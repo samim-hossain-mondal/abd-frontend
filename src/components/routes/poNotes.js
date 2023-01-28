@@ -6,7 +6,7 @@ import Navbar from '../dumbComponents/navBar'
 import PoNotesBody from '../poNotesComponents/poNotesBody';
 import PoNotesHeader from '../poNotesComponents/poNotesHeader';
 
-function poNotesContainer() {
+function PoNotesContainer() {
   return (
     <Box>
       <Box> <Navbar /> </Box>
@@ -16,4 +16,4 @@ function poNotesContainer() {
   );
 };
 
-export default poNotesContainer;
+export default PoNotesContainer;
