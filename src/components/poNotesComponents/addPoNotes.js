@@ -5,11 +5,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import QueueSharpIcon from '@mui/icons-material/QueueSharp';
 
 import Transition from '../utilityFunctions/overlayTransition';
+import Timeline from "../utilityFunctions/timeline";
 
 function AddPoNotes() {
 
-  const [noteType, setNoteType] = React.useState('');
+  let noteVal = 10;
   const [addNote, setAddNote] = React.useState(false);
+  const [noteType, setNoteType] = React.useState(10);
+  const [addtimeline,setTimeline] = React.useState(true);
 
   const addNoteOpener = () => {
     setAddNote(true);
@@ -18,8 +21,19 @@ function AddPoNotes() {
     setAddNote(false);
   };
 
+  const timelineHandler = ()=>{
+    if(noteVal===10){
+      setTimeline(true);
+    }
+    else{
+      setTimeline(false);
+    }
+  };
+
   const noteTypeHandler = (event) => {
-    setNoteType(event.target.value);
+    noteVal=event.target.value;
+    setNoteType(noteVal);
+    timelineHandler(noteType);
   };
 
   return (
@@ -65,9 +79,9 @@ function AddPoNotes() {
                     label="note type"
                     onChange={noteTypeHandler}
                   >
-                    <MenuItem value={1}>Action Item</MenuItem>
-                    <MenuItem value={2}>Key Decision</MenuItem>
-                    <MenuItem value={3}>Agenda Item</MenuItem>
+                    <MenuItem value={10}>Action Item</MenuItem>
+                    <MenuItem value={20}>Key Decision</MenuItem>
+                    <MenuItem value={30}>Agenda Item</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -89,21 +103,7 @@ function AddPoNotes() {
             </ListItem>
           </List>
         </Box>
-        <Box>
-          <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }}>Timeline</Typography>
-          <List>
-            <ListItem>
-              <TextField
-                id="datetime-local"
-                label="Select date, time"
-                type="datetime-local"
-                defaultValue="2017-05-24T10:30"
-                sx={{ width: 350 }}
-                InputLabelProps={{ shrink: true }}
-              />
-            </ListItem>
-          </List>
-        </Box>
+        {addtimeline&&<Timeline/>}
       </Dialog>
     </Box>
   );
