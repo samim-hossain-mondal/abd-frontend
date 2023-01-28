@@ -14,7 +14,7 @@ function PoNotesHeader() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [quickFilterType, setQuickFilter] = React.useState('');
-
+  
   const quickFilterHandler = (event) => {
     setQuickFilter(event.target.value);
   };
@@ -24,6 +24,7 @@ function PoNotesHeader() {
       <Container maxWidth="lg">
         <Toolbar disableGutters>
           <Typography
+            data-testid="poNotesIdentifier"
             variant="h5"
             noWrap
             sx={{ flexGrow: 2, mr: 2, display: { xs: 'none', md: 'flex' }, fontWeight: 500, letterSpacing: '.025rem', color: '#3D3D3D;', textDecoration: 'none' }}
