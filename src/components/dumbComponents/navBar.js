@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
+
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Tooltip, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Logo from '../../assets/images/agileLogo.png';
 
@@ -25,6 +26,9 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const location = useLocation();
+  console.log(location.pathname);
 
   return (
     <AppBar position="static" style={{ background: 'transparent', boxShadow: 'none' }}>
@@ -66,23 +70,24 @@ function Navbar() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
-              {pages.map((page) => (
+              {pages.map((page, index) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu} sx={{ ':hover': { bgcolor: 'white', color: '#2258F5' }, my: 2, color: '#3D3D3D', display: 'block' }}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Link style={{ textDecoration: 'none' }} to={routes[index]}> <Typography sx={{ fontSize: 16.5, ':hover': { color: '#2258F5' }, my: 2, color: '#3D3D3D', display: 'flex' }}> {page} </Typography> </Link>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ marginRight: 5, flexGrow: 2, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page, index) => (
-              <Button
+              <Box
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ ':hover': { bgcolor: 'white', color: '#2258F5' }, my: 2, color: '#3D3D3D', display: 'flex' }}
+                sx={{ flexGrow: 1 }}
               >
-                <Link to={routes[index]}> {page} </Link>
-              </Button>
+                <Link style={{ textDecoration: 'none' }} to={routes[index]}> <Typography sx={{ fontSize: 16.5, ':hover': { textDecoration: 'underline', textUnderlineOffset: '8px', color: '#2258F5' }, my: 2, color: '#3D3D3D', display: 'flex' }}> {page} </Typography> </Link>
+              </Box>
             ))}
+
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
