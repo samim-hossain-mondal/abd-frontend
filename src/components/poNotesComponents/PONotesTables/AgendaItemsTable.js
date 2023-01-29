@@ -9,7 +9,7 @@ import {
 } from '@mui/material'
 import React from 'react'
 import Box from '@mui/material/Box';
-import AgendaItemsTableHeader from './PONotesTablesHeader/AgendaItemsHeader'
+import AgendaItemsTableHeader from './PONotesTablesHeader/AgendaItemsTableHeader'
 
 export default function AgendaItemsTable() {
   return (
