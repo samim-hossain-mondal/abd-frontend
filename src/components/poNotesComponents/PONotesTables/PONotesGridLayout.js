@@ -7,8 +7,8 @@ import AgendaItemsTable from './AgendaItemsTable';
 export default function GridArea() {
   return (
 
-    <Grid container spacing={5} columns={20}>
-      <Grid item xs={1}> </Grid>
+    <Grid container spacing={4} columns={20}>
+      <Grid item xs='auto' > </Grid>
       <Grid sx={{
         p: 6,
         m: 1,
@@ -33,7 +33,7 @@ export default function GridArea() {
       }} item xs={6}>
         <AgendaItemsTable />
       </Grid>
-      <Grid item xs={1}> </Grid>
+      <Grid item xs='auto'> </Grid>
     </Grid>
 
   );

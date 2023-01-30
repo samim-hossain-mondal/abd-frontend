@@ -1,17 +1,10 @@
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper
-} from '@mui/material'
-import React from 'react'
-import Box from '@mui/material/Box';
-import AgendaItemsTableHeader from './PONotesTablesHeader/AgendaItemsTableHeader'
+import React from 'react';
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, Box } from '@mui/material';
 
-export default function AgendaItemsTable() {
+import AgendaItemsTableHeader from './PONotesTablesHeader/AgendaItemsTableHeader'
+import CardLayout from '../../Cards/CardLayout';
+
+function AgendaItemsTable() {
   return (
     <Box sx={{ width: '600px' }}>
       <TableContainer sx={{
@@ -26,16 +19,20 @@ export default function AgendaItemsTable() {
         <Table stickyHeader aria-label='simple table'>
           <TableHead>
             <TableRow align='center'>
-              <TableCell align='center' sx={{ backgroundColor: '#051C2C',
-               borderradius: '0px',
-                color: '#FFFFFF' }}><AgendaItemsTableHeader countOfItems={0} /></TableCell>
+              <TableCell align='center' sx={{
+                backgroundColor: '#051C2C',
+                borderradius: '0px',
+                color: '#FFFFFF'
+              }}><AgendaItemsTableHeader countOfItems={0} /></TableCell>
             </TableRow>
           </TableHead>
           <TableBody >
-            <TableRow/>
+            <TableRow> <CardLayout /> </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
     </Box>
-  )
-}
+  );
+};
+
+export default AgendaItemsTable;

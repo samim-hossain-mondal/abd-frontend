@@ -1,13 +1,14 @@
-import React from 'react';
+import * as React from 'react';
+import Grid from '@mui/material/Grid';
+import PONotesGridLayout from './PONotesTables/PONotesGridLayout'
 
-import { Box, Container } from '@mui/material';
-
-function PoNotesBody() {
+export default function poNotesBody() {
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ bgcolor: '#E6EEF2', height: '83.5vh' }} />
-    </Container>
-  );
+    <Grid>
+      <Grid sx={{
+        minWidth: "100%",
+        height: "100vh", backgroundColor: '#E6EEF2'
+      }}><PONotesGridLayout /></Grid>
+    </Grid>
+  )
 }
-
-export default PoNotesBody;

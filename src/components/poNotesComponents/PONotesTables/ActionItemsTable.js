@@ -1,17 +1,11 @@
-import {
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper
-} from '@mui/material'
-import React from 'react'
-import Box from '@mui/material/Box';
+import React from 'react';
+
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Box, Paper } from '@mui/material';
+
+import CardLayout from '../../Cards/CardLayout';
 import ActionItemsTableHeader from './PONotesTablesHeader/ActionItemsTableHeader'
 
-export default function ActionItemsTable() {
+function ActionItemsTable() {
   return (
     <Box sx={{ width: '600px' }}>
       <TableContainer sx={{
@@ -33,11 +27,12 @@ export default function ActionItemsTable() {
             </TableRow>
           </TableHead>
           <TableBody >
-            <TableRow />
+            <TableRow> <CardLayout /> </TableRow>
           </TableBody>
         </Table>
       </TableContainer>
     </Box>
+  );
+};
 
-  )
-}
+export default ActionItemsTable;

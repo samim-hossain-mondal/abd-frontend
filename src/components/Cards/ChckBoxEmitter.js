@@ -1,14 +1,15 @@
-import {Checkbox} from '@mui/material';
+import React from 'react';
+import { Checkbox, Box } from '@mui/material';
 
-const chckBoxEmitter=(chck)=>{
-    return (
-        <div>
-          {chck===true? (
-                <Checkbox color='primary' size="large"/>
-          ):(<Checkbox color='primary' size="large" sx={{visibility: 'hidden'}}/>)
-          }
-        </div>
-      );
+function chckBoxEmitter(chck) {
+  return (
+    <Box>
+      {chck === true ? (
+        <Checkbox color='primary' size="large" />
+      ) : (<Checkbox color='primary' size="large" sx={{ visibility: 'hidden' }} />)
+      }
+    </Box>
+  );
 };
 
 export default chckBoxEmitter;
