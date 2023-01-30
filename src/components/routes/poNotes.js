@@ -10,7 +10,7 @@ function PoNotesContainer() {
   return (
     <Box>
       <Box> <Navbar /> </Box>
-      <Box> <PoNotesHeader /> </Box>
+      <Box> <PoNotesHeader /> </Box> <br /> <br /> <br />
       <Box> <PoNotesBody /> </Box>
     </Box>
   );
