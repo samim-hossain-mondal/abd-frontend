@@ -16,7 +16,7 @@ function Login() {
   const login = async () => oktaAuth.signInWithRedirect();
 
   if(!authState) {
-    return <div>Loading...</div>;
+    return <p>Loading...</p>;
   }
 
   if(!authState.isAuthenticated) {

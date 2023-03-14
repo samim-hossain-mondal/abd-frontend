@@ -3,10 +3,13 @@ import React from 'react'
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
+// import { useOktaAuth } from '@okta/okta-react';
+import axios from 'axios';
 import PONotsTableHeader from './poNotesTablesHeader/PONotesTableHeader';
 import CardLayout from '../../cards/CardLayout';
 import { DOMAIN } from '../../../config';
-import { HEADINGS } from "../../utilityFunctions/Enums"
+import { HEADINGS } from "../../utilityFunctions/Enums";
+// import getAccessToken from '../../utilityFunctions/getAccessToken';
 
 // query params for get Api call
 const getStatusQuery = (type, status) => {
@@ -24,14 +27,21 @@ const getApiUrl = (type, query, page, limit) => {
 // table for the action items
 export default function PONotesTable(props) {
     const { heading, definition, accessibilityInformation, query, checkBox } = props;
+    // const { authState } = useOktaAuth();
     // need to add page & limit to the query
     const type = HEADINGS[heading].toUpperCase();
     const apiUrl = getApiUrl(type, query, 1, 100);
 
     const { data, error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
-        const res = await fetch(apiUrl);
-        if (res.ok) return res.json();
-        return new Error(res.data.message)
+        try {
+            const res = await axios.get(apiUrl);
+            return res.data;
+        } catch (err) {
+            if (err.response) {
+                return new Error(err.response.data.message);
+            }
+            return new Error(err.message);
+        }
     },
         {
             refetchInterval: 1000,
