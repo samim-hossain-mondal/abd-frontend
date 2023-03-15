@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
-import Proptypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, ListItemButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
@@ -311,22 +311,22 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 };
 
 Item.propTypes = {
-  entity: Proptypes.shape({
-    name: Proptypes.string.isRequired,
-    char: Proptypes.string.isRequired,
+  entity: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    char: PropTypes.string.isRequired,
   }).isRequired,
 };
 
 PONotesDialog.propTypes = {
-  open: Proptypes.bool.isRequired,
-  updateItem: Proptypes.bool.isRequired,
-  handleClose: Proptypes.func.isRequired,
-  data: Proptypes.shape({
-    noteId: Proptypes.string.isRequired,
-    type: Proptypes.string.isRequired,
-    note: Proptypes.string.isRequired,
-    dueDate: Proptypes.string.isRequired,
-    status: Proptypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+  updateItem: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  data: PropTypes.shape({
+    noteId: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    note: PropTypes.string.isRequired,
+    dueDate: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
   }),
 };
 

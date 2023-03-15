@@ -1,16 +1,16 @@
 export function quickFilterSanitizerPONotes(filters) {
-  const sanitizedFilters = {...filters};
+  const sanitizedFilters = { ...filters };
   if (sanitizedFilters.date) {
     switch (sanitizedFilters.date) {
       case 'today': {
-        sanitizedFilters.date = new Date();
-        sanitizedFilters.date.setHours(0, 0, 0, 0);
+        sanitizedFilters.startDate = new Date();
+        sanitizedFilters.startDate.setHours(0, 0, 0, 0);
         break;
       }
       case 'yesterday': {
-        sanitizedFilters.date = new Date();
-        sanitizedFilters.date.setDate(sanitizedFilters.date.getDate() - 1);
-        sanitizedFilters.date.setHours(0, 0, 0, 0);
+        sanitizedFilters.startDate = new Date();
+        sanitizedFilters.startDate.setDate(sanitizedFilters.startDate.getDate() - 1);
+        sanitizedFilters.startDate.setHours(0, 0, 0, 0);
         break;
       }
       case 'week': {
@@ -26,7 +26,16 @@ export function quickFilterSanitizerPONotes(filters) {
       }
     }
   }
-  return sanitizedFilters;
+
+  return {
+    ...sanitizedFilters,
+    ...(sanitizedFilters.startDate && {
+      startDate: sanitizedFilters.startDate.toISOString(),
+    }),
+    ...(sanitizedFilters.endDate && {
+      endDate: sanitizedFilters.endDate.toISOString()
+    })
+  };
 }
 
-export default {quickFilterSanitizerPONotes};
+export default { quickFilterSanitizerPONotes };

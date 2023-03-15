@@ -1,17 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import PropTypes from 'prop-types';
 import PONotesTable from './PONotesTable';
 import { actionItems, keyDecisions, agendaItems } from '../../constants/PONotes';
 
-export default function PONotesGridLayout(
+export default function PONotesGridLayout({ query }
 ) {
-  // setting serach query based on { text, start date , end date and status }.
-  const query = {
-    // search: "a",
-    // startDate: "2023-02-10",
-    // endDate: "2023-02-10",
-    // status: "DRAFT"
-  }
   return (
     // grid layout for the three tables
     <Box
@@ -45,3 +39,11 @@ export default function PONotesGridLayout(
     </Box>
   );
 }
+
+PONotesGridLayout.propTypes = {
+  query: PropTypes.shape({
+    status: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+  }).isRequired,
+};

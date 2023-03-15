@@ -35,24 +35,24 @@ export default function CelebrationBoard() {
 };
 
 // CelebrationBoard.propTypes = {
-//   gridHeightState: Proptypes.shape({
-//     sentiment: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
+//   gridHeightState: PropTypes.shape({
+//     sentiment: PropTypes.shape({
+//       expanded: PropTypes.bool.isRequired,
+//       height: PropTypes.number.isRequired,
 //     }).isRequired,
-//     celebration: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       fullExpanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
+//     celebration: PropTypes.shape({
+//       expanded: PropTypes.bool.isRequired,
+//       fullExpanded: PropTypes.bool.isRequired,
+//       height: PropTypes.number.isRequired,
 //     }).isRequired,
-//     request: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
+//     request: PropTypes.shape({
+//       expanded: PropTypes.bool.isRequired,
+//       height: PropTypes.number.isRequired,
 //     }).isRequired,
-//     announcement: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
+//     announcement: PropTypes.shape({
+//       expanded: PropTypes.bool.isRequired,
+//       height: PropTypes.number.isRequired,
 //     }).isRequired,
 //   }).isRequired,
-//   dispatchGridHeight: Proptypes.func.isRequired,
+//   dispatchGridHeight: PropTypes.func.isRequired,
 // }

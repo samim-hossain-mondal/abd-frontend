@@ -4,12 +4,14 @@ import PONotesBody from '../poNotesComponents/PONotesBody';
 import PONotesHeader from '../poNotesComponents/PONotesHeader';
 
 export default function PONotesContainer() {
+  const [query, setQuery] = React.useState({});
+
   return (
     <Box>
       <Box>
-        <PONotesHeader />
+        <PONotesHeader query={query} setQuery={setQuery} />
       </Box>
-      <Box > <PONotesBody /> </Box>
+      <Box > <PONotesBody query={query} /> </Box>
     </Box>
   );
 };

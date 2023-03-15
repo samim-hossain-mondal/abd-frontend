@@ -13,8 +13,8 @@ import { poNotesStatus } from "../../../constants/PONotes";
 const mainBoxPadding = "16px";
 const allowedDateFilters = ["today", "yesterday", "week"];
 
-export default function QuickFilterPopover({ onChange }) {
-  const [filters, setFilters] = useState({});
+export default function QuickFilterPopover({ query, onChange }) {
+  const [filters, setFilters] = useState(query);
 
   useEffect(() => {
     onChange(filters);
@@ -94,7 +94,7 @@ export default function QuickFilterPopover({ onChange }) {
         </Typography>
 
         <DateFilterBox
-          label={filters.startDate ? dateGetter(filters.startDate) :  "From Date"}
+          label={filters.startDate ? dateGetter(filters.startDate) : "From Date"}
           disabled={Boolean(filters.date)}
           onChange={(date) => {
             setFilters({ ...filters, startDate: date, date: undefined });
@@ -113,5 +113,10 @@ export default function QuickFilterPopover({ onChange }) {
 }
 
 QuickFilterPopover.propTypes = {
+  query: PropTypes.shape({
+    status: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+  }).isRequired,
   onChange: PropTypes.func.isRequired,
 };

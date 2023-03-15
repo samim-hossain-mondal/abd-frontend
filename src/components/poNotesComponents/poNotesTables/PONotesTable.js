@@ -31,6 +31,7 @@ export default function PONotesTable(props) {
     // need to add page & limit to the query
     const type = HEADINGS[heading].toUpperCase();
     const apiUrl = getApiUrl(type, query, 1, 100);
+    // console.log(apiUrl);
 
     const { data, error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
         try {

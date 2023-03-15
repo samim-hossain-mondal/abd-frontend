@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Box, AppBar, Container, InputLabel, FormControl, Toolbar, Typography, Popover, Select } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
+import PropTypes from 'prop-types';
 import SearchBar from '../utilityFunctions/SearchBar';
 import AddPONotes from './AddPONotes';
 import QuickFilterPopover from './poNotesTables/poNotesTablesHeader/QuickFilterPopover';
 import { quickFilterSanitizerPONotes } from '../utilityFunctions/filters';
 
-export default function PONotesHeader() {
-  const [searchQuery, setSearchQuery] = useState('');
+export default function PONotesHeader({ query, setQuery }) {
   const [positioningReferenceElement, setPositioningReferenceElement] = useState(null);
-
   const handleQuickFilterClick = (event) => {
     setPositioningReferenceElement(event.currentTarget);
   };
@@ -36,7 +35,7 @@ export default function PONotesHeader() {
           </Box>
           <Box sx={{ flexGrow: 0.2, display: { xs: 'none', md: 'flex' } }}>
             <Box sx={{ flexGrow: 0.5 }}>
-              <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+              <SearchBar query={query} setQuery={setQuery} />
             </Box>
             <FormControl id="demo-select-small" sx={{ minWidth: 200 }} size="small">
               <InputLabel id="demo-select-small">
@@ -63,19 +62,19 @@ export default function PONotesHeader() {
                   horizontal: 'left',
                 }}
               >
-                <QuickFilterPopover onChange={(filters) => {
-                  // eslint-disable-next-line no-unused-vars
-                  const sanitizedFilters = quickFilterSanitizerPONotes(filters);
-                  // TODO: update the filters as per requirement and integrate with backend
-
+                <QuickFilterPopover query={query} onChange={async (filters) => {
+                  const sanitizedFilters = quickFilterSanitizerPONotes(filters)
                   // sanitizedFilters is an object with the following structure
                   // {
                   //   status: ['PENDING', 'COMPLETED', 'DRAFT'] | undefined,
-                  //   date: Date | undefined,
                   //   startDate: Date | undefined,
                   //   endDate: Date | undefined,
                   // }
 
+                  setQuery({
+                    ...query,
+                    ...sanitizedFilters
+                  });
                 }} />
               </Popover>
             </FormControl>
@@ -87,4 +86,13 @@ export default function PONotesHeader() {
       </Container>
     </AppBar >
   );
+}
+
+PONotesHeader.propTypes = {
+  query: PropTypes.shape({
+    status: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+  }).isRequired,
+  setQuery: PropTypes.func.isRequired,
 }
