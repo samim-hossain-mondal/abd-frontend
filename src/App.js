@@ -12,7 +12,7 @@ import InformationRadiatorContainer from './components/routes/InformationRadiato
 import OurTeamsContainer from './components/routes/OurTeams';
 import PONotesContainer from './components/routes/PONotes';
 import RefMaterialsContainer from './components/routes/RefMaterials';
-import TimelineContainer from './components/routes/Timelines';
+import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
@@ -70,11 +70,12 @@ function AppRoutes() {
                   <Route path='/our-teams' exact element={<SecureRoute><OurTeamsContainer /></SecureRoute>} />
                   <Route path='/po-notes' exact element={<SecureRoute><PONotesContainer /></SecureRoute>} />
                   <Route path='/reference-material' exact element={<SecureRoute><RefMaterialsContainer /></SecureRoute>} />
-                  <Route path='/timelines-roadmaps' exact element={<SecureRoute><TimelineContainer /></SecureRoute>} />
+                  <Route path='/availability-calendar' exact element={<SecureRoute><AvailabilityCalendar /></SecureRoute>} />
                 </>
               )
             }
             <Route path='/login/callback' element={<LoginCallback />} />
+            <Route path='*' element={<h1>404: Not Found</h1>} />
           </Routes>
         </Box>
       </QueryClientProvider>

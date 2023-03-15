@@ -9,9 +9,9 @@ import {
   from '@mui/material';
 import Logo from '../../assets/images/agileLogo.png';
 
-const pages = ['Home', 'PO Notes', 'Our Teams', 'Timelines & Roadmaps',
+const pages = ['Home', 'PO Notes', 'Our Teams', 'Availability Calendar',
   'Announcements', 'Information Radiators', 'Reference Material'];
-const routes = ['/home', '/po-notes', '/our-teams', '/timelines-roadmaps',
+const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
   '/announcements', '/information-radiators', '/reference-material'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
