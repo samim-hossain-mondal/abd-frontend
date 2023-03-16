@@ -31,12 +31,12 @@ export default function Announcements() {
   }
 
   // OPTIMIZE: Is backend for announcements paginated ?
-  const getAnnouncements = async () =>{
+  const getAnnouncements = async () => {
     try {
       const res = await axios.get(`${DOMAIN}/api/dsm/announcements`);
       return res.data;
     }
-    catch(err) {
+    catch (err) {
       console.error(err);
       setError(val => val + err);
       return [];
@@ -56,13 +56,13 @@ export default function Announcements() {
   const addAnnouncementToDB = async (content) => {
     try {
       const res = await axios.post(`${DOMAIN}/api/dsm/announcements`, {
-        content, 
+        content,
       });
       setSuccess(() => 'Announcement created successfully');
 
       return res.data;
     }
-    catch(err) {
+    catch (err) {
       console.error(err);
       setError(val => val + err);
       return false;
@@ -111,9 +111,9 @@ export default function Announcements() {
 
             placeholder={DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER}
 
-            // TODO: add children component to check for addition on slack channel
+          // TODO: add children component to check for addition on slack channel
           />
-          
+
         </Dialog>
         <AccordionDetails sx={{
           display: 'flex',

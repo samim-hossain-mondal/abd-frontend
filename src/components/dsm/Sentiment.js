@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 
@@ -15,7 +15,10 @@ export default function Sentiment() {
           height: gridHeightState.sentiment.expanded ? '100%' : 'auto',
         }}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={
+              <IconButton>
+                <ExpandMoreIcon />
+              </IconButton>}
             aria-controls="panel1a-content"
             id="panel1a-header"
             sx={{

@@ -7,7 +7,13 @@ import { Box, Dialog, Typography } from '@mui/material';
 import events from '../../constants/Timeline/Event';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
-import { VIEWS, DEFAULT_VIEW, PRIMARY_BUTTON_TEXT, PLACEHOLDER, LOADING_TEXT } from '../../constants/Timeline/Calendar';
+import {
+  VIEWS,
+  DEFAULT_VIEW,
+  PRIMARY_BUTTON_TEXT,
+  PLACEHOLDER,
+  LOADING_TEXT,
+} from '../../constants/Timeline/Calendar';
 
 import './availabilityCalendar.css';
 
@@ -27,10 +33,21 @@ export default function AvailabilityCalendar() {
     setEventsData(events);
   }, []);
 
-
   const eventsPrimaryData = eventsData?.map((event) => {
-    const { startDatetime, endDatetime, eventName, name, uid, id, isRisk } = event;
-    return { start: startDatetime, end: endDatetime, title: `@${name}: ${eventName}`, uid, id, name, startDatetime, endDatetime, eventName, isRisk };
+    const { startDatetime, endDatetime, eventName, name, uid, id, isRisk } =
+      event;
+    return {
+      start: startDatetime,
+      end: endDatetime,
+      title: `@${name}: ${eventName}`,
+      uid,
+      id,
+      name,
+      startDatetime,
+      endDatetime,
+      eventName,
+      isRisk,
+    };
   });
 
   const handleInputModal = () => {
@@ -42,7 +59,7 @@ export default function AvailabilityCalendar() {
   };
 
   const handleAddEvent = (event) => {
-    const {content, startDatetime, endDatetime, isRisk} = event;
+    const { content, startDatetime, endDatetime, isRisk } = event;
     // will be changed upon integration with backend
     const newEvent = {
       eventName: content,
@@ -60,10 +77,9 @@ export default function AvailabilityCalendar() {
   const handleEditModal = (event) => {
     setEditModal(true);
     setSelectedEvent(event);
-    if(event.uid === getCurrentUserID()) {
+    if (event.uid === getCurrentUserID()) {
       setIsDisabled(false);
-    }
-    else{
+    } else {
       setIsDisabled(true);
     }
   };
@@ -73,7 +89,8 @@ export default function AvailabilityCalendar() {
   };
 
   const handleEditEvent = (editEvent) => {
-    const {content, startDatetime, endDatetime, isRisk, defaultID} = editEvent;
+    const { content, startDatetime, endDatetime, isRisk, defaultID } =
+      editEvent;
     // will be changed upon integration with backend
     const newEvent = {
       eventName: content,
@@ -81,12 +98,12 @@ export default function AvailabilityCalendar() {
       endDatetime,
       isRisk,
       uid: getCurrentUserID(),
-      name: 'User1', 
+      name: 'User1',
       id: defaultID,
     };
 
     const newEventsData = eventsData.map((event) => {
-      if(event.id === selectedEvent.id) {
+      if (event.id === selectedEvent.id) {
         return newEvent;
       }
       return event;
@@ -105,29 +122,31 @@ export default function AvailabilityCalendar() {
 
   const eventStyleGetter = (event) => {
     const backgroundColor = '#3f51b5';
-    
-    const style = (!event.isRisk)?{
-      backgroundColor,
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block',
-    }:{
-      backgroundColor: 'red',
-      borderRadius: '0px',
-      opacity: 0.8,
-      color: 'white',
-      border: '0px',
-      display: 'block',
-    };
+
+    const style = !event.isRisk
+      ? {
+        backgroundColor,
+        borderRadius: '0px',
+        opacity: 0.8,
+        color: 'white',
+        border: '0px',
+        display: 'block',
+      }
+      : {
+        backgroundColor: 'red',
+        borderRadius: '0px',
+        opacity: 0.8,
+        color: 'white',
+        border: '0px',
+        display: 'block',
+      };
     return {
       style,
     };
   };
 
-  return eventsData?(
-    <Box sx={{fontFamily: 'Roboto !important'}}>
+  return eventsData ? (
+    <Box sx={{ fontFamily: 'Roboto !important' }}>
       <Calendar
         views={VIEWS}
         selectable
@@ -140,48 +159,44 @@ export default function AvailabilityCalendar() {
         onSelectSlot={handleSelect}
         eventPropGetter={eventStyleGetter}
       />
-      {
-        (inputModal) && (
-          <Dialog
-            open={inputModal}
-            onClose={handleInputModalClose}
-          >
-            <GenericInputModal
-              onCloseButtonClick={handleInputModalClose}
-              primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-              onPrimaryButtonClick={(event) => { handleAddEvent(event) }}
-              defaultStartDatetime={selectedStartDate}
-              defaultEndDatetime={selectedEndDate}
-              placeholder={PLACEHOLDER}
-            />
-          </Dialog>
-        )
-      }
-      {
-        (editModal) && (
-          <Dialog
-            open={editModal}
-            onClose={handleEditModalClose}
-          >
-            <GenericInputModal
-              onCloseButtonClick={handleEditModalClose}
-              primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
-              onPrimaryButtonClick={(event) => { handleEditEvent(event) }}
-              defaultID={selectedEvent.id}
-              defaultEventName={selectedEvent.eventName}
-              defaultStartDatetime={selectedEvent.startDatetime}
-              defaultEndDatetime={selectedEvent.endDatetime}
-              defaultIsRisk={selectedEvent.isRisk}
-              isDisabled={isDisabled}
-              setIsDisabled={setIsDisabled}
-            />
-          </Dialog>
-        )
-      }
+      {inputModal && (
+        <Dialog open={inputModal} onClose={handleInputModalClose}>
+          <GenericInputModal
+            onCloseButtonClick={handleInputModalClose}
+            primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
+            onPrimaryButtonClick={(event) => {
+              handleAddEvent(event);
+            }}
+            defaultStartDatetime={selectedStartDate}
+            defaultEndDatetime={selectedEndDate}
+            placeholder={PLACEHOLDER}
+          />
+        </Dialog>
+      )}
+      {editModal && (
+        <Dialog open={editModal} onClose={handleEditModalClose}>
+          <GenericInputModal
+            onCloseButtonClick={handleEditModalClose}
+            primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
+            onPrimaryButtonClick={(event) => {
+              handleEditEvent(event);
+            }}
+            defaultID={selectedEvent.id}
+            defaultEventName={selectedEvent.eventName}
+            defaultStartDatetime={selectedEvent.startDatetime}
+            defaultEndDatetime={selectedEvent.endDatetime}
+            defaultIsRisk={selectedEvent.isRisk}
+            isDisabled={isDisabled}
+            setIsDisabled={setIsDisabled}
+          />
+        </Dialog>
+      )}
     </Box>
-  ):(
+  ) : (
     <Box>
-      <Typography variant='h4' align='center'>{LOADING_TEXT}</Typography>
+      <Typography variant='h4' align='center'>
+        {LOADING_TEXT}
+      </Typography>
     </Box>
   );
-};
+}

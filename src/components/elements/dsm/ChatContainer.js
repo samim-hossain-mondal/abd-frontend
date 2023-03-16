@@ -19,7 +19,7 @@ export default function ChatContainer({ name, src, content, date, onClick }) {
       </Avatar>
       <Box>
         <Typography>{content}</Typography>
-        <Typography variant="caption" sx={{marginTop: 8, color: 'gray'}}>
+        <Typography variant="caption" sx={{ marginTop: 8, color: 'gray' }}>
           {date.toLocaleString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -43,5 +43,5 @@ ChatContainer.defaultProps = {
   src: undefined,
   content: '',
   date: '',
-  onClick: () => {},
+  onClick: () => { },
 };

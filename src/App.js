@@ -1,8 +1,8 @@
-import React, {useEffect,useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Security, LoginCallback, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
-import { Route,Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
@@ -40,9 +40,9 @@ export default function App() {
 
 function AppRoutes() {
   const { authState } = useOktaAuth();
-  const [ authLoaded, setAuthLoaded ] = useState(false);
+  const [authLoaded, setAuthLoaded] = useState(false);
   const setAxiosHeader = async () => {
-    if(!authState){
+    if (!authState) {
       axios.defaults.headers.common.Authorization = null;
       return;
     }
@@ -57,14 +57,16 @@ function AppRoutes() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Box><Navbar/></Box>
-      <Box>
+      <Box className="App">
+        <Box>
+          <Navbar />
+        </Box>
         <Routes>
           <Route path='/' exact element={<Login />} />
           {
             (authLoaded) && (
               <>
-                <Route path='/home' exact element={<SecureRoute><HomeContainer/></SecureRoute>} />
+                <Route path='/home' exact element={<SecureRoute><HomeContainer /></SecureRoute>} />
                 <Route path='/announcements' exact element={<SecureRoute><AnnouncementContainer /></SecureRoute>} />
                 <Route path='/information-radiators' exact element={<SecureRoute><InformationRadiatorContainer /></SecureRoute>} />
                 <Route path='/our-teams' exact element={<SecureRoute><OurTeamsContainer /></SecureRoute>} />
@@ -78,6 +80,6 @@ function AppRoutes() {
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>
-    </QueryClientProvider>
+    </QueryClientProvider >
   );
 }

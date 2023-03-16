@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 
-export default function DeleteDialog({ open, setOpen, handleDelete }) {
+export default function DeleteDialog({ open, setOpen, handleDelete, description }) {
 
   const handleClose = () => {
     setOpen(false);
@@ -26,7 +26,7 @@ export default function DeleteDialog({ open, setOpen, handleDelete }) {
         }}
       >
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure to delete this PO Note?</DialogContentText>
+          <DialogContentText id="alert-dialog-description">{description}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDelete} color="error" >
@@ -45,4 +45,5 @@ DeleteDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  description: PropTypes.string.isRequired,
 };

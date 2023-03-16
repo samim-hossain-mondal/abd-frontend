@@ -31,7 +31,7 @@ export default function Requests() {
   const [openModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editModalData, setEditModalData] = useState({});
-  const [isDisabled,setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
 
   const handleEditModalClose = () => {
@@ -42,12 +42,12 @@ export default function Requests() {
   };
 
   const handleChatClick = (request) => {
-    if(getCurretUser() !== request.author){
+    if (getCurretUser() !== request.author) {
       setError(ERROR_MESSAGE.UNAUTHORIZED);
       return;
     }
     setOpenEditModal(true);
-    setEditModalData({...request});
+    setEditModalData({ ...request });
     setIsDisabled(true);
     setRequestType(request.type);
   };
@@ -239,9 +239,9 @@ export default function Requests() {
                         <Chip label="Resource" onClick={() => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
                       </Stack>
                     )
-                    :(
+                    : (
                       <Stack spacing={1} direction="row">
-                        <Chip label="Meeting"  color={editModalData.type === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
+                        <Chip label="Meeting" color={editModalData.type === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
                         <Chip label="Resource" color={editModalData.type === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
                       </Stack>
                     )
@@ -250,7 +250,6 @@ export default function Requests() {
             </Dialog>
           )
         }
-
       </Accordion>
     </Grid>
   );

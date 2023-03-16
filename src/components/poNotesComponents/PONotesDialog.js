@@ -2,10 +2,8 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, ListItemButton } from '@mui/material';
+import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
-import emoji from '@jukben/emoji-search';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Transition from '../utilityFunctions/OverlayTransition';
@@ -13,7 +11,8 @@ import Timeline from '../utilityFunctions/Timeline';
 import { DOMAIN } from '../../config';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
 import { ErrorContext } from '../contexts/ErrorContext';
-import DeleteDialog from './DeletePONote';
+import DeleteDialog from '../elements/DeleteDialog';
+import RichTextArea from '../elements/RichTextArea';
 
 const getNextDate = (days) => {
   const date = new Date();
@@ -32,21 +31,6 @@ const getISODateToTimlineFormat = (isoDate = '') => {
   }
 
 };
-function Item({ entity: { name, char } }) {
-  return (
-    <List>
-      <ListItem disablePadding>
-        <ListItemButton>
-          <Typography>{char}</Typography>
-          <Typography sx={{ fontWeight: 700, fontSize: '15px' }}>{name}</Typography>
-        </ListItemButton>
-      </ListItem>
-    </List>
-  )
-}
-function Loading() {
-  return <Box>Loading...</Box>;
-}
 
 export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
@@ -129,10 +113,6 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
     setType(event.target.value);
   };
 
-  const handleStatement = (event) => {
-    setStatement(event.target.value);
-  };
-
   const [deleteAlert, setDeleteAlert] = useState(false);
 
   const handleDeleteAlert = () => {
@@ -155,9 +135,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
   return (
     <Box>
-      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete}>
-        hello
-      </DeleteDialog>
+      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete} description="Are you sure to delete this PO Note?" />
       <Dialog
         disabled
         maxWidth
@@ -230,10 +208,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
           <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }}>Smart Statement</Typography>
           <List>
             <ListItem>
-              <ReactTextareaAutocomplete
-                className="autocomplete-textarea"
-                loadingComponent={Loading}
-                style={{
+              <RichTextArea
+                sx={{
                   multiline: true,
                   rows: 4,
                   fontSize: '16px',
@@ -244,22 +220,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
                   border: '2px solid #ccc',
                   fontFamily: 'Roboto, sans-serif',
                 }}
-                containerStyle={{
-                  margin: '5px auto'
-                }}
-                minChar={0}
-                trigger={{
-                  ':': {
-                    dataProvider: token => emoji(token)
-                      .slice(0, 3)
-                      .map(({ name, char }) => ({ name, char })),
-                    component: Item,
-                    output: (item) => item.char
-                  }
-                  // For adding users we can use @ as trigger
-                }}
                 value={statement}
-                onChange={handleStatement}
+                setContent={setStatement}
                 disabled={lock}
                 placeholder={PLACEHOLDER[type]}
               />
@@ -308,13 +270,6 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
       </Dialog >
     </Box>
   );
-};
-
-Item.propTypes = {
-  entity: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    char: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 PONotesDialog.propTypes = {

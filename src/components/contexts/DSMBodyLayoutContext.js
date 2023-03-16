@@ -192,7 +192,7 @@ export function DSMBodyLayoutProvider({ children }) {
 
   return (
     <DSMBodyLayoutContext.Provider value={dsmBodyLayoutContextValue}>
-      <Grid backgroundColor='#e6eef2' height="90vh">
+      <Grid backgroundColor='#e6eef2' height="100%">
         {children}
       </Grid>
     </DSMBodyLayoutContext.Provider>

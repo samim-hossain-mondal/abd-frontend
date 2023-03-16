@@ -104,4 +104,16 @@ theme.typography.dsmSubMain = {
   fontWeight: '400'
 }
 
+
+theme.typography.contentMain = {
+  ...theme.typography.subtitle1,
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontSize: '15px',
+  lineHeight: '23px',
+  letterSpacing: '0.3px',
+  color: '#657278'
+}
+
+
 export default theme;
