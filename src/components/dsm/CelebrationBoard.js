@@ -2,17 +2,17 @@ import React, { useContext } from 'react';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext"
+import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 
 export default function CelebrationBoard() {
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandCelebration = () => {
-    dispatchGridHeight({ type: "CELEBRATION" })
+    dispatchGridHeight({ type: 'CELEBRATION' })
   };
   return (
     <Grid item height={gridHeightState.celebration.height}>
       <Accordion expanded={gridHeightState.celebration.expanded} onChange={handleExpandCelebration} sx={{
-        height: gridHeightState.celebration.expanded ? "100%" : "none"
+        height: gridHeightState.celebration.expanded ? '100%' : 'none'
       }}>
         <AccordionSummary
           expandIcon={(gridHeightState.celebration.fullExpanded) ? <FullscreenExitIcon /> : <FullscreenIcon />}

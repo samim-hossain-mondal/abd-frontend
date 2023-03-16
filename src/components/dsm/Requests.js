@@ -24,7 +24,7 @@ export default function Requests() {
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandRequests = () => {
-    dispatchGridHeight({ type: "REQUEST" })
+    dispatchGridHeight({ type: 'REQUEST' })
   };
 
   const [requests, setRequests] = useState([]);
@@ -54,7 +54,7 @@ export default function Requests() {
 
   const handleAddButtonClick = () => {
     setOpenAddModal(!openModal);
-    dispatchGridHeight({ type: "REQUEST" });
+    dispatchGridHeight({ type: 'REQUEST' });
   }
 
   const handleModalClose = () => {
@@ -137,10 +137,10 @@ export default function Requests() {
   };
 
   return (
-    <Grid item height={gridHeightState.request.height} sx={{ ...(gridHeightState.request.expanded && { paddingBottom: "15px" }) }}>
+    <Grid item height={gridHeightState.request.height} sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}>
       <Accordion expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
-        height: gridHeightState.request.expanded ? "100%" : "none",
-        overflow: "auto",
+        height: gridHeightState.request.expanded ? '100%' : 'none',
+        overflow: 'auto',
       }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -148,10 +148,10 @@ export default function Requests() {
           id="panel3a-header"
           sx={{
             '.MuiAccordionSummary-content': {
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }
           }}
         >
@@ -194,10 +194,10 @@ export default function Requests() {
         </Dialog>
 
         <AccordionDetails sx={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "16px",
-          gap: "16px",
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px',
+          gap: '16px',
         }}>
           {requests.map((announcement) => (
             <ChatContainer

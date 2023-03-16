@@ -3,7 +3,7 @@ import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconBu
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import axios from 'axios';
-import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext"
+import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import ChatContainer from '../elements/dsm/ChatContainer';
 import { DOMAIN } from '../../config';
@@ -16,14 +16,14 @@ export default function Announcements() {
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
-    dispatchGridHeight({ type: "ANNOUNCEMENT" })
+    dispatchGridHeight({ type: 'ANNOUNCEMENT' })
   };
 
   const [announcements, setAnnouncements] = useState([]);
   const [openModal, setOpenAddModal] = useState(false);
   const handleAddButtonClick = () => {
     setOpenAddModal(!openModal);
-    dispatchGridHeight({ type: "ANNOUNCEMENT" });
+    dispatchGridHeight({ type: 'ANNOUNCEMENT' });
   }
 
   const handleModalClose = () => {
@@ -58,7 +58,7 @@ export default function Announcements() {
       const res = await axios.post(`${DOMAIN}/api/dsm/announcements`, {
         content, 
       });
-      setSuccess(() => "Announcement created successfully");
+      setSuccess(() => 'Announcement created successfully');
 
       return res.data;
     }
@@ -72,8 +72,8 @@ export default function Announcements() {
   return (
     <Grid item height={gridHeightState.announcement.height} >
       <Accordion expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements} sx={{
-        height: gridHeightState.announcement.expanded ? "100%" : "none",
-        overflow: "auto",
+        height: gridHeightState.announcement.expanded ? '100%' : 'none',
+        overflow: 'auto',
       }}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -81,10 +81,10 @@ export default function Announcements() {
           id="panel4a-header"
           sx={{
             '.MuiAccordionSummary-content': {
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }
           }}
         >
@@ -116,10 +116,10 @@ export default function Announcements() {
           
         </Dialog>
         <AccordionDetails sx={{
-          display: "flex",
-          flexDirection: "column",
-          padding: "16px",
-          gap: "16px",
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px',
+          gap: '16px',
         }}>
           {announcements.map((announcement) => (
             <ChatContainer

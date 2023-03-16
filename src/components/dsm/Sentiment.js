@@ -1,25 +1,25 @@
 import React, { useContext } from 'react';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext"
+import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 
 export default function Sentiment() {
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandSentiment = () => {
-    dispatchGridHeight({ type: "SENTIMENT" })
+    dispatchGridHeight({ type: 'SENTIMENT' })
   };
   return (
-    <Grid item sx={{ marginBottom: "10px", paddingBottom: "10px", ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }), display: "flex", flexDirection: "row", justifyContent: "space-between" }} height={gridHeightState.sentiment.height}>
+    <Grid item sx={{ marginBottom: '10px', paddingBottom: '10px', ...(gridHeightState.sentiment.expanded && { paddingBottom: '15px' }), display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} height={gridHeightState.sentiment.height}>
       <Grid item xs={gridHeightState.celebration.fullExpanded ? 8 : 12}>
         <Accordion expanded={gridHeightState.sentiment.expanded} onChange={handleExpandSentiment} sx={{
-          height: gridHeightState.sentiment.expanded ? "100%" : "auto",
+          height: gridHeightState.sentiment.expanded ? '100%' : 'auto',
         }}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
             sx={{
-              textAlign: "center",
+              textAlign: 'center',
             }}
           >
             {/* All Content/Development of SentimentMeter HEADER goes here */}
@@ -38,8 +38,8 @@ export default function Sentiment() {
         gridHeightState.celebration.fullExpanded && (
           <Grid item xs={1.7}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
-              height: gridHeightState.sentiment.expanded ? "100%" : "none",
-              padding: "6px",
+              height: gridHeightState.sentiment.expanded ? '100%' : 'none',
+              padding: '6px',
 
             }}>
               <AccordionSummary
@@ -57,8 +57,8 @@ export default function Sentiment() {
         gridHeightState.celebration.fullExpanded && (
           <Grid item xs={2} height="auto">
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
-              height: gridHeightState.sentiment.expanded ? "100%" : "none",
-              padding: "6px",
+              height: gridHeightState.sentiment.expanded ? '100%' : 'none',
+              padding: '6px',
             }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}

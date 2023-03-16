@@ -11,7 +11,7 @@ export default function SuccessSnackbar({ message, setSuccess }) {
       return;
     }
     setOpen(val => !val);
-    setSuccess(() => "");
+    setSuccess(() => '');
   };
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>

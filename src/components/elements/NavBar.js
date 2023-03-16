@@ -74,13 +74,13 @@ export default function Navbar() {
               {settings.map((setting) => (
                 (setting !== 'Logout')
                   ?
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-                :
-                <MenuItem key={setting} onClick={logout}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                  :
+                  <MenuItem key={setting} onClick={logout}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
               ))}
             </Menu>
           </Box>

@@ -1,16 +1,16 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, ListItemButton } from "@mui/material";
+import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, ListItemButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ReactTextareaAutocomplete from "@webscopeio/react-textarea-autocomplete";
-import emoji from "@jukben/emoji-search";
+import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
+import emoji from '@jukben/emoji-search';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Transition from '../utilityFunctions/OverlayTransition';
-import Timeline from "../utilityFunctions/Timeline";
-import { DOMAIN } from "../../config";
+import Timeline from '../utilityFunctions/Timeline';
+import { DOMAIN } from '../../config';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
 import { ErrorContext } from '../contexts/ErrorContext';
 import DeleteDialog from './DeletePONote';
@@ -22,7 +22,7 @@ const getNextDate = (days) => {
   return dateString;
 };
 
-const getISODateToTimlineFormat = (isoDate = "") => {
+const getISODateToTimlineFormat = (isoDate = '') => {
   try {
     const dateString = isoDate.substring(0, isoDate.indexOf('T'));
     return dateString || null;
@@ -66,7 +66,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
     setLock(!lock);
   };
 
-  const isPublished = () => data?.status !== "DRAFT"
+  const isPublished = () => data?.status !== 'DRAFT'
 
   const isSave = () => updateItem
   const isSaveDraft = () => (isPublished() || !updateItem)
@@ -85,7 +85,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
         'status': status
       };
 
-      if (type === "ACTION_ITEM") body = { ...body, ...({ 'dueDate': timeline === "" ? null : timeline }) }
+      if (type === 'ACTION_ITEM') body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
 
 
       if (updateItem) {
@@ -118,11 +118,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
   };
 
   const handleSave = () => {
-    handleSubmit(type === "KEY_DECISION" && data.status !== "DRAFT" ? "NONE" : data.status);
+    handleSubmit(type === 'KEY_DECISION' && data.status !== 'DRAFT' ? 'NONE' : data.status);
   };
 
   const handlePublish = () => {
-    handleSubmit(type === "KEY_DECISION" ? "NONE" : 'PENDING');
+    handleSubmit(type === 'KEY_DECISION' ? 'NONE' : 'PENDING');
   };
 
   const handleNoteType = (event) => {
@@ -174,10 +174,10 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
               aria-label="close"
               disabled={!updateItem}
             >
-              <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? "" : "hidden" }} />
+              <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
             </IconButton>
           </Grid>
-          <Grid item xs={5} sx={{ visibility: "hidden" }} />
+          <Grid item xs={5} sx={{ visibility: 'hidden' }} />
           <Grid item xs={2} >
             <IconButton
               edge="start"
@@ -186,7 +186,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
               aria-label="close"
               disabled={!updateItem}
             >
-              <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? "" : "hidden" }} />
+              <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
             </IconButton>
           </Grid>
           <Grid item xs={2}>
@@ -236,8 +236,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
                 style={{
                   multiline: true,
                   rows: 4,
-                  fontSize: "16px",
-                  lineHeight: "20px",
+                  fontSize: '16px',
+                  lineHeight: '20px',
                   width: '260px',
                   height: '150px',
                   padding: '15px 20px',
@@ -245,11 +245,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
                   fontFamily: 'Roboto, sans-serif',
                 }}
                 containerStyle={{
-                  margin: "5px auto"
+                  margin: '5px auto'
                 }}
                 minChar={0}
                 trigger={{
-                  ":": {
+                  ':': {
                     dataProvider: token => emoji(token)
                       .slice(0, 3)
                       .map(({ name, char }) => ({ name, char })),

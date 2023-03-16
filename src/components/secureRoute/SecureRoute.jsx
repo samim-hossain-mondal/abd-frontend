@@ -1,7 +1,7 @@
-import { useOktaAuth } from "@okta/okta-react";
-import { useEffect } from "react";
-import PropTypes from "prop-types";
-import { toRelativeUrl } from "@okta/okta-auth-js";
+import { useOktaAuth } from '@okta/okta-react';
+import { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { toRelativeUrl } from '@okta/okta-auth-js';
 
 export default function SecureRoute({ children }) {
 

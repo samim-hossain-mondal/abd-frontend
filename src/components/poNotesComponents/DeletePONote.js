@@ -21,8 +21,8 @@ export default function DeleteDialog({ open, setOpen, handleDelete }) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         sx={{
-          "box-shadow": "0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)",
-          "border-radius": "2px"
+          'box-shadow': '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)',
+          'border-radius': '2px'
         }}
       >
         <DialogContent>

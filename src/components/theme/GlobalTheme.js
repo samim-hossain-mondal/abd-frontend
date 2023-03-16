@@ -91,8 +91,8 @@ theme.typography.dsmMain = {
   color: '#051C2C',
   display: 'flow',
   fontFamily: 'Roboto',
-  fontSize: "25px",
-  fontWeight: "400"
+  fontSize: '25px',
+  fontWeight: '400'
 }
 
 theme.typography.dsmSubMain = {
@@ -100,8 +100,8 @@ theme.typography.dsmSubMain = {
   color: '#051C2C',
   display: 'flow',
   fontFamily: 'Roboto',
-  fontSize: "17px",
-  fontWeight: "400"
+  fontSize: '17px',
+  fontWeight: '400'
 }
 
 export default theme;

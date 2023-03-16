@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextField, IconButton } from '@mui/material';
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar({ query, setQuery }) {
 
@@ -17,7 +17,7 @@ export default function SearchBar({ query, setQuery }) {
         variant="outlined" placeholder="Search..." size="small"
         InputProps={{
           endAdornment: (
-            <IconButton type="submit" sx={{ color: "primary.main" }} onClick={(e) => { e.preventDefault(); setQuery({ ...query, search: searchInput }); }}>
+            <IconButton type="submit" sx={{ color: 'primary.main' }} onClick={(e) => { e.preventDefault(); setQuery({ ...query, search: searchInput }); }}>
               <SearchIcon />
             </IconButton>
           ),

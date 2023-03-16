@@ -16,10 +16,23 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "overrides": [
+    {
+      "files": ["*.jsx", "*.js"]
+    }
+  ],
   "plugins": [
     "react"
   ],
   "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
     "linebreak-style": 0,
     "no-console": "off",
     "react/jsx-filename-extension": [

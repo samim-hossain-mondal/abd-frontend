@@ -26,4 +26,4 @@ const collaborators = ['Kartik Goel', 'Samim Gupta', 'Abhishek Bharadwaj'];
 
 export { placeholder, actionItems, keyDecisions, agendaItems, collaborators };
 
-export const poNotesStatus = ["PENDING", "COMPLETED", "DRAFT"];
+export const poNotesStatus = ['PENDING', 'COMPLETED', 'DRAFT'];

@@ -1,9 +1,9 @@
-import { Close as CloseIcon } from "@mui/icons-material";
-import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import DateTimePicker from "../../elements/timeline/DateTimePicker/Index";
+import { Close as CloseIcon } from '@mui/icons-material';
+import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import { Box } from '@mui/system';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import DateTimePicker from '../../elements/timeline/DateTimePicker/Index';
 
 
 export default function GenericInputModal({
@@ -21,7 +21,7 @@ export default function GenericInputModal({
   placeholder,
   isDisabled
 }) {
-  const [content, setContent] = useState(defaultEventName ?? "");
+  const [content, setContent] = useState(defaultEventName ?? '');
   const [isRisk, setIsRisk] = useState(defaultIsRisk ?? false);
   const [startDatetime, setStartDatetime] = useState(defaultStartDatetime ?? new Date());
   const [endDatetime, setEndDatetime] = useState(defaultEndDatetime ?? new Date());
@@ -29,13 +29,13 @@ export default function GenericInputModal({
   return (
     <Box
       sx={{
-        width: "max(25vw, 340px)",
-        boxSizing: "border-box",
-        backgroundColor: "#FFFFFF",
-        boxShadow: "0px 30px 60px rgba(32, 56, 85, 0.15)",
-        borderRadius: "8px",
-        padding: "16px 24px 24px 24px",
-        position: "relative"
+        width: 'max(25vw, 340px)',
+        boxSizing: 'border-box',
+        backgroundColor: '#FFFFFF',
+        boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
+        borderRadius: '8px',
+        padding: '16px 24px 24px 24px',
+        position: 'relative'
       }}
     >
       <Box sx={{ textAlign: 'right' }}>
@@ -48,9 +48,9 @@ export default function GenericInputModal({
 
       <TextField
         sx={{
-          width: "100%",
-          margin: "16px 0",
-          boxShadow: "0px 5px 15px rgba(119, 132, 238, 0.3)",
+          width: '100%',
+          margin: '16px 0',
+          boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
         }}
         value={content}
         multiline
@@ -80,15 +80,15 @@ export default function GenericInputModal({
         !isDisabled && (
           <Button
             sx={{
-              margin: "16px 0",
-              padding: "12px 0",
-              width: "100%",
-              borderRadius: "8px",
-              color: "customButton1.contrastText",
-              backgroundColor: "customButton1.main",
-              "&:hover": {
-                color: "customButton1.contrastText",
-                backgroundColor: "customButton1.main",
+              margin: '16px 0',
+              padding: '12px 0',
+              width: '100%',
+              borderRadius: '8px',
+              color: 'customButton1.contrastText',
+              backgroundColor: 'customButton1.main',
+              '&:hover': {
+                color: 'customButton1.contrastText',
+                backgroundColor: 'customButton1.main',
               },
             }}
             onClick={() => onPrimaryButtonClick({content, startDatetime, endDatetime, isRisk, defaultID})}
@@ -101,14 +101,14 @@ export default function GenericInputModal({
       {secondaryButtonText && (
         <Button
           sx={{
-            padding: "12px 0",
-            width: "100%",
-            borderRadius: "8px",
-            color: "secondaryButton.contrastText",
-            backgroundColor: "secondaryButton.main",
-            "&:hover": {
-              color: "secondaryButton.contrastText",
-              backgroundColor: "secondaryButton.main",
+            padding: '12px 0',
+            width: '100%',
+            borderRadius: '8px',
+            color: 'secondaryButton.contrastText',
+            backgroundColor: 'secondaryButton.main',
+            '&:hover': {
+              color: 'secondaryButton.contrastText',
+              backgroundColor: 'secondaryButton.main',
             },
           }}
           onClick={() => onSecondaryButtonClick(content)}

@@ -12,7 +12,7 @@ export default function ErrorSnackbar({ message, setError }) {
       return;
     }
     setOpen(val => !val);
-    setError(() => "");
+    setError(() => '');
   };
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>

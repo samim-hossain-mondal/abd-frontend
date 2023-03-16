@@ -4,7 +4,7 @@ import { Security, LoginCallback, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route,Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box } from "@mui/material";
+import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import HomeContainer from './components/routes/Home';
 import AnnouncementContainer from './components/routes/Announcements';
@@ -57,27 +57,27 @@ function AppRoutes() {
 
   return (
     <QueryClientProvider client={queryClient}>
-        <Box><Navbar/></Box>
-        <Box>
-          <Routes>
-            <Route path='/' exact element={<Login />} />
-            {
-              (authLoaded) && (
-                <>
-                  <Route path='/home' exact element={<SecureRoute><HomeContainer/></SecureRoute>} />
-                  <Route path='/announcements' exact element={<SecureRoute><AnnouncementContainer /></SecureRoute>} />
-                  <Route path='/information-radiators' exact element={<SecureRoute><InformationRadiatorContainer /></SecureRoute>} />
-                  <Route path='/our-teams' exact element={<SecureRoute><OurTeamsContainer /></SecureRoute>} />
-                  <Route path='/po-notes' exact element={<SecureRoute><PONotesContainer /></SecureRoute>} />
-                  <Route path='/reference-material' exact element={<SecureRoute><RefMaterialsContainer /></SecureRoute>} />
-                  <Route path='/availability-calendar' exact element={<SecureRoute><AvailabilityCalendar /></SecureRoute>} />
-                </>
-              )
-            }
-            <Route path='/login/callback' element={<LoginCallback />} />
-            <Route path='*' element={<h1>404: Not Found</h1>} />
-          </Routes>
-        </Box>
-      </QueryClientProvider>
+      <Box><Navbar/></Box>
+      <Box>
+        <Routes>
+          <Route path='/' exact element={<Login />} />
+          {
+            (authLoaded) && (
+              <>
+                <Route path='/home' exact element={<SecureRoute><HomeContainer/></SecureRoute>} />
+                <Route path='/announcements' exact element={<SecureRoute><AnnouncementContainer /></SecureRoute>} />
+                <Route path='/information-radiators' exact element={<SecureRoute><InformationRadiatorContainer /></SecureRoute>} />
+                <Route path='/our-teams' exact element={<SecureRoute><OurTeamsContainer /></SecureRoute>} />
+                <Route path='/po-notes' exact element={<SecureRoute><PONotesContainer /></SecureRoute>} />
+                <Route path='/reference-material' exact element={<SecureRoute><RefMaterialsContainer /></SecureRoute>} />
+                <Route path='/availability-calendar' exact element={<SecureRoute><AvailabilityCalendar /></SecureRoute>} />
+              </>
+            )
+          }
+          <Route path='/login/callback' element={<LoginCallback />} />
+          <Route path='*' element={<h1>404: Not Found</h1>} />
+        </Routes>
+      </Box>
+    </QueryClientProvider>
   );
 }

@@ -72,7 +72,7 @@ export default function CustomCard({ checkBox, data, type }) {
 
   const handleLinkButton = () => {
     handleClose();
-    console.log("JIRA LINK")
+    console.log('JIRA LINK')
   }
 
   const isDraft = () => {
@@ -126,12 +126,12 @@ export default function CustomCard({ checkBox, data, type }) {
               <Tooltip title={data.note}>
                 <Typography mt={3} pl={1} sx={{
                   maxWidth: '400px',
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  wordWrap: "break-word",
-                  display: "-webkit-box",
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  wordWrap: 'break-word',
+                  display: '-webkit-box',
                   WebkitLineClamp: 4,
-                  WebkitBoxOrient: "vertical",
+                  WebkitBoxOrient: 'vertical',
                 }}> {data.note}</Typography>
               </Tooltip>
             </Box>

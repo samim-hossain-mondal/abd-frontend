@@ -1,17 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect } from 'react';
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Dialog, Typography } from '@mui/material';
-import events from "../../constants/Timeline/Events";
-import GenericInputModal from '../../timeline/inputModal/Index';
+import events from '../../constants/Timeline/Events';
+import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
 import { VIEWS, DEFAULT_VIEW, PRIMARY_BUTTON_TEXT, PLACEHOLDER, LOADING_TEXT } from '../../constants/Timeline/Calendar';
 
 import './availabilityCalendar.css';
 
-moment.locale("en-GB");
+moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
 export default function AvailabilityCalendar() {
@@ -96,28 +96,30 @@ export default function AvailabilityCalendar() {
   };
 
   const handleSelect = ({ start, end }) => {
-    handleInputModal();
-    setSelectedStartDate(start);
-    setSelectedEndDate(end);
+    if (start >= new Date()) {
+      handleInputModal();
+      setSelectedStartDate(start);
+      setSelectedEndDate(end);
+    }
   };
 
   const eventStyleGetter = (event) => {
-    const backgroundColor = "#3f51b5";
+    const backgroundColor = '#3f51b5';
     
     const style = (!event.isRisk)?{
       backgroundColor,
-      borderRadius: "0px",
+      borderRadius: '0px',
       opacity: 0.8,
-      color: "white",
-      border: "0px",
-      display: "block",
+      color: 'white',
+      border: '0px',
+      display: 'block',
     }:{
-      backgroundColor: "red",
-      borderRadius: "0px",
+      backgroundColor: 'red',
+      borderRadius: '0px',
       opacity: 0.8,
-      color: "white",
-      border: "0px",
-      display: "block",
+      color: 'white',
+      border: '0px',
+      display: 'block',
     };
     return {
       style,
@@ -133,7 +135,7 @@ export default function AvailabilityCalendar() {
         defaultDate={new Date()}
         defaultView={DEFAULT_VIEW}
         events={eventsPrimaryData}
-        style={{ height: "100vh" }}
+        style={{ height: '100vh' }}
         onSelectEvent={(event) => handleEditModal(event)}
         onSelectSlot={handleSelect}
         eventPropGetter={eventStyleGetter}

@@ -1,15 +1,15 @@
-import React, { useMemo } from "react";
-import PropTypes from "prop-types";
+import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { Box } from '@mui/system';
 
-import ErrorSnackbar from "../utilityFunctions/ErrorSnackbar";
-import SuccessSnackbar from "../utilityFunctions/SuccessSnackbar";
+import ErrorSnackbar from '../utilityFunctions/ErrorSnackbar';
+import SuccessSnackbar from '../utilityFunctions/SuccessSnackbar';
 
 export const ErrorContext = React.createContext();
 
 export function ErrorProvider({ children }) {
-  const [error, setError] = React.useState("");
-  const [success, setSuccess] = React.useState("");
+  const [error, setError] = React.useState('');
+  const [success, setSuccess] = React.useState('');
   const errorContextValues = useMemo(() => ({ error, setError, success, setSuccess }), [error, success]);
 
   return (
