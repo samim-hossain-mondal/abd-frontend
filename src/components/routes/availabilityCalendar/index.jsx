@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Dialog, Typography } from '@mui/material';
-import events from '../../constants/Timeline/Events';
+import events from '../../constants/Timeline/Event';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
 import { VIEWS, DEFAULT_VIEW, PRIMARY_BUTTON_TEXT, PLACEHOLDER, LOADING_TEXT } from '../../constants/Timeline/Calendar';

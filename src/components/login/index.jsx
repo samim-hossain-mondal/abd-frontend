@@ -3,7 +3,7 @@ import { useOktaAuth } from '@okta/okta-react';
 
 function Loggedin(){
   return (
-    <div />
+    <div data-testid='logged-in'/>
   );
 }
 

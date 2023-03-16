@@ -1,9 +1,9 @@
 import React from 'react';
-import {render, screen,waitFor} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import Login from '../index';
 
 describe('Login', () => {
-  it('should show logged in if user is logged in', () => {
+  it('should contain div with logged-in id if user is logged in', () => {
     jest.spyOn(React, 'useContext').mockImplementation(() => ({
       oktaAuth: {
         signInWithRedirect: jest.fn(),
@@ -13,7 +13,7 @@ describe('Login', () => {
       },
     }));
     render(<Login />);
-    expect(screen.getByText('Logged in!')).toBeTruthy();
+    expect(screen.getByTestId('logged-in')).toBeTruthy();
   });
 
   it('should show Loading... if user is not logged in', () => {
