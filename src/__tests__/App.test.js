@@ -1,7 +1,5 @@
-import '@testing-library/jest-dom';
+describe('App',( ) => {
+  xit('should render correctly',()=>{
 
-describe('App', () => {
-  it('should render homepage by default', () => {
   });
 });
-

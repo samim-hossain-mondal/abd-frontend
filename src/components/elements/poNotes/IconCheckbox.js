@@ -42,6 +42,7 @@ export default function IconCheckbox({ Icon, label, onChange, isChecked=false, s
 
       <Checkbox
         id={idName}
+        data-testid='checkbox'
         sx={{
           color: '#08A0F7',
           '&.Mui-checked': {

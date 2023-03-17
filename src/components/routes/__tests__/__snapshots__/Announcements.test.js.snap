@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Announcements renders 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-0"
+  >
+    Welcome to Announcements page.
+  </div>
+</div>
+`;

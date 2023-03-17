@@ -80,7 +80,7 @@ export default function PONotesHeader({ query, setQuery }) {
             </FormControl>
           </Box>
           <Box sx={{ mr: 5, display: { xs: 'none', md: 'flex' } }}>
-            <AddPONotes updateItem={false} data={{ status: 'DRAT', noteType: 'ACTION_ITEM', note: 'hello', dueDate: 'kk' }} />
+            <AddPONotes/>
           </Box>
         </Toolbar>
       </Container>
