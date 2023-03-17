@@ -1,25 +1,17 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
-import React, { useState } from "react";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  TextField,
-  Typography,
-  Button,
-  Slide,
-} from "@mui/material";
+import React, { useState, useContext } from "react";
+import { Box, Dialog, DialogContent, Input, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-// import SaveIcon from '@mui/icons-material/Save';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DoneIcon from "@mui/icons-material/Done";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { PropTypes } from "prop-types";
 import ProjectModal from "./ProjectModal";
+import Transition from "../utilityFunctions/OverlayTransition";
+import { ErrorContext } from "../contexts/ErrorContext";
 
-function AccountSettingsModal(props) {
+function AccountSettingsModal({ open, setOpenSettings }) {
+  const { setError } = useContext(ErrorContext);
   const [openEditModel, setOpenEditModel] = useState({
     isOpen: false,
     id: null,
@@ -57,18 +49,21 @@ function AccountSettingsModal(props) {
     setProjectInfo(newProjectArray);
   };
 
-  const addCollaborator = (index) => {
-    console.log("add collaborator", index);
-    const newCollaborator = { email: "", role: "" };
-    const newProjectArray = [
-      ...projectInfo.slice(0, index),
-      {
-        ...projectInfo[index],
-        collaborators: [...projectInfo[index].collaborators, newCollaborator],
-      },
-      ...projectInfo.slice(index + 1),
-    ];
-    setProjectInfo(newProjectArray);
+  const addCollaborator = (index, isAdmin) => {
+    if (isAdmin) {
+      const newCollaborator = { email: "", role: "" };
+      const newProjectArray = [
+        ...projectInfo.slice(0, index),
+        {
+          ...projectInfo[index],
+          collaborators: [...projectInfo[index].collaborators, newCollaborator],
+        },
+        ...projectInfo.slice(index + 1),
+      ];
+      setProjectInfo(newProjectArray);
+    } else {
+      setError((val) => `${val}You are not authorized to add collaborators`);
+    }
   };
 
   const handleEmailChange = (index, colabIndex, event) => {
@@ -139,7 +134,6 @@ function AccountSettingsModal(props) {
   };
 
   const handleAddNew = () => {
-    console.log("add new");
     const id = Date.now();
     const newProject = {
       ProjectId: id,
@@ -190,34 +184,23 @@ function AccountSettingsModal(props) {
   }
   return (
     <Dialog
-      open={props.open}
-      TransitionComponent={Slide}
-      TransitionProps={{
-        direction: "left",
-      }}
-      onClose={() => props.setOpenSettings(false)}
-      // fullWidth
+      open={open}
+      TransitionComponent={Transition}
+      onClose={() => setOpenSettings(false)}
       maxWidth="md"
       style={{
         display: "flex",
-        // alignItems: "stretch",
-        // width: "400px",
-        // justifyContent: "flex-start",
       }}
       PaperProps={{
         sx: {
-          // transform: "translateX(-100%)",
-          transition: "transform 0.2s ease-in-out",
-          position: "fixed",
-          // top: 0,
-          left: 147,
-          height: "100%",
-          width: "25%",
-          margin: 0,
-          padding: 0,
-          borderRadius: 0,
-          borderTopRightRadius: "4px",
-          borderBottomRightRadius: "4px",
+          position: "absolute",
+          top: "48%",
+          left: "40%",
+          transform: "translate(-50%, -50%)",
+          width: "80%",
+          maxWidth: "400px",
+          height: "500px",
+          p: 2,
         },
       }}
     >
@@ -225,7 +208,12 @@ function AccountSettingsModal(props) {
         <Box
           sx={{ display: "flex", flexDirection: "column", textAlign: "center" }}
         >
-          <Typography mb={5}>Manage Projects</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h5" mb={5}>
+              Manage Projects
+            </Typography>
+            <AddIcon onClick={handleAddNew} />
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -246,25 +234,19 @@ function AccountSettingsModal(props) {
                       <DoneIcon />
                     ) : null}
                   </Box>
-                  <Box sx={{ display: "flex" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      textAlign: "center",
+                      width: "60%",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      // width: "70%",
+                    }}
+                  >
                     {project.projectTitle.isEditable ? (
-                      <TextField
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            "& fieldset": {
-                              borderColor: "transparent",
-                            },
-                            "&:hover fieldset": {
-                              borderColor: "transparent",
-                            },
-                            "&.Mui-focused fieldset": {
-                              borderColor: "transparent",
-                            },
-                            "&.MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                          },
-                        }}
+                      <Input
                         value={project.projectTitle.label}
                         onChange={(event) =>
                           handleLabelChange(
@@ -278,11 +260,12 @@ function AccountSettingsModal(props) {
                       <Box
                         sx={{
                           display: "flex",
-                          // flexDirection: "row",
+
                           justifyItems: "flex-end",
                         }}
                       >
                         <Typography
+                          sx={{ fontSize: "22px" }}
                           onClick={() => {
                             handleSelectedProject(project.ProjectId);
                           }}
@@ -319,7 +302,9 @@ function AccountSettingsModal(props) {
               <ProjectModal
                 open={openEditModel}
                 handleClose={setOpenEditModel}
-                handleProjectDescription={handleProjectDescription}
+                handleProjectDescription={() => {
+                  handleProjectDescription();
+                }}
                 projectInfo={projectInfo}
                 addCollaborator={addCollaborator}
                 handleEmailChange={handleEmailChange}
@@ -329,17 +314,16 @@ function AccountSettingsModal(props) {
                 handleEditProjectTitle={handleEditProjectTitle}
               />
             )}
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleAddNew}
-            />
           </Box>
         </Box>
       </DialogContent>
     </Dialog>
   );
 }
+
+AccountSettingsModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  setOpenSettings: PropTypes.func.isRequired,
+};
 
 export default AccountSettingsModal;

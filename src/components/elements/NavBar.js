@@ -37,7 +37,7 @@ export default function Navbar({authLoaded}) {
     setAnchorElUser(event.currentTarget);
   };
   const handleCloseUserMenu = (event) => {
-    if(event.target.innerText === 'Account Settings') {
+    if (event.target.innerText === "Account Settings") {
       setOpenSettings(true);
     }
     setAnchorElUser(null);
@@ -45,7 +45,10 @@ export default function Navbar({authLoaded}) {
 
   const location = useLocation();
   return (
-    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
+    <AppBar
+      position="static"
+      sx={{ background: "transparent", boxShadow: "none" }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex'}}>
           <Box
