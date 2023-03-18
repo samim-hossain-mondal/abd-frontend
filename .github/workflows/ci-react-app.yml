@@ -1,8 +1,11 @@
 name: ReactApp CI
 
+env:
+  REACT_APP_OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
+  REACT_APP_OCTA_DOMAIN: ${{ secrets.OCTA_DOMAIN }}
+  BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
+
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -17,14 +20,6 @@ jobs:
     steps:
       - name: Checking out code
         uses: actions/checkout@v3
-
-      - name: Create .env file
-        uses: ozaytsev86/create-env-file@v1
-        with:
-          DISABLE_ESLINT_PLUGIN: true
-          REACT_APP_OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
-          REACT_APP_OCTA_DOMAIN: ${{ secrets.OCTA_DOMAIN }}
-          BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
 
       - name: Installing Node.js
         uses: actions/setup-node@v3
