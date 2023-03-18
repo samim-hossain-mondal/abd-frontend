@@ -9,6 +9,10 @@ env:
 on:
   push:
     branches: ['main']
+  path-ignore:
+    - '.eslintrc.json'
+    - 'docs/**'
+    - 'README.md'
 
 jobs:
   build-react-my-agile-board:
