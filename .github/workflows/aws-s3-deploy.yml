@@ -13,6 +13,10 @@ on:
 jobs:
   build-react-my-agile-board:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
     steps:
       - name: Checking out code
         uses: actions/checkout@v3
@@ -20,6 +24,7 @@ jobs:
       - name: Create .env file
         uses: ozaytsev86/create-env-file@v1
         with:
+          DISABLE_ESLINT_PLUGIN: true
           REACT_APP_OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
           REACT_APP_OCTA_DOMAIN: ${{ secrets.OCTA_DOMAIN }}
           BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
@@ -27,7 +32,8 @@ jobs:
       - name: Installing Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '19'
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
       - name: Installing dependencies
         run: npm ci --production
