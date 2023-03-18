@@ -10,6 +10,7 @@ export default function SecureRoute({ children }) {
 
   useEffect(() => {
     if (authState?.isAuthenticated === false) {
+      console.log("hello", window);
       const originalUri = toRelativeUrl(
         window.location.href,
         window.location.origin,
