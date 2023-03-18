@@ -11,8 +11,8 @@ export default function SecureRoute({ children }) {
   useEffect(() => {
     if (authState?.isAuthenticated === false) {
       const originalUri = toRelativeUrl(
-        globalThis.location.href,
-        globalThis.location.origin,
+        window.location.href,
+        window.location.origin,
       )
       oktaAuth.setOriginalUri(originalUri)
       oktaAuth.signInWithRedirect()
