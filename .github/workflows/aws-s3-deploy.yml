@@ -8,11 +8,7 @@ env:
 # Run workflow only on push to main(dev) branch
 on:
   push:
-    branches: ['main']
-  path-ignore:
-    - '.eslintrc.json'
-    - 'docs/**'
-    - 'README.md'
+    branches: [main]
 
 jobs:
   build-react-my-agile-board:
@@ -32,6 +28,11 @@ jobs:
           REACT_APP_OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
           REACT_APP_OCTA_DOMAIN: ${{ secrets.OCTA_DOMAIN }}
           BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
+
+      - name: Remove .eslintrc File on prod
+        uses: JesseTG/rm@v1.0.3
+        with:
+          path: ./.eslintrc.json
 
       - name: Installing Node.js
         uses: actions/setup-node@v3
