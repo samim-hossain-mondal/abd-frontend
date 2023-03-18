@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import React, { useContext, useState } from 'react';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -14,14 +13,12 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import AddCelebrationModal from './AddCelebrationModal';
 import { celebrationTypes } from '../constants/DSM';
 
-
 export default function CelebrationBoard() {
   const { setError } = useContext(ErrorContext);
   const [celebrations, setCelebrations] = useState([]);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const [openAddModal, setOpenAddModal] = useState(false);
 
-  // handle states for add new celebrations
   const [newCelebration, setNewCelebration] = useState({
     type: celebrationTypes[0],
     content: '',
@@ -46,7 +43,6 @@ export default function CelebrationBoard() {
     setOpenAddModal(true);
   }
 
-
   const getCelebrations = async () => {
     try {
       const res = await axios.get(`${DOMAIN}/api/dsm/celebrations`);
@@ -64,9 +60,9 @@ export default function CelebrationBoard() {
     setCelebrations(res);
     return res
   },
-  {
-    refetchInterval: 5000,
-  }
+    {
+      refetchInterval: 5000,
+    }
   );
   if (isLoading) {
     return <CircularProgress />
@@ -74,18 +70,13 @@ export default function CelebrationBoard() {
   if (isError) {
     return <div>Error! {error.message}</div>
   }
-
-
-  // useEffect(() => {
-  //   // setInterval(getCelebrations().then(celebrationsData =>
-  //   //   setCelebrations(celebrationsData)
-  //   // ), 5000)
-  //   resetModal()
-  // }, [])
+  const topPadding = (!gridHeightState.sentiment.expanded && !gridHeightState.celebration.fullExpanded) ? '2%' : '1%';
 
   return (
     <Grid item
-      height={gridHeightState.celebration.height}>
+      height={gridHeightState.celebration.height}
+      paddingTop={gridHeightState.celebration.fullExpanded || !gridHeightState.sentiment.expanded ? topPadding : 'none'}
+    >
       <Accordion
         expanded={gridHeightState.celebration.expanded}
         onChange={handleExpandCelebration} sx={{
@@ -111,19 +102,17 @@ export default function CelebrationBoard() {
             }
           }}
         >
-          {/* All Content/Development of Celebration Board HEADER goes here */}
           <Typography variant="dsmSubMain">Celebration Board</Typography>
           <IconButton onClick={(e) => handleAddButtonClick(e)}>
             <AddCircleIcon color="primary" />
           </IconButton>
         </AccordionSummary>
         <AccordionDetails>
-          <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} columns={{ xs: 1, sm: 2, md: 3, lg: gridHeightState.celebration.fullExpanded ? 4 : 3 }} spacing={2}>
+          <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} spacing={2}>
             {celebrations.map((celebration) => (
               <CelebrationCard celebration={celebration} />
             ))}
           </Masonry>
-          {/* All Content/Development of Celebration Board BODY goes here */}
         </AccordionDetails>
       </Accordion>
       <AddCelebrationModal
@@ -136,26 +125,3 @@ export default function CelebrationBoard() {
     </Grid >
   );
 };
-
-// CelebrationBoard.propTypes = {
-//   gridHeightState: Proptypes.shape({
-//     sentiment: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
-//     }).isRequired,
-//     celebration: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       fullExpanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
-//     }).isRequired,
-//     request: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
-//     }).isRequired,
-//     announcement: Proptypes.shape({
-//       expanded: Proptypes.bool.isRequired,
-//       height: Proptypes.number.isRequired,
-//     }).isRequired,
-//   }).isRequired,
-//   dispatchGridHeight: Proptypes.func.isRequired,
-// }

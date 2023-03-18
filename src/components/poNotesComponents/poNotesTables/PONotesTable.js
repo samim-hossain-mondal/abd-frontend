@@ -44,9 +44,9 @@ export default function PONotesTable(props) {
       return [];
     }
   },
-  {
-    refetchInterval: 1000,
-  }
+    {
+      refetchInterval: 1000,
+    }
   );
   if (isLoading) {
     return <CircularProgress />

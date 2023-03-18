@@ -26,90 +26,113 @@ const intitalGridHeightState = {
 
 const gridHeightReducer = (state, action) => {
   switch (action.type) {
-  case 'SENTIMENT': {
-    if (!state.sentiment.expanded && state.celebration.fullExpanded) return intitalGridHeightState
-    if (state.sentiment.expanded) {
-      return {
-        ...state,
-        sentiment: {
-          ...state.sentiment,
-          height: '9%',
-          expanded: false
-        },
-        celebration: {
-          ...state.celebration,
-          height: '91%'
-        }
-      }
-    }
-    return {
-      ...state,
-      sentiment: intitalGridHeightState.sentiment,
-      celebration: {
-        ...state.celebration,
-        height: '75%'
-      }
-    }
-  }
-  case 'REQUEST': {
-    if (!state.request.expanded && state.celebration.fullExpanded) return intitalGridHeightState
-    if (state.request.expanded) {
-      if (state.announcement.expanded) {
+    case 'SENTIMENT': {
+      if (!state.sentiment.expanded && state.celebration.fullExpanded) return intitalGridHeightState
+      if (state.sentiment.expanded) {
         return {
           ...state,
-          request: {
-            ...state.request,
+          sentiment: {
+            ...state.sentiment,
             height: '9%',
             expanded: false
           },
-          announcement: {
-            ...state.announcement,
+          celebration: {
+            ...state.celebration,
             height: '91%'
           }
         }
       }
       return {
         ...state,
+        sentiment: intitalGridHeightState.sentiment,
         celebration: {
           ...state.celebration,
-          height: '91%',
-          fullExpanded: true
-        },
-        sentiment: {
-          ...state.sentiment,
-          height: '9%',
-          expanded: false
-        },
-        request: {
-          ...state.request,
-          height: '9%',
-          expanded: false
-        },
-        announcement: {
-          ...state.announcement,
-          height: '9%'
-        },
+          height: '75%'
+        }
       }
     }
-    return {
-      ...state,
-      celebration: {
-        ...state.celebration,
-        fullExpanded: false
-      },
-      request: intitalGridHeightState.request,
-      announcement: intitalGridHeightState.announcement
-    }
-  }
-  case 'ANNOUNCEMENT': {
-    if (!state.announcement.expanded && state.celebration.fullExpanded) return intitalGridHeightState
-    if (state.announcement.expanded) {
+    case 'REQUEST': {
+      if (!state.request.expanded && state.celebration.fullExpanded) return intitalGridHeightState
       if (state.request.expanded) {
+        if (state.announcement.expanded) {
+          return {
+            ...state,
+            request: {
+              ...state.request,
+              height: '9%',
+              expanded: false
+            },
+            announcement: {
+              ...state.announcement,
+              height: '91%'
+            }
+          }
+        }
         return {
           ...state,
+          celebration: {
+            ...state.celebration,
+            height: '91%',
+            fullExpanded: true
+          },
+          sentiment: {
+            ...state.sentiment,
+            height: '9%',
+            expanded: false
+          },
           request: {
             ...state.request,
+            height: '9%',
+            expanded: false
+          },
+          announcement: {
+            ...state.announcement,
+            height: '9%'
+          },
+        }
+      }
+      return {
+        ...state,
+        celebration: {
+          ...state.celebration,
+          fullExpanded: false
+        },
+        request: intitalGridHeightState.request,
+        announcement: intitalGridHeightState.announcement
+      }
+    }
+    case 'ANNOUNCEMENT': {
+      if (!state.announcement.expanded && state.celebration.fullExpanded) return intitalGridHeightState
+      if (state.announcement.expanded) {
+        if (state.request.expanded) {
+          return {
+            ...state,
+            request: {
+              ...state.request,
+              height: '91%',
+            },
+            announcement: {
+              ...state.announcement,
+              height: '9%',
+              expanded: false
+            }
+          }
+        }
+        return {
+          ...state,
+          celebration: {
+            ...state.celebration,
             height: '91%',
+            fullExpanded: true
+          },
+          sentiment: {
+            ...state.sentiment,
+            height: '9%',
+            expanded: false
+          },
+          request: {
+            ...state.request,
+            height: '9%'
           },
           announcement: {
             ...state.announcement,
@@ -117,6 +140,20 @@ const gridHeightReducer = (state, action) => {
             expanded: false
           }
         }
+      }
+      return {
+        ...state,
+        celebration: {
+          ...state.celebration,
+          fullExpanded: false
+        },
+        request: intitalGridHeightState.request,
+        announcement: intitalGridHeightState.announcement
+      }
+    }
+    case 'CELEBRATION': {
+      if (state.celebration.fullExpanded) {
+        return intitalGridHeightState;
       }
       return {
         ...state,
@@ -132,7 +169,8 @@ const gridHeightReducer = (state, action) => {
         },
         request: {
           ...state.request,
-          height: '9%'
+          height: '9%',
+          expanded: false
         },
         announcement: {
           ...state.announcement,
@@ -141,45 +179,7 @@ const gridHeightReducer = (state, action) => {
         }
       }
     }
-    return {
-      ...state,
-      celebration: {
-        ...state.celebration,
-        fullExpanded: false
-      },
-      request: intitalGridHeightState.request,
-      announcement: intitalGridHeightState.announcement
-    }
-  }
-  case 'CELEBRATION': {
-    if (state.celebration.fullExpanded) {
-      return intitalGridHeightState;
-    }
-    return {
-      ...state,
-      celebration: {
-        ...state.celebration,
-        height: '91%',
-        fullExpanded: true
-      },
-      sentiment: {
-        ...state.sentiment,
-        height: '9%',
-        expanded: false
-      },
-      request: {
-        ...state.request,
-        height: '9%',
-        expanded: false
-      },
-      announcement: {
-        ...state.announcement,
-        height: '9%',
-        expanded: false
-      }
-    }
-  }
-  default: return intitalGridHeightState;
+    default: return intitalGridHeightState;
   }
 }
 

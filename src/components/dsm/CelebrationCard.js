@@ -101,7 +101,8 @@ export default function CelebrationCard({ celebration, isPreview }) {
   return newCelebration ?
     <Card
       sx={{
-        minWidth: '300px',
+        minWidth: '310px',
+        maxWidth: "310px",
         cursor: !isPreview ? 'pointer' : '',
         'border-radius': '8px',
         border: '2px solid',
@@ -114,7 +115,7 @@ export default function CelebrationCard({ celebration, isPreview }) {
     >
       <CardContent sx={{ paddingBottom: '0px' }}>
         <Grid container sx={{ 'max-height': '160px', 'min-height': '50px' }}>
-          <Grid item xs={2} sx={{ 'max-height': 'inherit', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center' }}>
+          <Grid item xs={2} sx={{ 'max-height': 'inherit', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center', }}>
             {newCelebration.isAnonymous ?
               <Avatar><PersonOutlineRoundedIcon /></Avatar> :
               <Avatar {...stringAvatar(newCelebration.author ?? '')} />

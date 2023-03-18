@@ -39,6 +39,12 @@ const theme = createTheme({
     secondaryButton: {
       main: '#EEF2F5',
       contrastText: '#000',
+    },
+    emoji: {
+      happy: '#1976d2',
+      good: '#43a047',
+      ok: '#f9a825',
+      bad: '#f44336',
     }
   },
   components: {

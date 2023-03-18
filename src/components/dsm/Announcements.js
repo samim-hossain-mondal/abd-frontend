@@ -70,7 +70,9 @@ export default function Announcements() {
   }
 
   return (
-    <Grid item height={gridHeightState.announcement.height} >
+    <Grid item height={gridHeightState.announcement.height}
+      paddingTop={gridHeightState.request.expanded ? 'none' : '5%'}
+    >
       <Accordion expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements} sx={{
         height: gridHeightState.announcement.expanded ? '100%' : 'none',
         overflow: 'auto',

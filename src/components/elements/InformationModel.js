@@ -21,21 +21,21 @@ const style = {
 export default function NestedModal(props) {
   // props destructuring
   /* props contains values for heading, definition and accessibility information of the selected
-    PO notes type (Action item or Key decision or Agenda item) */
+  PO notes type (Action item or Key decision or Agenda item) */
   const { heading, definition, accessibiltyInformation } = props;
   const [open, setOpen] = useState(false);
   // function to open the modal
   const handleOpen = () => {
     setOpen(true);
   };
-    // function to close the modal
+  // function to close the modal
   const handleClose = () => {
     setOpen(false);
   };
   return (
-    <Box sx={{paddingLeft:'0.5%'}}>
+    <Box sx={{ paddingLeft: '0.5%' }}>
       {/* Icon to open the modal */}
-      <InfoOutlinedIcon sx={{fontSize:'22px'}} onClick={handleOpen} />
+      <InfoOutlinedIcon sx={{ fontSize: '22px' }} onClick={handleOpen} />
       <Modal
         open={open}
         onClose={handleClose}

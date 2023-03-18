@@ -33,26 +33,3 @@ export default function DSMBody() {
     </Grid >
   );
 }
-
-// DSMBody.propTypes = {
-//   gridHeightState: PropTypes.shape({
-//     sentiment: PropTypes.shape({
-//       expanded: PropTypes.bool.isRequired,
-//       height: PropTypes.number.isRequired,
-//     }).isRequired,
-//     celebration: PropTypes.shape({
-//       expanded: PropTypes.bool.isRequired,
-//       fullExpanded: PropTypes.bool.isRequired,
-//       height: PropTypes.number.isRequired,
-//     }).isRequired,
-//     request: PropTypes.shape({
-//       expanded: PropTypes.bool.isRequired,
-//       height: PropTypes.number.isRequired,
-//     }).isRequired,
-//     announcement: PropTypes.shape({
-//       expanded: PropTypes.bool.isRequired,
-//       height: PropTypes.number.isRequired,
-//     }).isRequired,
-//   }).isRequired,
-//   dispatchGridHeight: PropTypes.func.isRequired,
-// }

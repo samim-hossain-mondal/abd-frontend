@@ -2,7 +2,7 @@ import React from 'react'
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
-import PONotesInformationModel from './PONotesInformationModel';
+import InformationModel from '../../../elements/InformationModel';
 
 export default function PONotesTableHeader(props) {
   // countOfItems is the number of items in the table
@@ -15,7 +15,7 @@ export default function PONotesTableHeader(props) {
       </Typography>
       {/* The information model displaying the information about Action Item is called here and information 
       about Action items (heading, definition and accessibility information) are passed as props */}
-      <PONotesInformationModel heading={heading}
+      <InformationModel heading={heading}
         definition={definition}
         accessibiltyInformation={accessibilityInformation} />
     </Box>

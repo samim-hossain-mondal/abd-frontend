@@ -16,23 +16,10 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "overrides": [
-    {
-      "files": ["*.jsx", "*.js"]
-    }
-  ],
   "plugins": [
     "react"
   ],
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
     "linebreak-style": 0,
     "no-console": "off",
     "react/jsx-filename-extension": [
@@ -49,7 +36,13 @@
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "no-underscore-dangle": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
