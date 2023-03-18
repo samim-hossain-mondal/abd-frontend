@@ -41,7 +41,7 @@ jobs:
           cache: 'npm'
 
       - name: Installing dependencies
-        run: npm ci --production
+        run: npm ci
 
       - name: Building project
         run: npm run build --production
