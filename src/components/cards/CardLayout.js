@@ -3,19 +3,20 @@ import { Box } from '@mui/material';
 import { PropTypes } from 'prop-types';
 import CustomCard from './CustomCard';
 
-export default function CardLayout(props) {
-  const { checkBox, type, data } = props;
+export default function CardLayout({ checkBox, type, data }) {
   return (
-    <Box>
-      {
-        data.map((item) => (
-          <CustomCard
-            checkBox={checkBox}
-            type={type}
-            data={item} />
-        ))
-      }
-    </Box>
+    data ?
+      <Box>
+        {
+          data.map((item) => (
+            <CustomCard
+              checkBox={checkBox}
+              type={type}
+              data={item} />
+          ))
+        }
+      </Box> :
+      <Box>Loading....</Box>
   );
 }
 CardLayout.propTypes = {
@@ -28,8 +29,9 @@ CardLayout.propTypes = {
     createdAt: PropTypes.string.isRequired,
     status: PropTypes.string,
     // collabrators: PropTypes.arrayOf(PropTypes.string).isRequired,
-  })).isRequired
+  }))
 };
 CardLayout.defaultProps = {
   checkBox: false,
+  data: []
 };

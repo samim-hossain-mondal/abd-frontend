@@ -69,7 +69,6 @@ export default function CelebrationGenericModal({
     setLock(!lock);
   }
 
-  // console.log(instructions, instructions[newCelebration.type], newCelebration.type, celebrationTypes);
   const handleChange = (value) => {
     updateCelebration({
       ...newCelebration,

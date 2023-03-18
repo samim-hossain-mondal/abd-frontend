@@ -55,6 +55,7 @@ function AppRoutes() {
     setAxiosHeader();
   }, [authState]);
 
+
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
@@ -63,20 +64,16 @@ function AppRoutes() {
         </Box>
         <Routes>
           <Route path='/' exact element={<Login />} />
-          {
-            (authLoaded) && (
-              <>
-                <Route path='/home' exact element={<SecureRoute><HomeContainer /></SecureRoute>} />
-                <Route path='/announcements' exact element={<SecureRoute><AnnouncementContainer /></SecureRoute>} />
-                <Route path='/information-radiators' exact element={<SecureRoute><InformationRadiatorContainer /></SecureRoute>} />
-                <Route path='/our-teams' exact element={<SecureRoute><OurTeamsContainer /></SecureRoute>} />
-                <Route path='/po-notes' exact element={<SecureRoute><PONotesContainer /></SecureRoute>} />
-                <Route path='/reference-material' exact element={<SecureRoute><RefMaterialsContainer /></SecureRoute>} />
-                <Route path='/availability-calendar' exact element={<SecureRoute><AvailabilityCalendar /></SecureRoute>} />
-              </>
-            )
-          }
+
+          <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>} />
+          <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>} />
+          <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
+          <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
+          <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <PONotesContainer />}</SecureRoute>} />
+          <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
+          <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
+          {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>

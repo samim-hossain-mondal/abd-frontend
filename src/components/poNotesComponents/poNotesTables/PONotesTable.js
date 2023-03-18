@@ -1,5 +1,5 @@
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, CircularProgress } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
@@ -9,6 +9,7 @@ import PONotsTableHeader from './poNotesTablesHeader/PONotesTableHeader';
 import CardLayout from '../../cards/CardLayout';
 import { DOMAIN } from '../../../config';
 import { HEADINGS } from '../../utilityFunctions/Enums';
+import { ErrorContext } from '../../contexts/ErrorContext';
 // import getAccessToken from '../../utilityFunctions/getAccessToken';
 
 // query params for get Api call
@@ -26,22 +27,21 @@ const getApiUrl = (type, query, page, limit) => {
 };
 // table for the action items
 export default function PONotesTable(props) {
+  const { setError } = useContext(ErrorContext);
+
   const { heading, definition, accessibilityInformation, query, checkBox } = props;
-  // const { authState } = useOktaAuth();
-  // need to add page & limit to the query
+
   const type = HEADINGS[heading].toUpperCase();
   const apiUrl = getApiUrl(type, query, 1, 100);
-  // console.log(apiUrl);
 
   const { data, error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
     try {
       const res = await axios.get(apiUrl);
       return res.data;
     } catch (err) {
-      if (err.response) {
-        return new Error(err.response.data.message);
-      }
-      return new Error(err.message);
+      console.error(err);
+      setError(val => val + err);
+      return [];
     }
   },
   {
@@ -56,29 +56,31 @@ export default function PONotesTable(props) {
   }
   const countOfItems = data.length;
   return (
-    <Box sx={{ width: '500px' }}>
-      <TableContainer component={Paper} sx={{ height: '80vh' }}>
-        <Table stickyHeader aria-label='simple table'>
-          <TableHead>
-            <TableRow align='center'>
-              {/* calling the action item table header and passing count of action items in the table as props in countOfItems variable */}
-              <TableCell>
-                {/* Information regarding each PO Notes type(Action Items, Key decisions and Agenda Items are passed as props to table header) */}
-                <PONotsTableHeader heading={heading}
-                  definition={definition}
-                  accessibilityInformation={accessibilityInformation}
-                  countOfItems={countOfItems} />
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody >
-            <TableRow>
-              {/* Data from get Api call using query params is passed to cardlayout for displaying it in cards */}
-              <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={data ?? []} /> </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+    data ? 
+      <Box sx={{ width: '500px' }}>
+        <TableContainer component={Paper} sx={{ height: '80vh' }}>
+          <Table stickyHeader aria-label='simple table'>
+            <TableHead>
+              <TableRow align='center'>
+                {/* calling the action item table header and passing count of action items in the table as props in countOfItems variable */}
+                <TableCell>
+                  {/* Information regarding each PO Notes type(Action Items, Key decisions and Agenda Items are passed as props to table header) */}
+                  <PONotsTableHeader heading={heading}
+                    definition={definition}
+                    accessibilityInformation={accessibilityInformation}
+                    countOfItems={countOfItems} />
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody >
+              <TableRow>
+                {/* Data from get Api call using query params is passed to cardlayout for displaying it in cards */}
+                <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={data} /> </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box> : 
+      <Box>Loading....</Box>
   )
 }
 // props validation
