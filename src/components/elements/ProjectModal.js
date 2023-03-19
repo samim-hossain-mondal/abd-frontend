@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import {
   Dialog,
@@ -12,23 +13,27 @@ import {
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { PropTypes } from "prop-types";
+import SaveIcon from "@mui/icons-material/Save"
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import { PropTypes } from "prop-types";
+// import axios from "axios";
 
 function ProjectModal({
   handleClose,
   open,
   projectInfo,
-  handleProjectTitle,
+  // handleProjectTitle,
   handleProjectDescription,
   addCollaborator,
   handleEmailChange,
   handleRoleChange,
-  removeCollaborator,
-  handleEditProjectTitle,
+  handleSaveCollab
+  // removeCollaborator,
+  // handleEditProjectTitle,
 }) {
-  const Roles = ["Select Role", "Admin", "Leader", "Member"];
-  const defaultCollaborator = "Select Role";
+
+  const Roles = ["ADMIN", "LEADER", "MEMBER"];
+  // const defaultCollaborator = "Select Role";
   return (
     <Dialog
       PaperProps={{
@@ -42,15 +47,15 @@ function ProjectModal({
           p: 2,
         },
       }}
-      open={open.isOpen}
+      open={open}
       onClose={() => {
-        handleClose({ isOpen: false, id: null });
+        handleClose(false);
       }}
     >
       <Box display="flex" justifyContent="flex-end" pr={3} mt={2}>
         <CloseIcon
           onClick={() => {
-            handleClose({ isOpen: false, id: null });
+            handleClose(false);
           }}
         />
       </Box>
@@ -63,14 +68,14 @@ function ProjectModal({
           type="text"
           fullWidth
           variant="standard"
-          value={projectInfo[open.id].projectTitle.label}
-          onChange={(e) => {
-            handleProjectTitle(open.id, e.target.value);
-          }}
-          onBlur={() => {
-            handleEditProjectTitle(open.id);
-          }}
-          disabled={!projectInfo[open.id].isAdmin}
+          value={projectInfo.projectName}
+          // onChange={(e) => {
+          //   handleProjectTitle(open.id, e.target.value);
+          // }}
+          // onBlur={() => {
+          //   handleEditProjectTitle(id);
+          // }}
+          // disabled={!projectInfo[open.id].isAdmin}
         />
         <TextField
           autoFocus
@@ -80,12 +85,13 @@ function ProjectModal({
           type="text"
           fullWidth
           variant="standard"
-          value={projectInfo[open.id].projectDescription}
+          value={projectInfo.projectDescription}
           onChange={(e) => {
-            handleProjectDescription(open.id, e.target.value);
+            handleProjectDescription(e.target.value);
           }}
-          disabled={!projectInfo[open.id].isAdmin}
+          // disabled={!projectInfo[open.id].isAdmin}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -96,10 +102,7 @@ function ProjectModal({
         >
           <Typography sx={{ fontSize: "20px" }}>Collaborators</Typography>
           <PersonAdd
-            disabled={!projectInfo[open.id].isAdmin}
-            onClick={() => {
-              addCollaborator(open.id, projectInfo[open.id].isAdmin);
-            }}
+            onClick={addCollaborator}
           />
         </Box>
         <Box
@@ -107,8 +110,10 @@ function ProjectModal({
           className="collabBody"
           mt={2}
         >
-          {projectInfo[open.id].collaborators &&
-            projectInfo[open.id].collaborators.map((collaborator, index) => (
+
+          {
+            projectInfo &&
+            projectInfo.projectMembers.map((collaborator,index) => (
               <Box
                 sx={{ display: "flex", justifyContent: "space-between" }}
                 className="collabRow"
@@ -118,21 +123,20 @@ function ProjectModal({
                     type="text"
                     placeholder="Email"
                     value={collaborator.email}
-                    disabled={!projectInfo[open.id].isAdmin}
+                    // disabled={!projectInfo[open.id].isAdmin}
                     onChange={(event) =>
-                      handleEmailChange(open.id, index, event)
+                      handleEmailChange(event.target.value,index)
                     }
                   />
                 </Box>
                 <Box className="collabRole">
                   <Select
-                    defaultValue={defaultCollaborator}
                     sx={{ height: "30px", width: "100px" }}
                     value={collaborator.role}
                     onChange={(event) =>
-                      handleRoleChange(open.id, index, event)
+                      handleRoleChange(event.target.value,index)
                     }
-                    disabled={!projectInfo[open.id].isAdmin}
+                    // disabled={!projectInfo[open.id].isAdmin}
                   >
                     {Roles.map((role) => (
                       <MenuItem value={role} key={role}>
@@ -140,17 +144,18 @@ function ProjectModal({
                       </MenuItem>
                     ))}
                   </Select>
+                  <SaveIcon onClick={()=>{handleSaveCollab(index)}}/>
                 </Box>
                 <Box
                   className="collabDelete"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  <DeleteIcon
+                  {/* <DeleteIcon
                     disabled={!projectInfo[open.id].isAdmin}
-                    onClick={() => {
-                      removeCollaborator(open.id, index);
-                    }}
-                  />
+                    // onClick={() => {
+                    //   removeCollaborator(open.id, index);
+                    // }}
+                  /> */}
                 </Box>
               </Box>
             ))}
@@ -160,35 +165,32 @@ function ProjectModal({
   );
 }
 
-ProjectModal.propTypes = {
-  open: PropTypes.shape({
-    isOpen: PropTypes.bool,
-    id: PropTypes.string,
-    isAdmin: PropTypes.bool,
-  }).isRequired,
-  handleClose: PropTypes.func.isRequired,
-  handleProjectTitle: PropTypes.func.isRequired,
-  handleProjectDescription: PropTypes.func.isRequired,
-  handleEmailChange: PropTypes.func.isRequired,
-  handleRoleChange: PropTypes.func.isRequired,
-  addCollaborator: PropTypes.func.isRequired,
-  removeCollaborator: PropTypes.func.isRequired,
-  handleEditProjectTitle: PropTypes.func.isRequired,
-  projectInfo: PropTypes.shape({
-    ProjectId: PropTypes.string,
-    projectTitle: PropTypes.shape({
-      label: PropTypes.string,
-      isEditable: PropTypes.bool,
-    }),
-    projectDescription: PropTypes.string,
-    collaborators: PropTypes.arrayOf(
-      PropTypes.shape({
-        email: PropTypes.string,
-        role: PropTypes.string,
-      })
-    ),
-    isAdmin: PropTypes.bool,
-  }).isRequired,
-};
+// ProjectModal.propTypes = {
+//   open: PropTypes.shape({
+//     isOpen: PropTypes.bool,
+//     id: PropTypes.string,
+//     isAdmin: PropTypes.bool,
+//   }).isRequired,
+//   handleClose: PropTypes.func.isRequired,
+//   handleProjectTitle: PropTypes.func.isRequired,
+//   handleProjectDescription: PropTypes.func.isRequired,
+//   handleEmailChange: PropTypes.func.isRequired,
+//   handleRoleChange: PropTypes.func.isRequired,
+//   addCollaborator: PropTypes.func.isRequired,
+//   removeCollaborator: PropTypes.func.isRequired,
+//   handleEditProjectTitle: PropTypes.func.isRequired,
+//   projectInfo: PropTypes.shape({
+//     ProjectId: PropTypes.string,
+//     projectName: PropTypes.string,
+//     projectDescription: PropTypes.string,
+//     // collaborators: PropTypes.arrayOf(
+//     //   PropTypes.shape({
+//     //     email: PropTypes.string,
+//     //     role: PropTypes.string,
+//     //   }))
+//     ,
+//     isAdmin: PropTypes.bool,
+//   }).isRequired,
+// };
 
 export default ProjectModal;
