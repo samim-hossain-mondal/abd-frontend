@@ -21,9 +21,9 @@ export default function Announcements() {
 
   const [announcements, setAnnouncements] = useState([]);
   const [openModal, setOpenAddModal] = useState(false);
-  const handleAddButtonClick = () => {
+  const handleAddButtonClick = (e) => {
+    e.stopPropagation();
     setOpenAddModal(!openModal);
-    dispatchGridHeight({ type: 'ANNOUNCEMENT' });
   }
 
   const handleModalClose = () => {

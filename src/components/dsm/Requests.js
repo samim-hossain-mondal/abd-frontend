@@ -52,9 +52,9 @@ export default function Requests() {
     setRequestType(request.type);
   };
 
-  const handleAddButtonClick = () => {
+  const handleAddButtonClick = (e) => {
+    e.stopPropagation();
     setOpenAddModal(!openModal);
-    dispatchGridHeight({ type: 'REQUEST' });
   }
 
   const handleModalClose = () => {
@@ -199,13 +199,13 @@ export default function Requests() {
           padding: '16px',
           gap: '16px',
         }}>
-          {requests.map((announcement) => (
+          {requests.map((request) => (
             <ChatContainer
-              key={announcement.announcementId}
-              name={announcement.author}
-              content={announcement.content}
-              date={new Date(announcement.createdAt)}
-              onClick={() => handleChatClick(announcement)}
+              key={request.requestId}
+              name={request.author}
+              content={request.content}
+              date={new Date(request.createdAt)}
+              onClick={() => handleChatClick(request)}
             />
           ))}
         </AccordionDetails>
