@@ -182,7 +182,7 @@ export default function SentimentMeterDialog({ open, setOpen, data, csvReport })
     <div >
       <Dialog
         open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description"
-        sx={{ 'box-shadow': '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)', 'border-radius': '2px' }}
+        sx={{ boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)', borderRadius: '2px' }}
       >
         <DialogContent>
           <Box sx={{ display: 'flex' }}>

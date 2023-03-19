@@ -104,7 +104,7 @@ export default function CelebrationCard({ celebration, isPreview }) {
         minWidth: '310px',
         maxWidth: "310px",
         cursor: !isPreview ? 'pointer' : '',
-        'border-radius': '8px',
+        borderRadius: '8px',
         border: '2px solid',
         borderColor: newCelebration.type === celebrationType.CELEBRATION ? '#044ED7' : '#FF6E00',
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
