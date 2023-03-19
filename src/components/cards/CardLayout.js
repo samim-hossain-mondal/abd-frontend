@@ -10,6 +10,7 @@ export default function CardLayout({ checkBox, type, data }) {
         {
           data.map((item) => (
             <CustomCard
+              key={item.noteId}
               checkBox={checkBox}
               type={type}
               data={item} />

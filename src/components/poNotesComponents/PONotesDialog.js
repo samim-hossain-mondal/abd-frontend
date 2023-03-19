@@ -138,7 +138,6 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
       <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete} description="Are you sure to delete this PO Note?" />
       <Dialog
         disabled
-        maxWidth
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
@@ -277,14 +276,14 @@ PONotesDialog.propTypes = {
   updateItem: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   data: PropTypes.shape({
-    noteId: PropTypes.string.isRequired,
+    noteId: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired,
     note: PropTypes.string.isRequired,
-    dueDate: PropTypes.string.isRequired,
+    dueDate: PropTypes.string,
     status: PropTypes.string.isRequired,
   }),
 };
 
 PONotesDialog.defaultProps = {
-  data: {}
+  data: undefined
 }

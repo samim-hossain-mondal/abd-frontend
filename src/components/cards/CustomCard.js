@@ -139,7 +139,8 @@ export default function CustomCard({ checkBox, data, type }) {
               {renderdueDate()}
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Stack direction="row" spacing={-1} mb={4} pl={1}>
-                  {collaborators.map((names) => <Avatar {...stringAvatar(names)} />)}
+                  {/* eslint-disable-next-line react/no-array-index-key */}
+                  {collaborators.map((names, idx) => <Avatar key={idx + 1} {...stringAvatar(names)} />)}
                 </Stack>
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
