@@ -56,6 +56,19 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 })
   }
 
+  const handleDeleteProject = (projectId) => {
+    axios.delete(`http://localhost:3001/api/management/project/${projectId}`).then((response)=>{
+      console.log(response);
+    }).catch((error)=>{
+      console.log(error);
+    })
+    const index=projects.findIndex((project) => project.projectId === projectId);
+    const newProjectArray = [
+      ...projects.slice(0, index),
+      ...projects.slice(index + 1),
+    ];
+    setProjects(newProjectArray);
+  };
 
   // const handleEditProjectTitle = (id) => {
   //   const newProjectArray = [
@@ -113,20 +126,30 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       setProjectInfo(updatedProjectInfo)
   };
 
-  // const removeCollaborator = (index, colabIndex) => {
-  //   const newProjectArray = [
-  //     ...projectInfo.slice(0, index),
-  //     {
-  //       ...projectInfo[index],
-  //       collaborators: [
-  //         ...projectInfo[index].collaborators.slice(0, colabIndex),
-  //         ...projectInfo[index].collaborators.slice(colabIndex + 1),
-  //       ],
-  //     },
-  //     ...projectInfo.slice(index + 1),
-  //   ];
-  //   setProjectInfo(newProjectArray);
-  // };
+const removeCollaborator = (index) => {
+
+const {projectId}=projectInfo;
+axios.delete(`http://localhost:3001/api/management/project/${projectId}/member`, {
+  data: {
+    email: projectInfo.projectMembers[index].email,
+  },
+}).then((response) => {
+  console.log(response);
+}).catch((error) => {
+  console.log(error);
+});
+
+const updatedProjectInfo =
+      {
+        ...projectInfo,
+        projectMembers: [
+          ...projectInfo.projectMembers.slice(0, index),
+          ...projectInfo.projectMembers.slice(index + 1),
+        ],
+      }
+    setProjectInfo(updatedProjectInfo);
+  };
+
   const handleEditModel = (id) => {
    axios.get(`http://localhost:3001/api/management/project/${id}`).then((response) => {
       const {data}=response;
@@ -146,14 +169,17 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   };
 
-  // const handleDelete = (id) => {
-  //   const index = projectInfo.findIndex((project) => project.ProjectId === id);
-  //   const newProjectArray = [
-  //     ...projectInfo.slice(0, index),
-  //     ...projectInfo.slice(index + 1),
-  //   ];
-  //   setProjectInfo(newProjectArray);
-  // };
+
+
+
+  const handleDelete = (id) => {
+    const index = projectInfo.findIndex((project) => project.ProjectId === id);
+    const newProjectArray = [
+      ...projectInfo.slice(0, index),
+      ...projectInfo.slice(index + 1),
+    ];
+    setProjectInfo(newProjectArray);
+  };
 
   const handleAddNew = () => {
     setOpenNewProjectModal(true);
@@ -265,7 +291,9 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                         // handleDelete(project.ProjectId);
                       }}
                     >
-                      {project.isAdmin ? <DeleteIcon /> : null}
+                      <DeleteIcon onClick={()=>{
+                        handleDeleteProject(project.projectId)
+                      }}/>
                     </Typography>
                   </Box>
                 </Box>
@@ -280,7 +308,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 handleEmailChange={handleEmailChange}
                 handleRoleChange={handleRoleChange}
                 handleSaveCollab={handleSaveCollab}
-                // removeCollaborator={removeCollaborator}
+                removeCollaborator={removeCollaborator}
+                handleDelete={handleDelete}
+                handleDeleteProject={handleDeleteProject}
+                
                 // handleProjectTitle={handleProjectTitle}
                 // handleEditProjectTitle={handleEditProjectTitle}
               />

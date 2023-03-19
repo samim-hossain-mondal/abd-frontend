@@ -14,7 +14,7 @@ import {
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save"
-// import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
 // import { PropTypes } from "prop-types";
 // import axios from "axios";
 
@@ -27,8 +27,8 @@ function ProjectModal({
   addCollaborator,
   handleEmailChange,
   handleRoleChange,
-  handleSaveCollab
-  // removeCollaborator,
+  handleSaveCollab,
+  removeCollaborator,
   // handleEditProjectTitle,
 }) {
 
@@ -150,12 +150,12 @@ function ProjectModal({
                   className="collabDelete"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  {/* <DeleteIcon
-                    disabled={!projectInfo[open.id].isAdmin}
-                    // onClick={() => {
-                    //   removeCollaborator(open.id, index);
-                    // }}
-                  /> */}
+                  <DeleteIcon
+                    // disabled={!projectInfo[open.id].isAdmin}
+                    onClick={() => {
+                      removeCollaborator(index);
+                    }}
+                  />
                 </Box>
               </Box>
             ))}

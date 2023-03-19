@@ -4,17 +4,13 @@ import {
   Dialog,
   DialogContent,
   TextField,
-  Typography,
   Box,
-  Input,
-//   Select,
-//   MenuItem,
   Button,
 } from "@mui/material";
 
-import PersonAdd from "@mui/icons-material/PersonAdd";
+// import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import { PropTypes } from "prop-types";
 import axios from "axios";
 
@@ -104,43 +100,6 @@ function NewProjectModal(
         <Button variant="outlined" sx={{ mt: 2 }} onClick={()=>{addNewProject(projectTitle,projectDescription)}}>
           Create New Project
         </Button>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-          mt={1}
-        >
-          <Typography sx={{ fontSize: "20px" }}>Collaborators</Typography>
-          <PersonAdd
-          />
-        </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column" }}
-          className="collabBody"
-          mt={2}
-        >
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between" }}
-                className="collabRow"
-              >
-                <Box sx={{ display: "flex" }} className="collabEmail">
-                  <Input
-                    type="text"
-                    placeholder="Email"
-                  />
-                </Box>
-                <Box className="collabRole" />
-                <Box
-                  className="collabDelete"
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <DeleteIcon
-                  />
-                </Box>
-              </Box>
-        </Box>
       </DialogContent>
     </Dialog>
   );
