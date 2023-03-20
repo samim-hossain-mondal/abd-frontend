@@ -16,6 +16,7 @@ import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
+import ScrollableHome from './components/routes/ScrollableHome'
 
 
 const oktaAuth = new OktaAuth({
@@ -72,8 +73,9 @@ function AppRoutes() {
           <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <PONotesContainer />}</SecureRoute>} />
           <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
           <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
+          {/* the route of scroll-app will be changed to home afterwards. */}
+          <Route path='/scroll-app' exact element={<SecureRoute>{authLoaded && <ScrollableHome />}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
-          {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>
