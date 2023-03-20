@@ -74,7 +74,7 @@ function AppRoutes() {
           <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
           <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
           {/* the route of scroll-app will be changed to home afterwards. */}
-          <Route path='/scroll-app' exact element={<SecureRoute>{authLoaded && <ScrollableHome />}</SecureRoute>} />
+          <Route path='/scrollable-app' exact element={<SecureRoute>{authLoaded && <ScrollableHome />}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
