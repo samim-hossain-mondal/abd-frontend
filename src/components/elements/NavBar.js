@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -7,6 +8,7 @@ import {
   Container, Avatar, Tooltip, MenuItem
 }
   from '@mui/material';
+import PropTypes from 'prop-types';
 import Logo from '../../assets/images/agileLogo.png';
 
 const pages = ['DSM', 'PO Notes', 'Our Teams', 'Availability Calendar',
@@ -15,7 +17,7 @@ const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
   '/announcements', '/information-radiators', '/reference-material'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
-export default function Navbar() {
+export default function Navbar({ poNotesRef, dsmRef, availabilityCalendarRef }) {
   const { oktaAuth } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -25,6 +27,9 @@ export default function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleScroll=(ref)=>{
+    ref.current.scrollIntoView();
+  }
   const location = useLocation();
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
@@ -41,21 +46,60 @@ export default function Navbar() {
             My Agile Board
           </Typography>
           <Box sx={{ marginRight: 5, flexGrow: 3, display: { xs: 'none', md: 'flex' } }}>
+            {/* TODO: will have to similarly change code for mobile view when made responsive */}
             {pages.map((page, index) => (
               <Box
                 key={page}
                 sx={{ flexGrow: 1 }}
               >
-                <Link style={{ textDecoration: 'none' }} to={routes[index]}>
-                  <Typography
-                    color='secondary.main'
-                    sx={{
-                      ...(location.pathname === routes[index] &&
-                        { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
-                      ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
-                    }}> {page}
-                  </Typography>
-                </Link>
+                {/* when routes[index] is either po-notes, home or availability-calendar call handleScrollwith their respective refs using inline switch otherwise no onClick */}
+
+                {
+                  routes[index] === '/po-notes' ?
+                    <Link style={{ textDecoration: 'none' }} to={routes[index]} onClick={()=>handleScroll(poNotesRef)}>
+                      <Typography
+                        color='secondary.main'
+                        sx={{
+                          ...(location.pathname === routes[index] &&
+                            { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                          ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
+                        }}> {page}
+                      </Typography>
+                    </Link>
+                    : routes[index] === '/home' ?
+                      <Link style={{ textDecoration: 'none' }} to={routes[index]} onClick={()=>handleScroll(dsmRef)}>
+                        <Typography
+
+                          color='secondary.main'
+                          sx={{
+                            ...(location.pathname === routes[index] &&
+                              { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                            ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
+                          }}> {page}
+                        </Typography>
+                      </Link>
+                      : routes[index] === '/availability-calendar' ?
+                        <Link style={{ textDecoration: 'none' }} to={routes[index]} onClick={()=>handleScroll(availabilityCalendarRef)}>
+                          <Typography
+                            color='secondary.main'
+                            sx={{
+                              ...(location.pathname === routes[index] &&
+                                { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                              ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
+                            }}> {page}
+                          </Typography>
+                        </Link>
+                        : <Link style={{ textDecoration: 'none' }} to={routes[index]}>
+                          <Typography
+                            color='secondary.main'
+                            sx={{
+                              ...(location.pathname === routes[index] &&
+                                { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                              ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
+                            }}> {page}
+                          </Typography>
+                        </Link>
+                }
               </Box>
             ))}
           </Box>
@@ -89,3 +133,15 @@ export default function Navbar() {
     </AppBar >
   );
 }
+
+Navbar.propTypes = {
+  poNotesRef: PropTypes.instanceOf(Object),
+  dsmRef: PropTypes.instanceOf(Object),
+  availabilityCalendarRef: PropTypes.instanceOf(Object)
+};
+
+Navbar.defaultProps = {
+  poNotesRef: null,
+  dsmRef: null,
+  availabilityCalendarRef: null
+};
