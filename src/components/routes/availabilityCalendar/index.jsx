@@ -1,10 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Dialog, Typography } from '@mui/material';
-import events from '../../constants/Timeline/Event';
+import axios from 'axios';
+import moment from 'moment';
+import { ErrorContext } from '../../contexts/ErrorContext';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
 import {
@@ -13,8 +14,9 @@ import {
   PRIMARY_BUTTON_TEXT,
   PLACEHOLDER,
   LOADING_TEXT,
+  SNACKBAR_TEXT,
 } from '../../constants/Timeline/Calendar';
-
+import { DOMAIN } from '../../../config';
 import './availabilityCalendar.css';
 
 moment.locale('en-GB');
@@ -29,23 +31,36 @@ export default function AvailabilityCalendar() {
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
 
+  const { setError, setSuccess } = useContext(ErrorContext);
+
+  const handleMount = async () => {
+    try{
+      const response = await axios.get(`${DOMAIN}/api/leaves`);
+      const {data} = response;
+      setEventsData(data);
+    }
+    catch(err){
+      setError(val=>val + err);
+    }
+  }
+
   useEffect(() => {
-    setEventsData(events);
+    handleMount();
   }, []);
 
-  const eventsPrimaryData = eventsData?.map((event) => {
-    const { startDatetime, endDatetime, eventName, name, uid, id, isRisk } =
-      event;
+  const eventsPrimaryData = eventsData?.map((eventData) => {
+    const { startDate, endDate, event, userFullName, userId, leaveId, isRisk } =
+      eventData;
     return {
-      start: startDatetime,
-      end: endDatetime,
-      title: `@${name}: ${eventName}`,
-      uid,
-      id,
-      name,
-      startDatetime,
-      endDatetime,
-      eventName,
+      start: new Date(startDate),
+      end: new Date(endDate),
+      title: `@${userFullName}: ${event}`,
+      userId,
+      leaveId,
+      userFullName,
+      startDate,
+      endDate,
+      event,
       isRisk,
     };
   });
@@ -58,26 +73,36 @@ export default function AvailabilityCalendar() {
     setInputModal(false);
   };
 
-  const handleAddEvent = (event) => {
-    const { content, startDatetime, endDatetime, isRisk } = event;
-    // will be changed upon integration with backend
-    const newEvent = {
-      eventName: content,
-      startDatetime,
-      endDatetime,
-      isRisk,
-      uid: getCurrentUserID(),
-      name: 'User1',
-      id: 2,
-    };
-    setEventsData([...eventsData, newEvent]);
-    handleInputModalClose();
+  const handleAddEvent = async (event) => {
+    const { content, startDate, endDate, isRisk } = event;
+    if(endDate<startDate){
+      setError(val=>`${val  } ${SNACKBAR_TEXT.DATE_ERROR}`);
+      handleInputModalClose();
+      return;
+    }
+    try{
+      const res = await axios.post(`${DOMAIN}/api/leaves`, {
+        event: content,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        isRisk,
+      });
+      const newData = res.data;
+      newData.startDate = new Date(newData.startDate);
+      newData.endDate = new Date(newData.endDate);
+      setEventsData([...eventsData, newData]);
+      handleInputModalClose();
+      setSuccess(()=>SNACKBAR_TEXT.SUCCESS);
+    }
+    catch(err){
+      setError(val=>val + err);
+    }
   };
 
   const handleEditModal = (event) => {
     setEditModal(true);
     setSelectedEvent(event);
-    if (event.uid === getCurrentUserID()) {
+    if (event.userId === getCurrentUserID()) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -88,28 +113,48 @@ export default function AvailabilityCalendar() {
     setEditModal(false);
   };
 
-  const handleEditEvent = (editEvent) => {
-    const { content, startDatetime, endDatetime, isRisk, defaultID } =
-      editEvent;
-    // will be changed upon integration with backend
-    const newEvent = {
-      eventName: content,
-      startDatetime,
-      endDatetime,
-      isRisk,
-      uid: getCurrentUserID(),
-      name: 'User1',
-      id: defaultID,
-    };
+  const handleEditEvent = async (editEvent) => {
+    const { content, startDate, endDate, isRisk, defaultID } = editEvent;
+    if(endDate<startDate){
+      setError(val=>`${val  } ${SNACKBAR_TEXT.DATE_ERROR}`);
+      handleEditModalClose();
+      return;
+    }
+    try{
+      const res = await axios.put(`${DOMAIN}/api/leaves/${defaultID}`, {
+        event: content,
+        startDate,
+        endDate,
+        isRisk
+      });
+      const newEventsData = eventsData.map((event) => {
+        if (event.leaveId === selectedEvent.leaveId) {
+          return res.data;
+        }
+        return event;
+      });
+      setEventsData([...newEventsData]);
+      handleEditModalClose();
+      setSuccess(()=>SNACKBAR_TEXT.SUCCESS);
+    }
+    catch(err){
+      setError(val=>val + err);
+    }
+  };
 
-    const newEventsData = eventsData.map((event) => {
-      if (event.id === selectedEvent.id) {
-        return newEvent;
-      }
-      return event;
-    });
-    setEventsData([...newEventsData]);
-    handleEditModalClose();
+  const handleDeleteEvent = async (leaveId) => {
+    try{
+      await axios.delete(`${DOMAIN}/api/leaves/${leaveId}`);
+      const newEventsData = eventsData.filter(
+        (event) => event.leaveId !== leaveId
+      );
+      setEventsData([...newEventsData]);
+      handleEditModalClose();
+      setSuccess(()=>SNACKBAR_TEXT.DELETE);
+    }
+    catch(err){
+      setError(val=>val + err);
+    }
   };
 
   const handleSelect = ({ start, end }) => {
@@ -167,8 +212,8 @@ export default function AvailabilityCalendar() {
             onPrimaryButtonClick={(event) => {
               handleAddEvent(event);
             }}
-            defaultStartDatetime={selectedStartDate}
-            defaultEndDatetime={selectedEndDate}
+            defaultStartDate={selectedStartDate}
+            defaultEndDate={selectedEndDate}
             placeholder={PLACEHOLDER}
           />
         </Dialog>
@@ -181,13 +226,14 @@ export default function AvailabilityCalendar() {
             onPrimaryButtonClick={(event) => {
               handleEditEvent(event);
             }}
-            defaultID={selectedEvent.id}
-            defaultEventName={selectedEvent.eventName}
-            defaultStartDatetime={selectedEvent.startDatetime}
-            defaultEndDatetime={selectedEvent.endDatetime}
+            defaultID={selectedEvent.leaveId}
+            defaultEvent={selectedEvent.event}
+            defaultStartDate={new Date(selectedEvent.startDate)}
+            defaultEndDate={new Date(selectedEvent.endDate)}
             defaultIsRisk={selectedEvent.isRisk}
             isDisabled={isDisabled}
             setIsDisabled={setIsDisabled}
+            handleDelete={handleDeleteEvent}
           />
         </Dialog>
       )}

@@ -15,7 +15,6 @@ import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TY
 /*
 ISSUES: 
         1. someplace key is missing console is showing error
-        2. User must be able to tag user in request so we can use ReactTextAreaAutocomplete
 */
 
 export default function Requests() {
