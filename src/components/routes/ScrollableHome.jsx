@@ -31,7 +31,6 @@ function useIsInViewport(ref) {
 export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendarRef, handleScroll,scrollTo}) {
   const dsmIsInViewPort = useIsInViewport(dsmRef);
   const poNotesIsInViewPort = useIsInViewport(poNotesRef);
-  const availabilityCalendarIsInViewPort = useIsInViewport(availabilityCalendarRef);
 
   useEffect(()=>{
     switch (scrollTo) {
@@ -61,7 +60,7 @@ export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendar
         </PONotesViewportContext.Provider>
       </div>
       <div ref={availabilityCalendarRef}>
-        <AvailabilityCalendar availabilityCalendarIsInViewPort={availabilityCalendarIsInViewPort}/>
+        <AvailabilityCalendar/>
       </div>
     </Box>
   );

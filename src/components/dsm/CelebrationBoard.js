@@ -10,11 +10,13 @@ import CelebrationCard from './CelebrationCard';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
+import DSMViewportContext from '../contexts/DSMViewportContext';
 import AddCelebrationModal from './AddCelebrationModal';
 import { celebrationTypes } from '../constants/DSM';
 
 export default function CelebrationBoard() {
   const { setError } = useContext(ErrorContext);
+  const DSMInViewPort = useContext(DSMViewportContext);
   const [celebrations, setCelebrations] = useState([]);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const [openAddModal, setOpenAddModal] = useState(false);
@@ -56,9 +58,13 @@ export default function CelebrationBoard() {
   }
 
   const { error, isError, isLoading } = useQuery(celebrations, async () => {
-    const res = await getCelebrations();
-    setCelebrations(res);
-    return res
+    if(DSMInViewPort){
+      const res = await getCelebrations();
+      setCelebrations(res);
+      return res
+    }
+    setCelebrations([]);
+    return [];
   },
     {
       refetchInterval: 5000,

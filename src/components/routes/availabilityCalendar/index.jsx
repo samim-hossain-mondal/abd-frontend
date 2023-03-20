@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { AppBar, Box, Dialog, Toolbar, Typography, Container } from '@mui/material';
 import events from '../../constants/Timeline/Event';
@@ -21,7 +20,7 @@ import './availabilityCalendar.css';
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-export default function AvailabilityCalendar({availabilityCalendarIsInViewPort}) {
+export default function AvailabilityCalendar() {
   const [eventsData, setEventsData] = useState(null);
   const [inputModal, setInputModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -32,7 +31,7 @@ export default function AvailabilityCalendar({availabilityCalendarIsInViewPort})
 
   useEffect(() => {
     setEventsData(events);
-  }, [availabilityCalendarIsInViewPort]);
+  }, []);
 
   const eventsPrimaryData = eventsData?.map((event) => {
     const { startDatetime, endDatetime, eventName, name, uid, id, isRisk } =
@@ -219,7 +218,3 @@ export default function AvailabilityCalendar({availabilityCalendarIsInViewPort})
     </Box>
   );
 }
-
-AvailabilityCalendar.propTypes = {
-  availabilityCalendarIsInViewPort: PropTypes.bool.isRequired,
-};

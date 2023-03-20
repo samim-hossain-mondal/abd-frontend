@@ -22,7 +22,8 @@ export default function Requests() {
 
   const { setError, setSuccess } = useContext(ErrorContext);
 
-  const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
+  const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+
   const handleExpandRequests = () => {
     dispatchGridHeight({ type: 'REQUEST' })
   };
