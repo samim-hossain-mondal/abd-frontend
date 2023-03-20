@@ -1,13 +1,39 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Box } from '@mui/material';
 import PropTypes from 'prop-types';
 import HomeContainer from './Home';
 import PONotesContainer from './PONotes';
 import AvailabilityCalendar from './availabilityCalendar';
+import DSMViewportContext from '../contexts/DSMViewportContext';
+import PONotesViewportContext from '../contexts/PONotesViewportContext';
 
+function useIsInViewport(ref) {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  const observer = useMemo(
+    () =>
+      new IntersectionObserver(([entry]) =>
+        setIsIntersecting(entry.isIntersecting),
+      ),
+    [],
+  );
+
+  useEffect(() => {
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref, observer]);
+
+  return isIntersecting;
+}
 export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendarRef, handleScroll,scrollTo}) {
+  const dsmIsInViewPort = useIsInViewport(dsmRef);
+  const poNotesIsInViewPort = useIsInViewport(poNotesRef);
+  const availabilityCalendarIsInViewPort = useIsInViewport(availabilityCalendarRef);
+
   useEffect(()=>{
-  
     switch (scrollTo) {
       case 'poNotes':
         handleScroll(poNotesRef);
@@ -25,13 +51,17 @@ export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendar
   return (
     <Box>
       <div ref={dsmRef}>
-        <HomeContainer />
+        <DSMViewportContext.Provider value={dsmIsInViewPort}>
+          <HomeContainer dsmIsInViewPort={dsmIsInViewPort}/>
+        </DSMViewportContext.Provider>
       </div>
       <div ref={poNotesRef}>
-        <PONotesContainer/>
+        <PONotesViewportContext.Provider value={poNotesIsInViewPort}>
+          <PONotesContainer poNotesIsInViewPort={poNotesIsInViewPort}/>
+        </PONotesViewportContext.Provider>
       </div>
       <div ref={availabilityCalendarRef}>
-        <AvailabilityCalendar/>
+        <AvailabilityCalendar availabilityCalendarIsInViewPort={availabilityCalendarIsInViewPort}/>
       </div>
     </Box>
   );

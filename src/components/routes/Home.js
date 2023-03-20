@@ -9,9 +9,7 @@ export default function HomeContainer() {
   return (
     <Box>
       <DSMHeader />
-      <DSMBodyLayoutProvider>
-        <DSMBody />
-      </DSMBodyLayoutProvider>
+      <DSMBodyLayoutProvider > <DSMBody /> </DSMBodyLayoutProvider>
     </Box>
   );
 }
