@@ -1,5 +1,5 @@
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel, useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -25,11 +25,11 @@ export default function GenericInputModal({
   const [isRisk, setIsRisk] = useState(defaultIsRisk ?? false);
   const [startDatetime, setStartDatetime] = useState(defaultStartDatetime ?? new Date());
   const [endDatetime, setEndDatetime] = useState(defaultEndDatetime ?? new Date());
-
+  const breakpoint411 = useMediaQuery('(min-width:411px)');
   return (
     <Box
       sx={{
-        width: 'max(25vw, 340px)',
+        width: (breakpoint411)?'max(25vw, 340px)':'250px',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',

@@ -182,7 +182,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
           <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '1px' }}>PO Note Type</Typography>
           <List>
             <ListItem>
-              <Box sx={{ flexGrow: 0.2, display: { xs: 'none', md: 'flex' } }}>
+              <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
                 <FormControl sx={{ minWidth: 200 }} size="small">
                   <InputLabel id="demo-select-small-2">Note Type</InputLabel>
                   <Select

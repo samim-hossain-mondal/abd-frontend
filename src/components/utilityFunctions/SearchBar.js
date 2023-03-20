@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { TextField, IconButton } from '@mui/material';
+import { TextField, IconButton, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar({ query, setQuery }) {
 
   const [searchInput, setSearchInput] = useState(query.search);
+  const aboveTablet = useMediaQuery('(min-width: 769px)');
 
   return (
     <form>
@@ -22,6 +23,7 @@ export default function SearchBar({ query, setQuery }) {
             </IconButton>
           ),
         }}
+        sx={{ width: aboveTablet ? '200px' : '138px' }}
       />
     </form>
   );

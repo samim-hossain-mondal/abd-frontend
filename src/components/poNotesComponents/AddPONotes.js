@@ -12,7 +12,7 @@ export default function AddPONotes() {
   };
 
   return (
-    <Box sx={{ flexGrow: 0.2, display: { xs: 'none', md: 'flex' } }}>
+    <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
       <IconButton data-testid="AddPONotesFormIdentifier" aria-label="Add Notes"
         component="label" sx={{ color: 'primary.main' }} onClick={handleNoteOpener}>
         <QueueSharpIcon fontSize='large' />
