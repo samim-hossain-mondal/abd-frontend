@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 // import DeleteIcon from "@mui/icons-material/Delete";
 import { PropTypes } from "prop-types";
 import axios from "axios";
+import { ErrorContext } from "../contexts/ErrorContext";
 
 function NewProjectModal(
     {
@@ -23,6 +24,7 @@ function NewProjectModal(
     }
 ) {
     const [projectTitle, setProjectTitle] = React.useState("");
+    const { setError,setSuccess} = React.useContext(ErrorContext);
     const [projectDescription, setProjectDescription] = React.useState("");
     const handleProjectTitle = (e) => {
         setProjectTitle(e.target.value);
@@ -35,7 +37,7 @@ function NewProjectModal(
             projectName:title,
             projectDescription:projectDesc
         }).then((response)=>{
-            console.log(response);
+          setSuccess("Project Created Successfully");
            const {result} = response.data;
             const proj={
                 projectId: result.projectId,
@@ -44,8 +46,9 @@ function NewProjectModal(
             }
             setProjects([...projects, proj]);
         }).catch((error)=>{
-            console.log(error);
+            setError(error.response.data.message);
         })
+        setOpen(false);
     }
 
 

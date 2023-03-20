@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 import React from "react";
 import {
@@ -8,14 +9,15 @@ import {
   Box,
   Input,
   Select,
-  MenuItem, Button,
+  MenuItem,
+  Button,
 } from "@mui/material";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 // import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save"
+import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import { PropTypes } from "prop-types";
 // import axios from "axios";
@@ -31,22 +33,20 @@ function ProjectModal({
   removeCollaborator,
   handleDeleteProject,
   editProjectDetails,
-  handleCancelChanges
+  handleCancelChanges,
+  handleEditCollab,
 }) {
   const [lock, setLock] = React.useState(true);
-
   const [name, setName] = React.useState(projectInfo.projectName);
-  const [desc, setDesc] = React.useState(
-    projectInfo.projectDescription
-  );
+  const [desc, setDesc] = React.useState(projectInfo.projectDescription);
 
-  const projName=(title)=>{
+  const projName = (title) => {
     setName(title);
-  }
+  };
 
-  const projDesc=(description)=>{
-    setDesc(description)
-  }
+  const projDesc = (description) => {
+    setDesc(description);
+  };
 
   const handleLock = () => {
     setLock(!lock);
@@ -72,29 +72,19 @@ function ProjectModal({
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "flex-start" }} pr={3} mt={2}>
-        {
-          projectInfo.role==="ADMIN"|| projectInfo.role==="LEADER"?(
-            <DeleteIcon onClick={()=>{
-              handleDeleteProject(projectInfo.projectId)
-            }}/>
-          ):
-          (
-            null
-          )
-        }
-        </Box>
+        {projectInfo.role === "ADMIN" || projectInfo.role === "LEADER" ? (
+          <DeleteIcon
+            onClick={() => {
+              handleDeleteProject(projectInfo.projectId);
+            }}
+          />
+        ) : null}
+      </Box>
       <Box display="flex" justifyContent="flex-end" pr={3} mt={2}>
-        {
-          projectInfo.role==="ADMIN"|| projectInfo.role==="LEADER"?
-          (
-            <EditIcon onClick={
-              handleLock
-            }/>
-          ):
-          (
-            null  
-          )
-        }
+        {(projectInfo.role === "ADMIN" || projectInfo.role === "LEADER") &&
+        lock ? (
+          <EditIcon onClick={handleLock} />
+        ) : null}
         <CloseIcon
           onClick={() => {
             handleClose(false);
@@ -141,8 +131,9 @@ function ProjectModal({
         >
           <Typography sx={{ fontSize: "20px" }}>Collaborators</Typography>
           <PersonAdd
-            onClick={()=>{
-              addCollaborator(lock)}}
+            onClick={() => {
+              addCollaborator(lock);
+            }}
           />
         </Box>
         <Box
@@ -150,22 +141,24 @@ function ProjectModal({
           className="collabBody"
           mt={2}
         >
-
-          {
-            projectInfo &&
-            projectInfo.projectMembers.map((collaborator,index) => (
+          {projectInfo &&
+            projectInfo.projectMembers.map((collaborator, index) => (
               <Box
                 sx={{ display: "flex", justifyContent: "space-between" }}
                 className="collabRow"
               >
                 <Box sx={{ display: "flex" }} className="collabEmail">
                   <Input
-                    type="text"
+                    type="email"
                     placeholder="Email"
                     value={collaborator.email}
-                    disabled={lock}
+                    disabled={
+                      lock ||
+                      collaborator.role === "ADMIN" ||
+                      !collaborator.isNew
+                    }
                     onChange={(event) =>
-                      handleEmailChange(event.target.value,index)
+                      handleEmailChange(event.target.value, index)
                     }
                   />
                 </Box>
@@ -174,9 +167,9 @@ function ProjectModal({
                     sx={{ height: "30px", width: "100px" }}
                     value={collaborator.role}
                     onChange={(event) =>
-                      handleRoleChange(event.target.value,index)
+                      handleRoleChange(event.target.value, index)
                     }
-                    disabled={lock}
+                    disabled={lock || collaborator.role === "ADMIN"}
                   >
                     {Roles.map((role) => (
                       <MenuItem value={role} key={role}>
@@ -185,56 +178,63 @@ function ProjectModal({
                     ))}
                   </Select>
                 </Box>
-               
-               {
-                  !lock?(   
-                <Box
-                  className="collabIcon"
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                    <SaveIcon onClick={()=>{handleSaveCollab(index)}} />
-                  <DeleteIcon
-                    onClick={() => {
-                      removeCollaborator(index);
-                    }}
-                  />
-                </Box>
-                  ):
-                  (
-                    null
-                  )
-                }
 
+                {!lock ? (
+                  <Box
+                    className="collabIcon"
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    {console.log(collaborator.isNew)}
+                    {!collaborator.isNew ? (
+                      collaborator.role !== "ADMIN" ? (
+                        <>
+                          <EditIcon
+                            onClick={() => {
+                              handleEditCollab(index);
+                            }}
+                          />
+                          <DeleteIcon
+                            onClick={() => {
+                              removeCollaborator(index);
+                            }}
+                          />
+                        </>
+                      ) : null
+                    ) : (
+                      <>
+                        <SaveIcon
+                          onClick={() => {
+                            handleSaveCollab(index);
+                          }}
+                        />
+                        <DeleteIcon
+                          onClick={() => {
+                            removeCollaborator(index);
+                          }}
+                        />
+                      </>
+                    )}
+                  </Box>
+                ) : null}
               </Box>
             ))}
         </Box>
-        {
-          !lock?
-          (
-            <Box mt={2} sx={{display:'flex',justifyContent:"space-between"}}>
+        {!lock ? (
+          <Box mt={2} sx={{ display: "flex", justifyContent: "space-between" }}>
             <Button
-            variant="contained"
-            onClick={()=>{
-              editProjectDetails(name,desc,projectInfo.projectId)
-              handleLock()
-            }}
+              variant="contained"
+              onClick={() => {
+                editProjectDetails(name, desc, projectInfo.projectId);
+                handleLock();
+              }}
             >
               Save Changes
             </Button>
-            <Button 
-            variant="contained"
-            onClick={handleCancelChanges
-            }
-            >
+            <Button variant="contained" onClick={handleCancelChanges}>
               Cancel Changes
             </Button>
-            </Box>
-          ):
-          (
-            null
-          )
-        }
-
+          </Box>
+        ) : null}
       </DialogContent>
     </Dialog>
   );
