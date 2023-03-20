@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Box, Dialog, Typography } from '@mui/material';
+import { AppBar, Box, Dialog, Toolbar, Typography, Container } from '@mui/material';
 import events from '../../constants/Timeline/Event';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
@@ -147,6 +147,24 @@ export default function AvailabilityCalendar() {
 
   return eventsData ? (
     <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
+      <Box>
+        <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <Typography
+                  data-testid="poNotesIdentifier"
+                  variant="h5"
+                  noWrap
+                  sx={{ ml: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
+                >
+                  Availability Calendar
+                </Typography>
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </Box>
       <Calendar
         views={VIEWS}
         selectable
