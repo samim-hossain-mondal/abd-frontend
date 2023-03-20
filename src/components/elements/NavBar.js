@@ -11,9 +11,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Logo from '../../assets/images/agileLogo.png';
 
 const pages = ['Home', 'PO Notes', 'Our Teams', 'Availability Calendar',
-  'Announcements', 'Information Radiators', 'Reference Material'];
+  'Made To Stick', 'Information Radiators', 'Reference Material'];
 const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
-  '/announcements', '/information-radiators', '/reference-material'];
+  '/made-to-stick', '/information-radiators', '/reference-material'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 export default function Navbar() {

@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import HomeContainer from './components/routes/Home';
-import AnnouncementContainer from './components/routes/Announcements';
+import MadeToStickContainer from './components/routes/MadeToStick';
 import InformationRadiatorContainer from './components/routes/InformationRadiator';
 import OurTeamsContainer from './components/routes/OurTeams';
 import PONotesContainer from './components/routes/PONotes';
@@ -16,7 +16,6 @@ import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
-
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -55,16 +54,14 @@ function AppRoutes() {
     setAxiosHeader();
   }, [authState]);
 
-
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
         <Navbar />
         <Routes>
           <Route path='/' exact element={<Login />} />
-
-          <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>}/>
-          <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>}/>
+          <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>} />
+          <Route path='/made-to-stick' exact element={<SecureRoute>{authLoaded && <MadeToStickContainer />}</SecureRoute>} />
           <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
           <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <PONotesContainer />}</SecureRoute>} />
