@@ -1,11 +1,13 @@
+/* eslint-disable no-alert */
+/* exlint-disable no-restricted-syntax */
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-no-bind */
 import React, { useState} from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DoneIcon from "@mui/icons-material/Done";
-import DeleteIcon from "@mui/icons-material/Delete";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import { PropTypes } from "prop-types";
 import axios from "axios";
 import ProjectModal from "./ProjectModal";
@@ -22,35 +24,100 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   const [selectedProject, setSelectedProject] = useState(null);
   
 
-
   React.useEffect(() => {
-    axios.get("http://localhost:3001/api/management/project").then((response) => {
-      const {data}=response;
-    setProjects(data);
+    async function fetchProjectInfo() {
+      const [firstApiCall, secondApiCall] = await Promise.all([
+        axios.get("http://localhost:3001/api/management/project"),
+          axios.get("http://localhost:3001/api/management/me")]
+      )
+        const {data}=firstApiCall;
+        const {memberId}=secondApiCall.data;
+        if(memberId!==null)
+        {
+        const requests = data.map(project => axios.get(`http://localhost:3001/api/management/project/${project.projectId}/member/${memberId}`)
+            .then(response => {
+              project.role = response.data.role;
+              return project;
+            })
+            .catch(error => {
+              console.log(error);
+              return project;
+            }));
+
+        Promise.all(requests)
+  .then(updatedProjects => {
+    console.log(updatedProjects);
+    setProjects(updatedProjects);
+  })
+  .catch(error => {
+    console.log('At least one request failed!');
+    console.log(error);
+  });
+  
+  }
+
     }
-    ).catch((error) => {
+    fetchProjectInfo()
+  }, [])
+
+  const handleCancelChanges = () => {
+    console.log("Cancel");
+    setOpenEditModel(false);
+  };
+
+  const editProjectDetails = (projectName,projectDescription,projectId) => {
+    axios.patch(`http://localhost:3001/api/management/project/${projectId}`,{
+        projectName,
+        projectDescription
+      }).then((response)=>{
+      console.log(response);
+    }).catch((error)=>{
       console.log(error);
     })
-  }, [open]);
+    const index=projects.findIndex((project) => project.projectId === projectId);
+    const newProjects = [...projects];
+    newProjects[index].projectName = projectName;
+    setProjects(newProjects);
+    setProjectInfo({
+      ...projectInfo,
+      projectName,
+      projectDescription,
+    });
 
+  };
 
-  const addCollaborator = () => { 
+  const addCollaborator = (lock) => { 
+    
+    if(projectInfo.role==="ADMIN"||projectInfo.role==="LEADER")
+    {
+      if(!lock)
+      {
       const newCollaborator = { email:"", role: "" };
       setProjectInfo({
         ...projectInfo,
         projectMembers: [...projectInfo.projectMembers, newCollaborator],
       });
+    }
+    else
+    {
+      alert("Press edit button to add collaborators");
+    }
+  }
+    else
+    {
+      alert("You are not allowed to add collaborators");
+    }
   };
 
   const handleSaveCollab=(index)=>{
+    console.log("Saved");
     const {projectId}=projectInfo;
     console.log(projectId)
-    console.log(index);
   axios.post(`http://localhost:3001/api/management/project/${projectId}/member`,{
     email:projectInfo.projectMembers[index].email,
     role:projectInfo.projectMembers[index].role,
 }).then((response)=>{
-    console.log(response);
+  console.log(response);
 }).catch((error)=>{
     console.log(error);
 })
@@ -68,37 +135,14 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       ...projects.slice(index + 1),
     ];
     setProjects(newProjectArray);
-  };
+    setOpenEditModel(false);
 
-  // const handleEditProjectTitle = (id) => {
-  //   const newProjectArray = [
-  //     ...projectInfo.slice(0, id),
-  //     {
-  //       ...projectInfo[id],
-  //       projectTitle: {
-  //         label: projectInfo[id].projectTitle.label,
-  //         isEditable: false,
-  //       },
-  //     },
-  //     ...projectInfo.slice(id + 1),
-  //   ];
-  //   setProjectInfo(newProjectArray);
-  // };
+  };
 
   const handleSelectedProject = (projectId) => {
+    console.log(projectId);
     setSelectedProject(projectId);
   };
-
-  // const handleProjectTitle = (index, label) => {
-  //   const newProjectArray = [
-  //     ...projectInfo.slice(0, index),
-  //     { ...projectInfo[index], projectTitle: { label, isEditable: true } },
-  //     ...projectInfo.slice(index + 1),
-  //   ];
-  //   setProjectInfo(newProjectArray);
-  // };
-
-
 
     const handleEmailChange = (email,index) => {
       const updatedProjectInfo = { ...projectInfo };
@@ -154,11 +198,14 @@ const updatedProjectInfo =
    axios.get(`http://localhost:3001/api/management/project/${id}`).then((response) => {
       const {data}=response;
       const {projectId,projectName,projectDescription,projectMembers}=data;
+        const findProjectObject=projects.find((project)=>project.projectId===id)
+        const {role}=findProjectObject;
       const projectInfoId = {
         projectId,
         projectName,
         projectDescription,
         projectMembers,
+        role
       };
       setProjectInfo(projectInfoId);
       setOpenEditModel(true);
@@ -183,15 +230,8 @@ const updatedProjectInfo =
 
   const handleAddNew = () => {
     setOpenNewProjectModal(true);
+      
   };
-
-
-  function handleProjectDescription(projectDescription) {
-    setProjectInfo({
-      ...projectInfo,
-      projectDescription,
-    });
-  }
 
   return (
     <Dialog
@@ -273,6 +313,7 @@ const updatedProjectInfo =
                     
                     
                   </Box>
+
                   <Box
                     sx={{
                       display: "flex",
@@ -280,11 +321,32 @@ const updatedProjectInfo =
                     }}
                   >
                     <Typography
+                    onClick={() => {
+                      handleEditModel(project.projectId);
+                    }}
+                  >
+                    <VisibilityIcon />
+                  </Typography>
+
+
+
+
+
+
+                {/* {project.role==="ADMIN" ?
+                (
+                  <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                    <Typography
                       onClick={() => {
                         handleEditModel(project.projectId);
                       }}
                     >
-                      {project.isAdmin ? <EditIcon /> : <VisibilityIcon />}
+                      <EditIcon />
                     </Typography>
                     <Typography
                       onClick={() => {
@@ -295,6 +357,27 @@ const updatedProjectInfo =
                         handleDeleteProject(project.projectId)
                       }}/>
                     </Typography>
+                    </Box>
+                ):(
+                  <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography
+                    onClick={() => {
+                      handleEditModel(project.projectId);
+                    }}
+                  >
+                    <VisibilityIcon />
+                  </Typography>
+                  </Box>
+                )
+                } */}
+
+
+
                   </Box>
                 </Box>
               ))}
@@ -302,7 +385,6 @@ const updatedProjectInfo =
               <ProjectModal
                 open={openEditModel}
                 handleClose={setOpenEditModel}
-                handleProjectDescription={handleProjectDescription}
                 projectInfo={projectInfo}
                 addCollaborator={addCollaborator}
                 handleEmailChange={handleEmailChange}
@@ -311,9 +393,8 @@ const updatedProjectInfo =
                 removeCollaborator={removeCollaborator}
                 handleDelete={handleDelete}
                 handleDeleteProject={handleDeleteProject}
-                
-                // handleProjectTitle={handleProjectTitle}
-                // handleEditProjectTitle={handleEditProjectTitle}
+                editProjectDetails={editProjectDetails}
+                handleCancelChanges={handleCancelChanges}
               />
             )}
           </Box>

@@ -40,6 +40,7 @@ function NewProjectModal(
             const proj={
                 projectId: result.projectId,
                 projectName: result.projectName,
+                role:"ADMIN"
             }
             setProjects([...projects, proj]);
         }).catch((error)=>{

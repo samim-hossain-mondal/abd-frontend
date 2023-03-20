@@ -8,11 +8,13 @@ import {
   Box,
   Input,
   Select,
-  MenuItem,
+  MenuItem, Button,
 } from "@mui/material";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save"
 import DeleteIcon from "@mui/icons-material/Delete";
 // import { PropTypes } from "prop-types";
@@ -22,18 +24,35 @@ function ProjectModal({
   handleClose,
   open,
   projectInfo,
-  // handleProjectTitle,
-  handleProjectDescription,
   addCollaborator,
   handleEmailChange,
   handleRoleChange,
   handleSaveCollab,
   removeCollaborator,
-  // handleEditProjectTitle,
+  handleDeleteProject,
+  editProjectDetails,
+  handleCancelChanges
 }) {
+  const [lock, setLock] = React.useState(true);
+
+  const [name, setName] = React.useState(projectInfo.projectName);
+  const [desc, setDesc] = React.useState(
+    projectInfo.projectDescription
+  );
+
+  const projName=(title)=>{
+    setName(title);
+  }
+
+  const projDesc=(description)=>{
+    setDesc(description)
+  }
+
+  const handleLock = () => {
+    setLock(!lock);
+  };
 
   const Roles = ["ADMIN", "LEADER", "MEMBER"];
-  // const defaultCollaborator = "Select Role";
   return (
     <Dialog
       PaperProps={{
@@ -52,7 +71,30 @@ function ProjectModal({
         handleClose(false);
       }}
     >
+      <Box sx={{ display: "flex", justifyContent: "flex-start" }} pr={3} mt={2}>
+        {
+          projectInfo.role==="ADMIN"|| projectInfo.role==="LEADER"?(
+            <DeleteIcon onClick={()=>{
+              handleDeleteProject(projectInfo.projectId)
+            }}/>
+          ):
+          (
+            null
+          )
+        }
+        </Box>
       <Box display="flex" justifyContent="flex-end" pr={3} mt={2}>
+        {
+          projectInfo.role==="ADMIN"|| projectInfo.role==="LEADER"?
+          (
+            <EditIcon onClick={
+              handleLock
+            }/>
+          ):
+          (
+            null  
+          )
+        }
         <CloseIcon
           onClick={() => {
             handleClose(false);
@@ -68,14 +110,11 @@ function ProjectModal({
           type="text"
           fullWidth
           variant="standard"
-          value={projectInfo.projectName}
-          // onChange={(e) => {
-          //   handleProjectTitle(open.id, e.target.value);
-          // }}
-          // onBlur={() => {
-          //   handleEditProjectTitle(id);
-          // }}
-          // disabled={!projectInfo[open.id].isAdmin}
+          value={name}
+          onChange={(e) => {
+            projName(e.target.value);
+          }}
+          disabled={lock}
         />
         <TextField
           autoFocus
@@ -85,11 +124,11 @@ function ProjectModal({
           type="text"
           fullWidth
           variant="standard"
-          value={projectInfo.projectDescription}
+          value={desc}
           onChange={(e) => {
-            handleProjectDescription(e.target.value);
+            projDesc(e.target.value);
           }}
-          // disabled={!projectInfo[open.id].isAdmin}
+          disabled={lock}
         />
 
         <Box
@@ -102,7 +141,8 @@ function ProjectModal({
         >
           <Typography sx={{ fontSize: "20px" }}>Collaborators</Typography>
           <PersonAdd
-            onClick={addCollaborator}
+            onClick={()=>{
+              addCollaborator(lock)}}
           />
         </Box>
         <Box
@@ -123,7 +163,7 @@ function ProjectModal({
                     type="text"
                     placeholder="Email"
                     value={collaborator.email}
-                    // disabled={!projectInfo[open.id].isAdmin}
+                    disabled={lock}
                     onChange={(event) =>
                       handleEmailChange(event.target.value,index)
                     }
@@ -136,7 +176,7 @@ function ProjectModal({
                     onChange={(event) =>
                       handleRoleChange(event.target.value,index)
                     }
-                    // disabled={!projectInfo[open.id].isAdmin}
+                    disabled={lock}
                   >
                     {Roles.map((role) => (
                       <MenuItem value={role} key={role}>
@@ -144,22 +184,57 @@ function ProjectModal({
                       </MenuItem>
                     ))}
                   </Select>
-                  <SaveIcon onClick={()=>{handleSaveCollab(index)}}/>
                 </Box>
+               
+               {
+                  !lock?(   
                 <Box
-                  className="collabDelete"
+                  className="collabIcon"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
+                    <SaveIcon onClick={()=>{handleSaveCollab(index)}} />
                   <DeleteIcon
-                    // disabled={!projectInfo[open.id].isAdmin}
                     onClick={() => {
                       removeCollaborator(index);
                     }}
                   />
                 </Box>
+                  ):
+                  (
+                    null
+                  )
+                }
+
               </Box>
             ))}
         </Box>
+        {
+          !lock?
+          (
+            <Box mt={2} sx={{display:'flex',justifyContent:"space-between"}}>
+            <Button
+            variant="contained"
+            onClick={()=>{
+              editProjectDetails(name,desc,projectInfo.projectId)
+              handleLock()
+            }}
+            >
+              Save Changes
+            </Button>
+            <Button 
+            variant="contained"
+            onClick={handleCancelChanges
+            }
+            >
+              Cancel Changes
+            </Button>
+            </Box>
+          ):
+          (
+            null
+          )
+        }
+
       </DialogContent>
     </Dialog>
   );
