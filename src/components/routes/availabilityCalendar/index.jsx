@@ -4,7 +4,6 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Box, Dialog, Typography } from '@mui/material';
-import PropTypes from 'prop-types';
 import events from '../../constants/Timeline/Event';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
@@ -21,7 +20,7 @@ import './availabilityCalendar.css';
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-export default function AvailabilityCalendar({availabilityCalendarRef}) {
+export default function AvailabilityCalendar() {
   const [eventsData, setEventsData] = useState(null);
   const [inputModal, setInputModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -147,7 +146,7 @@ export default function AvailabilityCalendar({availabilityCalendarRef}) {
   };
 
   return eventsData ? (
-    <Box sx={{ fontFamily: 'Roboto !important' }} ref={availabilityCalendarRef} id='availability-calendar'>
+    <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
       <Calendar
         views={VIEWS}
         selectable
@@ -201,11 +200,3 @@ export default function AvailabilityCalendar({availabilityCalendarRef}) {
     </Box>
   );
 }
-
-AvailabilityCalendar.propTypes = {
-  availabilityCalendarRef: PropTypes.instanceOf(Object),
-};
-
-AvailabilityCalendar.defaultProps = {
-  availabilityCalendarRef: null,
-};

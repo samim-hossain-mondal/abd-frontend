@@ -59,24 +59,26 @@ function AppRoutes() {
     setAxiosHeader();
   }, [authState]);
 
+  const handleScroll=(ref)=>{
+    ref.current.scrollIntoView();
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
         <Box>
-          <Navbar poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef}/>
+          <Navbar/>
         </Box>
         <Routes>
           <Route path='/' exact element={<Login />} />
 
-          <Route path='/home' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef}/>}</SecureRoute>} />
+          <Route path='/home' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm'/>}</SecureRoute>} />
           <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>} />
           <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
           <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
-          <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef}/>}</SecureRoute>} />
+          <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes'/>}</SecureRoute>} />
           <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
-          <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef}/>}</SecureRoute>} />
-          <Route path='/scrollable-app' exact element={<SecureRoute>{authLoaded && <ScrollableHome  poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef}/>}</SecureRoute>} />
+          <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar'/>}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
