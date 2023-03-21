@@ -3,10 +3,10 @@ import { AppBar, Typography, Box, Container, Toolbar } from '@mui/material';
 
 export default function DSMHeader() {
   return (
-    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
+    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ display: { md: 'flex' } }}>
             <Typography
               data-testid="poNotesIdentifier"
               variant="h5"

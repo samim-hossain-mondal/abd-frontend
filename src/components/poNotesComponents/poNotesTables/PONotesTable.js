@@ -1,9 +1,8 @@
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, CircularProgress } from '@mui/material'
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, CircularProgress ,useMediaQuery} from '@mui/material'
 import React, { useContext } from 'react'
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
-// import { useOktaAuth } from '@okta/okta-react';
 import axios from 'axios';
 import PONotsTableHeader from './poNotesTablesHeader/PONotesTableHeader';
 import CardLayout from '../../cards/CardLayout';
@@ -35,6 +34,7 @@ export default function PONotesTable(props) {
 
   const type = HEADINGS[heading].toUpperCase();
   const apiUrl = getApiUrl(type, query, 1, 100);
+  const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const { data, error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
     try {
@@ -44,7 +44,6 @@ export default function PONotesTable(props) {
       const res = await axios.get(apiUrl);
       return res.data;
     } catch (err) {
-      console.error(err);
       setError(val => val + err);
       return [];
     }
@@ -62,7 +61,7 @@ export default function PONotesTable(props) {
   const countOfItems = data.length;
   return (
     data ? 
-      <Box sx={{ width: '500px' }}>
+      <Box sx={{ width: (breakpoint500)?'480px':'280px' }}>
         <TableContainer component={Paper} sx={{ height: '80vh' }}>
           <Table stickyHeader aria-label='simple table'>
             <TableHead>

@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 // import HomeContainer from './components/routes/Home';
-import AnnouncementContainer from './components/routes/Announcements';
+import MadeToStickContainer from './components/routes/MadeToStick';
 import InformationRadiatorContainer from './components/routes/InformationRadiator';
 import OurTeamsContainer from './components/routes/OurTeams';
 // import PONotesContainer from './components/routes/PONotes';
@@ -17,7 +17,6 @@ import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
 import ScrollableHome from './components/routes/ScrollableHome'
-
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -66,14 +65,11 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
-        <Box>
-          <Navbar/>
-        </Box>
+        <Navbar />
         <Routes>
           <Route path='/' exact element={<Login />} />
-
           <Route path='/home' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm'/>}</SecureRoute>} />
-          <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>} />
+          <Route path='/made-to-stick' exact element={<SecureRoute>{authLoaded && <MadeToStickContainer />}</SecureRoute>} />
           <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
           <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes'/>}</SecureRoute>} />
