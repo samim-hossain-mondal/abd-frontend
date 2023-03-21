@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
   Box, Card, CardContent, Typography, Button,
-  Checkbox, styled, Tooltip, CardActionArea
+  Checkbox, styled, Tooltip
 }
   from '@mui/material';
 import axios from 'axios';
@@ -99,7 +99,7 @@ export default function CustomCard({ checkBox, data, type }) {
     <Box m={3}>
       <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} />
       <Cards>
-        <CardActionArea onClick={handleClickOpen}>
+        <Box onClick={handleClickOpen}>
           <CardContent >
             <CardHeader>{renderCheckBox()}
               {isDraft() ?
@@ -131,7 +131,7 @@ export default function CustomCard({ checkBox, data, type }) {
               </Box>
             </Box>
           </CardContent>
-        </CardActionArea>
+        </Box>
       </Cards>
     </Box>
   );
