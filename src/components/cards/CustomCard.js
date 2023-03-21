@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
-  Box, Card, CardContent, Typography, Button,
-  Checkbox, styled, Tooltip
+  Box, Card, CardContent, Typography,
+  Checkbox, styled, Tooltip, Link
 }
   from '@mui/material';
 import axios from 'axios';
@@ -13,7 +13,6 @@ import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
 import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
-import PreventParentClick from '../utilityFunctions/PreventParentClick';
 
 const Cards = styled(Card)(() => ({
   width: 'auto',
@@ -58,11 +57,6 @@ export default function CustomCard({ checkBox, data, type }) {
     }
   }
 
-  const handleLinkButton = () => {
-    handleClose();
-    console.log('JIRA LINK')
-  }
-
   const isDraft = () => {
     if (data.status === STATUS.draft) return true;
     return false;
@@ -80,10 +74,10 @@ export default function CustomCard({ checkBox, data, type }) {
     return <Typography color="primary" fontWeight={500} mt={2} pl={1} sx={{ visibility: 'hidden ' }}> Needed By {dateGetter(data.dueDate, false)} </Typography>
   }
   const renderLink = () => {
-    if (isActionItem()) {
-      return <Button variant="contained" size='small' sx={{ display: 'inline-flex' }} onClick={PreventParentClick(() => handleLinkButton())}>JIRA LINK</Button>
+    if (isActionItem() && data?.issueLink) {
+      return <Link target='_blank' href={data?.issueLink ?? '#'} variant="contained" size='small' sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>ISSUE LINK</Link>
     }
-    return <Button variant="contained" sx={{ display: 'inline-flex', visibility: 'hidden' }} >JIRA LINK</Button>
+    return true;
   }
 
   const renderCheckBox = () => {
