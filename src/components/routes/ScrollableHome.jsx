@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box } from '@mui/material';
+import { Box, Fab } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import PropTypes from 'prop-types';
 import HomeContainer from './Home';
 import PONotesContainer from './PONotes';
@@ -62,6 +63,13 @@ export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendar
       <div ref={availabilityCalendarRef}>
         <AvailabilityCalendar/>
       </div>
+      <Fab color="primary" aria-label="refresh" sx={{
+        position: 'sticky',
+        bottom: 16,
+        left: '99%',
+      }}>
+        <RefreshIcon />
+      </Fab>
     </Box>
   );
 };
