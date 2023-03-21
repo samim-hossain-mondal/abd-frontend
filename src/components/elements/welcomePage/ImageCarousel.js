@@ -8,7 +8,7 @@ function Item({title, description, image}) {
   return (
     <Box component="card" sx={{display: 'flex', flexDirection: 'column', width: '100%', boxShadow: 5, borderRadius: 2, justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', textAlign: 'center'}}>
       <Box component="p" sx={{fontSize: 25, color: 'text.primary',  width: '100%', padding: 1, margin: 0, backgroundColor: 'grey.200', borderTopLeftRadius: '8px', borderTopRightRadius: '8px'}}>{title}</Box>
-      <Box component="img" sx={{width: '100%', height: '100%', maxHeight: '600px', maxWidth: '600px'}} src={image} alt="image" />
+      <Box component="img" sx={{width: '100%', height: '100%', maxHeight: '1000px', maxWidth: '1000px', margin: 2}} src={image} alt="image" />
       <Box component="p" sx={{fontSize: 20, color: 'text.primary',  width: '100%', px: 2}}>{description}</Box>
     </Box>
   );
@@ -31,7 +31,7 @@ function ImageCarousel() {
           marginInline: 10,
           width: 30,
           height: 30,
-          zIndex: 2,
+          zIndex: 1,
         },
       }}
     >
