@@ -1,5 +1,6 @@
-import DSMImg from '../../assets/images/screens/dsm.png';
-import PONoteImg from '../../assets/images/screens/ponote.png';
+import dsmImg from '../../assets/images/screens/dsm.png';
+import poNoteImg from '../../assets/images/screens/ponote.png';
+import calendarImg from '../../assets/images/screens/calendar2.png'; 
 
 const texts = {
     whyMyAgile: 
@@ -9,15 +10,21 @@ const texts = {
 const slides = [
     {
         id: 1,
-        title: 'DSM',
-        description: 'The DSM is a dashboard that provides a high-level view of the current state of the business. It is a single source of truth for the business and provides a holistic view of the business.',
-        image: DSMImg
+        title: 'Run your Daily Standup Meetings more efficiently',
+        description: "Keep up with your team's well being, achievements, requests, blockers and announcements, all within a single Agile dashboard.",
+        image: dsmImg
     },
     {
         id: 2,
-        title: 'PO Notes',
-        description: 'PO Notes is a tool that allows users to create and manage notes for a specific PO. It allows users to create notes, view notes, and delete notes.',
-        image: PONoteImg
+        title: 'Product Owners can easily categorise their notes',
+        description: 'The PO Notes section helps the Product Owner prioritise and categorise their notes, so that team can easily find the information they need.',
+        image: poNoteImg
+    },
+    {
+        id: 3,
+        title: "Stay informed about your team's availability status",
+        description: 'The availability calendar helps you stay informed about your team members availability status, so that you can plan your meetings accordingly.',
+        image: calendarImg
     }
 ]
 
