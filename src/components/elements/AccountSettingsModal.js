@@ -29,7 +29,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       ]);
       const { data } = firstApiCall;
       const { memberId } = secondApiCall.data;
-      if (memberId !== null) {
+      if (memberId !== null && data.length > 0) {
         const requests = data.map((project) =>
           axios
             .get(
@@ -54,28 +54,12 @@ function AccountSettingsModal({ open, setOpenSettings }) {
             console.log("At least one request failed!");
             console.log(error);
           });
+      } else {
+        setProjects([]);
       }
     }
     fetchProjectInfo();
   }, []);
-
-  const handleEditCollab = (index) => {
-    const { projectId } = projectInfo;
-    const { memberId, role } = projectInfo.projectMembers[index];
-    axios
-      .patch(
-        `http://localhost:3001/api/management/project/${projectId}/member/${memberId}`,
-        {
-          role,
-        }
-      )
-      .then(() => {
-        setSuccess("Collaborator Updated Successfully");
-      })
-      .catch((error) => {
-        setError(error.data.message);
-      });
-  };
 
   const handleCancelChanges = () => {
     console.log("Cancel");
@@ -136,6 +120,19 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       )
       .then(() => {
         setSuccess("Successfully Added Collaborator");
+        setProjectInfo({
+          ...projectInfo,
+          projectMembers: [
+            ...projectInfo.projectMembers.slice(0, index),
+            {
+              email: projectInfo.projectMembers[index].email,
+              role: projectInfo.projectMembers[index].role,
+              isNew: false,
+            },
+            ...projectInfo.projectMembers.slice(index + 1),
+          ],
+        });
+        console.log(projectInfo);
       })
       .catch((error) => {
         setError(error.response.data.message);
@@ -174,7 +171,12 @@ function AccountSettingsModal({ open, setOpenSettings }) {
     setProjectInfo(updatedProjectInfo);
   };
 
-  const handleRoleChange = (role, index) => {
+  const handleRoleChange = (role, index, isNew) => {
+    console.log(isNew, role);
+    if (projectInfo.projectMembers[index].email === "") {
+      setError("Enter Some Email");
+      return;
+    }
     const updatedProjectInfo = {
       ...projectInfo,
       projectMembers: [
@@ -186,8 +188,26 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         ...projectInfo.projectMembers.slice(index + 1),
       ],
     };
-
     setProjectInfo(updatedProjectInfo);
+    if (!isNew) {
+      console.log("I m inside isNew", projectInfo);
+      const { projectId } = projectInfo;
+      const { email } = projectInfo.projectMembers[index];
+      axios
+        .patch(
+          `http://localhost:3001/api/management/project/${projectId}/member`,
+          {
+            email,
+            role,
+          }
+        )
+        .then(() => {
+          setSuccess("Collaborator Updated Successfully");
+        })
+        .catch((error) => {
+          setError(error.data.message);
+        });
+    }
   };
 
   const removeCollaborator = (index) => {
@@ -380,7 +400,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 handleDeleteProject={handleDeleteProject}
                 editProjectDetails={editProjectDetails}
                 handleCancelChanges={handleCancelChanges}
-                handleEditCollab={handleEditCollab}
               />
             )}
           </Box>

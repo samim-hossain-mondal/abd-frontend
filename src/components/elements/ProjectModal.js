@@ -20,7 +20,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import { PropTypes } from "prop-types";
-// import axios from "axios";
 
 function ProjectModal({
   handleClose,
@@ -34,12 +33,10 @@ function ProjectModal({
   handleDeleteProject,
   editProjectDetails,
   handleCancelChanges,
-  handleEditCollab,
 }) {
   const [lock, setLock] = React.useState(true);
   const [name, setName] = React.useState(projectInfo.projectName);
   const [desc, setDesc] = React.useState(projectInfo.projectDescription);
-
   const projName = (title) => {
     setName(title);
   };
@@ -167,7 +164,11 @@ function ProjectModal({
                     sx={{ height: "30px", width: "100px" }}
                     value={collaborator.role}
                     onChange={(event) =>
-                      handleRoleChange(event.target.value, index)
+                      handleRoleChange(
+                        event.target.value,
+                        index,
+                        projectInfo.projectMembers[index].isNew
+                      )
                     }
                     disabled={lock || collaborator.role === "ADMIN"}
                   >
@@ -178,27 +179,19 @@ function ProjectModal({
                     ))}
                   </Select>
                 </Box>
-
+                {}
                 {!lock ? (
                   <Box
                     className="collabIcon"
                     sx={{ display: "flex", alignItems: "center" }}
                   >
-                    {console.log(collaborator.isNew)}
                     {!collaborator.isNew ? (
                       collaborator.role !== "ADMIN" ? (
-                        <>
-                          <EditIcon
-                            onClick={() => {
-                              handleEditCollab(index);
-                            }}
-                          />
-                          <DeleteIcon
-                            onClick={() => {
-                              removeCollaborator(index);
-                            }}
-                          />
-                        </>
+                        <DeleteIcon
+                          onClick={() => {
+                            removeCollaborator(index);
+                          }}
+                        />
                       ) : null
                     ) : (
                       <>
