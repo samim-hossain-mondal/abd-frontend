@@ -5,11 +5,13 @@ import Logo from '../../assets/images/agileLogo.png';
 import CardBox from '../elements/welcomePage/CardBox';
 import { texts } from '../constants/welcomePage'
 import ImageCarousel from '../elements/welcomePage/ImageCarousel';
+import StickyHeader from '../elements/welcomePage/StickyHeader';
 
 export default function WelcomePage() {
     const [userProjects, setUserProjects] = React.useState([]);
     const [user, setUser] = React.useState(null);
     // const [loading, setLoading] = React.useState(true);
+    const [stickyHeader, setStickyHeader] = React.useState(false);
 
     React.useEffect(() => {
         const getUser = async () => {
@@ -26,8 +28,24 @@ export default function WelcomePage() {
         getUserProjects();
     }, []);
 
-    console.log(user);
-    console.log(userProjects);
+    const handleScroll = () => {
+      if (window.pageYOffset > 300) {
+          setStickyHeader(true);
+      } else {
+          setStickyHeader(false);
+      }
+  };
+
+  console.log(userProjects);
+  console.log(user);
+
+  React.useEffect(() => {
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+          window.removeEventListener('scroll', handleScroll);
+      };
+  }, []);
 
   return (
     <Box
@@ -39,6 +57,7 @@ export default function WelcomePage() {
       }}
     >
       <CssBaseline />
+      {stickyHeader ? <StickyHeader /> : null}
       <Container component="main" sx={{ mt: 8, mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} maxWidth="lg"> 
         <Box component="img" src={Logo} alt="logo" sx={{height: 200, width: 200, borderRadius: '50%', boxShadow: 5, alignSelf: 'center'}} />
         <Typography variant="h3" component="h3" sx={{mt: 3, mb: 5, alignSelf: 'center', fontWeight: 'bold'}}>
