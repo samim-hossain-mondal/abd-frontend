@@ -6,7 +6,10 @@ import CustomCard from './CustomCard';
 export default function CardLayout({ checkBox, type, data }) {
   return (
     data ?
-      <Box>
+      <Box sx={{
+        height: 'calc(80vh - 60px)',
+        overflowY: 'auto',
+      }}>
         {
           data.map((item) => (
             <CustomCard

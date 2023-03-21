@@ -2,30 +2,18 @@ import React, { useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
   Box, Card, CardContent, Typography, Button,
-  Checkbox, styled, Stack, Avatar, Tooltip, CardActionArea
+  Checkbox, styled, Tooltip
 }
   from '@mui/material';
-import stc from 'string-to-color';
 import axios from 'axios';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
-import { collaborators } from '../constants/PONotes';
 import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import PreventParentClick from '../utilityFunctions/PreventParentClick';
-
-const stringToColor = (string) => (stc(string))
-function stringAvatar(name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-  };
-}
 
 const Cards = styled(Card)(() => ({
   width: 'auto',
@@ -111,7 +99,7 @@ export default function CustomCard({ checkBox, data, type }) {
     <Box m={3}>
       <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} />
       <Cards>
-        <CardActionArea onClick={handleClickOpen}>
+        <Box onClick={handleClickOpen}>
           <CardContent >
             <CardHeader>{renderCheckBox()}
               {isDraft() ?
@@ -135,18 +123,15 @@ export default function CustomCard({ checkBox, data, type }) {
                 }}> {data.note}</Typography>
               </Tooltip>
             </Box>
-            <Box sx={{ position: 'relative', bottom: 0, top: 35 }}>
+            <Box>
               {renderdueDate()}
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Stack direction="row" spacing={-1} mb={4} pl={1}>
-                  {/* eslint-disable-next-line react/no-array-index-key */}
-                  {collaborators.map((names, idx) => <Avatar key={idx + 1} {...stringAvatar(names)} />)}
-                </Stack>
+                <Box />
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
             </Box>
           </CardContent>
-        </CardActionArea>
+        </Box>
       </Cards>
     </Box>
   );
