@@ -1,16 +1,37 @@
+/* eslint-disable import/no-unresolved */
 import * as React from 'react';
-import { Box, Typography, Container, CssBaseline, Stack, Button } from '@mui/material';
+import { Box, Typography, Container, CssBaseline, Stack, Button, Avatar, Card, CardContent, List} from '@mui/material';
 import axios from 'axios';
-import Logo from '../../assets/images/agileLogo.png';
 import CardBox from '../elements/welcomePage/CardBox';
+import Logo from '../../assets/images/agileLogo.png';
 import { texts } from '../constants/welcomePage'
 import ImageCarousel from '../elements/welcomePage/ImageCarousel';
 import StickyHeader from '../elements/welcomePage/StickyHeader';
 
+
+function ProfileCard(props) {
+  // eslint-disable-next-line react/prop-types
+  const { name, jobTitle, avatarUrl, bio } = props;
+
+  return (
+    <Card sx={{minWidth: '40%', maxHeight: '100%'}}>
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar sx={{ width: 64, height: 64, backgroundColor: 'lightblue' }} src={avatarUrl} alt={name} />
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="h5">{name}</Typography>
+            <Typography variant="subtitle1" color="text.secondary">{jobTitle}</Typography>
+          </Box>
+        </Box>
+        <Typography sx={{ mt: 2 }} variant="body1">{bio}</Typography>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function WelcomePage() {
     const [userProjects, setUserProjects] = React.useState([]);
     const [user, setUser] = React.useState(null);
-    // const [loading, setLoading] = React.useState(true);
     const [stickyHeader, setStickyHeader] = React.useState(false);
 
     React.useEffect(() => {
@@ -69,6 +90,31 @@ export default function WelcomePage() {
             <ImageCarousel />
         </Stack>
       </Container>
+      {/* profile card + project list */}
+      <Container component="main" sx={{ mt: 8, mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} maxWidth="lg">
+  <Stack direction="row" spacing={2} sx={{alignSelf: 'center', width: '100%'}}>
+    <ProfileCard
+      avatarUrl="/static/images/avatar/2.jpg"
+      name={user ? user.name : 'Loading...'}
+      jobTitle="Software Engineer"
+      bio={`Part of ${userProjects.length} projects`}
+    />
+    <Container component="main" sx={{ mt: 8, mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} maxWidth="lg">
+    <Box component="p" sx={{fontSize: 20, px: 1, py: 1, mt: 0, mb: 1, alignSelf: 'center', fontWeight: 100, backgroundColor: 'white', width: '100%', boxShadow: 1}}>
+      Your Projects
+    </Box>
+    <List sx={{width: '100%', overflowY: 'scroll', maxHeight: 'calc(100vh - 500px)'}}>
+      {/* simple icon and text list */}
+      {userProjects.map((project) => (
+        <Box component="card" sx={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', textAlign: 'start', mb: 1}}>
+          <Box component="p" sx={{fontSize: 15, width: '100%', padding: 1, margin: 0, backgroundColor: '#85B2FC', color: 'white'}}>{project.projectName}</Box>
+          <Box component="p" sx={{fontSize: 15, color: 'text.primary',  width: '100%', px: 2}}>{project.projectId}</Box>
+      </Box>
+      ))}
+    </List>
+    </Container>
+  </Stack>
+</Container>
       <Box
         component="footer"
         sx={{
