@@ -82,12 +82,12 @@ export default function WelcomePage() {
       <Container component="main" sx={{ mt: 8, mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} maxWidth="lg"> 
         <Box component="img" src={Logo} alt="logo" sx={{height: 200, width: 200, borderRadius: '50%', boxShadow: 5, alignSelf: 'center'}} />
         <Typography variant="h3" component="h3" sx={{mt: 3, mb: 5, alignSelf: 'center', fontWeight: 'bold'}}>
-          Welcome to My Agile Board
+          {userProjects.length > 0 ? `Welcome back, ${user.name} \u{1F44B}` : texts.welcome}
         </Typography>
         <Stack direction="column" spacing={2} sx={{alignSelf: 'center', width: '100%'}}>
             <CardBox title="Why use My Agile Dashboard?" description={texts.whyMyAgile} />
-            <CardBox title="Get started with My Agile Board" description="Create a new project or ask your PO to add you to an existing project" />
             <ImageCarousel />
+            <CardBox title="Get started with My Agile Board" description="Create a new project or ask your PO to add you to an existing project" />
         </Stack>
       </Container>
       {/* profile card + project list */}
@@ -101,14 +101,14 @@ export default function WelcomePage() {
     />
     <Container component="main" sx={{ mt: 8, mb: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center' }} maxWidth="lg">
     <Box component="p" sx={{fontSize: 20, px: 1, py: 1, mt: 0, mb: 1, alignSelf: 'center', fontWeight: 100, backgroundColor: 'white', width: '100%', boxShadow: 1}}>
-      Your Projects
+      {texts.yourProjects}
     </Box>
     <List sx={{width: '100%', overflowY: 'scroll', maxHeight: 'calc(100vh - 500px)'}}>
       {/* simple icon and text list */}
       {userProjects.map((project) => (
         <Box component="card" sx={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', textAlign: 'start', mb: 1}}>
-          <Box component="p" sx={{fontSize: 15, width: '100%', padding: 1, margin: 0, backgroundColor: '#85B2FC', color: 'white'}}>{project.projectName}</Box>
-          <Box component="p" sx={{fontSize: 15, color: 'text.primary',  width: '100%', px: 2}}>{project.projectId}</Box>
+          <Box component="p" sx={{fontSize: 15, width: '100%', padding: 1, margin: 0, backgroundColor: '#85B2FC', color: 'white', fontWeight: 800}}>{project.projectName}</Box>
+          <Box component="p" sx={{fontSize: 15, color: 'text.primary',  width: '100%', px: 2}}>{`This project has id ${project.projectId}`}</Box>
       </Box>
       ))}
     </List>
