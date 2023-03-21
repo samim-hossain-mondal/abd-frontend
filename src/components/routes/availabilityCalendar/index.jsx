@@ -6,6 +6,7 @@ import { AppBar, Box, Dialog, Toolbar, Typography, Container, Grid } from '@mui/
 import axios from 'axios';
 import moment from 'moment';
 import { ErrorContext } from '../../contexts/ErrorContext';
+import { RefreshContext } from '../../contexts/RefreshContext';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
 import {
@@ -32,6 +33,12 @@ export default function AvailabilityCalendar() {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
 
   const { setError, setSuccess } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
+
+  if(refresh.availabilityCalendar){
+    console.log('Handle Refresh For Calendar');
+    setRefresh(val=>({...val, availabilityCalendar: false}));
+  }
 
   const handleMount = async () => {
     try{

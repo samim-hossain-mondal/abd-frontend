@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Fab } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box } from '@mui/material';
 import PropTypes from 'prop-types';
 import HomeContainer from './Home';
 import PONotesContainer from './PONotes';
 import AvailabilityCalendar from './availabilityCalendar';
 import DSMViewportContext from '../contexts/DSMViewportContext';
+import { RefreshContextProvider } from '../contexts/RefreshContext';
 import PONotesViewportContext from '../contexts/PONotesViewportContext';
+import FabRefresh from '../utilityFunctions/FabRefresh';
 
 function useIsInViewport(ref) {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -32,6 +33,7 @@ function useIsInViewport(ref) {
 export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendarRef, handleScroll,scrollTo}) {
   const dsmIsInViewPort = useIsInViewport(dsmRef);
   const poNotesIsInViewPort = useIsInViewport(poNotesRef);
+  const availabilityIsInViewPort = useIsInViewport(availabilityCalendarRef);
 
   useEffect(()=>{
     switch (scrollTo) {
@@ -48,29 +50,26 @@ export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendar
         break;
     };
   },[scrollTo]);
+
   return (
-    <Box>
-      <div ref={dsmRef}>
-        <DSMViewportContext.Provider value={dsmIsInViewPort}>
-          <HomeContainer dsmIsInViewPort={dsmIsInViewPort}/>
-        </DSMViewportContext.Provider>
-      </div>
-      <div ref={poNotesRef}>
-        <PONotesViewportContext.Provider value={poNotesIsInViewPort}>
-          <PONotesContainer poNotesIsInViewPort={poNotesIsInViewPort}/>
-        </PONotesViewportContext.Provider>
-      </div>
-      <div ref={availabilityCalendarRef}>
-        <AvailabilityCalendar/>
-      </div>
-      <Fab color="primary" aria-label="refresh" sx={{
-        position: 'sticky',
-        bottom: 16,
-        left: '99%',
-      }}>
-        <RefreshIcon />
-      </Fab>
+    <RefreshContextProvider>
+      <Box>
+        <div ref={dsmRef}>
+          <DSMViewportContext.Provider value={dsmIsInViewPort}>
+              <HomeContainer/>
+          </DSMViewportContext.Provider>
+        </div>
+        <div ref={poNotesRef}>
+          <PONotesViewportContext.Provider value={poNotesIsInViewPort}>
+            <PONotesContainer/>
+          </PONotesViewportContext.Provider>
+        </div>
+        <div ref={availabilityCalendarRef}>
+          <AvailabilityCalendar/>
+        </div>
+        <FabRefresh poNotesIsInViewPort={poNotesIsInViewPort} dsmIsInViewPort={dsmIsInViewPort} availabilityIsInViewPort={availabilityIsInViewPort}/>
     </Box>
+    </RefreshContextProvider>
   );
 };
 

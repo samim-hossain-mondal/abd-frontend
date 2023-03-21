@@ -13,9 +13,11 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import AddCelebrationModal from './AddCelebrationModal';
 import { celebrationTypes } from '../constants/DSM';
+import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function CelebrationBoard() {
   const { setError } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
   const [celebrations, setCelebrations] = useState([]);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
@@ -26,6 +28,11 @@ export default function CelebrationBoard() {
     content: '',
     anonymous: false
   });
+
+  if(refresh.celebration){
+    console.log('handle celebration refresh');
+    setRefresh(val => ({...val, celebration: false}));
+  }
 
   const resetModal = () => {
     setNewCelebration({
