@@ -1,5 +1,3 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable react/prop-types */
 import React from "react";
 import {
   Dialog,
@@ -16,10 +14,9 @@ import {
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
-// import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import { PropTypes } from "prop-types";
+import { PropTypes } from "prop-types";
 
 function ProjectModal({
   handleClose,
@@ -37,6 +34,7 @@ function ProjectModal({
   const [lock, setLock] = React.useState(true);
   const [name, setName] = React.useState(projectInfo.projectName);
   const [desc, setDesc] = React.useState(projectInfo.projectDescription);
+
   const projName = (title) => {
     setName(title);
   };
@@ -88,6 +86,9 @@ function ProjectModal({
           }}
         />
       </Box>
+      <Typography variant="h5" ml={2.8}>
+        Project Details
+      </Typography>
       <DialogContent>
         <TextField
           autoFocus
@@ -185,15 +186,7 @@ function ProjectModal({
                     className="collabIcon"
                     sx={{ display: "flex", alignItems: "center" }}
                   >
-                    {!collaborator.isNew ? (
-                      collaborator.role !== "ADMIN" ? (
-                        <DeleteIcon
-                          onClick={() => {
-                            removeCollaborator(index);
-                          }}
-                        />
-                      ) : null
-                    ) : (
+                    {collaborator.isNew ? (
                       <>
                         <SaveIcon
                           onClick={() => {
@@ -206,6 +199,14 @@ function ProjectModal({
                           }}
                         />
                       </>
+                    ) : (
+                      collaborator.role !== "ADMIN" && (
+                        <DeleteIcon
+                          onClick={() => {
+                            removeCollaborator(index);
+                          }}
+                        />
+                      )
                     )}
                   </Box>
                 ) : null}
@@ -221,7 +222,7 @@ function ProjectModal({
                 handleLock();
               }}
             >
-              Save Changes
+              Save Project Changes
             </Button>
             <Button variant="contained" onClick={handleCancelChanges}>
               Cancel Changes
@@ -233,32 +234,31 @@ function ProjectModal({
   );
 }
 
-// ProjectModal.propTypes = {
-//   open: PropTypes.shape({
-//     isOpen: PropTypes.bool,
-//     id: PropTypes.string,
-//     isAdmin: PropTypes.bool,
-//   }).isRequired,
-//   handleClose: PropTypes.func.isRequired,
-//   handleProjectTitle: PropTypes.func.isRequired,
-//   handleProjectDescription: PropTypes.func.isRequired,
-//   handleEmailChange: PropTypes.func.isRequired,
-//   handleRoleChange: PropTypes.func.isRequired,
-//   addCollaborator: PropTypes.func.isRequired,
-//   removeCollaborator: PropTypes.func.isRequired,
-//   handleEditProjectTitle: PropTypes.func.isRequired,
-//   projectInfo: PropTypes.shape({
-//     ProjectId: PropTypes.string,
-//     projectName: PropTypes.string,
-//     projectDescription: PropTypes.string,
-//     // collaborators: PropTypes.arrayOf(
-//     //   PropTypes.shape({
-//     //     email: PropTypes.string,
-//     //     role: PropTypes.string,
-//     //   }))
-//     ,
-//     isAdmin: PropTypes.bool,
-//   }).isRequired,
-// };
+ProjectModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  projectInfo: PropTypes.shape({
+    projectId: PropTypes.number,
+    projectName: PropTypes.string,
+    projectDescription: PropTypes.string,
+    role: PropTypes.string,
+    projectMembers: PropTypes.arrayOf(
+      PropTypes.shape({
+        memberId: PropTypes.number,
+        email: PropTypes.string,
+        role: PropTypes.string,
+        isNew: PropTypes.bool,
+      })
+    ),
+  }).isRequired,
+  addCollaborator: PropTypes.func.isRequired,
+  handleEmailChange: PropTypes.func.isRequired,
+  handleRoleChange: PropTypes.func.isRequired,
+  handleSaveCollab: PropTypes.func.isRequired,
+  removeCollaborator: PropTypes.func.isRequired,
+  handleDeleteProject: PropTypes.func.isRequired,
+  editProjectDetails: PropTypes.func.isRequired,
+  handleCancelChanges: PropTypes.func.isRequired,
+};
 
 export default ProjectModal;

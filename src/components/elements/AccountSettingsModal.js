@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/jsx-no-bind */
 import React, { useState, useContext } from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -36,23 +34,20 @@ function AccountSettingsModal({ open, setOpenSettings }) {
               `http://localhost:3001/api/management/project/${project.projectId}/member/${memberId}`
             )
             .then((response) => {
-              project.role = response.data.role;
-              return project;
+              const projectWithRole = Object.assign(project, {
+                role: response.data.role,
+              });
+              return projectWithRole;
             })
-            .catch((error) => {
-              console.log(error);
-              return project;
-            })
+            .catch((error) => error)
         );
 
         Promise.all(requests)
           .then((updatedProjects) => {
-            console.log(updatedProjects);
             setProjects(updatedProjects);
           })
           .catch((error) => {
-            console.log("At least one request failed!");
-            console.log(error);
+            setError(error.response.data.message);
           });
       } else {
         setProjects([]);
@@ -62,7 +57,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   }, []);
 
   const handleCancelChanges = () => {
-    console.log("Cancel");
     setOpenEditModel(false);
   };
 
@@ -109,7 +103,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   const handleSaveCollab = (index) => {
     const { projectId } = projectInfo;
-    console.log(projectId);
     axios
       .post(
         `http://localhost:3001/api/management/project/${projectId}/member`,
@@ -132,7 +125,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
             ...projectInfo.projectMembers.slice(index + 1),
           ],
         });
-        console.log(projectInfo);
       })
       .catch((error) => {
         setError(error.response.data.message);
@@ -159,7 +151,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const handleSelectedProject = (projectId) => {
-    console.log(projectId);
     setSelectedProject(projectId);
   };
 
@@ -172,7 +163,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const handleRoleChange = (role, index, isNew) => {
-    console.log(isNew, role);
     if (projectInfo.projectMembers[index].email === "") {
       setError("Enter Some Email");
       return;
@@ -190,7 +180,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
     };
     setProjectInfo(updatedProjectInfo);
     if (!isNew) {
-      console.log("I m inside isNew", projectInfo);
       const { projectId } = projectInfo;
       const { email } = projectInfo.projectMembers[index];
       axios
@@ -231,11 +220,11 @@ function AccountSettingsModal({ open, setOpenSettings }) {
           },
         }
       )
-      .then((response) => {
-        console.log(response);
+      .then(() => {
+        setSuccess("Collaborator Deleted Successfully");
       })
       .catch((error) => {
-        console.log(error);
+        setError(error.data.message);
       });
 
     const updatedProjectInfo = {
@@ -270,7 +259,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         setOpenEditModel(true);
       })
       .catch((error) => {
-        console.log(error);
+        setError(error.response.data.message);
       });
   };
 
