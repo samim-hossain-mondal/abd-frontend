@@ -8,10 +8,8 @@ import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 // import HomeContainer from './components/routes/Home';
 import MadeToStickContainer from './components/routes/MadeToStick';
-import InformationRadiatorContainer from './components/routes/InformationRadiator';
 import OurTeamsContainer from './components/routes/OurTeams';
 // import PONotesContainer from './components/routes/PONotes';
-import RefMaterialsContainer from './components/routes/RefMaterials';
 // import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
@@ -70,10 +68,8 @@ function AppRoutes() {
           <Route path='/' exact element={<Login />} />
           <Route path='/home' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm'/>}</SecureRoute>} />
           <Route path='/made-to-stick' exact element={<SecureRoute>{authLoaded && <MadeToStickContainer />}</SecureRoute>} />
-          <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
           <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes'/>}</SecureRoute>} />
-          <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
           <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar'/>}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />

@@ -10,10 +10,10 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import Logo from '../../assets/images/agileLogo.png';
 
-const pages = ['Home', 'PO Notes', 'Our Teams', 'Availability Calendar',
-  'Made To Stick', 'Information Radiators', 'Reference Material'];
-const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
-  '/made-to-stick', '/information-radiators', '/reference-material'];
+const pages = ['Home', 'Our Teams',
+  'Made To Stick'];
+const routes = ['/home','/our-teams',
+  '/made-to-stick'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 export default function Navbar() {
@@ -69,7 +69,7 @@ export default function Navbar() {
                   {pages.map((page, index) => (
                     <Box
                       key={page}
-                      sx={{  marginLeft: '10px' }}
+                      sx={{  ml: 5 }}
                     >
                       <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={routes[index]}>
                         <Typography
