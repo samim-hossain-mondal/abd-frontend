@@ -16,6 +16,7 @@ import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
+import WelcomePage from './components/welcomePage';
 
 
 const oktaAuth = new OktaAuth({
@@ -55,16 +56,16 @@ function AppRoutes() {
     setAxiosHeader();
   }, [authState]);
 
-
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
+        {authLoaded && window.location.pathname !== '/welcome' && (
         <Box>
           <Navbar />
         </Box>
+        )}
         <Routes>
           <Route path='/' exact element={<Login />} />
-
           <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>} />
           <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>} />
           <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
@@ -73,6 +74,7 @@ function AppRoutes() {
           <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
           <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
+          <Route path='/welcome' exact element={<SecureRoute>{authLoaded && < WelcomePage />}</SecureRoute>} /> 
           {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
