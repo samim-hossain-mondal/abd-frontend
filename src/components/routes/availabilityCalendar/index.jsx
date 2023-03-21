@@ -196,7 +196,7 @@ export default function AvailabilityCalendar() {
         <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Box sx={{ display: {  md: 'flex' } }}>
                 <Typography
                   data-testid="poNotesIdentifier"
                   variant="h5"
@@ -222,7 +222,7 @@ export default function AvailabilityCalendar() {
             defaultDate={new Date()}
             defaultView={DEFAULT_VIEW}
             events={eventsPrimaryData}
-            style={{ height: '100vh', backgroundColor: '#f5f5f5' }}
+            style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}
             onSelectEvent={(event) => handleEditModal(event)}
             onSelectSlot={handleSelect}
             eventPropGetter={eventStyleGetter}
