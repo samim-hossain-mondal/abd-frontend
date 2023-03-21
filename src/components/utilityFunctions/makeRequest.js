@@ -7,11 +7,7 @@ const makeRequest = async (BACKEND_URL,apiEndPoint, method,  dynamicConfig = {})
     method,
     ...dynamicConfig
   };
-  try {
-    const { data } = await axios(requestDetails);
-    return data;
-  } catch (error) {
-    return error;
-  }
+  const { data } = await axios(requestDetails);
+  return data;
 };
 export default makeRequest;
