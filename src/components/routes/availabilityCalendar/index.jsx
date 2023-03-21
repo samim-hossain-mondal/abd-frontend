@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { AppBar, Box, Dialog, Toolbar, Typography, Container } from '@mui/material';
+import { AppBar, Box, Dialog, Toolbar, Typography, Container, Grid } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
 import { ErrorContext } from '../../contexts/ErrorContext';
@@ -210,51 +210,58 @@ export default function AvailabilityCalendar() {
           </Container>
         </AppBar>
       </Box>
-      <Calendar
-        views={VIEWS}
-        selectable
-        localizer={localizer}
-        defaultDate={new Date()}
-        defaultView={DEFAULT_VIEW}
-        events={eventsPrimaryData}
-        style={{ height: '100vh' }}
-        onSelectEvent={(event) => handleEditModal(event)}
-        onSelectSlot={handleSelect}
-        eventPropGetter={eventStyleGetter}
-      />
-      {inputModal && (
-        <Dialog open={inputModal} onClose={handleInputModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleInputModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-            onPrimaryButtonClick={(event) => {
-              handleAddEvent(event);
-            }}
-            defaultStartDate={selectedStartDate}
-            defaultEndDate={selectedEndDate}
-            placeholder={PLACEHOLDER}
+      <Grid backgroundColor='backgroundColor.main' height='100%'>
+        <Box
+        sx={{
+          gap: '5vh', padding: '50px 50px 50px 50px',
+        }}>
+          <Calendar
+            views={VIEWS}
+            selectable
+            localizer={localizer}
+            defaultDate={new Date()}
+            defaultView={DEFAULT_VIEW}
+            events={eventsPrimaryData}
+            style={{ height: '100vh', backgroundColor: '#f5f5f5' }}
+            onSelectEvent={(event) => handleEditModal(event)}
+            onSelectSlot={handleSelect}
+            eventPropGetter={eventStyleGetter}
           />
-        </Dialog>
-      )}
-      {editModal && (
-        <Dialog open={editModal} onClose={handleEditModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleEditModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
-            onPrimaryButtonClick={(event) => {
-              handleEditEvent(event);
-            }}
-            defaultID={selectedEvent.leaveId}
-            defaultEvent={selectedEvent.event}
-            defaultStartDate={new Date(selectedEvent.startDate)}
-            defaultEndDate={new Date(selectedEvent.endDate)}
-            defaultIsRisk={selectedEvent.isRisk}
-            isDisabled={isDisabled}
-            setIsDisabled={setIsDisabled}
-            handleDelete={handleDeleteEvent}
-          />
-        </Dialog>
-      )}
+          {inputModal && (
+            <Dialog open={inputModal} onClose={handleInputModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleInputModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
+                onPrimaryButtonClick={(event) => {
+                  handleAddEvent(event);
+                }}
+                defaultStartDate={selectedStartDate}
+                defaultEndDate={selectedEndDate}
+                placeholder={PLACEHOLDER}
+              />
+            </Dialog>
+          )}
+          {editModal && (
+            <Dialog open={editModal} onClose={handleEditModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleEditModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
+                onPrimaryButtonClick={(event) => {
+                  handleEditEvent(event);
+                }}
+                defaultID={selectedEvent.leaveId}
+                defaultEvent={selectedEvent.event}
+                defaultStartDate={new Date(selectedEvent.startDate)}
+                defaultEndDate={new Date(selectedEvent.endDate)}
+                defaultIsRisk={selectedEvent.isRisk}
+                isDisabled={isDisabled}
+                setIsDisabled={setIsDisabled}
+                handleDelete={handleDeleteEvent}
+              />
+            </Dialog>
+          )}
+        </Box>
+      </Grid>
     </Box>
   ) : (
     <Box>
