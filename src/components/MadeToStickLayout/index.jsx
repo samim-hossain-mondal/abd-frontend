@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import GridLayout from "react-grid-layout";
 import { Resizable } from "react-resizable";
 import "react-grid-layout/css/styles.css";
@@ -19,8 +19,12 @@ import {
   PUT_MADE_TO_STICK_CARDS,
 } from "../../constants/apiUrl";
 import "react-quill/dist/quill.snow.css";
+import { ErrorContext } from "../contexts/ErrorContext";
 
 function MyGrid() {
+
+  const {setError} = useContext(ErrorContext);
+
   const [isPO] = useState(true);
   const [cardDetails, setCardDetails] = useState([]);
   const [mobileCardDetails, setMobileCardDetails] = useState([]);
@@ -56,7 +60,7 @@ function MyGrid() {
   // handdle resize of card
   const handleResize = (i, newWidth, newHeight) => {
     setCards(
-      cards.map((card) => {
+      cards?.map((card) => {
         if (card.i === i) {
           return {
             ...card,
@@ -88,7 +92,7 @@ function MyGrid() {
   }, [cardDetails]);
   // set mobile card details when layout changes
   useEffect(() => {
-    const updatedCardDetails = cards.map((card, index) => {
+    const updatedCardDetails = cards?.map((card, index) => {
       const { i, value, backgroundColor, name, emailId, type } = card;
       const { x, y, w, h } = layout[index];
       return {
@@ -108,7 +112,7 @@ function MyGrid() {
   }, [layout]);
   // save card details in backend
   const handleSave = () => {
-    const updatedCardDetails = cards.map((card, index) => {
+    const updatedCardDetails = cards?.map((card, index) => {
       const { i, value, backgroundColor, name, emailId, type } = card;
       const { x, y, w, h } = layout[index];
       return {
@@ -126,7 +130,7 @@ function MyGrid() {
     });
     setMobileCardDetails(updatedCardDetails);
     // eslint-disable-next-line array-callback-return
-    updatedCardDetails.map((card) => {
+    updatedCardDetails?.map((card) => {
       makeRequest(BACKEND_URL, PUT_MADE_TO_STICK_CARDS(card.i).url, "PUT", {
         data: {
           i: card.i,
@@ -139,6 +143,8 @@ function MyGrid() {
           type: card.type,
           emailId: card.emailId,
         },
+      }).catch(err => {
+        setError(err.message);
       });
     });
   };
@@ -175,6 +181,8 @@ function MyGrid() {
       setCards([...cards, response]);
       setLayout([...layout, response]);
       setIsEdit(response.i);
+    }).catch(err => {
+      setError(err.message);
     });
   };
   // font color map
@@ -212,12 +220,16 @@ function MyGrid() {
     }).then((response) => {
       setCards([...cards, response]);
       setLayout([...layout, response]);
+    }).catch(err => {
+      setError(err.message);
     });
   };
   const handleDelete = (i) => {
     makeRequest(BACKEND_URL, DELETE_MADE_TO_STICK_CARDS(i).url, "DELETE").then(
       () => {}
-    );
+    ).catch(err => {
+      setError(err.message);
+    });
     setCards(cards.filter((card) => card.i !== i));
     setLayout(layout.filter((item) => item.i !== i));
     setIsEdit(false);
@@ -226,6 +238,8 @@ function MyGrid() {
     makeRequest(BACKEND_URL, GET_MADE_TO_STICK_CARDS, "GET").then((data) => {
       setCardDetails(data);
       setMobileCardDetails(data);
+    }).catch(err => {
+      setError(err.message);
     });
   }, []);
 
@@ -284,7 +298,7 @@ function MyGrid() {
             }}
           >
             {cards &&
-              cards.map((card) => (
+              cards?.map((card) => (
                 <Box
                   key={card.i}
                   sx={{
@@ -520,7 +534,7 @@ function MyGrid() {
             }}
           >
             {mobileCardDetails &&
-              mobileCardDetails.map((card) => (
+              mobileCardDetails?.map((card) => (
                 <Box
                   key={card.i}
                   sx={{

@@ -1,4 +1,4 @@
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper, CircularProgress ,useMediaQuery} from '@mui/material'
+import { Paper, CircularProgress ,useMediaQuery} from '@mui/material'
 import React, { useContext } from 'react'
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
@@ -57,27 +57,32 @@ export default function PONotesTable(props) {
   return (
     data ? 
       <Box sx={{ width: (breakpoint500)?'480px':'280px' }}>
-        <TableContainer component={Paper} sx={{ height: '80vh' }}>
-          <Table stickyHeader aria-label='simple table'>
-            <TableHead>
-              <TableRow align='center'>
+        <Box component={Paper} sx={{ height: '80vh' }}>
+          <Box aria-label='simple table'>
+            <Box>
+              <Box align='center' sx={{
+                p: '16px',
+                backgroundColor: 'poNotesHeader.main',
+                color: 'poNotesHeader.contrastText'
+              }}
+              >
                 {/* calling the action item table header and passing count of action items in the table as props in countOfItems variable */}
-                <TableCell>
+                <Box>
                   {/* Information regarding each PO Notes type(Action Items, Key decisions and Agenda Items are passed as props to table header) */}
                   <PONotsTableHeader heading={heading}
                     definition={definition}
                     accessibilityInformation={accessibilityInformation}
                     countOfItems={countOfItems} />
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody >
-              <TableRow>
+                </Box>
+              </Box>
+            </Box>
+            <Box>
+              <Box>
                 {/* Data from get Api call using query params is passed to cardlayout for displaying it in cards */}
-                <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={data} /> </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+                <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={data} /> </Box>
+            </Box>
+          </Box>
+        </Box>
       </Box> : 
       <Box>Loading....</Box>
   )

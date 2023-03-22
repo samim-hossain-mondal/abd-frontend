@@ -7,6 +7,7 @@ import {
   Container, Avatar, Tooltip, MenuItem, useMediaQuery
 }
   from '@mui/material';
+import PropTypes from 'prop-types';
 import MenuIcon from '@mui/icons-material/Menu';
 import Logo from '../../assets/images/agileLogo.png';
 
@@ -16,8 +17,8 @@ const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
   '/made-to-stick', '/information-radiators', '/reference-material'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
-export default function Navbar() {
-  const { oktaAuth } = useOktaAuth();
+export default function Navbar({authLoaded}) {
+  const { oktaAuth,authState } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const aboveTablet = useMediaQuery('(min-width: 769px)');
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -86,31 +87,37 @@ export default function Navbar() {
                 </Box>
             )
           }
-          <Box sx={{ textAlign: 'right', flexGrow: '1'}}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="PO" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              id="menu-appbar" sx={{ mt: '45px' }}
-              anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-              keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                (setting !== 'Logout')
-                  ?
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                  :
-                  <MenuItem key={setting} onClick={logout}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          
+          {
+            ((authLoaded)&&(authState?.isAuthenticated))&&(
+              <Box sx={{ textAlign: 'right', flexGrow: '1'}}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="PO" src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  id="menu-appbar" sx={{ mt: '45px' }}
+                  anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    (setting !== 'Logout')
+                      ?
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                      :
+                      <MenuItem key={setting} onClick={logout}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            )
+          }
+    
           {
             (!aboveTablet) && (
               <Box sx={{position: 'relative'}}>
@@ -156,3 +163,7 @@ export default function Navbar() {
     </AppBar >
   );
 }
+
+Navbar.propTypes = {
+  authLoaded: PropTypes.bool.isRequired,
+};
