@@ -10,9 +10,9 @@ import {
 import Logo from '../../assets/images/agileLogo.png';
 
 const pages = ['Home', 'PO Notes', 'Our Teams', 'Availability Calendar',
-  'Announcements', 'Information Radiators', 'Reference Material'];
+  'Announcements', 'Team Informations', 'Reference Material'];
 const routes = ['/home', '/po-notes', '/our-teams', '/availability-calendar',
-  '/announcements', '/information-radiators', '/reference-material'];
+  '/announcements', '/team-information', '/reference-material'];
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 export default function Navbar() {
