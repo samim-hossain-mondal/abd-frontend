@@ -16,7 +16,7 @@ import { useOktaAuth } from "@okta/okta-react";
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
-function StickyHeader() {
+function StickyHeader({ userName }) {
   const { oktaAuth } = useOktaAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -58,6 +58,7 @@ function StickyHeader() {
           alignItems: "center",
           margin: 0,
         }}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <Box
           component="img"
@@ -75,7 +76,7 @@ function StickyHeader() {
       </Container>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt="PO" src="/static/images/avatar/2.jpg" />
+          <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
         </IconButton>
       </Tooltip>
       <Menu

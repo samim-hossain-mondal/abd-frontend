@@ -8,6 +8,8 @@ const texts = {
     welcome: 'Welcome to My Agile Dashboard',
     welcomeBack: 'Welcome back',
     yourProjects: 'Your Projects \u{1F5C3}',
+    getStarted: 'Start using My Agile Dashboard today! \u{1F680} \n',
+    
 }
 
 const slides = [
