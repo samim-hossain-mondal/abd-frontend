@@ -57,7 +57,9 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
-        <Navbar />
+        <Box>
+          <Navbar authLoaded={authLoaded} />
+        </Box>
         <Routes>
           <Route path='/' exact element={<Login />} />
           <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>} />
