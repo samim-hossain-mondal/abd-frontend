@@ -10,6 +10,7 @@ import ProjectModal from "./ProjectModal";
 import Transition from "../utilityFunctions/OverlayTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
 import NewProjectModal from "./NewProjectModal";
+import { DOMAIN } from "../../config";
 
 function AccountSettingsModal({ open, setOpenSettings }) {
   const [projects, setProjects] = useState([]);
@@ -22,8 +23,8 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   React.useEffect(() => {
     async function fetchProjectInfo() {
       const [firstApiCall, secondApiCall] = await Promise.all([
-        axios.get("http://localhost:3001/api/management/project"),
-        axios.get("http://localhost:3001/api/management/me"),
+        axios.get(`${DOMAIN}/api/management/project`),
+        axios.get(`${DOMAIN}/api/management/me`),
       ]);
       const { data } = firstApiCall;
       const { memberId } = secondApiCall.data;
@@ -31,7 +32,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         const requests = data.map((project) =>
           axios
             .get(
-              `http://localhost:3001/api/management/project/${project.projectId}/member/${memberId}`
+              `${DOMAIN}/api/management/project/${project.projectId}/member/${memberId}`
             )
             .then((response) => {
               const projectWithRole = Object.assign(project, {
@@ -66,7 +67,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       return;
     }
     axios
-      .patch(`http://localhost:3001/api/management/project/${projectId}`, {
+      .patch(`${DOMAIN}/api/management/project/${projectId}`, {
         projectName,
         projectDescription,
       })
@@ -108,13 +109,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   const handleSaveCollab = (index) => {
     const { projectId } = projectInfo;
     axios
-      .post(
-        `http://localhost:3001/api/management/project/${projectId}/member`,
-        {
-          email: projectInfo.projectMembers[index].email,
-          role: projectInfo.projectMembers[index].role,
-        }
-      )
+      .post(`${DOMAIN}/api/management/project/${projectId}/member`, {
+        email: projectInfo.projectMembers[index].email,
+        role: projectInfo.projectMembers[index].role,
+      })
       .then(() => {
         setSuccess("Successfully Added Collaborator");
         setProjectInfo({
@@ -136,7 +134,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
   const handleDeleteProject = (projectId) => {
     axios
-      .delete(`http://localhost:3001/api/management/project/${projectId}`)
+      .delete(`${DOMAIN}/api/management/project/${projectId}`)
       .then(() => {
         setSuccess("Successfully Deleted Project");
       })
@@ -187,13 +185,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       const { projectId } = projectInfo;
       const { email } = projectInfo.projectMembers[index];
       axios
-        .patch(
-          `http://localhost:3001/api/management/project/${projectId}/member`,
-          {
-            email,
-            role,
-          }
-        )
+        .patch(`${DOMAIN}/api/management/project/${projectId}/member`, {
+          email,
+          role,
+        })
         .then(() => {
           setSuccess("Collaborator Updated Successfully");
         })
@@ -219,14 +214,11 @@ function AccountSettingsModal({ open, setOpenSettings }) {
     }
     const { projectId } = projectInfo;
     axios
-      .delete(
-        `http://localhost:3001/api/management/project/${projectId}/member`,
-        {
-          data: {
-            email: projectInfo.projectMembers[index].email,
-          },
-        }
-      )
+      .delete(`${DOMAIN}/api/management/project/${projectId}/member`, {
+        data: {
+          email: projectInfo.projectMembers[index].email,
+        },
+      })
       .then(() => {
         setSuccess("Collaborator Deleted Successfully");
       })
@@ -246,7 +238,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   const handleEditModel = (id) => {
     axios
-      .get(`http://localhost:3001/api/management/project/${id}`)
+      .get(`${DOMAIN}/api/management/project/${id}`)
       .then((response) => {
         const { data } = response;
         const { projectId, projectName, projectDescription, projectMembers } =
