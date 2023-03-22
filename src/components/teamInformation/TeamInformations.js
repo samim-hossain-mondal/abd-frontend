@@ -195,13 +195,13 @@ function CardList() {
       sx={{
         display: "flex",
         flexDirection: "row",
-        width: "90%",
+        width: "95%",
         flexWrap: "wrap",
         justifyContent: "center",
         marginLeft: "1%",
         marginRight: "1%",
         marginTop: "5%",
-        height: "72vh",
+        height: "83vh",
         backgroundColor: "#e6eef2",
       }}
     >
@@ -229,7 +229,7 @@ function CardList() {
           columnGap: "5%",
           rowGap: "5%",
           backgroundColor: "#e6eef2",
-          width: "90%",
+          width: "95%",
           overflowY: "scroll",
           height: "50vh",
         }}
