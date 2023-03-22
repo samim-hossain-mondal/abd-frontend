@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import * as React from "react";
+import { React, useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -18,11 +18,11 @@ import StickyHeader from "../elements/welcomePage/StickyHeader";
 import ProfileCard from "../elements/welcomePage/ProfileCard";
 
 export default function WelcomePage() {
-  const [userProjects, setUserProjects] = React.useState([]);
-  const [user, setUser] = React.useState(null);
-  const [stickyHeader, setStickyHeader] = React.useState(false);
+  const [userProjects, setUserProjects] = useState([]);
+  const [user, setUser] = useState(null);
+  const [stickyHeader, setStickyHeader] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const getUser = async () => {
       const response = await axios.get(
         "http://localhost:3001/api/management/me"
@@ -41,25 +41,25 @@ export default function WelcomePage() {
     getUserProjects();
   }, []);
 
+  const scrollRef = useRef(0);
+
   const handleScroll = () => {
-    if (window.pageYOffset > 300) {
+    scrollRef.current = window.scrollY;
+    if (scrollRef.current > 475) {
       setStickyHeader(true);
     } else {
       setStickyHeader(false);
     }
   };
 
-  console.log(userProjects);
-  console.log(user);
-
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
+  
   return (
     <Box
       sx={{
@@ -192,7 +192,7 @@ export default function WelcomePage() {
                   width: "100%",
                 }}
               >
-                {`Currently part of ${userProjects.length} projects`}
+                {userProjects.length > 0 ? `Currently part of ${userProjects.length} projects` : ''}
               </Typography>
             </Box>
             <List
