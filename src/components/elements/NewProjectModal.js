@@ -1,8 +1,6 @@
 import React from "react";
 import { Dialog, DialogContent, TextField, Box, Button } from "@mui/material";
-
 import CloseIcon from "@mui/icons-material/Close";
-
 import { PropTypes } from "prop-types";
 import axios from "axios";
 import { ErrorContext } from "../contexts/ErrorContext";
@@ -57,12 +55,14 @@ function NewProjectModal({ open, setOpen, projects, setProjects }) {
         setOpen(false);
       }}
     >
-      <Box display="flex" justifyContent="flex-end" pr={3} mt={2} />
-      <CloseIcon
-        onClick={() => {
-          setOpen(false);
-        }}
-      />
+      <Box pr={3} mt={2} />
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }} pr={3}>
+        <CloseIcon
+          onClick={() => {
+            setOpen(false);
+          }}
+        />
+      </Box>
       <DialogContent>
         <TextField
           autoFocus
@@ -87,7 +87,7 @@ function NewProjectModal({ open, setOpen, projects, setProjects }) {
           onChange={handleProjectDescription}
         />
         <Button
-          variant="outlined"
+          variant="contained"
           sx={{ mt: 2 }}
           onClick={() => {
             addNewProject(projectTitle, projectDescription);

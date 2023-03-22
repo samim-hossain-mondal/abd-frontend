@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DoneIcon from "@mui/icons-material/Done";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
 
 import { PropTypes } from "prop-types";
 import axios from "axios";
@@ -61,28 +61,32 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const editProjectDetails = (projectName, projectDescription, projectId) => {
+    if (projectName === "" || projectDescription === "") {
+      setError("Project name and description cannot be empty");
+      return;
+    }
     axios
       .patch(`http://localhost:3001/api/management/project/${projectId}`, {
         projectName,
         projectDescription,
       })
       .then(() => {
-        setSuccess("Project Updated Successfully");
+        setSuccess("Successfully Edited Project Details");
+        const index = projects.findIndex(
+          (project) => project.projectId === projectId
+        );
+        const newProjects = [...projects];
+        newProjects[index].projectName = projectName;
+        setProjects(newProjects);
+        setProjectInfo({
+          ...projectInfo,
+          projectName,
+          projectDescription,
+        });
       })
       .catch((error) => {
         setError(error.data.message);
       });
-    const index = projects.findIndex(
-      (project) => project.projectId === projectId
-    );
-    const newProjects = [...projects];
-    newProjects[index].projectName = projectName;
-    setProjects(newProjects);
-    setProjectInfo({
-      ...projectInfo,
-      projectName,
-      projectDescription,
-    });
   };
 
   const addCollaborator = (lock) => {
@@ -200,7 +204,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const removeCollaborator = (index) => {
-    if (projectInfo.projectMembers[index].email === "") {
+    if (
+      projectInfo.projectMembers[index].email === "" ||
+      projectInfo.projectMembers[index].role === ""
+    ) {
       setProjectInfo({
         ...projectInfo,
         projectMembers: [
@@ -284,6 +291,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       maxWidth="md"
       style={{
         display: "flex",
+        justifyContent: "center",
       }}
       PaperProps={{
         sx: {
@@ -291,9 +299,9 @@ function AccountSettingsModal({ open, setOpenSettings }) {
           top: "48%",
           left: "40%",
           transform: "translate(-50%, -50%)",
-          width: "80%",
-          maxWidth: "400px",
-          height: "500px",
+          width: "70%",
+          maxWidth: "300px",
+          height: "350px",
           p: 2,
         },
       }}
@@ -322,6 +330,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
               display: "flex",
               flexDirection: "column",
             }}
+            mb={4}
           >
             {projects &&
               projects.map((project) => (
@@ -334,9 +343,9 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 >
                   <Box sx={{ display: "flex" }}>
                     {project.projectId === selectedProject ? (
-                      <DoneIcon />
+                      <CheckBoxSharpIcon sx={{ color: "green" }} />
                     ) : (
-                      <DoneIcon style={{ visibility: "hidden" }} />
+                      <CheckBoxSharpIcon style={{ visibility: "hidden" }} />
                     )}
                   </Box>
                   <Box
@@ -347,10 +356,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
-                      // width: "70%",
                     }}
                   >
                     <Typography
+                      sx={{ fontSize: "20px" }}
                       onClick={() => {
                         handleSelectedProject(project.projectId);
                       }}
@@ -370,7 +379,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                         handleEditModel(project.projectId);
                       }}
                     >
-                      <VisibilityIcon />
+                      <ArrowForwardIcon />
                     </Typography>
                   </Box>
                 </Box>

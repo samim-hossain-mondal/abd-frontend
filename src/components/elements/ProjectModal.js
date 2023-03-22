@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Dialog,
-  DialogContent,
   TextField,
   Typography,
   Box,
@@ -9,13 +8,21 @@ import {
   Select,
   MenuItem,
   Button,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  Avatar,
+  Divider,
 } from "@mui/material";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+
 import { PropTypes } from "prop-types";
 
 function ProjectModal({
@@ -34,6 +41,28 @@ function ProjectModal({
   const [lock, setLock] = React.useState(true);
   const [name, setName] = React.useState(projectInfo.projectName);
   const [desc, setDesc] = React.useState(projectInfo.projectDescription);
+
+  const renderColor = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "red";
+      case "LEADER":
+        return "info.main";
+      case "MEMBER":
+        return "success.main";
+      default:
+        return "grey";
+    }
+  };
+
+  const emailInitals = (email) =>
+    email
+      .split("@")[0]
+      .split("_")
+      .map((n) => n.charAt(0))
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
 
   const projName = (title) => {
     setName(title);
@@ -55,9 +84,8 @@ function ProjectModal({
           position: "absolute",
           top: "48%",
           left: "69%",
+          right: "auto",
           transform: "translate(-50%, -50%)",
-          width: "80%",
-          maxWidth: "400px",
           p: 2,
         },
       }}
@@ -66,89 +94,232 @@ function ProjectModal({
         handleClose(false);
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "flex-start" }} pr={3} mt={2}>
-        {projectInfo.role === "ADMIN" || projectInfo.role === "LEADER" ? (
-          <DeleteIcon
+      <Grid
+        container
+        rowSpacing={1}
+        paddingTop="2%"
+        textAlign="center"
+        alignItems="center"
+      >
+        <Grid item xs={3}>
+          <IconButton
+            edge="start"
+            color="error"
+            aria-label="close"
             onClick={() => {
               handleDeleteProject(projectInfo.projectId);
             }}
-          />
-        ) : null}
-      </Box>
-      <Box display="flex" justifyContent="flex-end" pr={3} mt={2}>
-        {(projectInfo.role === "ADMIN" || projectInfo.role === "LEADER") &&
-        lock ? (
-          <EditIcon onClick={handleLock} />
-        ) : null}
-        <CloseIcon
-          onClick={() => {
-            handleClose(false);
-          }}
-        />
-      </Box>
-      <Typography variant="h5" ml={2.8}>
-        Project Details
-      </Typography>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Project Name"
-          type="text"
-          fullWidth
-          variant="standard"
-          value={name}
-          onChange={(e) => {
-            projName(e.target.value);
-          }}
-          disabled={lock}
-        />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="Project Description"
-          type="text"
-          fullWidth
-          variant="standard"
-          value={desc}
-          onChange={(e) => {
-            projDesc(e.target.value);
-          }}
-          disabled={lock}
-        />
+          >
+            <DeleteForeverRoundedIcon
+              sx={{
+                color: "secondary.main",
+                visibility:
+                  projectInfo.role === "ADMIN" || projectInfo.role === "LEADER"
+                    ? ""
+                    : "hidden",
+              }}
+            />
+          </IconButton>
+        </Grid>
+        <Grid item xs={5} sx={{ visibility: "hidden" }} />
+        <Grid item xs={2}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleLock}
+            aria-label="close"
+          >
+            <EditRoundedIcon
+              sx={{
+                visibility:
+                  (projectInfo.role === "ADMIN" ||
+                    projectInfo.role === "LEADER") &&
+                  lock
+                    ? ""
+                    : "hidden",
+              }}
+            />
+          </IconButton>
+        </Grid>
 
+        <Grid item xs={2}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={() => {
+              handleClose(false);
+            }}
+            aria-label="close"
+          >
+            <CloseIcon sx={{ color: "secondary.main" }} />
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Box mt={2}>
+        <Typography variant="h5" sx={{ fontWeight: 700, marginLeft: "20px" }}>
+          Project Details
+        </Typography>
+      </Box>
+      <Box
+        sx={{ position: "static", backgroundColor: "primary.contrastText" }}
+      />
+      <Box mt={2}>
+        <Typography
+          sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "5px" }}
+        >
+          Project Title
+        </Typography>
+        <List>
+          <ListItem>
+            <TextField
+              type="text"
+              variant="standard"
+              InputProps={{
+                disableUnderline: true,
+              }}
+              value={name}
+              sx={{
+                fontSize: "16px",
+                height: "20px",
+                width: "277px",
+                padding: "15px 20px",
+                border: "2px solid #ccc",
+                fontFamily: "Roboto, sans-serif",
+              }}
+              onChange={(e) => {
+                projName(e.target.value);
+              }}
+              disabled={lock}
+            />
+          </ListItem>
+        </List>
+      </Box>
+
+      <Box>
+        <Typography
+          sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "9px" }}
+        >
+          Project Description
+        </Typography>
+        <List>
+          <ListItem>
+            <TextField
+              type="text"
+              InputProps={{
+                disableUnderline: true,
+              }}
+              sx={{
+                multiline: true,
+                rows: 4,
+                fontSize: "16px",
+                lineHeight: "20px",
+                width: "280px",
+                height: "120px",
+                padding: "15px 20px",
+                border: "2px solid #ccc",
+                fontFamily: "Roboto, sans-serif",
+              }}
+              variant="standard"
+              value={desc}
+              onChange={(e) => {
+                projDesc(e.target.value);
+              }}
+              disabled={lock}
+            />
+          </ListItem>
+        </List>
+      </Box>
+      {!lock ? (
         <Box
+          mt={1}
+          pl={2}
+          pr={2}
           sx={{
             display: "flex",
-            flexDirection: "row",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
-          mt={1}
         >
-          <Typography sx={{ fontSize: "20px" }}>Collaborators</Typography>
-          <PersonAdd
+          <Button
+            sx={{ width: "45%" }}
+            variant="contained"
             onClick={() => {
-              addCollaborator(lock);
+              editProjectDetails(name, desc, projectInfo.projectId);
+              handleLock();
             }}
-          />
+          >
+            Save Changes
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ width: "50%" }}
+            onClick={handleCancelChanges}
+          >
+            Cancel Changes
+          </Button>
         </Box>
-        <Box
-          sx={{ display: "flex", flexDirection: "column" }}
-          className="collabBody"
-          mt={2}
-        >
-          {projectInfo &&
-            projectInfo.projectMembers.map((collaborator, index) => (
+      ) : null}
+      <br />
+      <Divider />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+        mt={1}
+      >
+        <Typography variant="h5">Collaborators</Typography>
+        <PersonAdd
+          onClick={() => {
+            addCollaborator(lock);
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: "20px",
+          marginTop: "20px",
+          overflow: "auto",
+        }}
+        className="collabBody"
+        mt={2}
+      >
+        {projectInfo &&
+          projectInfo.projectMembers.map((collaborator, index) => (
+            <Box sx={{ display: "flex" }} mb={2} className="collabRow">
               <Box
-                sx={{ display: "flex", justifyContent: "space-between" }}
-                className="collabRow"
+                className="collabAvatar"
+                mr={2}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignContent: "center",
+                }}
+              >
+                <Avatar
+                  sx={{
+                    backgroundColor: renderColor(collaborator.role),
+                    color: "#fff",
+                  }}
+                >
+                  {emailInitals(collaborator.email)}
+                </Avatar>
+              </Box>
+              <Box
+                className="collabDetails"
+                sx={{ display: "flex", flexDirection: "column" }}
               >
                 <Box sx={{ display: "flex" }} className="collabEmail">
                   <Input
+                    disableUnderline
+                    sx={{ height: "30px", width: "200px" }}
                     type="email"
-                    placeholder="Email"
+                    placeholder="xyz@gmail.com"
                     value={collaborator.email}
                     disabled={
                       lock ||
@@ -159,10 +330,41 @@ function ProjectModal({
                       handleEmailChange(event.target.value, index)
                     }
                   />
+
+                  {!lock ? (
+                    <Box
+                      className="collabIcon"
+                      ml={2}
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      {collaborator.isNew ? (
+                        <>
+                          <SaveIcon
+                            onClick={() => {
+                              handleSaveCollab(index);
+                            }}
+                          />
+                          <DeleteIcon
+                            onClick={() => {
+                              removeCollaborator(index);
+                            }}
+                          />
+                        </>
+                      ) : (
+                        collaborator.role !== "ADMIN" && (
+                          <DeleteIcon
+                            onClick={() => {
+                              removeCollaborator(index);
+                            }}
+                          />
+                        )
+                      )}
+                    </Box>
+                  ) : null}
                 </Box>
                 <Box className="collabRole">
                   <Select
-                    sx={{ height: "30px", width: "100px" }}
+                    sx={{ height: "30px", width: "200px" }}
                     value={collaborator.role}
                     onChange={(event) =>
                       handleRoleChange(
@@ -180,56 +382,10 @@ function ProjectModal({
                     ))}
                   </Select>
                 </Box>
-                {}
-                {!lock ? (
-                  <Box
-                    className="collabIcon"
-                    sx={{ display: "flex", alignItems: "center" }}
-                  >
-                    {collaborator.isNew ? (
-                      <>
-                        <SaveIcon
-                          onClick={() => {
-                            handleSaveCollab(index);
-                          }}
-                        />
-                        <DeleteIcon
-                          onClick={() => {
-                            removeCollaborator(index);
-                          }}
-                        />
-                      </>
-                    ) : (
-                      collaborator.role !== "ADMIN" && (
-                        <DeleteIcon
-                          onClick={() => {
-                            removeCollaborator(index);
-                          }}
-                        />
-                      )
-                    )}
-                  </Box>
-                ) : null}
               </Box>
-            ))}
-        </Box>
-        {!lock ? (
-          <Box mt={2} sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                editProjectDetails(name, desc, projectInfo.projectId);
-                handleLock();
-              }}
-            >
-              Save Project Changes
-            </Button>
-            <Button variant="contained" onClick={handleCancelChanges}>
-              Cancel Changes
-            </Button>
-          </Box>
-        ) : null}
-      </DialogContent>
+            </Box>
+          ))}
+      </Box>
     </Dialog>
   );
 }
