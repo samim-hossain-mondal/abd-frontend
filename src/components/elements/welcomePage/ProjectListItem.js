@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Collapse, IconButton } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Box, Collapse, IconButton, Tooltip } from "@mui/material";
+import { ExpandLess, ExpandMore, ArrowCircleRight } from "@mui/icons-material";
 import propTypes from "prop-types";
 
 function ProjectListItem({ project, handleProjectClick }) {
@@ -20,7 +20,6 @@ function ProjectListItem({ project, handleProjectClick }) {
         textAlign: "start",
         borderBottom: "1px solid white",
       }}
-      onClick={() => handleProjectClick(project.projectId)}
     >
       <Box
         component="p"
@@ -38,13 +37,30 @@ function ProjectListItem({ project, handleProjectClick }) {
         }}
       >
         {project.projectName}
-        <IconButton onClick={(e) => {
-            e.stopPropagation();
-            setShowDescription(!showDescription)
-            }
-        }>
-          {showDescription ? <ExpandLess /> : <ExpandMore />}
-        </IconButton>
+        <Box>
+          <Tooltip
+            title={showDescription ? "Hide Description" : "Show Description"}
+          >
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDescription(!showDescription);
+              }}
+            >
+              {showDescription ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Go to project dashboard">
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                handleProjectClick(project.projectId);
+              }}
+            >
+              <ArrowCircleRight backgroundColor='white'/>
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
       <Collapse in={showDescription} timeout="auto" unmountOnExit>
         <Box
@@ -57,8 +73,11 @@ function ProjectListItem({ project, handleProjectClick }) {
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
+            WebkitAlignContent: "start",
+            textAlign: "start",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            wordBreak: "break-word",
           }}
         >
           {project.projectDescription}

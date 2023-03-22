@@ -9,6 +9,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  useMediaQuery
 } from "@mui/material";
 import { useOktaAuth } from "@okta/okta-react";
 import propTypes from "prop-types";
@@ -19,6 +20,7 @@ const settings = ['Profile', 'Account Settings', 'Logout'];
 function StickyHeader({ userName }) {
   const { oktaAuth } = useOktaAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const isSmallerScreen = useMediaQuery('(min-width: 600px)');
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -35,20 +37,19 @@ function StickyHeader({ userName }) {
       component="header"
       sx={{
         py: 2,
-        px: 4,
+        px: isSmallerScreen ? 0 : 4,
         backgroundColor: "white",
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width: "99%",
+        width: "100%",
         alignSelf: "center",
-        borderRadius: 12,
+        // borderRadius: 12,
         boxShadow: 5,
         position: "sticky",
-        top: 5,
-        zIndex: 2,
-        transition: "background-color 1.5s ease-in-out",
+        top: 0,
+        zIndex: 99,
       }}
     >
       <Container
@@ -57,6 +58,7 @@ function StickyHeader({ userName }) {
           flexDirection: "row",
           alignItems: "center",
           margin: 0,
+          padding: 0,
         }}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
@@ -71,16 +73,15 @@ function StickyHeader({ userName }) {
           color="secondary.main"
           sx={{ marginLeft: 2, px: 0 }}
         >
-          My Agile Board
+          {isSmallerScreen ? 'My Agile Board' : ''}
         </Typography>
       </Container>
       <Box sx={{display: 'flex'}}>
       <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
+        <IconButton onClick={handleOpenUserMenu} sx={{ paddingRight: 2 }}>
+          <Avatar alt={userName} src="/static/images/avatar/2.jpg" sx={{height: 50, width: 50}}/>
         </IconButton>
       </Tooltip>
-      <Box component="p" sx={{paddingLeft: 1}}>{userName}</Box>
       </Box>
       <Menu
         id="menu-appbar"

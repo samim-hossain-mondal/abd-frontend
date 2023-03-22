@@ -8,6 +8,7 @@ import {
   Button,
   List,
   Paper,
+  useMediaQuery
 } from "@mui/material";
 import axios from "axios";
 import CardBox from "../elements/welcomePage/CardBox";
@@ -23,6 +24,10 @@ export default function WelcomePage() {
   const [userProjects, setUserProjects] = useState([]);
   const [user, setUser] = useState(null);
   const [stickyHeader, setStickyHeader] = useState(false);
+
+  const isSmallerScreen = useMediaQuery("(max-width: 600px)");
+  const showBio = !isSmallerScreen;
+  const showProjectList = userProjects.length > 0;
 
   useEffect(() => {
     const getUser = async () => {
@@ -41,7 +46,7 @@ export default function WelcomePage() {
 
   const handleScroll = () => {
     scrollRef.current = window.scrollY;
-    if (scrollRef.current > 400) {
+    if (scrollRef.current > 350) {
       setStickyHeader(true);
     } else {
       setStickyHeader(false);
@@ -97,7 +102,10 @@ export default function WelcomePage() {
         <Typography
           variant="h3"
           component="h3"
-          sx={{ mt: 3, mb: 5, alignSelf: "center", fontWeight: "bold" }}
+          sx={{ 
+            mt: 3, mb: 5, alignSelf: "center", fontWeight: "bold",
+            textAlign: "center", 
+          }}
         >
           {userProjects.length > 0
             ? `Welcome back, ${user.name} \u{1F44B}`
@@ -129,119 +137,124 @@ export default function WelcomePage() {
         maxWidth="lg"
       >
         <Stack
-          direction="row"
-          spacing={2}
-          sx={{ alignSelf: "center", width: "100%" }}
+      direction={isSmallerScreen ? "column" : "row"}
+      spacing={2}
+      sx={{ alignSelf: "center", width: "100%" }}
+    >
+      <ProfileCard
+        avatarUrl="/static/images/avatar/2.jpg"
+        name={user ? user.name : "Loading..."}
+        email={user ? user.email : "Loading..."}
+        bio={showBio ? `Part of ${userProjects.length} projects` : null}
+      />
+
+      {showProjectList ? (
+        <Box
+          component="main"
+          sx={{
+            mt: 8,
+            mb: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            border: "5px solid #e0e0e0",
+            borderRadius: 2,
+            paddingLeft: 0,
+            paddingRight: 0,
+            width: "100%",
+          }}
         >
-          <ProfileCard
-            avatarUrl="/static/images/avatar/2.jpg"
-            name={user ? user.name : "Loading..."}
-            email={user ? user.email : "Loading..."}
-            bio={`Part of ${userProjects.length} projects`}
-          />
-          {userProjects.length > 0 ? (
           <Box
-            component="main"
+            component="p"
             sx={{
-              mt: 8,
-              mb: 2,
+              fontSize: 20,
+              py: 1,
+              mt: 0,
+              mb: 0,
+              alignSelf: "center",
+              backgroundColor: "white",
+              width: "100%",
+              boxShadow: 2,
               display: "flex",
-              minWidth: "60%",
-              flexDirection: "column",
-              justifyContent: "center",
-              border: "5px solid #e0e0e0",
-              paddingLeft: 0,
-              paddingRight: 0,
+              justifyContent: "space-between",
             }}
           >
-            <Box
+            <Typography
               component="p"
               sx={{
                 fontSize: 20,
-                py: 1,
-                mt: 0,
-                mb: 0,
+                px: 1,
                 alignSelf: "center",
-                backgroundColor: "white",
+                fontWeight: "bold",
                 width: "100%",
-                boxShadow: 2,
               }}
             >
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: 18,
-                  px: 1,
-                  alignSelf: "center",
-                  fontWeight: "bold",
-                  width: "100%",
-                }}
-              >
-                  YOUR PROJECTS
-              </Typography>
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: 12,
-                  px: 1,
-                  alignSelf: "center",
-                  fontWeight: 100,
-                  width: "100%",
-                }}
-              >
-                {userProjects.length
-                  ? `Currently part of ${userProjects.length} projects`
-                  : ""}
-              </Typography>
-            </Box>
-            
-            <List
+              YOUR PROJECTS
+            </Typography>
+            <Typography
+              component="p"
               sx={{
+                fontSize: 15,
+                px: 1,
+                alignSelf: "center",
+                fontWeight: 100,
                 width: "100%",
-                overflowY: "scroll",
-                maxHeight: "300px",
-                padding: 0,
-                scrollBehavior: "smooth",
+                textAlign: "end",
+                color: "grey.500",
               }}
             >
-              {userProjects.map((project) => (
-                <ProjectListItem
-                  key={project.projectId}
-                  project={project}
-                  handleProjectClick={handleProjectClick}
-                />
-              ))}
-            </List>
+              {userProjects.length ? `${userProjects.length} PROJECTS` : "..."}
+            </Typography>
           </Box>
-          ) : (
-            <Paper
-              sx={{
-                mt: 8,
-                mb: 2,
-                display: "flex",
-                minWidth: "60%",
-                flexDirection: "column",
-                justifyContent: "center",
-                paddingLeft: 0,
-                paddingRight: 0,
-                backgroundColor: "grey.200",
-              }}
-            >
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: 20,
-                  px: 1,
-                  alignSelf: "center",
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                {texts.getStarted}
-              </Typography>
-            </Paper>
-          )}
-        </Stack>
+
+          <List
+            sx={{
+              width: "100%",
+              overflowY: "scroll",
+              maxHeight: "300px",
+              padding: 0,
+              scrollBehavior: "smooth",
+            }}
+          >
+            {userProjects.map((project) => (
+              <ProjectListItem
+                key={project.projectId}
+                project={project}
+                handleProjectClick={handleProjectClick}
+              />
+            ))}
+          </List>
+        </Box>
+      ) : null}
+
+      {!showProjectList && (
+        <Paper
+          sx={{
+            mt: 8,
+            mb: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingLeft: 0,
+            paddingRight: 0,
+            backgroundColor: "grey.200",
+          }}
+        >
+          <Typography
+            component="p"
+            sx={{
+              fontSize: 20,
+              px: 1,
+              alignSelf: "center",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {texts.getStarted}
+          </Typography>
+        </Paper>
+      )}
+    </Stack>
       </Container>
       <Box
         component="footer"
