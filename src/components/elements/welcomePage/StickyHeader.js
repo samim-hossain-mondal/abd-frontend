@@ -1,4 +1,3 @@
-/*eslint-disable*/
 import * as React from "react";
 import { useState } from "react";
 import {
@@ -11,8 +10,9 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import Logo from "../../../assets/images/agileLogo.png";
 import { useOktaAuth } from "@okta/okta-react";
+import propTypes from "prop-types";
+import Logo from "../../../assets/images/agileLogo.png";
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
@@ -74,11 +74,14 @@ function StickyHeader({ userName }) {
           My Agile Board
         </Typography>
       </Container>
+      <Box sx={{display: 'flex'}}>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
           <Avatar alt={userName} src="/static/images/avatar/2.jpg" />
         </IconButton>
       </Tooltip>
+      <Box component="p" sx={{paddingLeft: 1}}>{userName}</Box>
+      </Box>
       <Menu
         id="menu-appbar"
         sx={{ mt: "45px" }}
@@ -103,6 +106,10 @@ function StickyHeader({ userName }) {
       </Menu>
     </Box>
   );
+}
+
+StickyHeader.propTypes = {
+  userName: propTypes.string.isRequired,
 }
 
 export default StickyHeader;
