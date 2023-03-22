@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Security, LoginCallback, useOktaAuth } from '@okta/okta-react';
+import { Security, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -16,6 +16,7 @@ import AvailabilityCalendar from './components/routes/availabilityCalendar';
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
+import LoginCallbackPage from './components/elements/LoginCallbackPage';
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -67,7 +68,7 @@ function AppRoutes() {
           <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <PONotesContainer />}</SecureRoute>} />
           <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
           <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
-          <Route path='/login/callback' element={<LoginCallback />} />
+          <Route path='/login/callback' element={<LoginCallbackPage />} />
           {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
