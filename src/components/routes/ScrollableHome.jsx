@@ -15,9 +15,9 @@ function useIsInViewport(ref) {
   const observer = useMemo(
     () =>
       new IntersectionObserver(([entry]) =>
-        setIsIntersecting(entry.isIntersecting),
+        setIsIntersecting(entry.isIntersecting)
       ),
-    [],
+    []
   );
 
   useEffect(() => {
@@ -30,12 +30,18 @@ function useIsInViewport(ref) {
 
   return isIntersecting;
 }
-export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendarRef, handleScroll,scrollTo}) {
+export default function ScrollableHome({
+  poNotesRef,
+  dsmRef,
+  availabilityCalendarRef,
+  handleScroll,
+  scrollTo,
+}) {
   const dsmIsInViewPort = useIsInViewport(dsmRef);
   const poNotesIsInViewPort = useIsInViewport(poNotesRef);
   const availabilityIsInViewPort = useIsInViewport(availabilityCalendarRef);
 
-  useEffect(()=>{
+  useEffect(() => {
     switch (scrollTo) {
       case 'poNotes':
         handleScroll(poNotesRef);
@@ -43,36 +49,39 @@ export default function ScrollableHome({poNotesRef, dsmRef, availabilityCalendar
       case 'dsm':
         handleScroll(dsmRef);
         break;
-      case 'availabilityCalendar':  
+      case 'availabilityCalendar':
         handleScroll(availabilityCalendarRef);
         break;
       default:
         break;
-    };
-  },[scrollTo]);
+    }
+  }, [scrollTo]);
 
   return (
     <RefreshContextProvider>
       <Box>
         <div ref={dsmRef}>
           <DSMViewportContext.Provider value={dsmIsInViewPort}>
-              <HomeContainer/>
+            <HomeContainer />
           </DSMViewportContext.Provider>
         </div>
         <div ref={poNotesRef}>
           <PONotesViewportContext.Provider value={poNotesIsInViewPort}>
-            <PONotesContainer/>
+            <PONotesContainer />
           </PONotesViewportContext.Provider>
         </div>
         <div ref={availabilityCalendarRef}>
-          <AvailabilityCalendar/>
+          <AvailabilityCalendar />
         </div>
-        <FabRefresh poNotesIsInViewPort={poNotesIsInViewPort} dsmIsInViewPort={dsmIsInViewPort} availabilityIsInViewPort={availabilityIsInViewPort}/>
-    </Box>
+        <FabRefresh
+          poNotesIsInViewPort={poNotesIsInViewPort}
+          dsmIsInViewPort={dsmIsInViewPort}
+          availabilityIsInViewPort={availabilityIsInViewPort}
+        />
+      </Box>
     </RefreshContextProvider>
   );
-};
-
+}
 
 ScrollableHome.propTypes = {
   poNotesRef: PropTypes.instanceOf(Object),

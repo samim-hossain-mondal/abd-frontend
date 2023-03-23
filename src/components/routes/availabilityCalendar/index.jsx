@@ -2,9 +2,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { AppBar, Box, Dialog, Toolbar, Typography, Container, Grid } from '@mui/material';
-import axios from 'axios';
+import {
+  AppBar,
+  Box,
+  Dialog,
+  Toolbar,
+  Typography,
+  Container,
+  Grid,
+} from '@mui/material';
 import moment from 'moment';
+import { useParams } from 'react-router-dom';
 import { ErrorContext } from '../../contexts/ErrorContext';
 import { RefreshContext } from '../../contexts/RefreshContext';
 import GenericInputModal from '../../timeline/inputModal';
@@ -17,14 +25,21 @@ import {
   LOADING_TEXT,
   SNACKBAR_TEXT,
 } from '../../constants/Timeline/Calendar';
-import { DOMAIN } from '../../../config';
 import './availabilityCalendar.css';
+import makeRequest from '../../utilityFunctions/makeRequest';
+import {
+  CREATE_LEAVE,
+  DELETE_LEAVE,
+  GET_LEAVES,
+  UPDATE_LEAVE,
+} from '../../constants/apiEndpoints';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
 export default function AvailabilityCalendar() {
-  const [eventsData, setEventsData] = useState(null);
+  const { projectId } = useParams();
+  const [eventsData, setEventsData] = useState([]);
   const [inputModal, setInputModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -35,21 +50,19 @@ export default function AvailabilityCalendar() {
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
 
-  if(refresh.availabilityCalendar){
+  if (refresh.availabilityCalendar) {
     console.log('Handle Refresh For Calendar');
-    setRefresh(val=>({...val, availabilityCalendar: false}));
+    setRefresh((val) => ({ ...val, availabilityCalendar: false }));
   }
 
   const handleMount = async () => {
-    try{
-      const response = await axios.get(`${DOMAIN}/api/leaves`);
-      const {data} = response;
-      setEventsData(data);
+    try {
+      const resData = await makeRequest(GET_LEAVES(projectId));
+      setEventsData(resData);
+    } catch (err) {
+      setError((val) => val + err);
     }
-    catch(err){
-      setError(val=>val + err);
-    }
-  }
+  };
 
   useEffect(() => {
     handleMount();
@@ -82,27 +95,29 @@ export default function AvailabilityCalendar() {
 
   const handleAddEvent = async (event) => {
     const { content, startDate, endDate, isRisk } = event;
-    if(endDate<startDate){
-      setError(val=>`${val  } ${SNACKBAR_TEXT.DATE_ERROR}`);
+    if (endDate < startDate) {
+      setError((val) => `${val} ${SNACKBAR_TEXT.DATE_ERROR}`);
       handleInputModalClose();
       return;
     }
-    try{
-      const res = await axios.post(`${DOMAIN}/api/leaves`, {
+    try {
+      const reqBody = {
         event: content,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         isRisk,
+      };
+      const resData = await makeRequest(CREATE_LEAVE(projectId), {
+        data: reqBody,
       });
-      const newData = res.data;
+      const newData = resData;
       newData.startDate = new Date(newData.startDate);
       newData.endDate = new Date(newData.endDate);
       setEventsData([...eventsData, newData]);
       handleInputModalClose();
-      setSuccess(()=>SNACKBAR_TEXT.SUCCESS);
-    }
-    catch(err){
-      setError(val=>val + err);
+      setSuccess(() => SNACKBAR_TEXT.SUCCESS);
+    } catch (err) {
+      setError((val) => val + err);
     }
   };
 
@@ -122,45 +137,47 @@ export default function AvailabilityCalendar() {
 
   const handleEditEvent = async (editEvent) => {
     const { content, startDate, endDate, isRisk, defaultID } = editEvent;
-    if(endDate<startDate){
-      setError(val=>`${val  } ${SNACKBAR_TEXT.DATE_ERROR}`);
+    if (endDate < startDate) {
+      setError((val) => `${val} ${SNACKBAR_TEXT.DATE_ERROR}`);
       handleEditModalClose();
       return;
     }
-    try{
-      const res = await axios.put(`${DOMAIN}/api/leaves/${defaultID}`, {
+    try {
+      const reqBody = {
         event: content,
         startDate,
         endDate,
-        isRisk
+        isRisk,
+      };
+      const resData = await makeRequest(UPDATE_LEAVE(projectId, defaultID), {
+        data: reqBody,
       });
       const newEventsData = eventsData.map((event) => {
         if (event.leaveId === selectedEvent.leaveId) {
-          return res.data;
+          return resData;
         }
         return event;
       });
       setEventsData([...newEventsData]);
       handleEditModalClose();
-      setSuccess(()=>SNACKBAR_TEXT.SUCCESS);
-    }
-    catch(err){
-      setError(val=>val + err);
+      setSuccess(() => SNACKBAR_TEXT.SUCCESS);
+    } catch (err) {
+      setError((val) => val + err);
     }
   };
 
   const handleDeleteEvent = async (leaveId) => {
-    try{
-      await axios.delete(`${DOMAIN}/api/leaves/${leaveId}`);
+    try {
+      await makeRequest(DELETE_LEAVE(projectId, leaveId));
+      // const resData = await makeRequest(DELETE_LEAVE(projectId, leaveId));
       const newEventsData = eventsData.filter(
         (event) => event.leaveId !== leaveId
       );
       setEventsData([...newEventsData]);
       handleEditModalClose();
-      setSuccess(()=>SNACKBAR_TEXT.DELETE);
-    }
-    catch(err){
-      setError(val=>val + err);
+      setSuccess(() => SNACKBAR_TEXT.DELETE);
+    } catch (err) {
+      setError((val) => val + err);
     }
   };
 
@@ -177,21 +194,21 @@ export default function AvailabilityCalendar() {
 
     const style = !event.isRisk
       ? {
-        backgroundColor,
-        borderRadius: '0px',
-        opacity: 0.8,
-        color: 'white',
-        border: '0px',
-        display: 'block',
-      }
+          backgroundColor,
+          borderRadius: '0px',
+          opacity: 0.8,
+          color: 'white',
+          border: '0px',
+          display: 'block',
+        }
       : {
-        backgroundColor: 'red',
-        borderRadius: '0px',
-        opacity: 0.8,
-        color: 'white',
-        border: '0px',
-        display: 'block',
-      };
+          backgroundColor: 'red',
+          borderRadius: '0px',
+          opacity: 0.8,
+          color: 'white',
+          border: '0px',
+          display: 'block',
+        };
     return {
       style,
     };
@@ -200,16 +217,23 @@ export default function AvailabilityCalendar() {
   return eventsData ? (
     <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
       <Box>
-        <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
-          <Container maxWidth="xl">
+        <AppBar
+          position='static'
+          sx={{ background: 'transparent', boxShadow: 'none' }}>
+          <Container maxWidth='xl'>
             <Toolbar disableGutters>
-              <Box sx={{ display: {  md: 'flex' } }}>
+              <Box sx={{ display: { md: 'flex' } }}>
                 <Typography
-                  data-testid="poNotesIdentifier"
-                  variant="h5"
+                  data-testid='poNotesIdentifier'
+                  variant='h5'
                   noWrap
-                  sx={{ ml: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
-                >
+                  sx={{
+                    ml: 5,
+                    fontWeight: 500,
+                    letterSpacing: '.025rem',
+                    color: 'secondary.main',
+                    textDecoration: 'none',
+                  }}>
                   Availability Calendar
                 </Typography>
               </Box>
@@ -219,9 +243,10 @@ export default function AvailabilityCalendar() {
       </Box>
       <Grid backgroundColor='backgroundColor.main' height='100%'>
         <Box
-        sx={{
-          gap: '5vh', padding: '50px 50px 50px 50px',
-        }}>
+          sx={{
+            gap: '5vh',
+            padding: '50px 50px 50px 50px',
+          }}>
           <Calendar
             views={VIEWS}
             selectable
