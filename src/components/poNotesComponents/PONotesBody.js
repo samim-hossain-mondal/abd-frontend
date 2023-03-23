@@ -5,7 +5,7 @@ import PONotesGridLayout from './poNotesTables/PONotesGridLayout';
 
 export default function PONotesBody({ query }) {
   return (
-    <Grid >
+    <Grid>
       <Grid backgroundColor='backgroundColor.main' height='100%'>
         <PONotesGridLayout query={query} />
       </Grid>

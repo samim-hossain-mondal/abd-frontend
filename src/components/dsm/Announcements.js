@@ -9,10 +9,12 @@ import ChatContainer from '../elements/dsm/ChatContainer';
 import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER } from '../constants/dsm/Announcements';
+import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function Announcements() {
 
   const { setError, setSuccess } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
@@ -26,6 +28,11 @@ export default function Announcements() {
     setOpenAddModal(!openModal);
   }
 
+  if(refresh.announcement) {
+    console.log('handle announcement refresh');
+    setRefresh((prev) => ({...prev, announcement: false}));
+  }
+  
   const handleModalClose = () => {
     setOpenAddModal(false);
   }

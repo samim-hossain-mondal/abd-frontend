@@ -11,18 +11,18 @@ import { DOMAIN } from '../../config';
 import ChatContainer from '../elements/dsm/ChatContainer';
 import { getCurretUser } from '../utilityFunctions/User';
 import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, ERROR_MESSAGE, SUCCESS_MESSAGE, TITLE, PRIMARY_BUTTON_TEXT } from '../constants/dsm/Requests';
-
+import { RefreshContext } from '../contexts/RefreshContext';
 /*
 ISSUES: 
         1. someplace key is missing console is showing error
-        2. User must be able to tag user in request so we can use ReactTextAreaAutocomplete
 */
 
 export default function Requests() {
 
   const { setError, setSuccess } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
+  const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
 
-  const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandRequests = () => {
     dispatchGridHeight({ type: 'REQUEST' })
   };
@@ -33,6 +33,11 @@ export default function Requests() {
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
+
+  if(refresh.request){
+    console.log('Handle Refresh Request');
+    setRefresh(val => ({...val, request: false}));
+  }
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
