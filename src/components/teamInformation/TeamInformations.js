@@ -318,15 +318,24 @@ function CardList() {
         <Modal
           open={modalOpen}
           onClose={handleCloseModal}
-          sx={{ overflow: "scroll", width: "1700px", justifySelf: "center" }}
+          sx={{
+            overflow: "scroll",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
         >
           <Box
             style={{
-              position: "relative",
               top: "50%",
               left: "50%",
+              right: "50%",
               width: "35%",
-              transform: "translate(-50%, -50%)",
+              marginTop: "2%",
+              marginBottom: "2%",
+              height: "88%",
+              overflow: "scroll",
               backgroundColor: "#fff",
               padding: "1rem",
               borderRadius: "4px",
@@ -334,21 +343,25 @@ function CardList() {
           >
             <Box
               sx={{
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 width: "100%",
                 display: "flex",
                 columnGap: "2%",
               }}
             >
-              <IconButton edge="end" color="inherit" aria-label="close">
-                <DeleteForeverRoundedIcon onClick={handleDelete} />
-              </IconButton>
-              <IconButton color="inherit" aria-label="close">
-                <CloseIcon onClick={handleCloseModal} />
-              </IconButton>
+              <Box>
+                <Typography variant="h5">Details</Typography>
+              </Box>
+              <Box>
+                <IconButton edge="end" color="inherit" aria-label="close">
+                  <DeleteForeverRoundedIcon onClick={handleDelete} />
+                </IconButton>
+                <IconButton color="inherit" aria-label="close">
+                  <CloseIcon onClick={handleCloseModal} />
+                </IconButton>
+              </Box>
             </Box>
 
-            <Typography variant="h5">Details</Typography>
             <TextField
               label="Enter your full name"
               value={name}
@@ -388,7 +401,7 @@ function CardList() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
-              minRows={4}
+              minRows={13}
               className="my-textarea"
               style={{
                 fontFamily: "Roboto",
