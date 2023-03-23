@@ -19,11 +19,13 @@ import StickyHeader from "../elements/welcomePage/StickyHeader";
 import ProfileCard from "../elements/welcomePage/ProfileCard";
 import { DOMAIN } from "../../config";
 import ProjectListItem from "../elements/welcomePage/ProjectListItem";
+import NewProjectModal from "../elements/NewProjectModal";
 
 export default function WelcomePage() {
   const [userProjects, setUserProjects] = useState([]);
   const [user, setUser] = useState(null);
   const [stickyHeader, setStickyHeader] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
@@ -31,11 +33,11 @@ export default function WelcomePage() {
 
   useEffect(() => {
     const getUser = async () => {
-      const response = await axios.get(`${DOMAIN}/api/management/me`);
+      const response = await axios.get(`${DOMAIN}/api/management/me`); // TODO: use makeRequest
       setUser(response.data);
     };
     const getUserProjects = async () => {
-      const response = await axios.get(`${DOMAIN}/api/management/project`);
+      const response = await axios.get(`${DOMAIN}/api/management/project`); // TODO: use makeRequest
       setUserProjects(response.data);
     };
     getUser();
@@ -62,8 +64,13 @@ export default function WelcomePage() {
   }, []);
 
   const handleProjectClick = (projectId) => {
-    window.location.href = `/project/${projectId}`;
+    window.location.href = `/project/${projectId}`; // TODO:
   };
+
+  const handleCreateProjectClick = () => {
+    setShowCreateModal(true);
+  };
+
 
   return (
     <Box
@@ -277,10 +284,12 @@ export default function WelcomePage() {
         <Button
           variant="contained"
           sx={{ backgroundColor: "primary.main", color: "white" }}
+          onClick={handleCreateProjectClick}
         >
           Create New Project
         </Button>
       </Box>
+      <NewProjectModal open={showCreateModal} setOpen={setShowCreateModal} projects={userProjects} setProjects={setUserProjects} />
     </Box>
   );
 }

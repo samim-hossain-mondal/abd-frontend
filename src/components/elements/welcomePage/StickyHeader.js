@@ -14,19 +14,25 @@ import {
 import { useOktaAuth } from "@okta/okta-react";
 import propTypes from "prop-types";
 import Logo from "../../../assets/images/agileLogo.png";
+import AccountSettingsModal from "../AccountSettingsModal";
+
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 function StickyHeader({ userName }) {
   const { oktaAuth } = useOktaAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [openSettings, setOpenSettings] = useState(false);
   const isSmallerScreen = useMediaQuery('(min-width: 600px)');
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (event) => {
+    if (event.target.innerText === "Account Settings") {
+      setOpenSettings(true);
+    }
     setAnchorElUser(null);
   };
 
@@ -45,7 +51,6 @@ function StickyHeader({ userName }) {
         alignItems: "center",
         width: "100%",
         alignSelf: "center",
-        // borderRadius: 12,
         boxShadow: 5,
         position: "sticky",
         top: 0,
@@ -105,6 +110,7 @@ function StickyHeader({ userName }) {
           )
         )}
       </Menu>
+      <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
     </Box>
   );
 }
