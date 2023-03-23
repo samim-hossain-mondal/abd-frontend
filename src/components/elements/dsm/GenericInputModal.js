@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
 import { Box } from '@mui/system';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getAllUsers } from '../../utilityFunctions/User';
+import { ErrorContext } from '../../contexts/ErrorContext';
 
 function Item({ entity: { name, char } }) {
   return (
@@ -43,6 +45,7 @@ export default function GenericInputModal({
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
   const [users,setUsers] = useState([]);
+  const {setSuccess, setError} = useContext(ErrorContext);
 
   useEffect(()=>{
     setUsers(getAllUsers());
@@ -107,7 +110,21 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Typography variant="h5">{title}</Typography>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        mt: '8px'
+      }}>
+        <Typography variant="h5">{title}</Typography>
+        <ContentCopyIcon onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
+      </Box>
 
       {/* TextField */}
       <Box sx={{
