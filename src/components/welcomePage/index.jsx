@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef, useContext } from "react";
 import {
   Box,
   Typography,
@@ -10,39 +10,33 @@ import {
   Paper,
   useMediaQuery
 } from "@mui/material";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import CardBox from "../elements/welcomePage/CardBox";
 import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
 import ImageCarousel from "../elements/welcomePage/ImageCarousel";
 import StickyHeader from "../elements/welcomePage/StickyHeader";
 import ProfileCard from "../elements/welcomePage/ProfileCard";
-import { DOMAIN } from "../../config";
 import ProjectListItem from "../elements/welcomePage/ProjectListItem";
 import NewProjectModal from "../elements/NewProjectModal";
+import { ProjectUserContext } from "../contexts/ProjectUserContext";
+import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
-  const [userProjects, setUserProjects] = useState([]);
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { 
+    user, 
+    projects: userProjects, 
+    setProjects: setUserProjects,
+    updateProjectDetails,
+    setProjectId
+  } = useContext(ProjectUserContext);
+  
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
-
-  useEffect(() => {
-    const getUser = async () => {
-      const response = await axios.get(`${DOMAIN}/api/management/me`); // TODO: use makeRequest
-      setUser(response.data);
-    };
-    const getUserProjects = async () => {
-      const response = await axios.get(`${DOMAIN}/api/management/project`); // TODO: use makeRequest
-      setUserProjects(response.data);
-    };
-    getUser();
-    getUserProjects();
-  }, []);
-
   const scrollRef = useRef(0);
 
   const handleScroll = () => {
@@ -62,8 +56,16 @@ export default function WelcomePage() {
     };
   }, []);
 
-  const handleProjectClick = (projectId) => {
-    window.location.href = `/project/${projectId}`; // TODO:
+  const handleProjectClick = async (projectId) => {
+    console.log("Project Clicked", projectId);
+    setProjectId(projectId);
+    updateProjectDetails()
+      .then(() => {
+        navigate(`/${projectId}`.concat(HOME_ROUTE));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleCreateProjectClick = () => {
@@ -225,7 +227,7 @@ export default function WelcomePage() {
               <ProjectListItem
                 key={project.projectId}
                 project={project}
-                handleProjectClick={handleProjectClick}
+                handleProjectClick={() => handleProjectClick(project.projectId)}
               />
             ))}
           </List>
@@ -292,7 +294,6 @@ export default function WelcomePage() {
         setOpen={setShowCreateModal}  
         projects={userProjects} 
         setProjects={setUserProjects} 
-        
       />
     </Box>
   );
