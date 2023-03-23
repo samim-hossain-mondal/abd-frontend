@@ -3,13 +3,19 @@ import { Dialog } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
-import axios from 'axios'
+import { useParams } from 'react-router-dom'
 import CelebrationGenericModal from '../elements/dsm/CelebrationGenericModal'
-import { DOMAIN } from '../../config'
 import { ErrorContext } from '../contexts/ErrorContext'
+import makeRequest from '../utilityFunctions/makeRequest'
+import { DELETE_CELEBRATION, UPDATE_CELEBRATION } from '../constants/apiEndpoints'
+import { SUCCESS_MESSAGE } from '../constants/dsm'
+import { GENERIC_NAME } from "../constants/dsm/Celebrations";
+import { ProjectUserContext } from '../contexts/ProjectUserContext'
 
-export default function UpdateCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, updateCelebrationOnSubmit }) {
+export default function UpdateCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, updateCelebrationOnSubmit, onDeleteCelebration }) {
   const [preview, setPreview] = useState(false);
+  const { user } = useContext(ProjectUserContext)
+  const { projectId } = useParams()
   const { setError, setSuccess } = useContext(ErrorContext)
 
   const [lock, setLock] = useState(true);
@@ -22,35 +28,37 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
 
   const updateCelebrationToDB = async () => {
     try {
-      const res = await axios.patch(`${DOMAIN}/api/dsm/celebrations/${newCelebration.celebrationId}`, {
+      const reqBody = {
         content: newCelebration.content,
         type: newCelebration.type,
         isAnonymous: newCelebration.anonymous
-      });
-      setSuccess(() => 'Celebration Updated Successfully!');
-      return res.data;
+      }
+      const resData = await makeRequest(UPDATE_CELEBRATION(projectId, newCelebration.celebrationId), { data: reqBody })
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
+      return resData;
     }
     catch (err) {
       console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   }
 
   const deleteCelebrationToDB = async () => {
     try {
-      const res = await axios.delete(`${DOMAIN}/api/dsm/celebrations/${newCelebration.celebrationId}`);
-      setSuccess(() => 'Celebration Deleted Successfully!');
-      return res.data;
+      const resData = await makeRequest(DELETE_CELEBRATION(projectId, newCelebration.celebrationId));
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
+      return resData;
     }
     catch (err) {
       console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   }
 
   const handleDelete = async () => {
+    onDeleteCelebration(newCelebration.celebrationId)
     await deleteCelebrationToDB()
   }
 
@@ -80,7 +88,7 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
           isPreview={preview}
           lock={lock}
           setLock={setLock}
-          update
+          update={true && user.memberId === newCelebration.memberId}
           handleDelete={handleDelete}
         />
       </Dialog>
@@ -92,11 +100,13 @@ UpdateCelebrationModal.propTypes = {
   openModal: PropTypes.bool.isRequired,
   setOpenModal: PropTypes.func.isRequired,
   newCelebration: PropTypes.shape({
-    celebrationId: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    anonymous: PropTypes.bool.isRequired,
+    celebrationId: PropTypes.number,
+    type: PropTypes.string,
+    content: PropTypes.string,
+    anonymous: PropTypes.bool,
+    memberId: PropTypes.number
   }).isRequired,
   setNewCelebration: PropTypes.func.isRequired,
   updateCelebrationOnSubmit: PropTypes.func.isRequired,
+  onDeleteCelebration: PropTypes.func.isRequired
 }

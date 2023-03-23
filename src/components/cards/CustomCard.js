@@ -6,26 +6,19 @@ import {
 }
   from '@mui/material';
 import stc from 'string-to-color';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
 import { collaborators } from '../constants/PONotes';
-import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import PreventParentClick from '../utilityFunctions/PreventParentClick';
+import makeRequest from '../utilityFunctions/makeRequest';
+import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import stringAvatar from '../utilityFunctions/getStringColor';
 
-const stringToColor = (string) => (stc(string))
-function stringAvatar(name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-  };
-}
 
 const Cards = styled(Card)(() => ({
   width: 'auto',
@@ -41,6 +34,7 @@ export default function CustomCard({ checkBox, data, type }) {
   const [checked, setChecked] = useState(data.status === STATUS.completed);
   const { setError, setSuccess } = React.useContext(ErrorContext);
   const [open, setOpen] = React.useState(false);
+  const { projectId } = useParams()
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,12 +55,13 @@ export default function CustomCard({ checkBox, data, type }) {
     try {
       handleClose();
       const body = { 'status': !status ? STATUS.completed : STATUS.pending }
-      await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body)
+      await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
       setSuccess(`Suceessfully marked as ${!status ? STATUS.completed : STATUS.pending}`)
       setChecked(!status)
+
     }
-    catch (er) {
-      setError(`${er.message}Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
+    catch (err) {
+      setError(`${err.message} Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
     }
   }
 
@@ -140,7 +135,7 @@ export default function CustomCard({ checkBox, data, type }) {
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Stack direction="row" spacing={-1} mb={4} pl={1}>
                   {/* eslint-disable-next-line react/no-array-index-key */}
-                  {collaborators.map((names, idx) => <Avatar key={idx + 1} {...stringAvatar(names)} />)}
+                  {collaborators.map((names, idx) => <Avatar key={idx + 1} {...stringAvatar(names, stc)} />)}
                 </Stack>
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
