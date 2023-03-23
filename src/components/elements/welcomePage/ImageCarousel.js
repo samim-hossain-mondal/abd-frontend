@@ -2,11 +2,10 @@ import React from "react";
 import { Box } from "@mui/material";
 import Carousel from "react-material-ui-carousel"; // eslint-disable-line import/no-extraneous-dependencies
 import PropTypes from "prop-types";
-import Image from 'mui-image'
+import Image from "mui-image";
 import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
-  console.log(image);
   return (
     <Box
       component="card"
@@ -36,37 +35,19 @@ function Item({ title, description, image }) {
       >
         {title}
       </Box>
-      {/* <Box
-        component="img"
-        sx={{
-          width: "100%",
-          height: "100%",
-          maxHeight: "1000px",
-          maxWidth: "1000px",
-          margin: 2,
-        }}
-        src={image}
-        alt="image"
-      /> */}
       <Image
         src={image}
         height="100%"
         width="100%"
         fit="cover"
-        // duration={
-        // 3000
-        // }
-        // easing=
-        // cubic-bezier(0.7, 0, 0.6, 1)
+        duration={3000}
+        easing="cubic-bezier(0.7, 0, 0.6, 1)"
         showLoading
         errorIcon
         shift={null}
         distance="100px"
-        shiftDuration={
-          900
-        }
+        shiftDuration={900}
         bgColor="inherit"
-
       />
       <Box
         component="p"
