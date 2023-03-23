@@ -1,18 +1,20 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Transition from '../utilityFunctions/OverlayTransition';
 import Timeline from '../utilityFunctions/Timeline';
-import { DOMAIN } from '../../config';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
 import { ErrorContext } from '../contexts/ErrorContext';
 import DeleteDialog from '../elements/DeleteDialog';
 import RichTextArea from '../elements/RichTextArea';
+import makeRequest from '../utilityFunctions/makeRequest';
+import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import { SUCCESS_MESSAGE } from '../constants/dsm';
+import { GENERIC_NAME } from '../constants/PONotes';
 
 const getNextDate = (days) => {
   const date = new Date();
@@ -33,10 +35,9 @@ const getISODateToTimlineFormat = (isoDate = '') => {
 };
 
 export default function PONotesDialog({ updateItem, data, open, handleClose }) {
-
   const { setError, setSuccess } = useContext(ErrorContext);
   const [lock, setLock] = useState(updateItem)
-
+  const { projectId } = useParams();
   const [timeline, setTimeline] =
     useState(
       updateItem ?
@@ -73,18 +74,16 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
 
       if (updateItem) {
-        await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body);
-        const response = 'Note UPDATED successfully';
-        setSuccess(() => response);
+        await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body })
+        setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       }
       else {
-        await axios.post(`${DOMAIN}/api/po-notes`, body);
-        const response = 'Note ADDED successfully';
-        setSuccess(() => response);
+        await makeRequest(CREATE_PO_NOTE(projectId), { data: body })
+        setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
       }
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
     }
     finally {
       if (updateItem) setLock(true);
@@ -120,12 +119,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
   }
   const handleDelete = async () => {
     try {
-      await axios.delete(`${DOMAIN}/api/po-notes/${data.noteId}`);
-      const response = 'Note DELETED successfully';
-      setSuccess(() => response);
+      await makeRequest(DELETE_PO_NOTE(projectId))
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
     }
     finally {
       setDeleteAlert(() => false);
@@ -232,37 +230,31 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
         </Box>
         {isPublish() && (<Box>
           {(statement.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton1' onClick={handlePublish} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Publish
-                </Button>
-              </Box>
-            </Link>
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton1' onClick={handlePublish} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Publish
+              </Button>
+            </Box>
           }
         </Box>
         )}
         {isSave() && (<Box>
           {(statement.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Save
-                </Button>
-              </Box>
-            </Link>
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Save
+              </Button>
+            </Box>
           }
         </Box>
         )}
         {isSaveDraft() && (<Box>
           {(statement.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Save as Draft
-                </Button>
-              </Box>
-            </Link>
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Save as Draft
+              </Button>
+            </Box>
           }
         </Box>
         )}
