@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Security, LoginCallback, useOktaAuth } from '@okta/okta-react';
+import { Security, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -20,6 +20,7 @@ import ScrollableHome from './components/routes/ScrollableHome'
 import { CALENDAR_ROUTE, HOME_ROUTE, MADE_TO_STICK_ROUTE, OUR_TEAM_ROUTE, PO_NOTE_ROUTE, WELCOME_ROUTE } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
+import LoginCallbackPage from './components/elements/LoginCallbackPage';
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -86,7 +87,7 @@ function AppRoutes() {
           <Route path={`/:projectId${PO_NOTE_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes' />}</SecureRoute>} />
           <Route path={`/:projectId${CALENDAR_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar' />}</SecureRoute>} />
           <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && < WelcomePage />}</SecureRoute>} />
-          <Route path='/login/callback' element={<LoginCallback />} />
+          <Route path='/login/callback' element={<LoginCallbackPage />} />
           {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
