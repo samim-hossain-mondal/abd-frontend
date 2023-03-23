@@ -82,7 +82,7 @@ export default function PONotesHeader({ query, setQuery }) {
             
           </Box>
           <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <AddPONotes/>
+            <AddPONotes />
           </Box>
           
         </Toolbar>

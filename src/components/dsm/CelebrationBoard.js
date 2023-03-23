@@ -1,21 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import Masonry from '@mui/lab/Masonry';
-import axios from 'axios';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useQuery } from 'react-query';
+import { useParams } from 'react-router-dom';
 import CelebrationCard from './CelebrationCard';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
-import { DOMAIN } from '../../config';
+import { REFETCH_INTERVAL } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import AddCelebrationModal from './AddCelebrationModal';
-import { celebrationTypes } from '../constants/DSM';
+import { celebrationTypes } from '../constants/dsm/Celebrations';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { GET_CELEBRATIONS } from '../constants/apiEndpoints';
 import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function CelebrationBoard() {
+  const { projectId } = useParams();
   const { setError } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
@@ -29,9 +32,9 @@ export default function CelebrationBoard() {
     anonymous: false
   });
 
-  if(refresh.celebration){
-    console.log('handle celebration refresh');
-    setRefresh(val => ({...val, celebration: false}));
+  const onDeleteCelebration = (celebrationId) => {
+    const updatedCelebrations = celebrations.filter(celebration => celebration.celebrationId !== celebrationId)
+    setCelebrations(updatedCelebrations);
   }
 
   const resetModal = () => {
@@ -54,27 +57,40 @@ export default function CelebrationBoard() {
 
   const getCelebrations = async () => {
     try {
-      const res = await axios.get(`${DOMAIN}/api/dsm/celebrations`);
-      return res.data;
+      const resData = await makeRequest(GET_CELEBRATIONS(projectId))
+      return resData;
     }
     catch (err) {
       console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return [];
     }
   }
 
+  if (refresh.celebration) {
+    getCelebrations().then(resData => {
+      setCelebrations(resData);
+    })
+    setRefresh(val => ({ ...val, celebration: false }));
+  }
+
+  useEffect(() => {
+    getCelebrations().then((_celebrations) => {
+      setCelebrations(_celebrations);
+    })
+  }, [])
+
   const { error, isError, isLoading } = useQuery(celebrations, async () => {
-    if(DSMInViewPort){
-      const res = await getCelebrations();
-      setCelebrations(res);
-      return res
+    console.log("DSMInViewPort Celebration >>>>", DSMInViewPort);
+    if (DSMInViewPort) {
+      const resData = await getCelebrations();
+      setCelebrations(resData);
+      return resData;
     }
-    setCelebrations([]);
     return [];
   },
     {
-      refetchInterval: 5000,
+      refetchInterval: REFETCH_INTERVAL,
     }
   );
   if (isLoading) {
@@ -123,7 +139,11 @@ export default function CelebrationBoard() {
         <AccordionDetails>
           <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} spacing={2}>
             {celebrations.map((celebration) => (
-              <CelebrationCard celebration={celebration} />
+              <CelebrationCard
+                celebration={celebration}
+                isPreview={false}
+                onDeleteCelebration={onDeleteCelebration}
+              />
             ))}
           </Masonry>
         </AccordionDetails>
@@ -134,6 +154,8 @@ export default function CelebrationBoard() {
         setOpenModal={setOpenAddModal}
         newCelebration={newCelebration}
         setNewCelebration={setNewCelebration}
+        setCelebrations={setCelebrations}
+        celebrations={celebrations}
       />
     </Grid >
   );

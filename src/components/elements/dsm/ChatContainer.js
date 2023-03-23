@@ -11,6 +11,7 @@ export default function ChatContainer({ name, src, content, date, onClick }) {
         display: 'flex',
         flexDirection: 'row',
         gap: '8px',
+        cursor: 'pointer',
       }}
       onClick={onClick}
     >

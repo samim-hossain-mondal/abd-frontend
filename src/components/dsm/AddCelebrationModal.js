@@ -2,13 +2,17 @@ import { Dialog } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
-import axios from 'axios'
+import { useParams } from 'react-router-dom'
 import CelebrationGenericModal from '../elements/dsm/CelebrationGenericModal'
-import { DOMAIN } from '../../config'
 import { ErrorContext } from '../contexts/ErrorContext'
+import makeRequest from '../utilityFunctions/makeRequest/index'
+import { CREATE_CELEBRATION } from '../constants/apiEndpoints'
+import { SUCCESS_MESSAGE } from '../constants/dsm/index'
+import { GENERIC_NAME } from '../constants/dsm/Celebrations'
 
-export default function AddCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, resetModal }) {
+export default function AddCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, resetModal, setCelebrations, celebrations }) {
   const [preview, setPreview] = useState(false);
+  const { projectId } = useParams()
   const { setError, setSuccess } = useContext(ErrorContext)
 
   const handleModalClose = () => {
@@ -17,17 +21,20 @@ export default function AddCelebrationModal({ openModal, setOpenModal, newCelebr
 
   const addCelebrationToDB = async () => {
     try {
-      const res = await axios.post(`${DOMAIN}/api/dsm/celebrations`, {
+      const reqBody = {
         content: newCelebration.content,
         type: newCelebration.type,
         isAnonymous: newCelebration.anonymous
-      });
-      setSuccess(() => 'Celebration Created Successfully!');
-      return res.data;
+      }
+      const resData = await makeRequest(CREATE_CELEBRATION(projectId), { data: reqBody })
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
+      const newCelebrations = [...celebrations, resData]
+      setCelebrations(newCelebrations)
+      return resData;
     }
     catch (err) {
       console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   }
@@ -72,4 +79,11 @@ AddCelebrationModal.propTypes = {
   }).isRequired,
   setNewCelebration: PropTypes.func.isRequired,
   resetModal: PropTypes.func.isRequired,
+  setCelebrations: PropTypes.func.isRequired,
+  celebrations: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number,
+    content: PropTypes.string,
+    type: PropTypes.string,
+    isAnonymous: PropTypes.bool
+  })).isRequired
 }

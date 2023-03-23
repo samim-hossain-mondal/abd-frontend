@@ -5,14 +5,16 @@ import {
   Checkbox, styled, Tooltip, Link
 }
   from '@mui/material';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
-import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
+
 
 const Cards = styled(Card)(() => ({
   width: 'auto',
@@ -28,6 +30,7 @@ export default function CustomCard({ checkBox, data, type }) {
   const [checked, setChecked] = useState(data.status === STATUS.completed);
   const { setError, setSuccess } = React.useContext(ErrorContext);
   const [open, setOpen] = React.useState(false);
+  const { projectId } = useParams()
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -48,12 +51,13 @@ export default function CustomCard({ checkBox, data, type }) {
     try {
       handleClose();
       const body = { 'status': !status ? STATUS.completed : STATUS.pending }
-      await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body)
+      await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
       setSuccess(`Suceessfully marked as ${!status ? STATUS.completed : STATUS.pending}`)
       setChecked(!status)
+
     }
-    catch (er) {
-      setError(`${er.message}Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
+    catch (err) {
+      setError(`${err.message} Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
     }
   }
 
@@ -120,7 +124,6 @@ export default function CustomCard({ checkBox, data, type }) {
             <Box>
               {renderdueDate()}
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Box />
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
             </Box>

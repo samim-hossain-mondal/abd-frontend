@@ -1,16 +1,16 @@
 /* eslint-disable react/forbid-prop-types */
 import { List, ListItem, ListItemButton, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import emoji from '@jukben/emoji-search';
 import { Box } from '@mui/system';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import Proptypes from 'prop-types';
-import { getAllUsers } from '../utilityFunctions/User';
+import { getAllMembersData } from '../utilityFunctions/User';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 function Loading() {
   return <Box>Loading...</Box>;
 }
-
 
 function Item({ entity: { name, char } }) {
   return (
@@ -28,14 +28,15 @@ function Item({ entity: { name, char } }) {
 export default function RichTextArea({ value, placeholder, setContent, sx, disabled, enableTag }) {
 
   const [users, setUsers] = useState([]);
+  const { projectDetails } = useContext(ProjectUserContext);
 
   useEffect(() => {
-    setUsers(getAllUsers());
-  }, []);
+    setUsers(getAllMembersData(projectDetails?.projectMembers ?? []));
+  }, [projectDetails]);
 
   const getSimilarUsers = (text) => {
-    const similarUsers = users.filter((user) => user.toLowerCase().includes(text.toLowerCase()));
-    return similarUsers.map((user) => ({ name: user, char: '@' }));
+    const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));
+    return similarUsers.map((user) => ({ name: user.email, char: '@' }));
   }
 
   return (
