@@ -85,9 +85,8 @@ function AppRoutes() {
           <Route path={`/:projectId${OUR_TEAM_ROUTE}`} exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path={`/:projectId${PO_NOTE_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes' />}</SecureRoute>} />
           <Route path={`/:projectId${CALENDAR_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar' />}</SecureRoute>} />
-          <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && <h1>Hey Hi, WELCOME</h1>}</SecureRoute>} />
+          <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && < WelcomePage />}</SecureRoute>} />
           <Route path='/login/callback' element={<LoginCallback />} />
-          <Route path='/welcome' exact element={<SecureRoute>{authLoaded && < WelcomePage />}</SecureRoute>} /> 
           {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
