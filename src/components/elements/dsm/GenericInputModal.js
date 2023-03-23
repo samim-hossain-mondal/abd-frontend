@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { Button, IconButton, Typography, List, ListItem, ListItemButton } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
+
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
@@ -10,6 +12,7 @@ import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getAllMembersData } from '../../utilityFunctions/User';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
+import { ErrorContext } from '../../contexts/ErrorContext';
 
 function Item({ entity: { name, char } }) {
   return (
@@ -47,6 +50,7 @@ export default function GenericInputModal({
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
+  const {setSuccess, setError} = useContext(ErrorContext);
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
@@ -111,7 +115,21 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Typography variant="h5">{title}</Typography>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        mt: '8px'
+      }}>
+        <Typography variant="h5">{title}</Typography>
+        <ContentCopyIcon onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
+      </Box>
 
       {/* TextField */}
       <Box sx={{
