@@ -17,24 +17,24 @@ import RichTextArea from '../elements/RichTextArea';
 const getNextDate = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
-  const dateString = date.toISOString().substring(0, date.toISOString().indexOf('T'));
+  const dateString = date
+    .toISOString()
+    .substring(0, date.toISOString().indexOf("T"));
   return dateString;
 };
 
 const getISODateToTimlineFormat = (isoDate = '') => {
   try {
-    const dateString = isoDate.substring(0, isoDate.indexOf('T'));
+    const dateString = isoDate.substring(0, isoDate.indexOf("T"));
     return dateString || null;
+  } catch (er) {
+    return null;
   }
-  catch (er) {
-    return null
-  }
-
 };
 
 export default function PONotesDialog({ updateItem, data, open, handleClose }) {
   const { setError, setSuccess } = useContext(ErrorContext);
-  const [lock, setLock] = useState(updateItem)
+  const [lock, setLock] = useState(updateItem);
 
   const [timeline, setTimeline] =
     useState(
@@ -52,14 +52,12 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
   const isPublished = () => data?.status !== 'DRAFT'
 
-  const isSave = () => updateItem
-  const isSaveDraft = () => (isPublished() || !updateItem)
-  const isPublish = () => (!isPublished() || !updateItem)
-
-
+  const isSave = () => updateItem;
+  const isSaveDraft = () => isPublished() || !updateItem;
+  const isPublish = () => !isPublished() || !updateItem;
 
   const handleSubmit = async (status) => {
-    setLock(val => !val);
+    setLock((val) => !val);
     try {
 
       let body =
@@ -76,31 +74,27 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
       if (updateItem) {
         await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body);
-        const response = 'Note UPDATED successfully';
+        const response = "Note UPDATED successfully";
         setSuccess(() => response);
-      }
-      else {
+      } else {
         await axios.post(`${DOMAIN}/api/po-notes`, body);
-        const response = 'Note ADDED successfully';
+        const response = "Note ADDED successfully";
         setSuccess(() => response);
       }
-    }
-    catch (err) {
-      setError(val => val + err);
-    }
-    finally {
+    } catch (err) {
+      setError((val) => val + err);
+    } finally {
       if (updateItem) setLock(true);
       else {
-        setLock(val => !val);
-        setStatement(() => '');
+        setLock((val) => !val);
+        setStatement(() => "");
       }
       handleClose();
     }
   };
 
-
   const handleDraft = () => {
-    handleSubmit('DRAFT');
+    handleSubmit("DRAFT");
   };
 
   const handleSave = () => {
@@ -119,21 +113,19 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
   const handleDeleteAlert = () => {
     setDeleteAlert(true);
-  }
+  };
   const handleDelete = async () => {
     try {
       await axios.delete(`${DOMAIN}/api/po-notes/${data.noteId}`);
-      const response = 'Note DELETED successfully';
+      const response = "Note DELETED successfully";
       setSuccess(() => response);
-    }
-    catch (err) {
-      setError(val => val + err);
-    }
-    finally {
+    } catch (err) {
+      setError((val) => val + err);
+    } finally {
       setDeleteAlert(() => false);
       handleClose();
     }
-  }
+  };
 
   return (
     <Box>
@@ -144,7 +136,13 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
+        <Grid
+          container
+          rowSpacing={1}
+          paddingTop="2%"
+          textAlign="center"
+          alignItems="center"
+        >
           <Grid item xs={3}>
             <IconButton
               edge="start"
@@ -175,13 +173,19 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
               onClick={handleClose}
               aria-label="close"
             >
-              <CloseIcon sx={{ color: 'secondary.main' }} />
+              <CloseIcon sx={{ color: "secondary.main" }} />
             </IconButton>
           </Grid>
         </Grid>
-        <Box sx={{ position: 'static', backgroundColor: 'primary.contrastText' }} />
+        <Box
+          sx={{ position: "static", backgroundColor: "primary.contrastText" }}
+        />
         <Box>
-          <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '1px' }}>PO Note Type</Typography>
+          <Typography
+            sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "1px" }}
+          >
+            PO Note Type
+          </Typography>
           <List>
             <ListItem>
               <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
@@ -196,9 +200,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
                     onChange={handleNoteType}
                     disabled={lock}
                   >
-                    <MenuItem value='ACTION_ITEM'>Action Item</MenuItem>
-                    <MenuItem value='KEY_DECISION'>Key Decision</MenuItem>
-                    <MenuItem value='AGENDA_ITEM'>Agenda Item</MenuItem>
+                    <MenuItem value="ACTION_ITEM">Action Item</MenuItem>
+                    <MenuItem value="KEY_DECISION">Key Decision</MenuItem>
+                    <MenuItem value="AGENDA_ITEM">Agenda Item</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -206,7 +210,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
           </List>
         </Box>
         <Box>
-          <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }}>Smart Statement</Typography>
+          <Typography
+            sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "20px" }}
+          >
+            Smart Statement
+          </Typography>
           <List>
             <ListItem>
               <RichTextArea
@@ -245,19 +253,34 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
           </List>
         </Box>}
         <Box>
-          {type === 'ACTION_ITEM' && <Timeline isSubmit={lock} timeline={timeline} setTimeline={setTimeline} />}
+          {type === "ACTION_ITEM" && (
+            <Timeline
+              isSubmit={lock}
+              timeline={timeline}
+              setTimeline={setTimeline}
+            />
+          )}
         </Box>
-        {isPublish() && (<Box>
-          {(statement.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton1' onClick={handlePublish} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Publish
-                </Button>
-              </Box>
-            </Link>
-          }
-        </Box>
+        {isPublish() && (
+          <Box>
+            {statement.trim() !== "" && !lock && (
+              <Link style={{ textDecoration: "none" }} to="/po-notes">
+                <Box
+                  textAlign="center"
+                  sx={{ marginTop: "6px", marginBottom: "6px" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="customButton1"
+                    onClick={handlePublish}
+                    sx={{ borderRadius: "8px", width: "292px", heigth: "49px" }}
+                  >
+                    Publish
+                  </Button>
+                </Box>
+              </Link>
+            )}
+          </Box>
         )}
         {isSave() && (<Box>
           {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
@@ -283,7 +306,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
           }
         </Box>
         )}
-      </Dialog >
+      </Dialog>
     </Box>
   );
 };

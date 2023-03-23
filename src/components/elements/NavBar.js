@@ -1,3 +1,7 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/jsx-no-bind */
 import React, { useState } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -10,6 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import MenuIcon from '@mui/icons-material/Menu';
 import Logo from '../../assets/images/agileLogo.png';
+import AccountSettingsModal from './AccountSettingsModal';
 
 const pages = ['Home', 'Our Teams',
   'Made To Stick'];
@@ -27,16 +32,24 @@ export default function Navbar({authLoaded}) {
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
   };
+  const [openSettings, setOpenSettings] = useState(false);
+
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (event) => {
+    if (event.target.innerText === "Account Settings") {
+      setOpenSettings(true);
+    }
     setAnchorElUser(null);
   };
 
   const location = useLocation();
   return (
-    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
+    <AppBar
+      position="static"
+      sx={{ background: "transparent", boxShadow: "none" }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex'}}>
           <Box
@@ -114,6 +127,8 @@ export default function Navbar({authLoaded}) {
                       </MenuItem>
                   ))}
                 </Menu>
+            <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
+
               </Box>
             )
           }
@@ -160,7 +175,7 @@ export default function Navbar({authLoaded}) {
           }
         </Toolbar>
       </Container>
-    </AppBar >
+    </AppBar>
   );
 }
 
