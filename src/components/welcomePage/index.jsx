@@ -165,8 +165,7 @@ export default function WelcomePage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            border: "5px solid #e0e0e0",
-            borderRadius: 2,
+            boxShadow: 2,
             paddingLeft: 0,
             paddingRight: 0,
             width: "100%",
@@ -185,6 +184,7 @@ export default function WelcomePage() {
               boxShadow: 2,
               display: "flex",
               justifyContent: "space-between",
+              borderBottom: "3px solid #e0e0e0",
             }}
           >
             <Typography
