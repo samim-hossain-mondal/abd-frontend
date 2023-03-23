@@ -1,20 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import ChatContainer from '../elements/dsm/ChatContainer';
-import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
-import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER } from '../constants/dsm/Announcements';
+import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME } from '../constants/dsm/Announcements';
 import { RefreshContext } from '../contexts/RefreshContext';
+import makeRequest from '../utilityFunctions/makeRequest';
+import { CREATE_ANNOUNCMENT, GET_ANNOUNCMENTS } from '../constants/apiEndpoints';
+import { ERROR_MESSAGE, SUCCESS_MESSAGE } from '../constants/dsm';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import DSMViewportContext from '../contexts/DSMViewportContext';
+import { REFETCH_INTERVAL } from '../../config';
 
 export default function Announcements() {
-
+  const { projectId } = useParams();
+  const DSMInViewPort = useContext(DSMViewportContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
+  const { user } = useContext(ProjectUserContext)
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
@@ -28,11 +36,6 @@ export default function Announcements() {
     setOpenAddModal(!openModal);
   }
 
-  if(refresh.announcement) {
-    console.log('handle announcement refresh');
-    setRefresh((prev) => ({...prev, announcement: false}));
-  }
-  
   const handleModalClose = () => {
     setOpenAddModal(false);
   }
@@ -40,14 +43,20 @@ export default function Announcements() {
   // OPTIMIZE: Is backend for announcements paginated ?
   const getAnnouncements = async () => {
     try {
-      const res = await axios.get(`${DOMAIN}/api/dsm/announcements`);
-      return res.data;
+      const resData = await makeRequest(GET_ANNOUNCMENTS(projectId))
+      return resData;
     }
     catch (err) {
-      console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return [];
     }
+  }
+
+  if (refresh.announcement) {
+    getAnnouncements().then(resData => {
+      setAnnouncements(resData);
+    })
+    setRefresh((prev) => ({ ...prev, announcement: false }));
   }
 
   useEffect(() => {
@@ -56,22 +65,44 @@ export default function Announcements() {
     })
   }, [])
 
+  const { error, isError, isLoading } = useQuery(announcements, async () => {
+    if (DSMInViewPort) {
+      const resData = await getAnnouncements();
+      getAnnouncements(resData);
+      return resData;
+    }
+    return [];
+  },
+    {
+      refetchInterval: REFETCH_INTERVAL,
+    }
+  );
+
+  if (isLoading) {
+    return <CircularProgress />
+  }
+  if (isError) {
+    return <div>Error! {error.message}</div>
+  }
+
   const handleChatClick = (announcement) => {
-    console.log(announcement);
+    if (user.memberId !== announcement.memberId) {
+      setError(ERROR_MESSAGE.UNAUTHORIZED);
+
+    }
   };
 
   const addAnnouncementToDB = async (content) => {
     try {
-      const res = await axios.post(`${DOMAIN}/api/dsm/announcements`, {
+      const reqBody = {
         content,
-      });
-      setSuccess(() => 'Announcement created successfully');
-
-      return res.data;
+      }
+      const resData = await makeRequest(CREATE_ANNOUNCMENT(projectId), { data: reqBody })
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
+      return resData;
     }
     catch (err) {
-      console.error(err);
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   }
