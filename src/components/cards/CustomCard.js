@@ -1,23 +1,19 @@
 import React, { useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
-  Box, Card, CardContent, Typography, Button,
-  Checkbox, styled, Stack, Avatar, Tooltip, CardActionArea
+  Box, Card, CardContent, Typography,
+  Checkbox, styled, Tooltip, Link
 }
   from '@mui/material';
-import stc from 'string-to-color';
 import { useParams } from 'react-router-dom';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
-import { collaborators } from '../constants/PONotes';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
-import PreventParentClick from '../utilityFunctions/PreventParentClick';
 import makeRequest from '../utilityFunctions/makeRequest';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
-import stringAvatar from '../utilityFunctions/getStringColor';
 
 
 const Cards = styled(Card)(() => ({
@@ -65,11 +61,6 @@ export default function CustomCard({ checkBox, data, type }) {
     }
   }
 
-  const handleLinkButton = () => {
-    handleClose();
-    console.log('JIRA LINK')
-  }
-
   const isDraft = () => {
     if (data.status === STATUS.draft) return true;
     return false;
@@ -87,10 +78,10 @@ export default function CustomCard({ checkBox, data, type }) {
     return <Typography color="primary" fontWeight={500} mt={2} pl={1} sx={{ visibility: 'hidden ' }}> Needed By {dateGetter(data.dueDate, false)} </Typography>
   }
   const renderLink = () => {
-    if (isActionItem()) {
-      return <Button variant="contained" size='small' sx={{ display: 'inline-flex' }} onClick={PreventParentClick(() => handleLinkButton())}>JIRA LINK</Button>
+    if (isActionItem() && data?.issueLink) {
+      return <Link target='_blank' href={data?.issueLink ?? '#'} variant="contained" size='small' sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>ISSUE LINK</Link>
     }
-    return <Button variant="contained" sx={{ display: 'inline-flex', visibility: 'hidden' }} >JIRA LINK</Button>
+    return true;
   }
 
   const renderCheckBox = () => {
@@ -106,7 +97,7 @@ export default function CustomCard({ checkBox, data, type }) {
     <Box m={3}>
       <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} />
       <Cards>
-        <CardActionArea onClick={handleClickOpen}>
+        <Box onClick={handleClickOpen}>
           <CardContent >
             <CardHeader>{renderCheckBox()}
               {isDraft() ?
@@ -130,18 +121,14 @@ export default function CustomCard({ checkBox, data, type }) {
                 }}> {data.note}</Typography>
               </Tooltip>
             </Box>
-            <Box sx={{ position: 'relative', bottom: 0, top: 35 }}>
+            <Box>
               {renderdueDate()}
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Stack direction="row" spacing={-1} mb={4} pl={1}>
-                  {/* eslint-disable-next-line react/no-array-index-key */}
-                  {collaborators.map((names, idx) => <Avatar key={idx + 1} {...stringAvatar(names, stc)} />)}
-                </Stack>
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
             </Box>
           </CardContent>
-        </CardActionArea>
+        </Box>
       </Cards>
     </Box>
   );

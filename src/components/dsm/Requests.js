@@ -44,6 +44,11 @@ export default function Requests() {
   const DSMInViewPort = useContext(DSMViewportContext);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
 
+  if (refresh.request) {
+    console.log('Handle Refresh Request');
+    setRefresh(val => ({ ...val, request: false }));
+  }
+
   const handleEditModalClose = () => {
     setOpenEditModal(false);
     setEditModalData({});

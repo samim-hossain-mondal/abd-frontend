@@ -71,7 +71,9 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
-        <Navbar />
+        <Box>
+          <Navbar authLoaded={authLoaded} />
+        </Box>
         <Routes>
           <Route path='/' exact element={<Login />} />
           <Route path={`/:projectId${HOME_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm' />}</SecureRoute>} />

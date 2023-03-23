@@ -43,8 +43,6 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
     <ReactTextareaAutocomplete
       className="autocomplete-textarea"
       loadingComponent={Loading}
-      inputProps={{ style: { fontFamily: 'Poppins' } }} // font size of input text
-      InputLabelProps={{ style: { fontFamily: 'Poppins', color: '#121212' } }}
       sx={{ ...sx }}
       disabled={disabled}
       value={value}

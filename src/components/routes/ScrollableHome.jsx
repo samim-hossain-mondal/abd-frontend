@@ -99,3 +99,12 @@ ScrollableHome.defaultProps = {
     current: null,
   },
 };
+
+ScrollableHome.defaultProps = {
+  poNotesRef: null,
+  dsmRef: null,
+  availabilityCalendarRef: null,
+  handleScroll: {
+    current: null,
+  },
+};

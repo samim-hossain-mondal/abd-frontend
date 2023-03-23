@@ -50,6 +50,7 @@ export default function PONotesHeader({ query, setQuery }) {
                 aria-describedby={id}
                 label="Quick Filters Icon"
                 onClick={handleQuickFilterClick}
+                value=""
                 disabled
               />
               <Popover
