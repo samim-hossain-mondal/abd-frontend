@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import MadeToStickLayout from '../MadeToStickLayout';
+import MadeToStick from '../madeToStickLayout/MadeToStick';
 
-export default function AnnouncementContainer() {
+export default function MadeToStickContainer() {
   return (
     <Box>
-      <MadeToStickLayout/>
+      <MadeToStick />
     </Box>
   );
 };
