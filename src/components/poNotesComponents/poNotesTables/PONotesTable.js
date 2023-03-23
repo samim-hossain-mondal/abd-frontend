@@ -11,7 +11,7 @@ import { HEADINGS } from '../../utilityFunctions/Enums';
 import { ErrorContext } from '../../contexts/ErrorContext';
 import { RefreshContext } from '../../contexts/RefreshContext';
 import PONotesViewportContext from '../../contexts/PONotesViewportContext';
-import makeRequest from '../../utilityFunctions/makeRequest';
+import makeRequest from '../../utilityFunctions/makeRequest/index';
 import { GET_PO_NOTES } from '../../constants/apiEndpoints';
 // import getAccessToken from '../../utilityFunctions/getAccessToken';
 

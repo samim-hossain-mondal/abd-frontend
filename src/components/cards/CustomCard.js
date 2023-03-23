@@ -12,7 +12,7 @@ import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 
 

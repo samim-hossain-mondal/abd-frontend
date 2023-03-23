@@ -1,7 +1,7 @@
 import React, { createContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { GET_ME, GET_PROJECTS, GET_PROJECT_BY_ID } from '../constants/apiEndpoints';
 
 export const ProjectUserContext = createContext();

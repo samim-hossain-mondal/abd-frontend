@@ -12,9 +12,9 @@ import { celebrationType } from '../constants/dsm/Celebrations';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { ErrorContext } from '../contexts/ErrorContext';
 import UpdateCelebrationModal from './UpdateCelebrationModal';
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { UPDATE_CELEBRATION_REACTION } from '../constants/apiEndpoints';
-import { SUCCESS_MESSAGE } from '../constants/dsm';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import stringAvatar from '../utilityFunctions/getStringColor';
 

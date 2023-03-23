@@ -13,7 +13,7 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import AddCelebrationModal from './AddCelebrationModal';
 import { celebrationTypes } from '../constants/dsm/Celebrations';
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { GET_CELEBRATIONS } from '../constants/apiEndpoints';
 import { RefreshContext } from '../contexts/RefreshContext';
 

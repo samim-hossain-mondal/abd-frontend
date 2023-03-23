@@ -26,7 +26,7 @@ import {
   SNACKBAR_TEXT,
 } from '../../constants/Timeline/Calendar';
 import './availabilityCalendar.css';
-import makeRequest from '../../utilityFunctions/makeRequest';
+import makeRequest from '../../utilityFunctions/makeRequest/index';
 import {
   CREATE_LEAVE,
   DELETE_LEAVE,

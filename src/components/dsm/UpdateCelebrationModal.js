@@ -6,9 +6,9 @@ import PropTypes from 'prop-types'
 import { useParams } from 'react-router-dom'
 import CelebrationGenericModal from '../elements/dsm/CelebrationGenericModal'
 import { ErrorContext } from '../contexts/ErrorContext'
-import makeRequest from '../utilityFunctions/makeRequest'
+import makeRequest from '../utilityFunctions/makeRequest/index'
 import { DELETE_CELEBRATION, UPDATE_CELEBRATION } from '../constants/apiEndpoints'
-import { SUCCESS_MESSAGE } from '../constants/dsm'
+import { SUCCESS_MESSAGE } from '../constants/dsm/index'
 import { GENERIC_NAME } from "../constants/dsm/Celebrations";
 import { ProjectUserContext } from '../contexts/ProjectUserContext'
 

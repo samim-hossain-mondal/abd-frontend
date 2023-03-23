@@ -11,9 +11,9 @@ import { PLACEHOLDER } from '../utilityFunctions/Enums';
 import { ErrorContext } from '../contexts/ErrorContext';
 import DeleteDialog from '../elements/DeleteDialog';
 import RichTextArea from '../elements/RichTextArea';
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
-import { SUCCESS_MESSAGE } from '../constants/dsm';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { GENERIC_NAME } from '../constants/PONotes';
 
 const getNextDate = (days) => {
@@ -228,16 +228,16 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
             </ListItem>
           </List>
         </Box>
-        { updateItem && type === 'ACTION_ITEM' && <Box>
+        {updateItem && type === 'ACTION_ITEM' && <Box>
           <Typography style={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }} >Issue Link</Typography>
           <List>
             <ListItem>
-              <TextField 
+              <TextField
                 sx={{ width: '100%' }}
-                type='url' 
-                value={issueLink} 
-                onChange={(e) => setIssueLink(e.target.value.trim())} 
-                disabled={lock} 
+                type='url'
+                value={issueLink}
+                onChange={(e) => setIssueLink(e.target.value.trim())}
+                disabled={lock}
                 placeholder={lock ? '' : 'https://example.com'}
               />
             </ListItem>
