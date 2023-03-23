@@ -16,7 +16,6 @@ import propTypes from "prop-types";
 import Logo from "../../../assets/images/agileLogo.png";
 import AccountSettingsModal from "../AccountSettingsModal";
 
-
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 function StickyHeader({ userName }) {
@@ -69,25 +68,24 @@ function StickyHeader({ userName }) {
       >
         <Box
           component="img"
-          sx={{ height: 50, width: 50, borderRadius: "50%" }}
+          sx={{ height: 50, width: 50, borderRadius: "50%", cursor: "pointer", }}
           alt="logo"
           src={Logo}
+
         />
         <Typography
           variant="h4"
           color="secondary.main"
-          sx={{ marginLeft: 2, px: 0 }}
+          sx={{ marginLeft: 2, px: 0, cursor: "pointer" }}
         >
           {isSmallerScreen ? 'My Agile Board' : ''}
         </Typography>
       </Container>
-      <Box sx={{display: 'flex'}}>
       <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{ paddingRight: 2 }}>
+        <IconButton onClick={handleOpenUserMenu} sx={{ marginRight: 3 }}>
           <Avatar alt={userName} src="/static/images/avatar/2.jpg" sx={{height: 50, width: 50}}/>
         </IconButton>
       </Tooltip>
-      </Box>
       <Menu
         id="menu-appbar"
         sx={{ mt: "45px" }}

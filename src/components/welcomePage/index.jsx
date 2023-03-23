@@ -26,7 +26,6 @@ export default function WelcomePage() {
   const [user, setUser] = useState(null);
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
@@ -192,11 +191,10 @@ export default function WelcomePage() {
                 fontSize: 20,
                 px: 1,
                 alignSelf: "center",
-                fontWeight: "bold",
                 width: "100%",
               }}
             >
-              YOUR PROJECTS
+              Your Projects
             </Typography>
             <Typography
               component="p"
@@ -218,7 +216,7 @@ export default function WelcomePage() {
             sx={{
               width: "100%",
               overflowY: "scroll",
-              maxHeight: "300px",
+              maxHeight: "400px",
               padding: 0,
               scrollBehavior: "smooth",
             }}
@@ -289,7 +287,13 @@ export default function WelcomePage() {
           Create New Project
         </Button>
       </Box>
-      <NewProjectModal open={showCreateModal} setOpen={setShowCreateModal} projects={userProjects} setProjects={setUserProjects} />
+      <NewProjectModal 
+        open={showCreateModal} 
+        setOpen={setShowCreateModal}  
+        projects={userProjects} 
+        setProjects={setUserProjects} 
+        
+      />
     </Box>
   );
 }

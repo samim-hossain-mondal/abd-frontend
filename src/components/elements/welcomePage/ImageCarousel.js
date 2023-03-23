@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "@mui/material";
-import Carousel from "react-material-ui-carousel"; // eslint-disable-line import/no-extraneous-dependencies
+import Carousel from "react-material-ui-carousel"; 
 import PropTypes from "prop-types";
-import Image from "mui-image";
+import Image from "mui-image"; 
 import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
@@ -37,18 +37,25 @@ function Item({ title, description, image }) {
       </Box>
       <Image
         src={image}
-        height="100%"
-        width="100%"
+        height="75%"
+        width="75%"
         fit="cover"
-        duration={3000}
-        easing="cubic-bezier(0.7, 0, 0.6, 1)"
-        showLoading
+        duration={0}
         errorIcon
         shift={null}
-        distance="100px"
         shiftDuration={900}
-        bgColor="inherit"
+        showLoading
+        easing="ease-in-out"
+        sx={{ marginTop: 2, marginBottom: 2 }}
       />
+      {/* <Box
+        component="img"
+        sx={{
+          width: "100%",
+        }}
+        src={image}
+        alt="image"
+      /> */}
       <Box
         component="p"
         sx={{ fontSize: 20, color: "text.primary", width: "100%", px: 2 }}
@@ -68,16 +75,25 @@ function ImageCarousel() {
       timeout={500}
       navButtonsAlwaysVisible
       cycleNavigation
-      navButtonsProps={{
+      fullHeightHover={false}     // We want the nav buttons wrapper to only be as big as the button element is
+      navButtonsProps={{          // Change the colors and radius of the actual buttons. THIS STYLES BOTH BUTTONS
         style: {
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          borderRadius: "50%",
-          color: "#FFF",
-          marginInline: 10,
-          width: 30,
-          height: 30,
-          zIndex: 1,
-        },
+            borderRadius: '50%',
+            marginInline: 10,
+            width: 30,
+            height: 30,
+            zIndex: 1,
+        }
+      }} 
+      activeIndicatorIconButtonProps={{
+        style: {
+          transform: 'scale(1.5)', 
+        }
+      }}
+      indicatorIconButtonProps={{
+        style: {
+          marginTop: 15,
+        }
       }}
     >
       {slides.map((slide) => (

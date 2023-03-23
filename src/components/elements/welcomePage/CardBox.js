@@ -10,7 +10,7 @@ function CardBox({ title, description }) {
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        border: "5px solid #e0e0e0",
+        boxShadow: 1,
         borderRadius: 2,
         justifyContent: "space-between",
         alignItems: "center",
@@ -30,6 +30,7 @@ function CardBox({ title, description }) {
           padding: 1,
           margin: 0,
           backgroundColor: "grey.200",
+          borderBottom: "5px solid #e0e0e0",
         }}
       >
         {title}
