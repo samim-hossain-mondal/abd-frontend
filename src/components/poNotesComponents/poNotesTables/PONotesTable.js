@@ -9,6 +9,8 @@ import CardLayout from '../../cards/CardLayout';
 import { DOMAIN } from '../../../config';
 import { HEADINGS } from '../../utilityFunctions/Enums';
 import { ErrorContext } from '../../contexts/ErrorContext';
+import { RefreshContext } from '../../contexts/RefreshContext';
+import PONotesViewportContext from '../../contexts/PONotesViewportContext';
 // import getAccessToken from '../../utilityFunctions/getAccessToken';
 
 // query params for get Api call
@@ -27,6 +29,8 @@ const getApiUrl = (type, query, page, limit) => {
 // table for the action items
 export default function PONotesTable(props) {
   const { setError } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
+  const PONotesinViewPort = useContext(PONotesViewportContext);
 
   const { heading, definition, accessibilityInformation, query, checkBox } = props;
 
@@ -34,8 +38,16 @@ export default function PONotesTable(props) {
   const apiUrl = getApiUrl(type, query, 1, 100);
   const breakpoint500 = useMediaQuery('(min-width:500px)');
 
+  if(refresh.poNotes){
+    console.log('Handle Refresh PO notes');
+    setRefresh(val => ({...val, poNotes: false}));
+  }
+
   const { data, error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
     try {
+      if(!PONotesinViewPort){
+        return [];
+      }
       const res = await axios.get(apiUrl);
       return res.data;
     } catch (err) {

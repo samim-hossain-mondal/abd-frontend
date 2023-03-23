@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Box, Dialog, Typography } from '@mui/material';
+import { AppBar, Box, Dialog, Toolbar, Typography, Container, Grid } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
 import { ErrorContext } from '../../contexts/ErrorContext';
+import { RefreshContext } from '../../contexts/RefreshContext';
 import GenericInputModal from '../../timeline/inputModal';
 import { getCurrentUserID } from '../../utilityFunctions/User';
 import {
@@ -32,6 +33,12 @@ export default function AvailabilityCalendar() {
   const [selectedEndDate, setSelectedEndDate] = useState(null);
 
   const { setError, setSuccess } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
+
+  if(refresh.availabilityCalendar){
+    console.log('Handle Refresh For Calendar');
+    setRefresh(val=>({...val, availabilityCalendar: false}));
+  }
 
   const handleMount = async () => {
     try{
@@ -191,52 +198,77 @@ export default function AvailabilityCalendar() {
   };
 
   return eventsData ? (
-    <Box sx={{ fontFamily: 'Roboto !important' }}>
-      <Calendar
-        views={VIEWS}
-        selectable
-        localizer={localizer}
-        defaultDate={new Date()}
-        defaultView={DEFAULT_VIEW}
-        events={eventsPrimaryData}
-        style={{ height: '100vh' }}
-        onSelectEvent={(event) => handleEditModal(event)}
-        onSelectSlot={handleSelect}
-        eventPropGetter={eventStyleGetter}
-      />
-      {inputModal && (
-        <Dialog open={inputModal} onClose={handleInputModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleInputModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-            onPrimaryButtonClick={(event) => {
-              handleAddEvent(event);
-            }}
-            defaultStartDate={selectedStartDate}
-            defaultEndDate={selectedEndDate}
-            placeholder={PLACEHOLDER}
+    <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
+      <Box>
+        <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Box sx={{ display: {  md: 'flex' } }}>
+                <Typography
+                  data-testid="poNotesIdentifier"
+                  variant="h5"
+                  noWrap
+                  sx={{ ml: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
+                >
+                  Availability Calendar
+                </Typography>
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </Box>
+      <Grid backgroundColor='backgroundColor.main' height='100%'>
+        <Box
+        sx={{
+          gap: '5vh', padding: '50px 50px 50px 50px',
+        }}>
+          <Calendar
+            views={VIEWS}
+            selectable
+            localizer={localizer}
+            defaultDate={new Date()}
+            defaultView={DEFAULT_VIEW}
+            events={eventsPrimaryData}
+            style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}
+            onSelectEvent={(event) => handleEditModal(event)}
+            onSelectSlot={handleSelect}
+            eventPropGetter={eventStyleGetter}
           />
-        </Dialog>
-      )}
-      {editModal && (
-        <Dialog open={editModal} onClose={handleEditModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleEditModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
-            onPrimaryButtonClick={(event) => {
-              handleEditEvent(event);
-            }}
-            defaultID={selectedEvent.leaveId}
-            defaultEvent={selectedEvent.event}
-            defaultStartDate={new Date(selectedEvent.startDate)}
-            defaultEndDate={new Date(selectedEvent.endDate)}
-            defaultIsRisk={selectedEvent.isRisk}
-            isDisabled={isDisabled}
-            setIsDisabled={setIsDisabled}
-            handleDelete={handleDeleteEvent}
-          />
-        </Dialog>
-      )}
+          {inputModal && (
+            <Dialog open={inputModal} onClose={handleInputModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleInputModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
+                onPrimaryButtonClick={(event) => {
+                  handleAddEvent(event);
+                }}
+                defaultStartDate={selectedStartDate}
+                defaultEndDate={selectedEndDate}
+                placeholder={PLACEHOLDER}
+              />
+            </Dialog>
+          )}
+          {editModal && (
+            <Dialog open={editModal} onClose={handleEditModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleEditModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
+                onPrimaryButtonClick={(event) => {
+                  handleEditEvent(event);
+                }}
+                defaultID={selectedEvent.leaveId}
+                defaultEvent={selectedEvent.event}
+                defaultStartDate={new Date(selectedEvent.startDate)}
+                defaultEndDate={new Date(selectedEvent.endDate)}
+                defaultIsRisk={selectedEvent.isRisk}
+                isDisabled={isDisabled}
+                setIsDisabled={setIsDisabled}
+                handleDelete={handleDeleteEvent}
+              />
+            </Dialog>
+          )}
+        </Box>
+      </Grid>
     </Box>
   ) : (
     <Box>

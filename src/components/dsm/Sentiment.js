@@ -29,15 +29,23 @@ import SentimentMeterDialog from './SentimentMeterDialog';
 import preventParentClick from '../utilityFunctions/PreventParentClick';
 import { SentimentMeterInfo } from '../constants/SentimentMeter';
 import { DOMAIN } from '../../config';
+import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function Sentiment() {
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
   const handleExpandSentiment = () => {
     dispatchGridHeight({ type: "SENTIMENT" })
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const openMenu = Boolean(anchorEl);
+
+  if(refresh.sentiment){
+    console.log('Handle Refresh Sentiment');
+    setRefresh(val => ({...val, sentiment: false}));
+  }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
