@@ -1,6 +1,7 @@
-import dsmImg from '../../assets/images/screens/dsm.png';
-import poNoteImg from '../../assets/images/screens/ponote.png';
-import calendarImg from '../../assets/images/screens/calendar2.png'; 
+const poNoteImg = '../../assets/images/screens/ponote.png';
+const calendarImg = '../../assets/images/screens/calendar2.png';
+
+const dsmImg = '../../assets/images/screens/dsm.png'; 
 
 const texts = {
     whyMyAgile: 

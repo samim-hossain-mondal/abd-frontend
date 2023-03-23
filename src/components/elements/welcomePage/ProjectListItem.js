@@ -15,7 +15,7 @@ function ProjectListItem({ project, handleProjectClick }) {
         flexDirection: "column",
         width: "100%",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-start",
         backgroundColor: "white",
         textAlign: "start",
         borderBottom: "1px solid white",
@@ -65,6 +65,7 @@ function ProjectListItem({ project, handleProjectClick }) {
       <Collapse in={showDescription} timeout="auto" unmountOnExit>
         <Box
           component="p"
+          paddingX={1}
           sx={{
             fontSize: 15,
             color: "text.primary",
