@@ -75,8 +75,8 @@ function ImageCarousel() {
       timeout={500}
       navButtonsAlwaysVisible
       cycleNavigation
-      fullHeightHover={false}     // We want the nav buttons wrapper to only be as big as the button element is
-      navButtonsProps={{          // Change the colors and radius of the actual buttons. THIS STYLES BOTH BUTTONS
+      fullHeightHover={false}    
+      navButtonsProps={{         
         style: {
             borderRadius: '50%',
             marginInline: 10,

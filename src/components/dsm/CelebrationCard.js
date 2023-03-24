@@ -35,7 +35,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   const [openUpdateModal, setOpenUpdateModal] = useState(false)
 
   useEffect(() => {
-    console.log("ANNN", celebration);
     setNewCelebration(celebration)
     setUpdateCelebration(celebration)
     setReactCount(celebration?.reaction?.length ?? 0)
@@ -45,7 +44,7 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   }, [])
 
   useEffect(() => {
-
+    
   }, [reacted])
 
   const updateReaction = async (e) => {
@@ -101,9 +100,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
             // gutterBottom
             >
               {newCelebration.content}
-              {/* Word of the Day Word of the Day
-            Word of the Day Word of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the Day
-            Word of the Day Word of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the Day */}
             </Typography>
           </Grid>
         </Grid>

@@ -8,7 +8,7 @@ export const GET_PO_NOTES = (projectId) => ({
   method: 'get',
 })
 
-// ***** poNotes Enpoints *****
+// ***** poNotes Endpoints *****
 
 export const GET_PO_NOTE_BY_ID = (projectId, poNoteId) => ({
   url: `api/po-notes/${projectId}/${poNoteId}`,
@@ -30,7 +30,7 @@ export const DELETE_PO_NOTE = (projectId, poNoteId) => ({
   method: 'delete',
 })
 
-// ***** celebrations Enpoints *****
+// ***** celebrations  Endpoints *****
 
 export const GET_CELEBRATIONS = (projectId) => ({
   url: `api/dsm/celebrations/${projectId}`,
@@ -69,7 +69,7 @@ export const UPDATE_CELEBRATION_REACTION = (projectId, celebrationId) => ({
   method: 'patch',
 })
 
-// ***** requests Enpoints *****
+// ***** requests  Endpoints *****
 
 export const GET_TEAM_REQUESTS = (projectId) => ({
   url: `api/dsm/team-requests/${projectId}`,
@@ -91,7 +91,7 @@ export const DELETE_TEAM_REQUEST = (projectId, requestId) => ({
   method: 'delete',
 })
 
-// ***** announcments Enpoints *****
+// ***** announcments  Endpoints *****
 
 export const GET_ANNOUNCMENTS = (projectId) => ({
   url: `api/dsm/announcements/${projectId}`,
@@ -104,7 +104,7 @@ export const CREATE_ANNOUNCMENT = (projectId) => ({
 })
 
 
-// ***** sentiments Enpoints *****
+// ***** sentiments  Endpoints *****
 
 export const GET_SENTIMENTS = (projectId) => ({
   url: `api/dsm/sentiment-meter/${projectId}`,
@@ -131,7 +131,7 @@ export const DELETE_SENTIMENT = (projectId, sentimentId) => ({
   method: 'delete',
 })
 
-// ***** leave Enpoints *****
+// ***** leave Endpoints *****
 
 export const GET_LEAVES = (projectId) => ({
   url: `api/leaves/${projectId}`,
@@ -154,7 +154,7 @@ export const DELETE_LEAVE = (projectId, leaveId) => ({
 })
 
 
-// ***** projects Enpoints *****
+// ***** projects  Endpoints *****
 
 export const GET_PROJECTS = {
   url: "api/management/project",
