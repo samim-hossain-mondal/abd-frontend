@@ -13,6 +13,7 @@ export function ProjectUserProvider({ children }) {
 
   const [user, setUser] = useState({});
   const [userRole, setUserRole] = useState();
+
   const [projects, setProjects] = useState([]);
   const [projectsUpdated, setProjectsUpdated] = useState(false);
 
@@ -23,7 +24,6 @@ export function ProjectUserProvider({ children }) {
       userDetailsPromises.push(makeRequest(GET_PROJECTS))
 
       const userDetails = await Promise.all(userDetailsPromises)
-
       setUser(userDetails[0]);
       setProjects(userDetails[1]);
       setProjectsUpdated(true);

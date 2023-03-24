@@ -13,7 +13,6 @@ import { allPages, WELCOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-
 import AccountSettingsModal from './AccountSettingsModal';
 
 const settings = ['Profile', 'Account Settings', 'Logout'];

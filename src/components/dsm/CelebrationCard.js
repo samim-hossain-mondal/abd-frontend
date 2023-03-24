@@ -44,7 +44,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   }, [])
 
   useEffect(() => {
-
   }, [reacted])
 
   const updateReaction = async (e) => {
@@ -100,9 +99,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
             // gutterBottom
             >
               {newCelebration.content}
-              {/* Word of the Day Word of the Day
-            Word of the Day Word of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the Day
-            Word of the Day Word of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the DayWord of the Day */}
             </Typography>
           </Grid>
         </Grid>

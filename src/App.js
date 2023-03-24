@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Security, LoginCallback, useOktaAuth } from '@okta/okta-react';
+import { Security, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,15 +9,18 @@ import getAccessToken from './components/utilityFunctions/getAccessToken';
 // import HomeContainer from './components/routes/Home';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
-// import PONotesContainer from './components/routes/PONotes';
-// import AvailabilityCalendar from './components/routes/availabilityCalendar';
-import Navbar from './components/elements/NavBar';
+
+import Navbar from './components/elements/NavBar'; 
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
+import WelcomePage from './components/welcomePage';
+
 import ScrollableHome from './components/routes/ScrollableHome'
 import { CALENDAR_ROUTE, HOME_ROUTE, MADE_TO_STICK_ROUTE, OUR_TEAM_ROUTE, PO_NOTE_ROUTE, WELCOME_ROUTE } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
+import LoginCallbackPage from './components/elements/LoginCallbackPage';
+
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -46,7 +49,9 @@ function AppRoutes() {
   const poNotesRef = useRef(null);
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
+
   const { updateUserDetails } = useContext(ProjectUserContext);
+  
   const { setError, setSuccess } = useContext(ErrorContext);
   const setAxiosHeader = async () => {
     if (!authState) {
@@ -70,9 +75,11 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
+        {authLoaded && window.location.pathname !== '/welcome' && (
         <Box>
           <Navbar authLoaded={authLoaded} />
         </Box>
+        )}
         <Routes>
           <Route path='/' exact element={<Login />} />
           <Route path={`/:projectId${HOME_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm' />}</SecureRoute>} />
@@ -80,8 +87,9 @@ function AppRoutes() {
           <Route path={`/:projectId${OUR_TEAM_ROUTE}`} exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path={`/:projectId${PO_NOTE_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes' />}</SecureRoute>} />
           <Route path={`/:projectId${CALENDAR_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar' />}</SecureRoute>} />
-          <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && <h1>Hey Hi, WELCOME</h1>}</SecureRoute>} />
-          <Route path='/login/callback' element={<LoginCallback />} />
+          {/* <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && < WelcomePage />}</SecureRoute>} /> */}
+          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
+          <Route path='/login/callback' element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>

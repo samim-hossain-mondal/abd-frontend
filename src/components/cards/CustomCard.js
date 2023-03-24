@@ -17,6 +17,7 @@ import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 
+
 const Cards = styled(Card)(() => ({
   width: 'auto',
   height: 'auto',
@@ -63,6 +64,7 @@ export default function CustomCard({ checkBox, data, type }) {
       await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
       setSuccess(`Suceessfully marked as ${!status ? STATUS.completed : STATUS.pending}`)
       setChecked(!status)
+
     }
     catch (err) {
       setError(`${err.message} Error in marking as ${!checked ? STATUS.completed : STATUS.pending}`)

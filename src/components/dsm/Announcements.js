@@ -36,10 +36,6 @@ export default function Announcements() {
     setOpenAddModal(!openModal);
   }
 
-  if (refresh.announcement) {
-    setRefresh((prev) => ({ ...prev, announcement: false }));
-  }
-
   const handleModalClose = () => {
     setOpenAddModal(false);
   }
