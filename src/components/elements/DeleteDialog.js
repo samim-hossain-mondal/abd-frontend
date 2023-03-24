@@ -13,6 +13,11 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
     setOpen(false);
   };
 
+  const handleConfirm = async () => {
+    await handleDelete();
+    setOpen(false);
+  };
+
   return (
     <div>
       <Dialog
@@ -32,7 +37,7 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
           <Button onClick={handleDelete} color="error" >
             <Typography variant="button" color='primary.main'>Yes</Typography>
           </Button>
-          <Button onClick={handleClose} variant="button" color='primary.main' autoFocus>
+          <Button onClick={handleConfirm} variant="button" color='primary.main' autoFocus>
             <Typography variant="button" color='primary.main'>No</Typography>
           </Button>
         </DialogActions>

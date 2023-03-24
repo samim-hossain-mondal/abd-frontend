@@ -1,18 +1,21 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
   Box, Card, CardContent, Typography,
   Checkbox, styled, Tooltip, Link
 }
   from '@mui/material';
-import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
-import { DOMAIN } from '../../config';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+
 
 const Cards = styled(Card)(() => ({
   width: 'auto',
@@ -28,6 +31,8 @@ export default function CustomCard({ checkBox, data, type }) {
   const [checked, setChecked] = useState(data.status === STATUS.completed);
   const { setError, setSuccess } = React.useContext(ErrorContext);
   const [open, setOpen] = React.useState(false);
+  const { projectId } = useParams()
+  const { userRole } = useContext(ProjectUserContext)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -44,16 +49,23 @@ export default function CustomCard({ checkBox, data, type }) {
     return false;
   }
 
-  const handleToggle = async (status) => {
+  const handleToggle = async (e) => {
     try {
+      e.stopPropagation();
+      e.preventDefault();
+      if (userRole !== "ADMIN") {
+        setError("ACCESS DENIED: ADMIN's can perform this action")
+        return;
+      }
+      const status = checked;
       handleClose();
       const body = { 'status': !status ? STATUS.completed : STATUS.pending }
-      await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body)
+      await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
       setSuccess(`Suceessfully marked as ${!status ? STATUS.completed : STATUS.pending}`)
       setChecked(!status)
     }
-    catch (er) {
-      setError(`${er.message}Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
+    catch (err) {
+      setError(`${err.message} Error in marking as ${!checked ? STATUS.completed : STATUS.pending}`)
     }
   }
 
@@ -85,13 +97,13 @@ export default function CustomCard({ checkBox, data, type }) {
       if (isDraft()) {
         return <Checkbox color='primary' size="large" disabled />
       }
-      return <Checkbox color='primary' size="large" checked={checked} onChange={() => handleToggle(checked)} />
+      return <Checkbox color='primary' size="large" checked={checked} onChange={handleToggle} />
     }
     return <Checkbox color='primary' size="large" sx={{ visibility: 'hidden' }} />
   };
   return (
     <Box m={3}>
-      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} />
+      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} access={userRole === "ADMIN"} />
       <Cards>
         <Box onClick={handleClickOpen}>
           <CardContent >
@@ -120,7 +132,6 @@ export default function CustomCard({ checkBox, data, type }) {
             <Box>
               {renderdueDate()}
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Box />
                 <Box pr={2}> {renderLink()} </Box>
               </Box>
             </Box>

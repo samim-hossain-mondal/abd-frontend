@@ -1,16 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
-import axios from 'axios';
 import { Stack } from '@mui/system';
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import { ErrorContext } from '../contexts/ErrorContext';
-import { DOMAIN } from '../../config';
 import ChatContainer from '../elements/dsm/ChatContainer';
-import { getCurretUser } from '../utilityFunctions/User';
-import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, ERROR_MESSAGE, SUCCESS_MESSAGE, TITLE, PRIMARY_BUTTON_TEXT } from '../constants/dsm/Requests';
+import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME } from '../constants/dsm/Requests';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import DSMViewportContext from '../contexts/DSMViewportContext';
+import { REFETCH_INTERVAL } from '../../config';
 import { RefreshContext } from '../contexts/RefreshContext';
 /*
 ISSUES: 
@@ -19,8 +24,12 @@ ISSUES:
 
 export default function Requests() {
 
+  const { user } = useContext(ProjectUserContext);
+
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
+  const { projectId } = useParams();
+
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
 
   const handleExpandRequests = () => {
@@ -32,11 +41,11 @@ export default function Requests() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
+  const DSMInViewPort = useContext(DSMViewportContext);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
 
-  if(refresh.request){
-    console.log('Handle Refresh Request');
-    setRefresh(val => ({...val, request: false}));
+  if (refresh.request) {
+    setRefresh(val => ({ ...val, request: false }));
   }
 
   const handleEditModalClose = () => {
@@ -47,10 +56,10 @@ export default function Requests() {
   };
 
   const handleChatClick = (request) => {
-    if (getCurretUser() !== request.author) {
-      setError(ERROR_MESSAGE.UNAUTHORIZED);
-      return;
-    }
+    // if (user.memberId !== request.memberId) {
+    //   setError(ERROR_MESSAGE.UNAUTHORIZED);
+    //   return;
+    // }
     setOpenEditModal(true);
     setEditModalData({ ...request });
     setIsDisabled(true);
@@ -68,13 +77,20 @@ export default function Requests() {
 
   const getRequests = async () => {
     try {
-      const res = await axios.get(`${DOMAIN}/api/dsm/team-requests`);
-      return res.data;
+      const resData = await makeRequest(GET_TEAM_REQUESTS(projectId))
+      return resData;
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
       return [];
     }
+  }
+
+  if (refresh.request) {
+    getRequests().then(resData => {
+      setRequests(resData);
+    })
+    setRefresh(val => ({ ...val, request: false }));
   }
 
   useEffect(() => {
@@ -83,30 +99,51 @@ export default function Requests() {
     })
   }, [])
 
+  const { error, isError, isLoading } = useQuery(requests, async () => {
+    if (DSMInViewPort) {
+      const resData = await getRequests();
+      setRequests(resData);
+      return resData
+    }
+    return [];
+  },
+    {
+      refetchInterval: REFETCH_INTERVAL,
+    }
+  );
+
+  if (isLoading) {
+    return <CircularProgress />
+  }
+  if (isError) {
+    return <div>Error! {error.message}</div>
+  }
+
 
   const addRequestToDB = async (content) => {
     try {
-      const res = await axios.post(`${DOMAIN}/api/dsm/team-requests`, {
-        author: getCurretUser(),
+      const reqBody = {
         content,
         type: requestType,
-      });
-      setSuccess(() => SUCCESS_MESSAGE.REQUEST_CREATED);
-      return res.data;
+      }
+      const resData = await makeRequest(CREATE_TEAM_REQUEST(projectId), { data: reqBody });
+      setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
+      return resData;
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   }
 
   const handleEditRequest = async (content) => {
     try {
-      const res = await axios.put(`${DOMAIN}/api/dsm/team-requests/${editModalData.requestId}`, {
+      const reqBody = {
         content,
         type: requestType,
-      });
-      setSuccess(() => SUCCESS_MESSAGE.REQUEST_UPDATED);
+      }
+      const resData = await makeRequest(UPDATE_TEAM_REQUEST(projectId, editModalData.requestId), { data: reqBody })
+      setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setRequests(requests.map((request) => {
         if (request.requestId === editModalData.requestId) {
           return {
@@ -118,25 +155,25 @@ export default function Requests() {
         return request;
       }));
       handleEditModalClose();
-      return res.data;
+      return resData;
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   };
 
   const handleDeleteRequest = async () => {
     try {
-      const res = await axios.delete(`${DOMAIN}/api/dsm/team-requests/${editModalData.requestId}`);
-      setSuccess(() => SUCCESS_MESSAGE.REQUEST_DELETED);
+      const resData = await makeRequest(DELETE_TEAM_REQUEST(projectId, editModalData.requestId))
+      setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
       const requestData = requests.filter((request) => request.requestId !== editModalData.requestId);
       setRequests([...requestData]);
       handleEditModalClose();
-      return res.data;
+      return resData;
     }
     catch (err) {
-      setError(val => val + err);
+      setError(err.message);
       return false;
     }
   };
@@ -231,6 +268,7 @@ export default function Requests() {
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteRequest}
+                authorize={user.memberId === editModalData.memberId}
               >
                 <Typography>
                   Tags

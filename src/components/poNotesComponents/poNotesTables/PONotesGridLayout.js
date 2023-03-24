@@ -11,32 +11,32 @@ export default function PONotesGridLayout({ query }
     // grid layout for the three tables
     <Box
       sx={{
-        display: 'flex', flexDirection: (breakpoint1080)?'row':'column', flexWrap: 'nowrap',
-        gap: '5vh', justifyContent:'space-between', padding: '50px 50px 50px 50px',
+        display: 'flex', flexDirection: (breakpoint1080) ? 'row' : 'column', flexWrap: 'nowrap',
+        gap: '5vh', justifyContent: 'space-between', padding: '50px 50px 50px 50px',
         alignItems: 'center',
       }}>
 
       {/* Table for action items */}
-        <PONotesTable heading={actionItems.heading}
-          checkBox
-          definition={actionItems.definition}
-          accessibilityInformation={actionItems.accessibilityInformation}
-          query={query} />
+      <PONotesTable heading={actionItems.heading}
+        checkBox
+        definition={actionItems.definition}
+        accessibilityInformation={actionItems.accessibilityInformation}
+        query={query} />
 
-        {/* Table for key decisions */}
-        <PONotesTable heading={keyDecisions.heading}
-          checkBox={false}
-          definition={keyDecisions.definition}
-          accessibilityInformation={keyDecisions.accessibilityInformation}
-          query={query} />
+      {/* Table for key decisions */}
+      <PONotesTable heading={keyDecisions.heading}
+        checkBox={false}
+        definition={keyDecisions.definition}
+        accessibilityInformation={keyDecisions.accessibilityInformation}
+        query={query} />
 
-        {/* Table for agenda items */}
-        <PONotesTable
-          heading={agendaItems.heading}
-          checkBox
-          definition={agendaItems.definition}
-          accessibilityInformation={agendaItems.accessibilityInformation}
-          query={query} />
+      {/* Table for agenda items */}
+      <PONotesTable
+        heading={agendaItems.heading}
+        checkBox
+        definition={agendaItems.definition}
+        accessibilityInformation={agendaItems.accessibilityInformation}
+        query={query} />
     </Box>
   );
 }

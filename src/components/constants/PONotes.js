@@ -1,3 +1,4 @@
+const GENERIC_NAME = "PO Note";
 const placeholder = {
   'ACTION_ITEM': 'Example: PO is to get the marketing approvals for the Payment screen text content by Monday so that we are prepared for our next sprint.',
   'KEY_DECISION': 'Example: The client suggested to use Stripe for payment integration as they already have corporate subscription.',
@@ -24,6 +25,6 @@ const agendaItems = {
 
 const collaborators = ['Kartik Goel', 'Samim Gupta', 'Abhishek Bharadwaj'];
 
-export { placeholder, actionItems, keyDecisions, agendaItems, collaborators };
+export { GENERIC_NAME, placeholder, actionItems, keyDecisions, agendaItems, collaborators };
 
 export const poNotesStatus = ['PENDING', 'COMPLETED', 'DRAFT'];

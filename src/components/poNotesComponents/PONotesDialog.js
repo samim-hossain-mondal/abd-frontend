@@ -1,18 +1,21 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import Transition from '../utilityFunctions/OverlayTransition';
 import Timeline from '../utilityFunctions/Timeline';
-import { DOMAIN } from '../../config';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
 import { ErrorContext } from '../contexts/ErrorContext';
 import DeleteDialog from '../elements/DeleteDialog';
 import RichTextArea from '../elements/RichTextArea';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
+import { GENERIC_NAME } from '../constants/PONotes';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 const getNextDate = (days) => {
   const date = new Date();
@@ -32,10 +35,11 @@ const getISODateToTimlineFormat = (isoDate = '') => {
   }
 };
 
-export default function PONotesDialog({ updateItem, data, open, handleClose }) {
+export default function PONotesDialog({ updateItem, data, open, handleClose, access }) {
   const { setError, setSuccess } = useContext(ErrorContext);
-  const [lock, setLock] = useState(updateItem);
-
+  const [lock, setLock] = useState(updateItem)
+  const { projectId } = useParams();
+  const { userRole } = useContext(ProjectUserContext)
   const [timeline, setTimeline] =
     useState(
       updateItem ?
@@ -73,17 +77,22 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
 
 
       if (updateItem) {
-        await axios.patch(`${DOMAIN}/api/po-notes/${data.noteId}`, body);
-        const response = "Note UPDATED successfully";
-        setSuccess(() => response);
-      } else {
-        await axios.post(`${DOMAIN}/api/po-notes`, body);
-        const response = "Note ADDED successfully";
-        setSuccess(() => response);
+        if (userRole !== "ADMIN") {
+          setError("ACCESS DENIED: ADMIN's can perform this action")
+          return;
+        }
+        await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body })
+        setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       }
-    } catch (err) {
-      setError((val) => val + err);
-    } finally {
+      else {
+        await makeRequest(CREATE_PO_NOTE(projectId), { data: body })
+        setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
+      }
+    }
+    catch (err) {
+      setError(err.message);
+    }
+    finally {
       if (updateItem) setLock(true);
       else {
         setLock((val) => !val);
@@ -116,12 +125,17 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
   };
   const handleDelete = async () => {
     try {
-      await axios.delete(`${DOMAIN}/api/po-notes/${data.noteId}`);
-      const response = "Note DELETED successfully";
-      setSuccess(() => response);
-    } catch (err) {
-      setError((val) => val + err);
-    } finally {
+      if (userRole !== "ADMIN") {
+        setError("ACCESS DENIED: ADMIN's can perform this action")
+        return;
+      }
+      await makeRequest(DELETE_PO_NOTE(projectId))
+      setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
+    }
+    catch (err) {
+      setError(err.message);
+    }
+    finally {
       setDeleteAlert(() => false);
       handleClose();
     }
@@ -136,14 +150,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <Grid
-          container
-          rowSpacing={1}
-          paddingTop="2%"
-          textAlign="center"
-          alignItems="center"
-        >
-          <Grid item xs={3}>
+        <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
+          {access && <Grid item xs={3}>
             <IconButton
               edge="start"
               color="error"
@@ -154,8 +162,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
               <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
             </IconButton>
           </Grid>
-          <Grid item xs={5} sx={{ visibility: 'hidden' }} />
-          <Grid item xs={2} >
+          }
+          <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
+          {access && <Grid item xs={2} >
             <IconButton
               edge="start"
               color="inherit"
@@ -166,6 +175,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
               <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
             </IconButton>
           </Grid>
+          }
           <Grid item xs={2}>
             <IconButton
               edge="start"
@@ -237,16 +247,16 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
             </ListItem>
           </List>
         </Box>
-        { updateItem && type === 'ACTION_ITEM' && <Box>
+        {updateItem && type === 'ACTION_ITEM' && <Box>
           <Typography style={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }} >Issue Link</Typography>
           <List>
             <ListItem>
-              <TextField 
+              <TextField
                 sx={{ width: '100%' }}
-                type='url' 
-                value={issueLink} 
-                onChange={(e) => setIssueLink(e.target.value.trim())} 
-                disabled={lock} 
+                type='url'
+                value={issueLink}
+                onChange={(e) => setIssueLink(e.target.value.trim())}
+                disabled={lock}
                 placeholder={lock ? '' : 'https://example.com'}
               />
             </ListItem>
@@ -261,53 +271,38 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
             />
           )}
         </Box>
-        {isPublish() && (
-          <Box>
-            {statement.trim() !== "" && !lock && (
-              <Link style={{ textDecoration: "none" }} to="/po-notes">
-                <Box
-                  textAlign="center"
-                  sx={{ marginTop: "6px", marginBottom: "6px" }}
-                >
-                  <Button
-                    variant="contained"
-                    color="customButton1"
-                    onClick={handlePublish}
-                    sx={{ borderRadius: "8px", width: "292px", heigth: "49px" }}
-                  >
-                    Publish
-                  </Button>
-                </Box>
-              </Link>
-            )}
-          </Box>
+        {isPublish() && (<Box>
+          {(statement.trim() !== '') && !lock &&
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton1' onClick={handlePublish} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Publish
+              </Button>
+            </Box>
+          }
+        </Box>
         )}
         {isSave() && (<Box>
           {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Save
-                </Button>
-              </Box>
-            </Link>
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Save
+              </Button>
+            </Box>
           }
         </Box>
         )}
         {isSaveDraft() && (<Box>
           {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
-            <Link style={{ textDecoration: 'none' }} to='/po-notes'>
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
-                  Save as Draft
-                </Button>
-              </Box>
-            </Link>
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Save as Draft
+              </Button>
+            </Box>
           }
         </Box>
         )}
-      </Dialog>
-    </Box>
+      </Dialog >
+    </Box >
   );
 };
 
@@ -321,10 +316,12 @@ PONotesDialog.propTypes = {
     note: PropTypes.string.isRequired,
     dueDate: PropTypes.string,
     status: PropTypes.string.isRequired,
-    issueLink: PropTypes.string
+    issueLink: PropTypes.string,
   }),
+  access: PropTypes.bool
 };
 
 PONotesDialog.defaultProps = {
-  data: undefined
+  data: undefined,
+  access: false
 }
