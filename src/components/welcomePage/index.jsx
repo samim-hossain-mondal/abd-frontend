@@ -8,7 +8,7 @@ import {
   Button,
   List,
   Paper,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CardBox from "../elements/welcomePage/CardBox";
@@ -26,17 +26,17 @@ export default function WelcomePage() {
   const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { 
-    user, 
-    projects: userProjects, 
+  const {
+    user,
+    projects: userProjects,
     setProjects: setUserProjects,
     updateProjectDetails,
-    setProjectId
   } = useContext(ProjectUserContext);
-  
+
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
+  console.log("User Projects", showProjectList);
   const scrollRef = useRef(0);
 
   const handleScroll = () => {
@@ -58,8 +58,7 @@ export default function WelcomePage() {
 
   const handleProjectClick = async (projectId) => {
     console.log("Project Clicked", projectId);
-    setProjectId(projectId);
-    updateProjectDetails()
+    updateProjectDetails(projectId)
       .then(() => {
         navigate(`/${projectId}`.concat(HOME_ROUTE));
       })
@@ -71,7 +70,6 @@ export default function WelcomePage() {
   const handleCreateProjectClick = () => {
     setShowCreateModal(true);
   };
-
 
   return (
     <Box
@@ -110,14 +108,17 @@ export default function WelcomePage() {
         <Typography
           variant="h3"
           component="h3"
-          sx={{ 
-            mt: 3, mb: 5, alignSelf: "center", fontWeight: "bold",
-            textAlign: "center", 
+          sx={{
+            mt: 3,
+            mb: 5,
+            alignSelf: "center",
+            fontWeight: "bold",
+            textAlign: "center",
           }}
         >
           {userProjects.length > 0
             ? `Welcome back, ${user.name} \u{1F44B}`
-            : `${texts.welcome} ${user ? `, ${user.name}` : ""} \u{1F44B}`}
+            : `${texts.welcome} ${user?.name ? `, ${user.name}` : ""} \u{1F44B}`}
         </Typography>
         <Stack
           direction="column"
@@ -131,7 +132,7 @@ export default function WelcomePage() {
           <ImageCarousel />
         </Stack>
       </Container>
-      <Container
+      {showProjectList && <Container
         component="main"
         sx={{
           mt: 4,
@@ -145,124 +146,128 @@ export default function WelcomePage() {
         maxWidth="lg"
       >
         <Stack
-      direction={isSmallerScreen ? "column" : "row"}
-      spacing={2}
-      sx={{ alignSelf: "center", width: "100%" }}
-    >
-      <ProfileCard
-        avatarUrl="/static/images/avatar/2.jpg"
-        name={user ? user.name : "Loading..."}
-        email={user ? user.email : "Loading..."}
-        bio={showBio ? `Part of ${userProjects.length} projects` : null}
-      />
-
-      {showProjectList ? (
-        <Box
-          component="main"
-          sx={{
-            mt: 8,
-            mb: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            boxShadow: 2,
-            paddingLeft: 0,
-            paddingRight: 0,
-            width: "100%",
-          }}
+          direction={isSmallerScreen ? "column" : "row"}
+          spacing={2}
+          sx={{ alignSelf: "center", width: "100%" }}
         >
-          <Box
-            component="p"
-            sx={{
-              fontSize: 20,
-              py: 1,
-              mt: 0,
-              mb: 0,
-              alignSelf: "center",
-              backgroundColor: "white",
-              width: "100%",
-              boxShadow: 2,
-              display: "flex",
-              justifyContent: "space-between",
-              borderBottom: "3px solid #e0e0e0",
-            }}
-          >
-            <Typography
-              component="p"
+          <ProfileCard
+            avatarUrl="/static/images/avatar/2.jpg"
+            name={user ? user.name : "Loading..."}
+            email={user ? user.email : "Loading..."}
+            bio={showBio ? `Part of ${userProjects.length} projects` : null}
+          />
+
+          {showProjectList ? (
+            <Box
+              component="main"
               sx={{
-                fontSize: 20,
-                px: 1,
-                alignSelf: "center",
+                mt: 8,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                boxShadow: 2,
+                paddingLeft: 0,
+                paddingRight: 0,
                 width: "100%",
               }}
             >
-              Your Projects
-            </Typography>
-            <Typography
-              component="p"
+              <Box
+                component="p"
+                sx={{
+                  fontSize: 20,
+                  py: 1,
+                  mt: 0,
+                  mb: 0,
+                  alignSelf: "center",
+                  backgroundColor: "white",
+                  width: "100%",
+                  boxShadow: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  borderBottom: "3px solid #e0e0e0",
+                }}
+              >
+                <Typography
+                  component="p"
+                  sx={{
+                    fontSize: 20,
+                    px: 1,
+                    alignSelf: "center",
+                    width: "100%",
+                  }}
+                >
+                  Your Projects
+                </Typography>
+                <Typography
+                  component="p"
+                  sx={{
+                    fontSize: 15,
+                    px: 1,
+                    alignSelf: "center",
+                    fontWeight: 100,
+                    width: "100%",
+                    textAlign: "end",
+                    color: "grey.500",
+                  }}
+                >
+                  {userProjects.length
+                    ? `${userProjects.length} PROJECTS`
+                    : "..."}
+                </Typography>
+              </Box>
+
+              <List
+                sx={{
+                  width: "100%",
+                  overflowY: "scroll",
+                  maxHeight: "400px",
+                  padding: 0,
+                  scrollBehavior: "smooth",
+                }}
+              >
+                {userProjects.map((project) => (
+                  <ProjectListItem
+                    key={project.projectId}
+                    project={project}
+                    handleProjectClick={() =>
+                      handleProjectClick(project.projectId)
+                    }
+                  />
+                ))}
+              </List>
+            </Box>
+          ) : null}
+
+          {!showProjectList && (
+            <Paper
               sx={{
-                fontSize: 15,
-                px: 1,
-                alignSelf: "center",
-                fontWeight: 100,
-                width: "100%",
-                textAlign: "end",
-                color: "grey.500",
+                mt: 8,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                paddingLeft: 0,
+                paddingRight: 0,
+                backgroundColor: "grey.200",
               }}
             >
-              {userProjects.length ? `${userProjects.length} PROJECTS` : "..."}
-            </Typography>
-          </Box>
-
-          <List
-            sx={{
-              width: "100%",
-              overflowY: "scroll",
-              maxHeight: "400px",
-              padding: 0,
-              scrollBehavior: "smooth",
-            }}
-          >
-            {userProjects.map((project) => (
-              <ProjectListItem
-                key={project.projectId}
-                project={project}
-                handleProjectClick={() => handleProjectClick(project.projectId)}
-              />
-            ))}
-          </List>
-        </Box>
-      ) : null}
-
-      {!showProjectList && (
-        <Paper
-          sx={{
-            mt: 8,
-            mb: 2,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            paddingLeft: 0,
-            paddingRight: 0,
-            backgroundColor: "grey.200",
-          }}
-        >
-          <Typography
-            component="p"
-            sx={{
-              fontSize: 20,
-              px: 1,
-              alignSelf: "center",
-              textAlign: "center",
-              width: "100%",
-            }}
-          >
-            {texts.getStarted}
-          </Typography>
-        </Paper>
-      )}
-    </Stack>
-      </Container>
+              <Typography
+                component="p"
+                sx={{
+                  fontSize: 20,
+                  px: 1,
+                  alignSelf: "center",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                {texts.getStarted}
+              </Typography>
+            </Paper>
+          )}
+        </Stack>
+      </Container>}
       <Box
         component="footer"
         sx={{
@@ -289,11 +294,11 @@ export default function WelcomePage() {
           Create New Project
         </Button>
       </Box>
-      <NewProjectModal 
-        open={showCreateModal} 
-        setOpen={setShowCreateModal}  
-        projects={userProjects} 
-        setProjects={setUserProjects} 
+      <NewProjectModal
+        open={showCreateModal}
+        setOpen={setShowCreateModal}
+        projects={userProjects}
+        setProjects={setUserProjects}
       />
     </Box>
   );

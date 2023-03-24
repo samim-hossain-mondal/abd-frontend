@@ -50,7 +50,6 @@ function AppRoutes() {
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
 
-  const { updateUserDetails, projectId } = useContext(ProjectUserContext);
   const { updateUserDetails } = useContext(ProjectUserContext);
   
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -88,7 +87,8 @@ function AppRoutes() {
           <Route path={`/:projectId${OUR_TEAM_ROUTE}`} exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
           <Route path={`/:projectId${PO_NOTE_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes' />}</SecureRoute>} />
           <Route path={`/:projectId${CALENDAR_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar' />}</SecureRoute>} />
-          <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && < WelcomePage />}</SecureRoute>} />
+          {/* <Route path={WELCOME_ROUTE} element={<SecureRoute welcome>{authLoaded && < WelcomePage />}</SecureRoute>} /> */}
+          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
           <Route path='/login/callback' element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
