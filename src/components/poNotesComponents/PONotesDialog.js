@@ -338,6 +338,27 @@ export default function PONotesDialog({ updateItem, data, open, handleClose }) {
             )}
           </Box>
         )}
+        {isPublish() && (
+          <Box>
+            {statement.trim() !== "" && !lock && (
+              <Link style={{ textDecoration: "none" }} to="/po-notes">
+                <Box
+                  textAlign="center"
+                  sx={{ marginTop: "6px", marginBottom: "6px" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="customButton1"
+                    onClick={handlePublish}
+                    sx={{ borderRadius: "8px", width: "292px", heigth: "49px" }}
+                  >
+                    Publish
+                  </Button>
+                </Box>
+              </Link>
+            )}
+          </Box>
+        )}
         {isSave() && (<Box>
           {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
