@@ -6,8 +6,10 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
+// import HomeContainer from './components/routes/Home';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
+
 import Navbar from './components/elements/NavBar'; 
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
@@ -18,6 +20,7 @@ import { CALENDAR_ROUTE, HOME_ROUTE, MADE_TO_STICK_ROUTE, OUR_TEAM_ROUTE, PO_NOT
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
 import LoginCallbackPage from './components/elements/LoginCallbackPage';
+
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -40,12 +43,16 @@ export default function App() {
 };
 
 function AppRoutes() {
+  // const navigate = useNavigate();
   const { authState } = useOktaAuth();
   const [authLoaded, setAuthLoaded] = useState(false);
   const poNotesRef = useRef(null);
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
+
   const { updateUserDetails, projectId } = useContext(ProjectUserContext);
+  const { updateUserDetails } = useContext(ProjectUserContext);
+  
   const { setError, setSuccess } = useContext(ErrorContext);
   const setAxiosHeader = async () => {
     if (!authState) {
@@ -56,7 +63,6 @@ function AppRoutes() {
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
     setAuthLoaded(true);
     await updateUserDetails(setError, setSuccess);
-    console.log("projectId >>>", projectId);
   };
 
   useEffect(() => {

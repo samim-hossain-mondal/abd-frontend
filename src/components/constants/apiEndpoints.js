@@ -103,7 +103,6 @@ export const CREATE_ANNOUNCMENT = (projectId) => ({
   method: 'post',
 })
 
-
 // ***** sentiments  Endpoints *****
 
 export const GET_SENTIMENTS = (projectId) => ({
@@ -152,7 +151,6 @@ export const DELETE_LEAVE = (projectId, leaveId) => ({
   url: `api/leaves/${projectId}/${leaveId}`,
   method: 'delete',
 })
-
 
 // ***** projects  Endpoints *****
 

@@ -4,7 +4,6 @@ import { FORBIDDEN_MSG, NOT_FOUND_MSG, SERVER_ERROR_MSG, UNAUTHORIZED_MSG } from
 import { HttpError } from '../errors';
 
 const makeRequest = async (apiEndPoint, dynamicConfig = {}, navigate = undefined) => {
-  console.log(apiEndPoint);
   try {
     const requestDetails = {
       baseURL: DOMAIN,

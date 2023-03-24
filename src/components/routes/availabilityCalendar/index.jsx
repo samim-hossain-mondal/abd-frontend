@@ -51,7 +51,6 @@ export default function AvailabilityCalendar() {
   const { refresh, setRefresh } = useContext(RefreshContext);
 
   if (refresh.availabilityCalendar) {
-    console.log('Handle Refresh For Calendar');
     setRefresh((val) => ({ ...val, availabilityCalendar: false }));
   }
 

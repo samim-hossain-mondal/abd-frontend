@@ -81,7 +81,6 @@ export default function CelebrationBoard() {
   }, [])
 
   const { error, isError, isLoading } = useQuery(celebrations, async () => {
-    console.log("DSMInViewPort Celebration >>>>", DSMInViewPort);
     if (DSMInViewPort) {
       const resData = await getCelebrations();
       setCelebrations(resData);

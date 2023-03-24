@@ -12,6 +12,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { allPages, WELCOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+
 import AccountSettingsModal from './AccountSettingsModal';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 

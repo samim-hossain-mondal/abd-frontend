@@ -35,19 +35,7 @@ export default function SecureRoute({ children, welcome = false }) {
     }
   }, [oktaAuth, authState?.isAuthenticated]);
 
-  // console.log(
-  //   projects,
-  //   user,
-  //   projectId,
-  //   projects.find((project) => project.projectId === parseInt(projectId, 10))
-  // );
-
   useEffect(() => {
-    console.log(
-      projects,
-      projectId,
-      projects.find((project) => project.projectId === parseInt(projectId, 10))
-    );
     if (projectId) setProjectId(projectId);
     if (projectId && projectsUpdated) {
       if (
@@ -56,32 +44,22 @@ export default function SecureRoute({ children, welcome = false }) {
         )
       ) {
         setIsProjectMember(true);
-        updateProjectDetails(setError, setSuccess).then((resData) => {
-          if (resData) {
-            console.log('updateProjectDetails >>> ', resData);
-            setProjectDetails(resData);
-            setSuccess('Project details loaded successfully');
+        updateProjectDetails(projectId, setError, setSuccess).then(
+          (resData) => {
+            if (resData) {
+              setProjectDetails(resData);
+              setSuccess('Project details loaded successfully');
+            }
           }
-        });
+        );
       } else {
         navigate(WELCOME_ROUTE);
         setProjectId(undefined);
         setIsProjectMember(false);
         setError(UNAUTHORIZED_MSG);
       }
-    } else {
-      console.log("I'm not Navigating", projectId);
     }
   }, [projects]);
-
-  console.log(
-    'Check bool',
-    authState?.isAuthenticated,
-    user?.uid,
-    welcome,
-    isProjectMember,
-    authState?.isAuthenticated && user?.uid && (welcome || isProjectMember)
-  );
   return authState?.isAuthenticated && user?.uid && (welcome || isProjectMember)
     ? children
     : 'loading ...';

@@ -52,9 +52,8 @@ export default function PONotesTable(props) {
   const { heading, definition, accessibilityInformation, query, checkBox } = props;
 
   const type = HEADINGS[heading].toUpperCase();
-  console.log("type >>", type);
   const apiUrlQuery = getApiUrlQuery(type, query, 1, 100);
-  console.log("apiUrlQuery >>", apiUrlQuery);
+
   const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const getPONotes = async () => {

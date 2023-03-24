@@ -44,7 +44,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   }, [])
 
   useEffect(() => {
-    
   }, [reacted])
 
   const updateReaction = async (e) => {

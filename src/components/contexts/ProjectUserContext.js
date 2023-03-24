@@ -12,6 +12,8 @@ export function ProjectUserProvider({ children }) {
   const [projectDetails, setProjectDetails] = useState(undefined);
 
   const [user, setUser] = useState({});
+  const [userRole, setUserRole] = useState();
+
   const [projects, setProjects] = useState([]);
   const [projectsUpdated, setProjectsUpdated] = useState(false);
 
@@ -22,8 +24,6 @@ export function ProjectUserProvider({ children }) {
       userDetailsPromises.push(makeRequest(GET_PROJECTS))
 
       const userDetails = await Promise.all(userDetailsPromises)
-
-      console.log(userDetails);
       setUser(userDetails[0]);
       setProjects(userDetails[1]);
       setProjectsUpdated(true);
@@ -34,9 +34,16 @@ export function ProjectUserProvider({ children }) {
     }
   };
 
-  const updateProjectDetails = async (setError) => {
+  const updateProjectDetails = async (projectIdParam, setError) => {
     try {
-      const resData = await makeRequest(GET_PROJECT_BY_ID(projectId))
+      setProjectId(projectIdParam);
+      const resData = await makeRequest(GET_PROJECT_BY_ID(projectIdParam))
+      const memberData = resData.projectMembers?.find(member => member.memberId === user.memberId);
+      if (!memberData) {
+        throw new Error('Failed to know the role')
+      }
+      setUserRole(memberData.role)
+      setProjectDetails(resData);
       return resData;
     }
     catch (err) {
@@ -54,8 +61,9 @@ export function ProjectUserProvider({ children }) {
     projectsUpdated,
     projectDetails,
     setProjectDetails,
-    updateProjectDetails
-  }), [projectId, user, projects, projectDetails, projectsUpdated]);
+    updateProjectDetails,
+    userRole
+  }), [projectId, user, projects, projectDetails, projectsUpdated, userRole]);
 
   return (
     <ProjectUserContext.Provider value={projectUserContextValues}>

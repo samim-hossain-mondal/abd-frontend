@@ -42,7 +42,6 @@ export default function Sentiment() {
   const openMenu = Boolean(anchorEl);
 
   if(refresh.sentiment){
-    console.log('Handle Refresh Sentiment');
     setRefresh(val => ({...val, sentiment: false}));
   }
 

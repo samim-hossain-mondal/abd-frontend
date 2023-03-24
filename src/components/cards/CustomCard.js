@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
   Box, Card, CardContent, Typography,
@@ -14,6 +14,8 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+
 
 
 const Cards = styled(Card)(() => ({
@@ -31,6 +33,7 @@ export default function CustomCard({ checkBox, data, type }) {
   const { setError, setSuccess } = React.useContext(ErrorContext);
   const [open, setOpen] = React.useState(false);
   const { projectId } = useParams()
+  const { userRole } = useContext(ProjectUserContext)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -47,8 +50,15 @@ export default function CustomCard({ checkBox, data, type }) {
     return false;
   }
 
-  const handleToggle = async (status) => {
+  const handleToggle = async (e) => {
     try {
+      e.stopPropagation();
+      e.preventDefault();
+      if (userRole !== "ADMIN") {
+        setError("ACCESS DENIED: ADMIN's can perform this action")
+        return;
+      }
+      const status = checked;
       handleClose();
       const body = { 'status': !status ? STATUS.completed : STATUS.pending }
       await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
@@ -57,7 +67,7 @@ export default function CustomCard({ checkBox, data, type }) {
 
     }
     catch (err) {
-      setError(`${err.message} Error in marking as ${!status ? STATUS.completed : STATUS.pending}`)
+      setError(`${err.message} Error in marking as ${!checked ? STATUS.completed : STATUS.pending}`)
     }
   }
 
@@ -89,13 +99,13 @@ export default function CustomCard({ checkBox, data, type }) {
       if (isDraft()) {
         return <Checkbox color='primary' size="large" disabled />
       }
-      return <Checkbox color='primary' size="large" checked={checked} onChange={() => handleToggle(checked)} />
+      return <Checkbox color='primary' size="large" checked={checked} onChange={handleToggle} />
     }
     return <Checkbox color='primary' size="large" sx={{ visibility: 'hidden' }} />
   };
   return (
     <Box m={3}>
-      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} />
+      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} access={userRole === "ADMIN"} />
       <Cards>
         <Box onClick={handleClickOpen}>
           <CardContent >

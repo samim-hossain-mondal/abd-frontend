@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Box, IconButton } from '@mui/material';
 import QueueSharpIcon from '@mui/icons-material/QueueSharp';
 import PONotesDialog from './PONotesDialog';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 export default function AddPONotes() {
 
   const [addNote, setAddNote] = useState(false);
+  const { userRole } = useContext(ProjectUserContext)
 
   const handleNoteOpener = () => {
     setAddNote(!addNote);
@@ -17,7 +19,7 @@ export default function AddPONotes() {
         component="label" sx={{ color: 'primary.main' }} onClick={handleNoteOpener}>
         <QueueSharpIcon fontSize='large' />
       </IconButton>
-      <PONotesDialog updateItem={false} open={addNote} handleClose={handleNoteOpener} />
+      <PONotesDialog updateItem={false} open={addNote} handleClose={handleNoteOpener} access={userRole === "ADMIN"} />
     </Box >
   );
 };
