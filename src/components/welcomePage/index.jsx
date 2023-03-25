@@ -36,7 +36,6 @@ export default function WelcomePage() {
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
-  console.log("User Projects", showProjectList);
   const scrollRef = useRef(0);
 
   const handleScroll = () => {
