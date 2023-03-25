@@ -45,6 +45,10 @@ const theme = createTheme({
       good: '#43a047',
       ok: '#f9a825',
       bad: '#f44336',
+    },
+    poNotesHeader: {
+      main: '#051C2C',
+      contrastText: '#FFFFFF'
     }
   },
   components: {

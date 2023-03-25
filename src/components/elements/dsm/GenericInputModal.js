@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
+
 import { Box } from '@mui/system';
+import emoji from '@jukben/emoji-search';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getAllUsers } from '../../utilityFunctions/User';
+import { getAllMembersData } from '../../utilityFunctions/User';
+import { ProjectUserContext } from '../../contexts/ProjectUserContext';
+import { ErrorContext } from '../../contexts/ErrorContext';
 
 function Item({ entity: { name, char } }) {
   return (
@@ -38,31 +43,34 @@ export default function GenericInputModal({
   placeholder,
   isDisabled,
   setIsDisabled,
-  deleteRequest
+  deleteRequest,
+  authorize
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
-  const [users,setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const { projectDetails } = useContext(ProjectUserContext);
+  const {setSuccess, setError} = useContext(ErrorContext);
 
-  useEffect(()=>{
-    setUsers(getAllUsers());
-  },[]);
+  useEffect(() => {
+    setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
+  });
 
   const getSimilarUsers = (text) => {
-    const similarUsers = users.filter((user) => user.toLowerCase().includes(text.toLowerCase()));
-    return similarUsers.map((user) => ({ name: user, char: '@' }));
+    const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));
+    return similarUsers.map((user) => ({ name: user.email, char: '@' }));
   }
 
   return (
     <Box
-      sx={matchesLargeSize?{
+      sx={matchesLargeSize ? {
         width: 'max(25vw, 340px)',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
         padding: '16px 24px 24px 24px',
-      }:{
+      } : {
         width: 'max(25vw, 255px)',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
@@ -79,16 +87,16 @@ export default function GenericInputModal({
             <Box
               sx={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              <IconButton onClick={deleteRequest} sx={{ padding: 0 }}>
+              {authorize && <IconButton onClick={deleteRequest} sx={{ padding: 0 }}>
                 <DeleteForeverIcon date-testid='delete-icon' />
-              </IconButton>
+              </IconButton>}
               <Box>
-                <IconButton onClick={() => setIsDisabled(false)}>
-                  <EditIcon data-testid='edit-icon'/>
-                </IconButton>
+                {authorize && <IconButton onClick={() => setIsDisabled(false)}>
+                  <EditIcon data-testid='edit-icon' />
+                </IconButton>}
                 <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
                   <CloseIcon />
                 </IconButton>
@@ -107,7 +115,21 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Typography variant="h5">{title}</Typography>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        mt: '8px'
+      }}>
+        <Typography variant="h5">{title}</Typography>
+        <ContentCopyIcon onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
+      </Box>
 
       {/* TextField */}
       <Box sx={{
@@ -118,7 +140,7 @@ export default function GenericInputModal({
         <ReactTextareaAutocomplete
           className="autocomplete-textarea"
           loadingComponent={Loading}
-          style={(matchesLargeSize)?{
+          style={(matchesLargeSize) ? {
             width: '88%',
             padding: '20px',
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
@@ -128,7 +150,7 @@ export default function GenericInputModal({
             lineHeight: '20px',
             height: '130px',
             fontFamily: 'Roboto, sans-serif',
-          }:{
+          } : {
             width: '80%',
             padding: '20px',
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
@@ -145,12 +167,19 @@ export default function GenericInputModal({
           }}
           minChar={0}
           trigger={{
+            ':': {
+              dataProvider: token => emoji(token)
+                .slice(0, 3)
+                .map(({ name, char }) => ({ name, char })),
+              component: Item,
+              output: (item) => item.char
+            },
             '@': {
               dataProvider: token => getSimilarUsers(token)
                 .slice(0, 3)
-                .map(({ name,char }) => ({ name, char })),
+                .map(({ name, char }) => ({ name, char })),
               component: Item,
-              output: (item) => item.char+item.name,
+              output: (item) => item.char + item.name,
             }
             // can add emojis with : trigger if required
           }}
@@ -228,7 +257,8 @@ GenericInputModal.propTypes = {
   onSecondaryButtonClick: PropTypes.func,
   isDisabled: PropTypes.bool,
   setIsDisabled: PropTypes.func,
-  deleteRequest: PropTypes.func
+  deleteRequest: PropTypes.func,
+  authorize: PropTypes.bool,
 };
 
 GenericInputModal.defaultProps = {
@@ -240,5 +270,6 @@ GenericInputModal.defaultProps = {
   defaultValue: undefined,
   isDisabled: undefined,
   setIsDisabled: () => { },
-  deleteRequest: () => { }
+  deleteRequest: () => { },
+  authorize: false,
 };

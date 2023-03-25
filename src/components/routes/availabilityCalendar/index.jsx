@@ -1,27 +1,49 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
+import { useQuery } from 'react-query';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Box, Dialog, Typography } from '@mui/material';
-import events from '../../constants/Timeline/Event';
+import {
+  AppBar,
+  Box,
+  Dialog,
+  Toolbar,
+  Typography,
+  Container,
+  Grid,
+  CircularProgress
+} from '@mui/material';
+import moment from 'moment';
+import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { ErrorContext } from '../../contexts/ErrorContext';
+import { RefreshContext } from '../../contexts/RefreshContext';
+import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import GenericInputModal from '../../timeline/inputModal';
-import { getCurrentUserID } from '../../utilityFunctions/User';
 import {
   VIEWS,
   DEFAULT_VIEW,
   PRIMARY_BUTTON_TEXT,
   PLACEHOLDER,
   LOADING_TEXT,
+  SNACKBAR_TEXT,
 } from '../../constants/Timeline/Calendar';
-
 import './availabilityCalendar.css';
+import makeRequest from '../../utilityFunctions/makeRequest/index';
+import {
+  CREATE_LEAVE,
+  DELETE_LEAVE,
+  GET_LEAVES,
+  UPDATE_LEAVE,
+} from '../../constants/apiEndpoints';
+import { REFETCH_INTERVAL } from '../../../config';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-export default function AvailabilityCalendar() {
-  const [eventsData, setEventsData] = useState(null);
+export default function AvailabilityCalendar({availabilityIsInViewPort}) {
+  const { projectId } = useParams();
+  const [eventsData, setEventsData] = useState([]);
   const [inputModal, setInputModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -29,23 +51,67 @@ export default function AvailabilityCalendar() {
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
 
+  const { setError, setSuccess } = useContext(ErrorContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
+  const { user } = useContext(ProjectUserContext);
+
+  if (refresh.availabilityCalendar) {
+    (async () => {
+      try {
+        const resData = await makeRequest(GET_LEAVES(projectId));
+        setEventsData(resData);
+      } catch (err) {
+        setError((val) => val + err);
+      }
+    })();
+    setRefresh((val) => ({ ...val, availabilityCalendar: false }));
+  }
+
+  const handleMount = async () => {
+    try {
+      const resData = await makeRequest(GET_LEAVES(projectId));
+      setEventsData(resData);
+    } catch (err) {
+      setError((val) => val + err);
+    }
+  };
+
   useEffect(() => {
-    setEventsData(events);
+    handleMount();
   }, []);
 
-  const eventsPrimaryData = eventsData?.map((event) => {
-    const { startDatetime, endDatetime, eventName, name, uid, id, isRisk } =
-      event;
+  const { error, isError, isLoading } = useQuery('events', async () => {
+    if (availabilityIsInViewPort) {
+      const resData = await makeRequest(GET_LEAVES(projectId));
+      setEventsData(resData);
+      return resData;
+    }
+    return [];
+  },
+    {
+      refetchInterval: REFETCH_INTERVAL,
+    }
+  );
+  if (isLoading) {
+    return <CircularProgress />
+  }
+  if (isError) {
+    return <div>Error! {error.message}</div>
+  }
+
+  const eventsPrimaryData = eventsData?.map((eventData) => {
+    const { startDate, endDate, event, userFullName, memberId, leaveId, isRisk } =
+      eventData;
     return {
-      start: startDatetime,
-      end: endDatetime,
-      title: `@${name}: ${eventName}`,
-      uid,
-      id,
-      name,
-      startDatetime,
-      endDatetime,
-      eventName,
+      start: new Date(startDate),
+      end: new Date(endDate),
+      title: `@${userFullName}: ${event}`,
+      memberId,
+      leaveId,
+      userFullName,
+      startDate,
+      endDate,
+      event,
       isRisk,
     };
   });
@@ -58,26 +124,38 @@ export default function AvailabilityCalendar() {
     setInputModal(false);
   };
 
-  const handleAddEvent = (event) => {
-    const { content, startDatetime, endDatetime, isRisk } = event;
-    // will be changed upon integration with backend
-    const newEvent = {
-      eventName: content,
-      startDatetime,
-      endDatetime,
-      isRisk,
-      uid: getCurrentUserID(),
-      name: 'User1',
-      id: 2,
-    };
-    setEventsData([...eventsData, newEvent]);
-    handleInputModalClose();
+  const handleAddEvent = async (event) => {
+    const { content, startDate, endDate, isRisk } = event;
+    if (endDate < startDate) {
+      setError((val) => `${val} ${SNACKBAR_TEXT.DATE_ERROR}`);
+      handleInputModalClose();
+      return;
+    }
+    try {
+      const reqBody = {
+        event: content,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        isRisk,
+      };
+      const resData = await makeRequest(CREATE_LEAVE(projectId), {
+        data: reqBody,
+      });
+      const newData = resData;
+      newData.startDate = new Date(newData.startDate);
+      newData.endDate = new Date(newData.endDate);
+      setEventsData([...eventsData, newData]);
+      handleInputModalClose();
+      setSuccess(() => SNACKBAR_TEXT.SUCCESS);
+    } catch (err) {
+      setError((val) => val + err);
+    }
   };
 
   const handleEditModal = (event) => {
     setEditModal(true);
     setSelectedEvent(event);
-    if (event.uid === getCurrentUserID()) {
+    if (event.memberId === user.memberId) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -88,28 +166,49 @@ export default function AvailabilityCalendar() {
     setEditModal(false);
   };
 
-  const handleEditEvent = (editEvent) => {
-    const { content, startDatetime, endDatetime, isRisk, defaultID } =
-      editEvent;
-    // will be changed upon integration with backend
-    const newEvent = {
-      eventName: content,
-      startDatetime,
-      endDatetime,
-      isRisk,
-      uid: getCurrentUserID(),
-      name: 'User1',
-      id: defaultID,
-    };
+  const handleEditEvent = async (editEvent) => {
+    const { content, startDate, endDate, isRisk, defaultID } = editEvent;
+    if (endDate < startDate) {
+      setError((val) => `${val} ${SNACKBAR_TEXT.DATE_ERROR}`);
+      handleEditModalClose();
+      return;
+    }
+    try {
+      const reqBody = {
+        event: content,
+        startDate,
+        endDate,
+        isRisk,
+      };
+      const resData = await makeRequest(UPDATE_LEAVE(projectId, defaultID), {
+        data: reqBody,
+      });
+      const newEventsData = eventsData.map((event) => {
+        if (event.leaveId === selectedEvent.leaveId) {
+          return resData;
+        }
+        return event;
+      });
+      setEventsData([...newEventsData]);
+      handleEditModalClose();
+      setSuccess(() => SNACKBAR_TEXT.SUCCESS);
+    } catch (err) {
+      setError((val) => val + err);
+    }
+  };
 
-    const newEventsData = eventsData.map((event) => {
-      if (event.id === selectedEvent.id) {
-        return newEvent;
-      }
-      return event;
-    });
-    setEventsData([...newEventsData]);
-    handleEditModalClose();
+  const handleDeleteEvent = async (leaveId) => {
+    try {
+      await makeRequest(DELETE_LEAVE(projectId, leaveId));
+      const newEventsData = eventsData.filter(
+        (event) => event.leaveId !== leaveId
+      );
+      setEventsData([...newEventsData]);
+      handleEditModalClose();
+      setSuccess(() => SNACKBAR_TEXT.DELETE);
+    } catch (err) {
+      setError((val) => val + err);
+    }
   };
 
   const handleSelect = ({ start, end }) => {
@@ -125,72 +224,106 @@ export default function AvailabilityCalendar() {
 
     const style = !event.isRisk
       ? {
-        backgroundColor,
-        borderRadius: '0px',
-        opacity: 0.8,
-        color: 'white',
-        border: '0px',
-        display: 'block',
-      }
+          backgroundColor,
+          borderRadius: '0px',
+          opacity: 0.8,
+          color: 'white',
+          border: '0px',
+          display: 'block',
+        }
       : {
-        backgroundColor: 'red',
-        borderRadius: '0px',
-        opacity: 0.8,
-        color: 'white',
-        border: '0px',
-        display: 'block',
-      };
+          backgroundColor: 'red',
+          borderRadius: '0px',
+          opacity: 0.8,
+          color: 'white',
+          border: '0px',
+          display: 'block',
+        };
     return {
       style,
     };
   };
 
   return eventsData ? (
-    <Box sx={{ fontFamily: 'Roboto !important' }}>
-      <Calendar
-        views={VIEWS}
-        selectable
-        localizer={localizer}
-        defaultDate={new Date()}
-        defaultView={DEFAULT_VIEW}
-        events={eventsPrimaryData}
-        style={{ height: '100vh' }}
-        onSelectEvent={(event) => handleEditModal(event)}
-        onSelectSlot={handleSelect}
-        eventPropGetter={eventStyleGetter}
-      />
-      {inputModal && (
-        <Dialog open={inputModal} onClose={handleInputModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleInputModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-            onPrimaryButtonClick={(event) => {
-              handleAddEvent(event);
-            }}
-            defaultStartDatetime={selectedStartDate}
-            defaultEndDatetime={selectedEndDate}
-            placeholder={PLACEHOLDER}
+    <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
+      <Box>
+        <AppBar
+          position='static'
+          sx={{ background: 'transparent', boxShadow: 'none' }}>
+          <Container maxWidth='xl'>
+            <Toolbar disableGutters>
+              <Box sx={{ display: { md: 'flex' } }}>
+                <Typography
+                  data-testid='poNotesIdentifier'
+                  variant='h5'
+                  noWrap
+                  sx={{
+                    ml: 5,
+                    fontWeight: 500,
+                    letterSpacing: '.025rem',
+                    color: 'secondary.main',
+                    textDecoration: 'none',
+                  }}>
+                  Availability Calendar
+                </Typography>
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </Box>
+      <Grid backgroundColor='backgroundColor.main' height='100%'>
+        <Box
+          sx={{
+            gap: '5vh',
+            padding: '50px 50px 50px 50px',
+          }}>
+          <Calendar
+            views={VIEWS}
+            selectable
+            localizer={localizer}
+            defaultDate={new Date()}
+            defaultView={DEFAULT_VIEW}
+            events={eventsPrimaryData}
+            style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}
+            onSelectEvent={(event) => handleEditModal(event)}
+            onSelectSlot={handleSelect}
+            eventPropGetter={eventStyleGetter}
           />
-        </Dialog>
-      )}
-      {editModal && (
-        <Dialog open={editModal} onClose={handleEditModalClose}>
-          <GenericInputModal
-            onCloseButtonClick={handleEditModalClose}
-            primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
-            onPrimaryButtonClick={(event) => {
-              handleEditEvent(event);
-            }}
-            defaultID={selectedEvent.id}
-            defaultEventName={selectedEvent.eventName}
-            defaultStartDatetime={selectedEvent.startDatetime}
-            defaultEndDatetime={selectedEvent.endDatetime}
-            defaultIsRisk={selectedEvent.isRisk}
-            isDisabled={isDisabled}
-            setIsDisabled={setIsDisabled}
-          />
-        </Dialog>
-      )}
+          {inputModal && (
+            <Dialog open={inputModal} onClose={handleInputModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleInputModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
+                onPrimaryButtonClick={(event) => {
+                  handleAddEvent(event);
+                }}
+                defaultStartDate={selectedStartDate}
+                defaultEndDate={selectedEndDate}
+                placeholder={PLACEHOLDER}
+              />
+            </Dialog>
+          )}
+          {editModal && (
+            <Dialog open={editModal} onClose={handleEditModalClose}>
+              <GenericInputModal
+                onCloseButtonClick={handleEditModalClose}
+                primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
+                onPrimaryButtonClick={(event) => {
+                  handleEditEvent(event);
+                }}
+                defaultID={selectedEvent.leaveId}
+                defaultEvent={selectedEvent.event}
+                defaultStartDate={new Date(selectedEvent.startDate)}
+                defaultEndDate={new Date(selectedEvent.endDate)}
+                defaultIsRisk={selectedEvent.isRisk}
+                isDisabled={isDisabled}
+                setIsDisabled={setIsDisabled}
+                handleDelete={handleDeleteEvent}
+              />
+            </Dialog>
+          )}
+        </Box>
+      </Grid>
     </Box>
   ) : (
     <Box>
@@ -200,3 +333,7 @@ export default function AvailabilityCalendar() {
     </Box>
   );
 }
+
+AvailabilityCalendar.propTypes = {
+  availabilityIsInViewPort: PropTypes.bool.isRequired,
+};

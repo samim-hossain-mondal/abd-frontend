@@ -29,15 +29,22 @@ import SentimentMeterDialog from './SentimentMeterDialog';
 import preventParentClick from '../utilityFunctions/PreventParentClick';
 import { SentimentMeterInfo } from '../constants/SentimentMeter';
 import { DOMAIN } from '../../config';
+import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function Sentiment() {
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+  const { refresh, setRefresh } = useContext(RefreshContext);
   const handleExpandSentiment = () => {
     dispatchGridHeight({ type: "SENTIMENT" })
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const openMenu = Boolean(anchorEl);
+
+  if(refresh.sentiment){
+    setRefresh(val => ({...val, sentiment: false}));
+  }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -134,6 +141,7 @@ export default function Sentiment() {
         sentiment: feeling.feeling_1
       })
       localStorage.setItem('currentFeeling', feeling.feeling_1);
+      setCurrentFeeling(feeling.feeling_1);
       setSentimentUpdation(true);
     }
     else if (!feelingHappy) {
@@ -163,6 +171,7 @@ export default function Sentiment() {
         sentiment: feeling.feeling_2
       })
       localStorage.setItem('currentFeeling', feeling.feeling_2);
+      setCurrentFeeling(feeling.feeling_2);
       setSentimentUpdation(true);
     }
     else if (!feelingGood) {
@@ -192,6 +201,7 @@ export default function Sentiment() {
         sentiment: feeling.feeling_3
       })
       localStorage.setItem('currentFeeling', feeling.feeling_3);
+      setCurrentFeeling(feeling.feeling_3);
       setSentimentUpdation(true);
     }
     else if (!feelingOk) {
@@ -221,6 +231,7 @@ export default function Sentiment() {
         sentiment: feeling.feeling_4
       })
       localStorage.setItem('currentFeeling', feeling.feeling_4);
+      setCurrentFeeling(feeling.feeling_4);
       setSentimentUpdation(true);
     }
     else if (!feelingBad) {

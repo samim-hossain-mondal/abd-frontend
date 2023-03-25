@@ -8,7 +8,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
-import { celebrationTypes, celebrationPlaceholder, instructions } from '../../constants/DSM';
+import { celebrationTypes, celebrationPlaceholder, instructions } from '../../constants/dsm/Celebrations';
 import InstructionBox from './InstructionBox';
 import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
@@ -45,17 +45,24 @@ export default function CelebrationGenericModal({
       content
     });
   }
+  const [deleteAlert, setDeleteAlert] = useState(false);
+
+  const onConfirmDelete = async (e) => {
+    setDeleteAlert(false)
+    onCloseButtonClick(e)
+    await handleDelete();
+  }
 
   const updateAnonymous = (isAnonymous) => {
     setNewCelebration({
       ...newCelebration,
+      isAnonymous,
       anonymous: isAnonymous
     });
   }
 
   const [openDropDown, setOpenDropDown] = useState(false);
 
-  const [deleteAlert, setDeleteAlert] = useState(false);
 
   const updateCelebration = (celebration) => {
     setNewCelebration(celebration);
@@ -231,7 +238,7 @@ export default function CelebrationGenericModal({
           </Grid>
         </Grid>
       }
-      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete} description="Are you sure want to delete celebration" />
+      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={onConfirmDelete} description="Are you sure want to delete celebration" />
     </Box >
   );
 }
@@ -248,9 +255,10 @@ CelebrationGenericModal.propTypes = {
   isPreview: PropTypes.bool,
   setNewCelebration: PropTypes.func.isRequired,
   newCelebration: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    anonymous: PropTypes.bool.isRequired,
+    type: PropTypes.string,
+    content: PropTypes.string,
+    anonymous: PropTypes.bool,
+    memberId: PropTypes.number,
   }).isRequired,
   update: PropTypes.bool,
   lock: PropTypes.bool,

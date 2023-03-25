@@ -1,14 +1,16 @@
-const celebrationType = {
+export const GENERIC_NAME = 'Celebration';
+
+export const celebrationType = {
   CELEBRATION: 'CELEBRATION',
   IMPEDIMENT: 'IMPEDIMENT'
 }
 
-const celebrationPlaceholder = {
+export const celebrationPlaceholder = {
   CELEBRATION: 'Example: Thank you @GC for helping out on Payment integration yesterday.',
   IMPEDIMENT: 'Example: We should make sure designs are getting marketing sign-off before given for development.'
 }
 
-const instructions = {
+export const instructions = {
   CELEBRATION: {
     header: 'Sharing is Caring',
     points: [
@@ -25,8 +27,6 @@ const instructions = {
   }
 }
 
-const celebrationTypes = [
+export const celebrationTypes = [
   'CELEBRATION', 'IMPEDIMENT'
 ]
-
-export { celebrationType, celebrationPlaceholder, instructions, celebrationTypes }

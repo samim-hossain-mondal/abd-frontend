@@ -7,11 +7,9 @@ import { DSMBodyLayoutProvider } from '../contexts/DSMBodyLayoutContext';
 
 export default function HomeContainer() {
   return (
-    <Box >
+    <Box>
       <DSMHeader />
-      <DSMBodyLayoutProvider>
-        <DSMBody />
-      </DSMBodyLayoutProvider>
+      <DSMBodyLayoutProvider > <DSMBody /> </DSMBodyLayoutProvider>
     </Box>
   );
 }

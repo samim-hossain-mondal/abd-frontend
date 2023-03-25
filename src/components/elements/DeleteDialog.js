@@ -13,6 +13,11 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
     setOpen(false);
   };
 
+  const handleConfirm = async () => {
+    await handleDelete();
+    setOpen(false);
+  };
+
   return (
     <div>
       <Dialog
@@ -21,8 +26,8 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         sx={{
-          'box-shadow': '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)',
-          'border-radius': '2px'
+          boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)',
+          borderRadius: '2px'
         }}
       >
         <DialogContent>
@@ -32,7 +37,7 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
           <Button onClick={handleDelete} color="error" >
             <Typography variant="button" color='primary.main'>Yes</Typography>
           </Button>
-          <Button onClick={handleClose} variant="button" color='primary.main' autoFocus>
+          <Button onClick={handleConfirm} variant="button" color='primary.main' autoFocus>
             <Typography variant="button" color='primary.main'>No</Typography>
           </Button>
         </DialogActions>

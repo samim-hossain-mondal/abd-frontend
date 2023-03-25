@@ -1,16 +1,16 @@
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel, useMediaQuery } from '@mui/material';
 import { Box } from '@mui/system';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DateTimePicker from '../../elements/timeline/DateTimePicker/Index';
 
-
 export default function GenericInputModal({
   onCloseButtonClick,
-  defaultEventName,
-  defaultStartDatetime,
-  defaultEndDatetime,
+  defaultEvent,
+  defaultStartDate,
+  defaultEndDate,
   defaultIsRisk,
   defaultID,
   children,
@@ -19,17 +19,18 @@ export default function GenericInputModal({
   secondaryButtonText,
   onSecondaryButtonClick,
   placeholder,
+  handleDelete,
   isDisabled
 }) {
-  const [content, setContent] = useState(defaultEventName ?? '');
+  const [content, setContent] = useState(defaultEvent ?? '');
   const [isRisk, setIsRisk] = useState(defaultIsRisk ?? false);
-  const [startDatetime, setStartDatetime] = useState(defaultStartDatetime ?? new Date());
-  const [endDatetime, setEndDatetime] = useState(defaultEndDatetime ?? new Date());
-
+  const [startDate, setStartDate] = useState(defaultStartDate ?? new Date());
+  const [endDate, setEndDate] = useState(defaultEndDate ?? new Date());
+  const breakpoint411 = useMediaQuery('(min-width:411px)');
   return (
     <Box
       sx={{
-        width: 'max(25vw, 340px)',
+        width: (breakpoint411)?'max(25vw, 340px)':'250px',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
@@ -38,11 +39,27 @@ export default function GenericInputModal({
         position: 'relative'
       }}
     >
-      <Box sx={{ textAlign: 'right' }}>
-        <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
-          <CloseIcon />
-        </IconButton>
-      </Box>
+      {
+        ((handleDelete===undefined)||(isDisabled))? (
+          <Box sx={{ textAlign: 'right' }}>
+            <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        ) : (
+          <Box
+            sx={{ textAlign: 'right'}}
+          >
+            <IconButton data-testid='delete-icon' onClick={()=>{handleDelete(defaultID)}} sx={{ padding: 0 }}>
+              <DeleteForeverIcon />
+            </IconButton>
+            <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        )
+      }
+      
 
       <Typography variant="h5">Event Notes</Typography>
 
@@ -61,8 +78,8 @@ export default function GenericInputModal({
       />
 
       <Typography variant="h5">Duration</Typography>
-      <DateTimePicker defaultValue={defaultStartDatetime} label="Start Date" disabled={isDisabled} onChange={setStartDatetime} />
-      <DateTimePicker defaultValue={defaultEndDatetime} label="End Date" disabled={isDisabled} onChange={setEndDatetime}/>
+      <DateTimePicker defaultValue={defaultStartDate} label="Start Date" disabled={isDisabled} onChange={setStartDate} />
+      <DateTimePicker defaultValue={defaultEndDate} label="End Date" disabled={isDisabled} onChange={setEndDate}/>
 
       <FormGroup>
         <FormControlLabel 
@@ -91,7 +108,7 @@ export default function GenericInputModal({
                 backgroundColor: 'customButton1.main',
               },
             }}
-            onClick={() => onPrimaryButtonClick({content, startDatetime, endDatetime, isRisk, defaultID})}
+            onClick={() => onPrimaryButtonClick({content, startDate, endDate, isRisk, defaultID})}
           >
             {primaryButtonText}
           </Button>
@@ -129,11 +146,12 @@ GenericInputModal.propTypes = {
   secondaryButtonText: PropTypes.string,
   onSecondaryButtonClick: PropTypes.func,
   isDisabled: PropTypes.bool,
-  defaultEventName: PropTypes.string,
-  defaultStartDatetime: PropTypes.instanceOf(Date),
-  defaultEndDatetime: PropTypes.instanceOf(Date),
+  defaultEvent: PropTypes.string,
+  defaultStartDate: PropTypes.instanceOf(Date),
+  defaultEndDate: PropTypes.instanceOf(Date),
   defaultIsRisk: PropTypes.bool,
   defaultID: PropTypes.number,
+  handleDelete: PropTypes.func,
 };
 
 GenericInputModal.defaultProps = {
@@ -143,9 +161,10 @@ GenericInputModal.defaultProps = {
   children: undefined,
   placeholder: undefined,
   isDisabled: undefined,
-  defaultEventName: undefined,
-  defaultStartDatetime: null,
-  defaultEndDatetime: null,
+  defaultEvent: undefined,
+  defaultStartDate: null,
+  defaultEndDate: null,
   defaultIsRisk: false,
   defaultID: undefined,
+  handleDelete: undefined,
 };

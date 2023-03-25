@@ -1,28 +1,75 @@
 import { useOktaAuth } from '@okta/okta-react';
-import { useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { toRelativeUrl } from '@okta/okta-auth-js';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { WELCOME_ROUTE } from '../constants/routes';
+import { ErrorContext } from '../contexts/ErrorContext';
+import { UNAUTHORIZED_MSG } from '../constants/HttpMessages';
 
-export default function SecureRoute({ children }) {
+export default function SecureRoute({ children, welcome = false }) {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+  const [isProjectMember, setIsProjectMember] = useState(false);
+  const {
+    projects,
+    setProjectId,
+    projectsUpdated,
+    user,
+    updateProjectDetails,
+    setProjectDetails,
+  } = useContext(ProjectUserContext);
 
-  // eslint-disable-next-line no-unused-vars
+  const { setError, setSuccess } = useContext(ErrorContext);
   const { oktaAuth, authState } = useOktaAuth();
 
   useEffect(() => {
     if (authState?.isAuthenticated === false) {
       const originalUri = toRelativeUrl(
-        globalThis.location.href,
-        globalThis.location.origin,
-      )
-      oktaAuth.setOriginalUri(originalUri)
-      oktaAuth.signInWithRedirect()
+        window.location.href,
+        window.location.origin
+      );
+      oktaAuth.setOriginalUri(originalUri);
+      oktaAuth.signInWithRedirect();
     }
-  }, [oktaAuth, authState?.isAuthenticated])
+  }, [oktaAuth, authState?.isAuthenticated]);
 
-
-  return authState?.isAuthenticated ? children : 'loading ...';
+  useEffect(() => {
+    if (projectId) setProjectId(projectId);
+    if (projectId && projectsUpdated) {
+      if (
+        projects.find(
+          (project) => project.projectId === parseInt(projectId, 10)
+        )
+      ) {
+        setIsProjectMember(true);
+        updateProjectDetails(projectId, setError, setSuccess).then(
+          (resData) => {
+            if (resData) {
+              setProjectDetails(resData);
+              setSuccess('Project details loaded successfully');
+            }
+          }
+        );
+      } else {
+        navigate(WELCOME_ROUTE);
+        setProjectId(undefined);
+        setIsProjectMember(false);
+        setError(UNAUTHORIZED_MSG);
+      }
+    }
+  }, [projects]);
+  return authState?.isAuthenticated && user?.uid && (welcome || isProjectMember)
+    ? children
+    : 'loading ...';
 }
 
 SecureRoute.propTypes = {
   children: PropTypes.node.isRequired,
+  welcome: PropTypes.bool,
+};
+
+SecureRoute.defaultProps = {
+  welcome: false,
 };

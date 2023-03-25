@@ -14,9 +14,6 @@ export default function InstructionBox({ header, points }) {
         {points.map((point, index) => (
           <Typography variant='contentMain' >{index + 1}. {point} <br /></Typography>
         ))}
-        {/* <Typography variant='contentMain' >1. Try not to be personal.</Typography>
-        <br />
-        <Typography variant='contentMain' >2. Seek attention to the core issue by highlighting the impact.</Typography> */}
       </Box>
     </Box>
   )
@@ -27,7 +24,6 @@ InstructionBox.propTypes = {
   points: PropTypes.arrayOf(PropTypes.string)
 }
 
-// default props
 InstructionBox.defaultProps = {
   header: '',
   points: []
