@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { useQuery } from 'react-query';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import {
   AppBar,
@@ -10,13 +11,15 @@ import {
   Typography,
   Container,
   Grid,
+  CircularProgress
 } from '@mui/material';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { ErrorContext } from '../../contexts/ErrorContext';
 import { RefreshContext } from '../../contexts/RefreshContext';
+import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import GenericInputModal from '../../timeline/inputModal';
-import { getCurrentUserID } from '../../utilityFunctions/User';
 import {
   VIEWS,
   DEFAULT_VIEW,
@@ -33,11 +36,12 @@ import {
   GET_LEAVES,
   UPDATE_LEAVE,
 } from '../../constants/apiEndpoints';
+import { REFETCH_INTERVAL } from '../../../config';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-export default function AvailabilityCalendar() {
+export default function AvailabilityCalendar({availabilityIsInViewPort}) {
   const { projectId } = useParams();
   const [eventsData, setEventsData] = useState([]);
   const [inputModal, setInputModal] = useState(false);
@@ -49,8 +53,17 @@ export default function AvailabilityCalendar() {
 
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
+  const { user } = useContext(ProjectUserContext);
 
   if (refresh.availabilityCalendar) {
+    (async () => {
+      try {
+        const resData = await makeRequest(GET_LEAVES(projectId));
+        setEventsData(resData);
+      } catch (err) {
+        setError((val) => val + err);
+      }
+    })();
     setRefresh((val) => ({ ...val, availabilityCalendar: false }));
   }
 
@@ -67,14 +80,33 @@ export default function AvailabilityCalendar() {
     handleMount();
   }, []);
 
+  const { error, isError, isLoading } = useQuery('events', async () => {
+    if (availabilityIsInViewPort) {
+      const resData = await makeRequest(GET_LEAVES(projectId));
+      setEventsData(resData);
+      return resData;
+    }
+    return [];
+  },
+    {
+      refetchInterval: REFETCH_INTERVAL,
+    }
+  );
+  if (isLoading) {
+    return <CircularProgress />
+  }
+  if (isError) {
+    return <div>Error! {error.message}</div>
+  }
+
   const eventsPrimaryData = eventsData?.map((eventData) => {
-    const { startDate, endDate, event, userFullName, userId, leaveId, isRisk } =
+    const { startDate, endDate, event, userFullName, memberId, leaveId, isRisk } =
       eventData;
     return {
       start: new Date(startDate),
       end: new Date(endDate),
       title: `@${userFullName}: ${event}`,
-      userId,
+      memberId,
       leaveId,
       userFullName,
       startDate,
@@ -123,7 +155,7 @@ export default function AvailabilityCalendar() {
   const handleEditModal = (event) => {
     setEditModal(true);
     setSelectedEvent(event);
-    if (event.userId === getCurrentUserID()) {
+    if (event.memberId === user.memberId) {
       setIsDisabled(false);
     } else {
       setIsDisabled(true);
@@ -168,7 +200,6 @@ export default function AvailabilityCalendar() {
   const handleDeleteEvent = async (leaveId) => {
     try {
       await makeRequest(DELETE_LEAVE(projectId, leaveId));
-      // const resData = await makeRequest(DELETE_LEAVE(projectId, leaveId));
       const newEventsData = eventsData.filter(
         (event) => event.leaveId !== leaveId
       );
@@ -302,3 +333,7 @@ export default function AvailabilityCalendar() {
     </Box>
   );
 }
+
+AvailabilityCalendar.propTypes = {
+  availabilityIsInViewPort: PropTypes.bool.isRequired,
+};

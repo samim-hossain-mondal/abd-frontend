@@ -62,7 +62,6 @@ export default function PONotesTable(props) {
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return [];
     }
@@ -72,7 +71,7 @@ export default function PONotesTable(props) {
     getPONotes().then(resData => {
       setPONotes(resData);
     })
-  }, [])
+  }, [query]);
 
   if (refresh.poNotes) {
     getPONotes().then(resData => {

@@ -71,7 +71,8 @@ export default function ScrollableHome({
           </PONotesViewportContext.Provider>
         </div>
         <div ref={availabilityCalendarRef}>
-          <AvailabilityCalendar />
+          {/* No need of context here as only one component requires the state */}
+          <AvailabilityCalendar availabilityIsInViewPort={availabilityIsInViewPort}/>
         </div>
         <FabRefresh
           poNotesIsInViewPort={poNotesIsInViewPort}

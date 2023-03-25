@@ -15,7 +15,7 @@ import RichTextArea from '../elements/RichTextArea';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
-import { GENERIC_NAME } from '../constants/PONotes';
+import { GENERIC_NAME, noteTypes } from '../constants/PONotes';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 const getNextDate = (days) => {
@@ -212,9 +212,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
                     onChange={handleNoteType}
                     disabled={lock}
                   >
-                    <MenuItem value="ACTION_ITEM">Action Item</MenuItem>
-                    <MenuItem value="KEY_DECISION">Key Decision</MenuItem>
-                    <MenuItem value="AGENDA_ITEM">Agenda Item</MenuItem>
+                    <MenuItem value="ACTION_ITEM">{noteTypes[0]}</MenuItem>
+                    <MenuItem value="KEY_DECISION">{noteTypes[1]}</MenuItem>
+                    <MenuItem value="AGENDA_ITEM">{noteTypes[2]}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -284,7 +284,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         </Box>
         )}
         {isSave() && (<Box>
-          {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
+          {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
               <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
                 Save
@@ -294,7 +294,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         </Box>
         )}
         {isSaveDraft() && (<Box>
-          {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
+          {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
               <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
                 Save as Draft

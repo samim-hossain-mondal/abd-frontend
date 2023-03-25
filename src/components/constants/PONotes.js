@@ -23,8 +23,10 @@ const agendaItems = {
   'accessibilityInformation': 'PO is the owner of this section only PO can add or edit these entries.'
 }
 
+const noteTypes = ['Action Item', 'Key Decision', 'Open Question'];
+
 const collaborators = ['Kartik Goel', 'Samim Gupta', 'Abhishek Bharadwaj'];
 
-export { GENERIC_NAME, placeholder, actionItems, keyDecisions, agendaItems, collaborators };
+export { GENERIC_NAME, placeholder, actionItems, keyDecisions, agendaItems, collaborators, noteTypes };
 
 export const poNotesStatus = ['PENDING', 'COMPLETED', 'DRAFT'];
