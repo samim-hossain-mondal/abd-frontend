@@ -14,13 +14,12 @@ import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
 import WelcomePage from './components/welcomePage';
-
+// import TeamInformation from './components/teamInformation/TeamInformations';
 import ScrollableHome from './components/routes/ScrollableHome'
 import { CALENDAR_ROUTE, HOME_ROUTE, MADE_TO_STICK_ROUTE, OUR_TEAM_ROUTE, PO_NOTE_ROUTE, WELCOME_ROUTE } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
 import LoginCallbackPage from './components/elements/LoginCallbackPage';
-import TeamInformation from './components/teamInformation/TeamInformations';
 
 
 const oktaAuth = new OktaAuth({
@@ -83,16 +82,14 @@ function AppRoutes() {
         )}
         <Routes>
           <Route path='/' exact element={<Login />} />
-
-          <Route path='/home' exact element={<SecureRoute>{authLoaded && <HomeContainer />}</SecureRoute>} />
-          <Route path='/announcements' exact element={<SecureRoute>{authLoaded && <AnnouncementContainer />}</SecureRoute>} />
-          <Route path='/information-radiators' exact element={<SecureRoute>{authLoaded && <InformationRadiatorContainer />}</SecureRoute>} />
-          <Route path='/our-teams' exact element={<SecureRoute>{authLoaded && <OurTeamsContainer />}</SecureRoute>} />
-          <Route path='/po-notes' exact element={<SecureRoute>{authLoaded && <PONotesContainer />}</SecureRoute>} />
-          <Route path='/reference-material' exact element={<SecureRoute>{authLoaded && <RefMaterialsContainer />}</SecureRoute>} />
-          <Route path='/availability-calendar' exact element={<SecureRoute>{authLoaded && <AvailabilityCalendar />}</SecureRoute>} />
-          <Route path='/login/callback' element={<LoginCallback />} />
-          {/* <Route path='*' element={<SecureRoute><h1>404: Not Found</h1></SecureRoute>} /> */}
+          <Route path={`/:projectId${HOME_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='dsm' />}</SecureRoute>} />
+          <Route path={`/:projectId${MADE_TO_STICK_ROUTE}`} exact element={<SecureRoute>{authLoaded && <MadeToStickContainer />}</SecureRoute>} />
+          <Route path={`/:projectId${OUR_TEAM_ROUTE}`} exact element={<SecureRoute>{authLoaded && < OurTeamsContainer/>}</SecureRoute>} />
+          <Route path={`/:projectId${PO_NOTE_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='poNotes' />}</SecureRoute>} />
+          <Route path={`/:projectId${CALENDAR_ROUTE}`} exact element={<SecureRoute>{authLoaded && <ScrollableHome poNotesRef={poNotesRef} dsmRef={dsmRef} availabilityCalendarRef={availabilityCalendarRef} handleScroll={handleScroll} scrollTo='availabilityCalendar' />}</SecureRoute>} />
+          {/* Is this route meant to be unprotected? */}
+          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
+          <Route path='/login/callback' element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>

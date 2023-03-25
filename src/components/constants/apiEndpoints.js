@@ -181,19 +181,19 @@ export const DUMY = {}
 //   method: 'patch',
 // }
  export const GET_TEAM_INFORMATION_BY_PROJECT_ID= (projectId) => ({
-  url: `${BACKEND_URL}/teamInformations/projectId/${projectId}`,
+  url: `api/teamInformations/projectId/${projectId}`,
   method: 'GET',
 })
 export const POST_TEAM_INFORMATION = {
-  url: `${BACKEND_URL}/teamInformations`,
+  url: `api/teamInformations`,
   method: 'POST',
 }
 export const PUT_TEAM_INFORMATION = (id)=>({
-  url: `${BACKEND_URL}/teamInformations/${id}`,
+  url: `api/teamInformations/${id}`,
   method: 'PUT',
 
 })
 export const DELETE_TEAM_INFORMATION = (id)=>({
-  url: `${BACKEND_URL}/teamInformations/${id}`,
+  url: `api/teamInformations/${id}`,
   method: 'DELETE',
 })

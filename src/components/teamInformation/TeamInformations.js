@@ -12,13 +12,12 @@ import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import {
-  BACKEND_URL,
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
   DELETE_TEAM_INFORMATION,
   PUT_TEAM_INFORMATION,
 } from "../constants/apiEndpoints";
-import makeRequest from "../utilityFunctions/makeRequest";
+import makeRequest from "../utilityFunctions/makeRequest/index";
 import { ErrorContext } from "../contexts/ErrorContext";
 
 function CardList() {
@@ -37,14 +36,14 @@ function CardList() {
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
-  const [projectId] = useState(1);
+  const [projectId] = useState(34);
   useEffect(() => {
+    console.log("useEffect",projectId);
     makeRequest(
-      BACKEND_URL,
-      GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId).url,
-      "GET"
+      GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId),
     )
       .then((response) => {
+        console.log(response);
         setData(response);
       })
       .catch((error) => {
@@ -81,7 +80,7 @@ function CardList() {
 
   const handleSaveChanges = () => {
     if (isAddCard) {
-      makeRequest(BACKEND_URL, POST_TEAM_INFORMATION.url, "POST", {
+      makeRequest(POST_TEAM_INFORMATION, {
         data: {
           name,
           projectId,
@@ -105,9 +104,7 @@ function CardList() {
       });
     } else {
       makeRequest(
-        BACKEND_URL,
-        PUT_TEAM_INFORMATION(selectedItem.id).url,
-        "PUT",
+        PUT_TEAM_INFORMATION(selectedItem.id),
         {
           data: {
             name,
@@ -166,7 +163,6 @@ function CardList() {
   };
   const handleDelete = () => {
     makeRequest(
-      BACKEND_URL,
       DELETE_TEAM_INFORMATION(selectedItem.id).url,
       "DELETE"
     ).then((response) => {
@@ -234,7 +230,7 @@ function CardList() {
           height: "50vh",
         }}
       >
-        {data.map((item) => (
+        {data && data.map((item) => (
           <Box
             key={item.id}
             sx={{
