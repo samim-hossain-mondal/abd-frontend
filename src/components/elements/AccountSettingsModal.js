@@ -3,7 +3,6 @@ import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
-
 import { PropTypes } from "prop-types";
 import axios from "axios";
 import ProjectModal from "./ProjectModal";
@@ -11,50 +10,27 @@ import Transition from "../utilityFunctions/OverlayTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
 import NewProjectModal from "./NewProjectModal";
 import { DOMAIN } from "../../config";
+import { ProjectUserContext } from "../contexts/ProjectUserContext";
 
 function AccountSettingsModal({ open, setOpenSettings }) {
-  const [projects, setProjects] = useState([]);
   const [projectInfo, setProjectInfo] = useState();
   const { setError, setSuccess } = useContext(ErrorContext);
   const [openEditModel, setOpenEditModel] = useState();
   const [openNewProjectModal, setOpenNewProjectModal] = useState();
   const [selectedProject, setSelectedProject] = useState(null);
 
-  React.useEffect(() => {
-    async function fetchProjectInfo() {
-      const [firstApiCall, secondApiCall] = await Promise.all([
-        axios.get(`${DOMAIN}/api/management/project`),
-        axios.get(`${DOMAIN}/api/management/me`),
-      ]);
-      const { data } = firstApiCall;
-      const { memberId } = secondApiCall.data;
-      if (memberId !== null && data.length > 0) {
-        const requests = data.map((project) =>
-          axios
-            .get(
-              `${DOMAIN}/api/management/project/${project.projectId}/member/${memberId}`
-            )
-            .then((response) => {
-              const projectWithRole = Object.assign(project, {
-                role: response.data.role,
-              });
-              return projectWithRole;
-            })
-            .catch((error) => error)
-        );
+  const { projects, fetchProjectInfo, setProjects, deleteProject } = useContext(ProjectUserContext);
 
-        Promise.all(requests)
-          .then((updatedProjects) => {
-            setProjects(updatedProjects);
-          })
-          .catch((error) => {
-            setError(error.response.data.message);
-          });
-      } else {
-        setProjects([]);
-      }
-    }
-    fetchProjectInfo();
+  React.useEffect(() => {
+    fetchProjectInfo()
+      .then((response) => {
+        if (response) {
+          setProjectInfo(response);
+        }
+      })
+      .catch((error) => {
+        setError(error.response.data.message);
+      });
   }, []);
 
   const handleCancelChanges = () => {
@@ -78,6 +54,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         );
         const newProjects = [...projects];
         newProjects[index].projectName = projectName;
+        newProjects[index].projectDescription = projectDescription;
         setProjects(newProjects);
         setProjectInfo({
           ...projectInfo,
@@ -106,6 +83,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
     }
   };
 
+  // TODO: state management for add collaborator
   const handleSaveCollab = (index) => {
     const { projectId } = projectInfo;
     axios
@@ -127,29 +105,41 @@ function AccountSettingsModal({ open, setOpenSettings }) {
             ...projectInfo.projectMembers.slice(index + 1),
           ],
         });
+        const newProjectArray = projects.map((project) => {
+          if (project.projectId === projectId) {
+            return {
+              ...project,
+              projectMembers: [
+                ...project.projectMembers,
+                {
+                  email: projectInfo.projectMembers[index].email,
+                  role: projectInfo.projectMembers[index].role,
+                },
+              ],
+              _count: {
+                projectMembers: project._count.projectMembers + 1, // TODO: fix when backend changes
+              }
+            };
+          }
+          return project;
+        });
+        console.log('new', newProjectArray);
+        setProjects(newProjectArray);
       })
       .catch((error) => {
         setError(error.response.data.message);
       });
   };
+
   const handleDeleteProject = (projectId) => {
-    axios
-      .delete(`${DOMAIN}/api/management/project/${projectId}`)
+    deleteProject(projectId)
       .then(() => {
+        setOpenEditModel(false);
         setSuccess("Successfully Deleted Project");
       })
       .catch((error) => {
         setError(error.response.data.message);
       });
-    const index = projects.findIndex(
-      (project) => project.projectId === projectId
-    );
-    const newProjectArray = [
-      ...projects.slice(0, index),
-      ...projects.slice(index + 1),
-    ];
-    setProjects(newProjectArray);
-    setOpenEditModel(false);
   };
 
   const handleSelectedProject = (projectId) => {

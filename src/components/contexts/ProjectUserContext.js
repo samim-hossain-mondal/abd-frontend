@@ -1,9 +1,10 @@
 // import axios from "axios";
 import React, { createContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-
+import axios from 'axios';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { GET_ME, GET_PROJECTS, GET_PROJECT_BY_ID, CREATE_PROJECT } from '../constants/apiEndpoints';
+import { DOMAIN } from '../../config';
 
 export const ProjectUserContext = createContext();
 
@@ -72,6 +73,47 @@ export function ProjectUserProvider({ children }) {
     setProjects([...projects, project]);
   };
 
+  async function fetchProjectInfo() {
+    const { memberId } = user;
+    if (memberId !== null && projects.length > 0) {
+      const requests = projects.map((project) =>
+        axios
+          .get(
+            `${DOMAIN}/api/management/project/${project.projectId}/member/${memberId}`
+          )
+          .then((response) => {
+            const projectWithRole = Object.assign(project, {
+              role: response.data.role,
+            });
+            return projectWithRole;
+          })
+          .catch((error) => error)
+      );
+
+      Promise.all(requests)
+        .then((updatedProjects) => {
+          setProjects(updatedProjects);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      setProjects([]);
+    }
+  }
+
+  const deleteProject = async (projectIdParam) => {
+    axios
+      .delete(`${DOMAIN}/api/management/project/${projectIdParam}`)
+      .then(() => {
+        const newProjectArray = projects.filter(project => project.projectId !== projectIdParam)
+        setProjects(newProjectArray);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const projectUserContextValues = useMemo(() => ({
     projectId,
     setProjectId,
@@ -83,8 +125,10 @@ export function ProjectUserProvider({ children }) {
     setProjectDetails,
     updateProjectDetails,
     userRole,
-    addNewProject
-  }), [projectId, user, projects, projectDetails, projectsUpdated, userRole, addNewProject]);
+    addNewProject,
+    fetchProjectInfo,
+    deleteProject,
+  }), [projectId, user, projects, projectDetails, projectsUpdated, userRole, addNewProject, fetchProjectInfo, deleteProject]);
 
   return (
     <ProjectUserContext.Provider value={projectUserContextValues}>
