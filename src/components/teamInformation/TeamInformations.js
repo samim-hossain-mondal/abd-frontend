@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
   TextareaAutosize,
+
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
@@ -232,25 +233,10 @@ const [showAddProfile, setShowAddProfile] = useState(null);
     setIsMessageClicked(true);
   };
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        width: "95%",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        marginLeft: "1%",
-        marginRight: "1%",
-        marginTop: "5%",
-        height: "83vh",
-        backgroundColor: "#e6eef2",
-      }}
-    >
-      <Box sx={{ width: "100%", paddingLeft: "18%" }}>
-        {
-          showAddProfile?
+    <Box sx={{ width: "100%",display:"flex",flexDirection:"column",alignItems:"center"}} className="body">
+      <Box sx={{ width: "95%",height:"3%"}}>
         <Button
-          style={{ margin: "2% 2% 1% 0%" }}
+          style={{ margin: "2% 2% 1% 0%",visibility:showAddProfile?"visible":"hidden"}}
           variant="contained"
           background="#7784EE"
           onClick={() => {
@@ -261,38 +247,43 @@ const [showAddProfile, setShowAddProfile] = useState(null);
         >
           Add Your Profile
         </Button>
-        :null
-        }
       </Box>
+    <Box sx={{ width: "100%",display:"flex",justifyContent:"center",height:"90vh"}}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        width: "95%",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        backgroundColor: "#e6eef2",
+      }}
+    >
       <Box
-        sx={{
-          paddingLeft: "18%",
-          paddingBottom: "5%",
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          columnGap: "5%",
-          rowGap: "5%",
-          backgroundColor: "#e6eef2",
-          width: "95%",
-          overflowY: "scroll",
-          height: "50vh",
-        }}
+      sx={{
+        marginTop: "3%",
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        width: "85%",
+       
+      }}
       >
         {data && data.map((item) => (
           <Box
             key={item.id}
             sx={{
-              width: 500,
-              marginBottom: "1rem",
+              width: 448,
               borderRadius: "10px",
-              overflow: "hidden",
-              fontFamily: "Roboto",
+              fontFamily: "bebas-neue",
               boxShadow: 1,
-              height: 235,
+              height: "235px",
+              margin: "2% 2% 2% 0",
+              border: "1px solid #CBD5DC",
             }}
           >
-            <Box onClick={() => handleOpenModal(item)}>
+            <Box onClick={() => handleOpenModal(item)}
+            >
               <Box
                 sx={{
                   backgroundColor: "#CBD5DC",
@@ -304,11 +295,8 @@ const [showAddProfile, setShowAddProfile] = useState(null);
                   height: "50px",
                   padding: "0 5% 0 0",
                 }}
-                style={{
-                  marginRight: "10px",
-                }}
               >
-                {formatDate(item.startDate)}-
+                {formatDate(item.startDate)}&nbsp; - &nbsp;
                 {item.endDate < today ? formatDate(item.endDate) : "Till Date"}
               </Box>
               <Box
@@ -514,6 +502,8 @@ const [showAddProfile, setShowAddProfile] = useState(null);
           </Box>
         </Modal>
       </Box>
+    </Box>
+    </Box>
     </Box>
   );
 }
