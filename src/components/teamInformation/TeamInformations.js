@@ -11,45 +11,74 @@ import {
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import {useParams} from "react-router-dom";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
   DELETE_TEAM_INFORMATION,
   PUT_TEAM_INFORMATION,
+  GET_ROLE_IN_PROJECT
 } from "../constants/apiEndpoints";
 import makeRequest from "../utilityFunctions/makeRequest/index";
 import { ErrorContext } from "../contexts/ErrorContext";
+import {ProjectUserContext} from "../contexts/ProjectUserContext";
 
 function CardList() {
+  const { projectId } = useParams();
+  const {user} = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const [today] = useState(new Date().toISOString().slice(0, 10));
   const [isMessageClicked, setIsMessageClicked] = useState(false);
   const [data, setData] = useState([]);
-  const [memberId] = useState(1);
+  const [memberId] = useState(user.memberId);
   const [isAddCard, setIsAddCard] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(user.name);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [emailId, setEmailId] = useState("");
+  const [emailId, setEmailId] = useState(user.email);
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
-  const [projectId] = useState(34);
+const [showAddProfile, setShowAddProfile] = useState(null);
+
   useEffect(() => {
-    console.log("useEffect",projectId);
+    try
+    {
     makeRequest(
       GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId),
     )
       .then((response) => {
-        console.log(response);
+        console.log(user);
         setData(response);
+        const index = response.findIndex((item) => item.emailId === user.email);
+        if(index===-1)
+        {
+          setShowAddProfile(true);
+        }
+        else
+        {
+          setShowAddProfile(false);
+        }
       })
-      .catch((error) => {
-        setError(error.message);
-      });
+    } catch (error) {
+      setError("Error in making the request");
+    } 
+    try
+    {
+      makeRequest(
+        GET_ROLE_IN_PROJECT(projectId,memberId),
+      )
+        .then((response) => {
+          console.log(response);
+          setProjectRole(response.role);
+        })
+      } catch (error) {
+        setError("Error in making the request");
+      }
   }, []);
+
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
@@ -67,11 +96,11 @@ function CardList() {
 
   const handleCloseModal = () => {
     setSelectedItem(null);
-    setName("");
+    setName(name);
     setStartDate("");
     setEndDate("");
-    setEmailId("");
-    setProjectRole("");
+    setEmailId(user.email);
+    setProjectRole(projectRole);
     setBio("");
     setMessage("");
     if (isAddCard) setIsAddCard(false);
@@ -80,78 +109,78 @@ function CardList() {
 
   const handleSaveChanges = () => {
     if (isAddCard) {
-      makeRequest(POST_TEAM_INFORMATION, {
-        data: {
-          name,
-          projectId,
-          projectRole,
-          memberId,
-          message,
-          bio,
-          startDate,
-          endDate,
-        },
-      }).then((response) => {
-        if (response.id) {
-          const updatedData = [...data, response];
-          setData(updatedData);
-          setIsAddCard(false);
-          setSuccess("Information added successfully");
-          handleCloseModal();
-        } else {
-          setError("Error in adding information");
-        }
-      });
-    } else {
-      makeRequest(
-        PUT_TEAM_INFORMATION(selectedItem.id),
-        {
+      try {
+        makeRequest(POST_TEAM_INFORMATION, {
           data: {
             name,
-            memberId,
-            projectId,
+            projectId:Number(projectId),
             projectRole,
+            memberId,
             message,
             bio,
             startDate,
             endDate,
           },
-        }
-      ).then((response) => {
-        let itemFound = false;
-        const updatedData = data.map((item) => {
-          if (response.id === selectedItem.id) {
-            setSuccess("Information updated successfully");
-            itemFound = true;
-            return {
-              ...item,
+        }).then((response) => {
+          if (response.id) {
+            const updatedData = [...data, response];
+            setData(updatedData);
+            setIsAddCard(false);
+            setShowAddProfile(false);
+            setSuccess("Information added successfully");
+            handleCloseModal();
+          } else {
+            setError("Error in adding information");
+          }
+        });
+      } catch (error) {
+        setError("Error in making the request");
+      }
+    } else {
+      try {
+        makeRequest(
+          PUT_TEAM_INFORMATION(selectedItem.id),
+          {
+            data: {
               name,
+              memberId,
+              projectId:Number(projectId),
+              projectRole,
+              message,
+              bio,
               startDate,
               endDate,
-              emailId,
-              projectRole,
-              bio,
-              message,
-            };
+            },
           }
-          return item;
+        ).then((response) => {
+          response.emailId = emailId;
+          const updatedData = data.map((item) => {
+            if (item.id === selectedItem.id) {
+              return response;
+            }
+            return item;
+          });
+          setData(updatedData);
+          setSuccess("Information updated successfully");
+          setIsAddCard(false);
+          setShowAddProfile(false);
+          handleCloseModal();
         });
-        if (!itemFound) setError("Error in updating information");
-        setData(updatedData);
-        setIsAddCard(false);
-        handleCloseModal();
-      });
+      } catch (error) {
+        setError("Error in making the request");
+      }
     }
+    
   };
 
   const handleAddCard = () => {
     const newCard = {
-      name: "",
+      name,
       startDate: new Date().toISOString().slice(0, 10),
       endDate: new Date().toISOString().slice(0, 10),
-      emailId: "",
+      emailId: user.email,
       bio: "",
-      projectRole: "",
+      projectRole,
       message: "",
     };
     setIsAddCard(true);
@@ -162,12 +191,23 @@ function CardList() {
     return dateInengbFormat.toLocaleDateString("en-GB");
   };
   const handleDelete = () => {
+    if(emailId!==user.email)
+    {
+      setError("You can only delete your own information");
+      return;
+    }
+
+    try
+    {
     makeRequest(
-      DELETE_TEAM_INFORMATION(selectedItem.id).url,
+      DELETE_TEAM_INFORMATION(selectedItem.id),
       "DELETE"
     ).then((response) => {
       if (response.id === selectedItem.id)
+      {
         setSuccess("Information deleted successfully");
+        setShowAddProfile(true);
+      }
       else {
         setError("Error in deleting information");
         return;
@@ -176,6 +216,11 @@ function CardList() {
       setData(updatedData);
       handleCloseModal();
     });
+  }
+  catch(error)
+  {
+    setError("Error in deleting information");
+  };
   };
   useEffect(() => {
     if (isMessageClicked) {
@@ -202,6 +247,8 @@ function CardList() {
       }}
     >
       <Box sx={{ width: "100%", paddingLeft: "18%" }}>
+        {
+          showAddProfile?
         <Button
           style={{ margin: "2% 2% 1% 0%" }}
           variant="contained"
@@ -212,8 +259,10 @@ function CardList() {
           name="save"
           type="button"
         >
-          Add Card
+          Add Your Profile
         </Button>
+        :null
+        }
       </Box>
       <Box
         sx={{
@@ -349,9 +398,13 @@ function CardList() {
                 <Typography variant="h5">Details</Typography>
               </Box>
               <Box>
+                {
+                  emailId ===user.email?(
                 <IconButton edge="end" color="inherit" aria-label="close">
                   <DeleteForeverRoundedIcon onClick={handleDelete} />
                 </IconButton>
+                ):null
+                } 
                 <IconButton color="inherit" aria-label="close">
                   <CloseIcon onClick={handleCloseModal} />
                 </IconButton>
@@ -364,6 +417,7 @@ function CardList() {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               margin="normal"
+              disabled={!(emailId ===user.email)}
             />
             <TextField
               label="Your start date in the project"
@@ -372,6 +426,8 @@ function CardList() {
               onChange={(e) => setStartDate(e.target.value)}
               fullWidth
               margin="normal"
+              disabled={!(emailId ===user.email)}
+
             />
             <TextField
               label="Your end date in the project"
@@ -380,6 +436,8 @@ function CardList() {
               onChange={(e) => setEndDate(e.target.value)}
               fullWidth
               margin="normal"
+              disabled={!(emailId ===user.email)}
+
             />
             <Box
               sx={{
@@ -399,6 +457,8 @@ function CardList() {
               placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
               minRows={13}
               className="my-textarea"
+              disabled={!(emailId ===user.email)}
+
               style={{
                 fontFamily: "Roboto",
                 fontSize: "large",
@@ -407,17 +467,21 @@ function CardList() {
               }}
             />
             <TextField
-              label="Your projectRole in the project"
+              label="Your project Role in the project"
               value={projectRole}
               onChange={(e) => setProjectRole(e.target.value)}
               fullWidth
               margin="normal"
+              disabled
+
             />
             <TextField
               label="Your email id"
               value={emailId}
               fullWidth
+              disabled
               margin="normal"
+          
             />
             <TextField
               label="Your slack link"
@@ -425,8 +489,12 @@ function CardList() {
               onChange={(e) => setMessage(e.target.value)}
               fullWidth
               margin="normal"
+              disabled={!(emailId ===user.email)}
+
             />
-            <Button
+             {
+                emailId===user.email ? (
+                  <Button
               variant="contained"
               sx={{
                 width: "100%",
@@ -438,6 +506,11 @@ function CardList() {
             >
               Save Changes
             </Button>
+                ) : (
+                  null
+                )
+
+              }        
           </Box>
         </Modal>
       </Box>

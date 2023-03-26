@@ -197,3 +197,9 @@ export const DELETE_TEAM_INFORMATION = (id)=>({
   url: `api/teamInformations/${id}`,
   method: 'DELETE',
 })
+
+// ***** projects  Endpoints *****
+export const GET_ROLE_IN_PROJECT = (projectId,memberId) => ({
+  url: `api/management/project/${projectId}/member/${memberId}`,
+  method: 'get',
+})
