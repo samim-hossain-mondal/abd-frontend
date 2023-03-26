@@ -23,6 +23,7 @@ import {
 import makeRequest from "../utilityFunctions/makeRequest/index";
 import { ErrorContext } from "../contexts/ErrorContext";
 import {ProjectUserContext} from "../contexts/ProjectUserContext";
+import DeleteDialog from "../elements/DeleteDialog";
 
 function CardList() {
   const { projectId } = useParams();
@@ -43,6 +44,7 @@ function CardList() {
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
 const [showAddProfile, setShowAddProfile] = useState(null);
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     try
@@ -80,6 +82,9 @@ const [showAddProfile, setShowAddProfile] = useState(null);
       }
   }, []);
 
+  const handleDeleteDialog = () => {
+    setDeleteDialogOpen(true);
+  };
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
@@ -221,7 +226,12 @@ const [showAddProfile, setShowAddProfile] = useState(null);
   catch(error)
   {
     setError("Error in deleting information");
-  };
+  }
+  finally
+  {
+    setDeleteDialogOpen(false);
+  }
+
   };
   useEffect(() => {
     if (isMessageClicked) {
@@ -233,278 +243,262 @@ const [showAddProfile, setShowAddProfile] = useState(null);
     setIsMessageClicked(true);
   };
   return (
-    <Box sx={{ width: "100%",display:"flex",flexDirection:"column",alignItems:"center"}} className="body">
-      <Box sx={{ width: "95%",height:"3%"}}>
+        <>
+        <DeleteDialog open={deleteDialogOpen} setOpen={setDeleteDialogOpen} handleDelete={handleDelete} description="Are you sure want to delete this Profile"/>
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }} className="body">
+      <Box sx={{ width: "95%", height: "3%" }}>
         <Button
-          style={{ margin: "2% 2% 1% 0%",visibility:showAddProfile?"visible":"hidden"}}
+          style={{ margin: "2% 2% 1% 0%", visibility: showAddProfile ? "visible" : "hidden" }}
           variant="contained"
           background="#7784EE"
           onClick={() => {
             handleAddCard();
-          }}
+          } }
           name="save"
           type="button"
         >
           Add Your Profile
         </Button>
       </Box>
-    <Box sx={{ width: "100%",display:"flex",justifyContent:"center",height:"90vh"}}>
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        width: "95%",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        backgroundColor: "#e6eef2",
-      }}
-    >
-      <Box
-      sx={{
-        marginTop: "3%",
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        width: "85%",
-       
-      }}
-      >
-        {data && data.map((item) => (
-          <Box
-            key={item.id}
-            sx={{
-              width: 448,
-              borderRadius: "10px",
-              fontFamily: "bebas-neue",
-              boxShadow: 1,
-              height: "235px",
-              margin: "2% 2% 2% 0",
-              border: "1px solid #CBD5DC",
-            }}
-          >
-            <Box onClick={() => handleOpenModal(item)}
-            >
-              <Box
-                sx={{
-                  backgroundColor: "#CBD5DC",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  width: "95%",
-                  height: "50px",
-                  padding: "0 5% 0 0",
-                }}
-              >
-                {formatDate(item.startDate)}&nbsp; - &nbsp;
-                {item.endDate < today ? formatDate(item.endDate) : "Till Date"}
-              </Box>
-              <Box
-                sx={{
-                  fontSize: "xx-large",
-                  backgroundColor: "#E6EEF2",
-                  height: "60px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  padding: "4% 0% 0% 6%",
-                }}
-              >
-                {item.name}
-              </Box>
-              <Box
-                sx={{
-                  color: "#8A9DAB",
-                  backgroundColor: "#E6EEF2",
-                  padding: "0% 0 7% 6%",
-                  fontSize: "large",
-                }}
-              >
-                {item.projectRole}
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: "white",
-                  color: "blue",
-                  height: "50px",
-                  display: "flex",
-                  fontSize: "large",
-                }}
-              >
-                <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
-                  <Button>Bio</Button>
-                </Box>
-                <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
-                  <Button
-                    href={item.message}
-                    target="_blank"
-                    onClick={handleMessageClick}
-                  >
-                    Message
-                  </Button>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-        ))}
-
-        <Modal
-          open={modalOpen}
-          onClose={handleCloseModal}
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center", height: "90vh" }}>
+        <Box
           sx={{
-            overflow: "scroll",
-            width: "100%",
             display: "flex",
+            flexDirection: "row",
+            width: "95%",
+            flexWrap: "wrap",
             justifyContent: "center",
-            alignContent: "center",
+            backgroundColor: "#e6eef2",
           }}
         >
           <Box
-            style={{
-              top: "50%",
-              left: "50%",
-              right: "50%",
-              width: "35%",
-              marginTop: "2%",
-              marginBottom: "2%",
-              height: "88%",
-              overflow: "scroll",
-              backgroundColor: "#fff",
-              padding: "1rem",
-              borderRadius: "4px",
+            sx={{
+              marginTop: "3%",
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              width: "85%",
             }}
           >
-            <Box
+            {data && data.map((item) => (
+              <Box
+                key={item.id}
+                sx={{
+                  width: 448,
+                  borderRadius: "10px",
+                  fontFamily: "bebas-neue",
+                  boxShadow: 1,
+                  height: "235px",
+                  margin: "2% 2% 2% 0",
+                  border: "1px solid #CBD5DC",
+                }}
+              >
+                <Box onClick={() => handleOpenModal(item)}
+                >
+                  <Box
+                    sx={{
+                      backgroundColor: "#CBD5DC",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      width: "95%",
+                      height: "50px",
+                      padding: "0 5% 0 0",
+                    }}
+                  >
+                    {formatDate(item.startDate)}&nbsp; - &nbsp;
+                    {item.endDate < today ? formatDate(item.endDate) : "Till Date"}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontSize: "xx-large",
+                      backgroundColor: "#E6EEF2",
+                      height: "60px",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      padding: "4% 0% 0% 6%",
+                    }}
+                  >
+                    {item.name}
+                  </Box>
+                  <Box
+                    sx={{
+                      color: "#8A9DAB",
+                      backgroundColor: "#E6EEF2",
+                      padding: "0% 0 7% 6%",
+                      fontSize: "large",
+                    }}
+                  >
+                    {item.projectRole}
+                  </Box>
+                  <Box
+                    sx={{
+                      backgroundColor: "white",
+                      color: "blue",
+                      height: "50px",
+                      display: "flex",
+                      fontSize: "large",
+                    }}
+                  >
+                    <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
+                      <Button>Bio</Button>
+                    </Box>
+                    <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
+                      <Button
+                        href={item.message}
+                        target="_blank"
+                        onClick={handleMessageClick}
+                      >
+                        Message
+                      </Button>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            ))}
+
+            <Modal
+              open={modalOpen}
+              onClose={handleCloseModal}
               sx={{
-                justifyContent: "space-between",
+                overflow: "scroll",
                 width: "100%",
                 display: "flex",
-                columnGap: "2%",
+                justifyContent: "center",
+                alignContent: "center",
               }}
             >
-              <Box>
-                <Typography variant="h5">Details</Typography>
-              </Box>
-              <Box>
-                {
-                  emailId ===user.email?(
-                <IconButton edge="end" color="inherit" aria-label="close">
-                  <DeleteForeverRoundedIcon onClick={handleDelete} />
-                </IconButton>
-                ):null
-                } 
-                <IconButton color="inherit" aria-label="close">
-                  <CloseIcon onClick={handleCloseModal} />
-                </IconButton>
-              </Box>
-            </Box>
+              <Box
+                style={{
+                  top: "50%",
+                  left: "50%",
+                  right: "50%",
+                  width: "35%",
+                  marginTop: "2%",
+                  marginBottom: "2%",
+                  height: "88%",
+                  overflow: "scroll",
+                  backgroundColor: "#fff",
+                  padding: "1rem",
+                  borderRadius: "4px",
+                }}
+              >
+                <Box
+                  sx={{
+                    justifyContent: "space-between",
+                    width: "100%",
+                    display: "flex",
+                    columnGap: "2%",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h5">Details</Typography>
+                  </Box>
+                  <Box>
+                    {emailId === user.email ? (
+                      <IconButton edge="end" color="inherit" aria-label="close">
+                        <DeleteForeverRoundedIcon onClick={handleDeleteDialog} />
+                      </IconButton>
+                    ) : null}
+                    <IconButton color="inherit" aria-label="close">
+                      <CloseIcon onClick={handleCloseModal} />
+                    </IconButton>
+                  </Box>
+                </Box>
 
-            <TextField
-              label="Enter your full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={!(emailId ===user.email)}
-            />
-            <TextField
-              label="Your start date in the project"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={!(emailId ===user.email)}
+                <TextField
+                  label="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  disabled={!(emailId === user.email)} />
+                <TextField
+                  label="Your start date in the project"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  disabled={!(emailId === user.email)} />
+                <TextField
+                  label="Your end date in the project"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  disabled={!(emailId === user.email)} />
+                <Box
+                  sx={{
+                    color: "grey",
+                    fontFamily: "Roboto",
+                    fontSize: "normal",
+                    fontWeight: "normal",
+                    padding: "2% 0% 1% 0%",
+                  }}
+                >
+                  Enter your work in the project
+                </Box>
+                <TextareaAutosize
+                  label="Your work in the project"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
+                  minRows={13}
+                  className="my-textarea"
+                  disabled={!(emailId === user.email)}
 
-            />
-            <TextField
-              label="Your end date in the project"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={!(emailId ===user.email)}
-
-            />
-            <Box
-              sx={{
-                color: "grey",
-                fontFamily: "Roboto",
-                fontSize: "normal",
-                fontWeight: "normal",
-                padding: "2% 0% 1% 0%",
-              }}
-            >
-              Enter your work in the project
-            </Box>
-            <TextareaAutosize
-              label="Your work in the project"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
-              minRows={13}
-              className="my-textarea"
-              disabled={!(emailId ===user.email)}
-
-              style={{
-                fontFamily: "Roboto",
-                fontSize: "large",
-                width: "97%",
-                padding: "1%",
-              }}
-            />
-            <TextField
-              label="Your project Role in the project"
-              value={projectRole}
-              onChange={(e) => setProjectRole(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled
-
-            />
-            <TextField
-              label="Your email id"
-              value={emailId}
-              fullWidth
-              disabled
-              margin="normal"
-          
-            />
-            <TextField
-              label="Your slack link"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={!(emailId ===user.email)}
-
-            />
-             {
-                emailId===user.email ? (
+                  style={{
+                    fontFamily: "Roboto",
+                    fontSize: "large",
+                    width: "97%",
+                    padding: "1%",
+                  }} />
+                <TextField
+                  label="Your project Role in the project"
+                  value={projectRole}
+                  onChange={(e) => setProjectRole(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  disabled />
+                <TextField
+                  label="Your email id"
+                  value={emailId}
+                  fullWidth
+                  disabled
+                  margin="normal" />
+                <TextField
+                  label="Your slack link"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  disabled={!(emailId === user.email)} />
+                {emailId === user.email ? (
                   <Button
-              variant="contained"
-              sx={{
-                width: "100%",
-                margin: "0.75% 0 0.75% 0",
-                backgroundColor: "#7784EE",
-                color: "white",
-              }}
-              onClick={handleSaveChanges}
-            >
-              Save Changes
-            </Button>
+                    variant="contained"
+                    sx={{
+                      width: "100%",
+                      margin: "0.75% 0 0.75% 0",
+                      backgroundColor: "#7784EE",
+                      color: "white",
+                    }}
+                    onClick={handleSaveChanges}
+                  >
+                    Save Changes
+                  </Button>
                 ) : (
                   null
-                )
-
-              }        
+                )}
+              </Box>
+            </Modal>
           </Box>
-        </Modal>
+        </Box>
       </Box>
-    </Box>
-    </Box>
-    </Box>
+    </Box></>
   );
 }
 
