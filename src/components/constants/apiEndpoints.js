@@ -103,6 +103,16 @@ export const CREATE_ANNOUNCMENT = (projectId) => ({
   method: 'post',
 })
 
+export const UPDATE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'patch',
+})
+
+export const DELETE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'delete',
+})
+
 // ***** sentiments  Endpoints *****
 
 export const GET_SENTIMENTS = (projectId) => ({
