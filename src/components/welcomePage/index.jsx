@@ -29,13 +29,10 @@ export default function WelcomePage() {
     projects: userProjects,
     updateProjectDetails,
   } = useContext(ProjectUserContext);
-
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
-
-  console.log("User Projects", userProjects);
 
   const handleScroll = () => {
     scrollRef.current = window.scrollY;
@@ -52,6 +49,15 @@ export default function WelcomePage() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const element = document.getElementById('projects');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 3000);
   }, []);
 
   const handleProjectClick = async (projectId) => {
@@ -131,6 +137,7 @@ export default function WelcomePage() {
         </Stack>
       </Container>
       {showProjectList && <Container
+        id="projects"
         component="main"
         sx={{
           mt: 4,
@@ -189,7 +196,7 @@ export default function WelcomePage() {
                 <Typography
                   component="p"
                   sx={{
-                    fontSize: 20,
+                    fontSize: 23,
                     px: 1,
                     alignSelf: "center",
                     width: "100%",
@@ -210,7 +217,7 @@ export default function WelcomePage() {
                   }}
                 >
                   {userProjects.length
-                    ? `${userProjects.length} PROJECTS`
+                    ? `${userProjects.length} Projects`
                     : "..."}
                 </Typography>
               </Box>

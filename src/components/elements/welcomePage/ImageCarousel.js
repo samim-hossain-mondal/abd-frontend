@@ -1,11 +1,14 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import Carousel from "react-material-ui-carousel"; 
 import PropTypes from "prop-types";
 import Image from "mui-image"; 
 import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
+
+  const matches = useMediaQuery("(min-width:600px)");
+
   return (
     <Box
       component="card"
@@ -13,38 +16,37 @@ function Item({ title, description, image }) {
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        borderRadius: 2,
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "white",
         textAlign: "center",
-        mt: 2,
-        border: "5px solid #e0e0e0",
+        boxShadow: 1,
       }}
     >
       <Box
         component="p"
         sx={{
-          fontSize: 25,
+          fontSize: matches ? 23 : 20,
           color: "text.primary",
           width: "100%",
           padding: 1,
           margin: 0,
           backgroundColor: "grey.200",
+          borderBottom: "5px solid #e0e0e0",
         }}
       >
         {title}
       </Box>
       <Image
         src={image}
-        height="75%"
-        width="75%"
-        fit="cover"
+        height= {matches ? "75%" : "50%"}
+        width= {matches ? "75%" : "50%"}
+        fit= "cover"
         duration={0}
         errorIcon
         shift={null}
         shiftDuration={900}
-        showLoading
+        showLoading 
         easing="ease-in-out"
         sx={{ marginTop: 2, marginBottom: 2 }}
       />
@@ -58,7 +60,12 @@ function Item({ title, description, image }) {
       /> */}
       <Box
         component="p"
-        sx={{ fontSize: 20, color: "text.primary", width: "100%", px: 2 }}
+        sx={{
+          fontSize: matches ? 20 : 18,
+          color: "text.primary",
+          width: "100%",
+          px: 2,
+        }}
       >
         {description}
       </Box>
@@ -71,7 +78,7 @@ function ImageCarousel() {
     <Carousel
       autoPlay
       animation="slide"
-      indicators
+      indicators={false}
       timeout={500}
       navButtonsAlwaysVisible
       cycleNavigation
@@ -94,6 +101,11 @@ function ImageCarousel() {
         style: {
           marginTop: 15,
         }
+      }}
+      sx = {{
+        width: "100%",
+        height: "100%",
+        boxShadow: 1,
       }}
     >
       {slides.map((slide) => (

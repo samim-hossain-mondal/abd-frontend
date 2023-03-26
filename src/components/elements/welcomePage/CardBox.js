@@ -11,7 +11,6 @@ function CardBox({ title, description }) {
         flexDirection: "column",
         width: "100%",
         boxShadow: 1,
-        borderRadius: 2,
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "white",
