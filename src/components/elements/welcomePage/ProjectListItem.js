@@ -36,7 +36,10 @@ function ProjectListItem({ project, handleProjectClick }) {
           alignItems: "center",
         }}
       >
-        {project.projectName}
+        <Box sx={{ display: "flex", flexDirection: "column"}}>
+          <Box>{project.projectName}</Box>
+          <Box sx={{ fontSize: 12, color: 'lightgrey' }}>{[project._count.projectMembers, ' members']}</Box>
+        </Box>
         <Box>
           <Tooltip
             title={showDescription ? "Hide Description" : "Show Description"}
@@ -93,6 +96,9 @@ ProjectListItem.propTypes = {
     projectId: propTypes.number.isRequired,
     projectName: propTypes.string.isRequired,
     projectDescription: propTypes.string.isRequired,
+    _count: propTypes.shape({
+      projectMembers: propTypes.number.isRequired,
+    }).isRequired,
   }).isRequired,
   handleProjectClick: propTypes.func.isRequired,
 };
