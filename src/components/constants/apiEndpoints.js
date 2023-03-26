@@ -164,6 +164,11 @@ export const GET_PROJECT_BY_ID = (projectId) => ({
   method: 'get',
 })
 
+export const CREATE_PROJECT = {
+  url: "/api/management/project",
+  method: 'post'
+}
+
 export const DUMY = {}
 
 // export const GET_PO_NOTES = {
