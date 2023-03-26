@@ -10,7 +10,6 @@ import {
   Paper,
   useMediaQuery,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import CardBox from "../elements/welcomePage/CardBox";
 import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
@@ -23,7 +22,6 @@ import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
-  const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const {
@@ -60,7 +58,7 @@ export default function WelcomePage() {
     console.log("Project Clicked", projectId);
     updateProjectDetails(projectId)
       .then(() => {
-        navigate(`/${projectId}`.concat(HOME_ROUTE));
+        window.open(`/${projectId}`.concat(HOME_ROUTE), "_blank");
       })
       .catch((err) => {
         console.log(err);
