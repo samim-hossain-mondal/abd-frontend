@@ -1,8 +1,9 @@
+// import axios from "axios";
 import React, { createContext, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { GET_ME, GET_PROJECTS, GET_PROJECT_BY_ID } from '../constants/apiEndpoints';
+import { GET_ME, GET_PROJECTS, GET_PROJECT_BY_ID, CREATE_PROJECT } from '../constants/apiEndpoints';
 
 export const ProjectUserContext = createContext();
 
@@ -52,6 +53,25 @@ export function ProjectUserProvider({ children }) {
     }
   }
 
+  const addNewProject = async (title, projectDesc) => {
+    const body = {
+      projectName: title,
+      projectDescription: projectDesc,
+    }
+    const { result } = await makeRequest(CREATE_PROJECT, {
+      data: body
+    })
+    const project = {
+      projectId: result.projectId,
+      projectName: result.projectName,
+      projectDescription: result.projectDescription,
+      _count: {
+        projectMembers: result.projectMembers.length, // TODO: once the backend is fixed, remove this and use the count from the response
+      }
+    };
+    setProjects([...projects, project]);
+  };
+
   const projectUserContextValues = useMemo(() => ({
     projectId,
     setProjectId,
@@ -62,8 +82,9 @@ export function ProjectUserProvider({ children }) {
     projectDetails,
     setProjectDetails,
     updateProjectDetails,
-    userRole
-  }), [projectId, user, projects, projectDetails, projectsUpdated, userRole]);
+    userRole,
+    addNewProject
+  }), [projectId, user, projects, projectDetails, projectsUpdated, userRole, addNewProject]);
 
   return (
     <ProjectUserContext.Provider value={projectUserContextValues}>
