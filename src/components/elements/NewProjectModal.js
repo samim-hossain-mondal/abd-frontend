@@ -1,38 +1,33 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { Dialog, DialogContent, TextField, Box, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { PropTypes } from "prop-types";
-import axios from "axios";
 import { ErrorContext } from "../contexts/ErrorContext";
+import { ProjectUserContext } from "../contexts/ProjectUserContext";
 
-function NewProjectModal({ open, setOpen, projects, setProjects }) {
-  const [projectTitle, setProjectTitle] = React.useState("");
-  const { setError, setSuccess } = React.useContext(ErrorContext);
-  const [projectDescription, setProjectDescription] = React.useState("");
+function NewProjectModal({ open, setOpen }) {
+  const [projectTitle, setProjectTitle] = useState("");
+  const { setError, setSuccess } = useContext(ErrorContext);
+  const [projectDescription, setProjectDescription] = useState("");
+  
+  const { addNewProject } = useContext(ProjectUserContext);
+  
   const handleProjectTitle = (e) => {
     setProjectTitle(e.target.value);
   };
   const handleProjectDescription = (e) => {
     setProjectDescription(e.target.value);
   };
-  const addNewProject = (title, projectDesc) => {
-    axios
-      .post("http://localhost:3001/api/management/project", {
-        projectName: title,
-        projectDescription: projectDesc,
-      })
+
+  const handleAddNewProject = (title, projectDesc) => {
+    addNewProject(title, projectDesc)
       .then((response) => {
-        setSuccess("Project Created Successfully");
-        const { result } = response.data;
-        const proj = {
-          projectId: result.projectId,
-          projectName: result.projectName,
-          role: "ADMIN",
-        };
-        setProjects([...projects, proj]);
+        if (response) {
+          setSuccess("Project Created Successfully");
+        }
       })
       .catch((error) => {
-        setError(error.response.data.message);
+        setError(error.response.data.message)
       });
     setOpen(false);
   };
@@ -90,7 +85,7 @@ function NewProjectModal({ open, setOpen, projects, setProjects }) {
           variant="contained"
           sx={{ mt: 2 }}
           onClick={() => {
-            addNewProject(projectTitle, projectDescription);
+            handleAddNewProject(projectTitle, projectDescription);
           }}
         >
           Create New Project
@@ -103,12 +98,6 @@ function NewProjectModal({ open, setOpen, projects, setProjects }) {
 NewProjectModal.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
-  projects: PropTypes.shape({
-    projectId: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
-    role: PropTypes.string.isRequired,
-  }).isRequired,
-  setProjects: PropTypes.func.isRequired,
 };
 
 export default NewProjectModal;
