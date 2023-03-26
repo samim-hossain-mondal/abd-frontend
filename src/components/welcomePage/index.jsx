@@ -29,7 +29,6 @@ export default function WelcomePage() {
   const {
     user,
     projects: userProjects,
-    setProjects: setUserProjects,
     updateProjectDetails,
   } = useContext(ProjectUserContext);
 
@@ -37,6 +36,8 @@ export default function WelcomePage() {
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
+
+  console.log("User Projects", userProjects);
 
   const handleScroll = () => {
     scrollRef.current = window.scrollY;
@@ -296,8 +297,6 @@ export default function WelcomePage() {
       <NewProjectModal
         open={showCreateModal}
         setOpen={setShowCreateModal}
-        projects={userProjects}
-        setProjects={setUserProjects}
       />
     </Box>
   );
