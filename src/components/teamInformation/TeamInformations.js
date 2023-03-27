@@ -102,7 +102,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleCloseModal = () => {
     setSelectedItem(null);
-    setName(name);
+    setName(user.name);
     setStartDate("");
     setEndDate("");
     setEmailId(user.email);
@@ -114,6 +114,15 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   };
 
   const handleSaveChanges = () => {
+    if(!name || !startDate || !endDate || !emailId || !projectRole || !message || !bio)
+    {
+      setError("Please fill all the fields");
+      return;
+    }
+    if (startDate > endDate) {
+      setError("Start date cannot be greater than end date");
+      return;
+    }
     if (isAddCard) {
       try {
         makeRequest(POST_TEAM_INFORMATION, {
@@ -202,7 +211,14 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
       setError("You can only delete your own information");
       return;
     }
-
+    const index=data.findIndex((item)=>item.emailId===user.email);
+    if(index===-1)
+    {
+      setModalOpen(false);
+      setDeleteDialogOpen(false);
+      return;
+      
+    }
     try
     {
     makeRequest(
@@ -250,7 +266,10 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
         <Button
           style={{ margin: "2% 2% 1% 0%", visibility: showAddProfile ? "visible" : "hidden" }}
           variant="contained"
-          background="#7784EE"
+        sx={{
+          backgroundColor: "#7784EE",
+
+        }}
           onClick={() => {
             handleAddCard();
           } }
