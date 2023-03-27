@@ -11,19 +11,27 @@ export default function PONotesTableHeader(props) {
       {
         (heading === agendaItems.heading) ? (
           <Typography variant='h6'>
-            OPEN QUESTIONS
+            {agendaItems.subHeading.toUpperCase()}{' '}
             ({countOfItems})
           </Typography>
         ) : (
           <Typography variant='h6'>
-            {heading.toUpperCase()}
+            {heading.toUpperCase()}{' '}
             ({countOfItems})
           </Typography>
         )
       }
-      <InformationModel heading={heading}
-        definition={definition}
-        accessibiltyInformation={accessibilityInformation} />
+      {
+        (heading === agendaItems.heading) ? (
+          <InformationModel heading={agendaItems.subHeading}
+            definition={definition}
+            accessibiltyInformation={accessibilityInformation} />
+        ) : (
+          <InformationModel heading={heading}
+            definition={definition}
+            accessibiltyInformation={accessibilityInformation} />
+        )
+      }
     </Box>
   )
 }

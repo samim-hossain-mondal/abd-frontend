@@ -19,6 +19,7 @@ const keyDecisions = {
 
 const agendaItems = {
   'heading': 'Agenda Items',
+  'subHeading': 'Open Questions',
   'definition': ' are the topics that the Product Owner(PO) has to discuss with the team in order to unblock the team, and can be linked to an issue in the Project management tool such as Jira.',
   'accessibilityInformation': 'PO is the owner of this section only PO can add or edit these entries.'
 }
