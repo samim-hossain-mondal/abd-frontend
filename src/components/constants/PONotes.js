@@ -30,3 +30,9 @@ const collaborators = ['Kartik Goel', 'Samim Gupta', 'Abhishek Bharadwaj'];
 export { GENERIC_NAME, placeholder, actionItems, keyDecisions, agendaItems, collaborators, noteTypes };
 
 export const poNotesStatus = ['PENDING', 'COMPLETED', 'DRAFT'];
+
+export const PO_NOTES_TYPES = {
+  ACTION_ITEM: 'ACTION_ITEM',
+  KEY_DECISION: 'KEY_DECISION',
+  AGENDA_ITEM: 'AGENDA_ITEM'
+}

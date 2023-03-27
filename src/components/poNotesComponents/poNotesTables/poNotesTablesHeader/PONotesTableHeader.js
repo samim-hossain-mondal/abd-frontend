@@ -8,10 +8,6 @@ export default function PONotesTableHeader(props) {
   const { countOfItems, definition, heading, accessibilityInformation } = props;
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Typography variant='h6'>
-        {heading.toUpperCase()}{' '}
-        ({countOfItems})
-      </Typography>
       {
         (heading === agendaItems.heading) ? (
           <Typography variant='h6'>

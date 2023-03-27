@@ -54,7 +54,7 @@ export default function GenericInputModal({
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
-  });
+  }, []);
 
   const getSimilarUsers = (text) => {
     const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));

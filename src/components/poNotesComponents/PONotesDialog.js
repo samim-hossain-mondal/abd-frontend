@@ -28,7 +28,7 @@ import RichTextArea from '../elements/RichTextArea';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
-import { GENERIC_NAME, noteTypes } from '../constants/PONotes';
+import { GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 const getNextDate = (days) => {
@@ -61,7 +61,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         getISODateToTimlineFormat(data?.dueDate) :
         getNextDate(1)
     );
-  const [type, setType] = useState(updateItem ? data?.type : 'ACTION_ITEM');
+  const [type, setType] = useState(updateItem ? data?.type : PO_NOTES_TYPES.ACTION_ITEM);
   const [statement, setStatement] = useState(updateItem ? data?.note : '');
   const [issueLink, setIssueLink] = useState(updateItem ? data?.issueLink ?? '' : '');
   const getEditColor = () => (updateItem && !lock) ? 'primary.main' : 'secondary.main'
@@ -86,9 +86,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         'status': status,
       };
 
-      if (type === 'ACTION_ITEM' && updateItem) body.issueLink = issueLink;
+      if (type === PO_NOTES_TYPES.ACTION_ITEM && updateItem && issueLink.length > 0) body.issueLink = issueLink;
 
-      if (type === 'ACTION_ITEM') body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
+      if (type === PO_NOTES_TYPES.ACTION_ITEM) body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
 
 
       if (updateItem) {
@@ -122,11 +122,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
   };
 
   const handleSave = () => {
-    handleSubmit(type === 'KEY_DECISION' && data.status !== 'DRAFT' ? 'NONE' : data.status);
+    handleSubmit(type === PO_NOTES_TYPES.KEY_DECISION && data.status !== 'DRAFT' ? 'NONE' : data.status);
   };
 
   const handlePublish = () => {
-    handleSubmit(type === 'KEY_DECISION' ? 'NONE' : 'PENDING');
+    handleSubmit(type === PO_NOTES_TYPES.KEY_DECISION ? 'NONE' : 'PENDING');
   };
 
   const handleNoteType = (event) => {
@@ -144,7 +144,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
-      await makeRequest(DELETE_PO_NOTE(projectId))
+      await makeRequest(DELETE_PO_NOTE(projectId, data?.noteId))
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
     }
     catch (err) {
@@ -262,7 +262,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
             </ListItem>
           </List>
         </Box>
-        {updateItem && type === 'ACTION_ITEM' && <Box>
+        {updateItem && type === PO_NOTES_TYPES.ACTION_ITEM && <Box>
           <Typography style={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }} >Issue Link</Typography>
           <List>
             <ListItem>
