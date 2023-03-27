@@ -169,6 +169,11 @@ export const CREATE_PROJECT = {
   method: 'post'
 }
 
+export const ADD_PROJECT_MEMBER = (projectId) => ({
+  url: `api/management/project/${projectId}/member`,
+  method: 'post',
+})
+
 export const DUMY = {}
 
 // export const GET_PO_NOTES = {
