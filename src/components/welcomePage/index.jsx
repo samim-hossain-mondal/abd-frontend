@@ -10,6 +10,7 @@ import {
   Paper,
   useMediaQuery,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import CardBox from "../elements/welcomePage/CardBox";
 import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
@@ -22,6 +23,7 @@ import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
+  const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const {
@@ -73,6 +75,10 @@ export default function WelcomePage() {
 
   const handleCreateProjectClick = () => {
     setShowCreateModal(true);
+  };
+
+  const handleLoginClick = () => {
+    navigate('/');
   };
 
   return (
@@ -190,7 +196,7 @@ export default function WelcomePage() {
                   boxShadow: 2,
                   display: "flex",
                   justifyContent: "space-between",
-                  borderBottom: "3px solid #e0e0e0",
+                  borderBottom: "5px solid #e0e0e0",
                 }}
               >
                 <Typography
@@ -291,6 +297,7 @@ export default function WelcomePage() {
         <Typography variant="body1" color="text.secondary" align="center">
           Get started with your own Agile board!
         </Typography>
+        {user.memberId ? (
         <Button
           variant="contained"
           sx={{ backgroundColor: "primary.main", color: "white" }}
@@ -298,6 +305,15 @@ export default function WelcomePage() {
         >
           Create New Project
         </Button>
+        ) : (
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "primary.main", color: "white" }}
+            onClick={handleLoginClick}
+          >
+            Login to Create Project
+          </Button>
+        )}
       </Box>
       <NewProjectModal
         open={showCreateModal}
