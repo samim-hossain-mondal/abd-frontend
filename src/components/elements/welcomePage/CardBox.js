@@ -16,12 +16,13 @@ function CardBox({ title, description }) {
         backgroundColor: "white",
         textAlign: "center",
         mb: 3,
+        mt: 3,
       }}
     >
       <Box
         component="p"
         sx={{
-          fontSize: 23,
+          fontSize: { xs: 20, sm: 23},
           color: "text.primary",
           width: "100%",
           borderTopLeftRadius: 2,
@@ -36,7 +37,12 @@ function CardBox({ title, description }) {
       </Box>
       <Box
         component="p"
-        sx={{ fontSize: 20, color: "text.primary", width: "100%", px: 2 }}
+        sx={{ 
+          fontSize: { xs: 15, sm: 18}, 
+          color: "text.primary", 
+          width: "100%", 
+          px: 2 
+        }}
       >
         {description}
       </Box>

@@ -28,9 +28,8 @@ function ProjectListItem({ project, handleProjectClick }) {
           width: "100%",
           padding: 1,
           margin: 0,
-          backgroundColor: "#4B93FC",
-          color: "white",
-          fontWeight: 800,
+          backgroundColor: "white",
+          fontWeight: 200,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -38,7 +37,7 @@ function ProjectListItem({ project, handleProjectClick }) {
       >
         <Box sx={{ display: "flex", flexDirection: "column"}}>
           <Box>{project.projectName}</Box>
-          <Box sx={{ fontSize: 12, color: 'lightgrey' }}>{[project._count.projectMembers, ' members']}</Box>
+          <Box sx={{ fontSize: 12, color: 'grey.800' }}>{[project._count.projectMembers, ' members']}</Box>
         </Box>
         <Box>
           <Tooltip
@@ -50,7 +49,7 @@ function ProjectListItem({ project, handleProjectClick }) {
                 setShowDescription(!showDescription);
               }}
             >
-              {showDescription ? <ExpandLess /> : <ExpandMore />}
+              {showDescription ? <ExpandLess sx={{color: 'logoBlue.main'}}/> : <ExpandMore sx={{color: 'logoBlue.main'}}/>}
             </IconButton>
           </Tooltip>
           <Tooltip title="Go to project dashboard">
@@ -60,7 +59,7 @@ function ProjectListItem({ project, handleProjectClick }) {
                 handleProjectClick(project.projectId);
               }}
             >
-              <ArrowCircleRight backgroundColor='white'/>
+              <ArrowCircleRight sx={{color: 'logoBlue.main'}}/>
             </IconButton>
           </Tooltip>
         </Box>

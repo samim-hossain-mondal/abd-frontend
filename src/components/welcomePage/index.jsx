@@ -11,7 +11,7 @@ import {
   useMediaQuery,
   Fab,
   Slide,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
@@ -147,6 +147,87 @@ export default function WelcomePage() {
                 user?.name ? `, ${user.name}` : ""
               } \u{1F44B}`}
         </Typography>
+        {showProjectList ? (
+          <Box
+            component="main"
+            sx={{
+              mt: 8,
+              mb: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              boxShadow: 2,
+              paddingLeft: 0,
+              paddingRight: 0,
+              width: "100%",
+            }}
+          >
+            <Box
+              component="p"
+              sx={{
+                fontSize: 20,
+                py: 1,
+                mt: 0,
+                mb: 0,
+                alignSelf: "center",
+                backgroundColor: "grey.200",
+                width: "100%",
+                boxShadow: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                borderBottom: "5px solid #e0e0e0",
+              }}
+            >
+              <Typography
+                component="p"
+                sx={{
+                  fontSize: 23,
+                  px: 1,
+                  alignSelf: "center",
+                  width: "100%",
+                }}
+              >
+                Your Projects
+              </Typography>
+              <Typography
+                component="p"
+                sx={{
+                  fontSize: 15,
+                  px: 1,
+                  alignSelf: "center",
+                  fontWeight: 100,
+                  width: "100%",
+                  textAlign: "end",
+                  color: "grey.500",
+                }}
+              >
+                {userProjects.length
+                  ? `${userProjects.length} Projects`
+                  : "..."}
+              </Typography>
+            </Box>
+
+            <List
+              sx={{
+                width: "100%",
+                overflowY: "scroll",
+                maxHeight: "400px",
+                padding: 0,
+                scrollBehavior: "smooth",
+              }}
+            >
+              {userProjects.map((project) => (
+                <ProjectListItem
+                  key={project.projectId}
+                  project={project}
+                  handleProjectClick={() =>
+                    handleProjectClick(project.projectId)
+                  }
+                />
+              ))}
+            </List>
+          </Box>
+        ) : null}
         <Stack
           direction="column"
           spacing={2}
@@ -186,88 +267,6 @@ export default function WelcomePage() {
               bio={showBio ? `Part of ${userProjects.length} projects` : null}
             />
 
-            {showProjectList ? (
-              <Box
-                component="main"
-                sx={{
-                  mt: 8,
-                  mb: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  boxShadow: 2,
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  width: "100%",
-                }}
-              >
-                <Box
-                  component="p"
-                  sx={{
-                    fontSize: 20,
-                    py: 1,
-                    mt: 0,
-                    mb: 0,
-                    alignSelf: "center",
-                    backgroundColor: "white",
-                    width: "100%",
-                    boxShadow: 2,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    borderBottom: "5px solid #e0e0e0",
-                  }}
-                >
-                  <Typography
-                    component="p"
-                    sx={{
-                      fontSize: 23,
-                      px: 1,
-                      alignSelf: "center",
-                      width: "100%",
-                    }}
-                  >
-                    Your Projects
-                  </Typography>
-                  <Typography
-                    component="p"
-                    sx={{
-                      fontSize: 15,
-                      px: 1,
-                      alignSelf: "center",
-                      fontWeight: 100,
-                      width: "100%",
-                      textAlign: "end",
-                      color: "grey.500",
-                    }}
-                  >
-                    {userProjects.length
-                      ? `${userProjects.length} Projects`
-                      : "..."}
-                  </Typography>
-                </Box>
-
-                <List
-                  sx={{
-                    width: "100%",
-                    overflowY: "scroll",
-                    maxHeight: "400px",
-                    padding: 0,
-                    scrollBehavior: "smooth",
-                  }}
-                >
-                  {userProjects.map((project) => (
-                    <ProjectListItem
-                      key={project.projectId}
-                      project={project}
-                      handleProjectClick={() =>
-                        handleProjectClick(project.projectId)
-                      }
-                    />
-                  ))}
-                </List>
-              </Box>
-            ) : null}
-
             {!showProjectList && (
               <Paper
                 sx={{
@@ -306,21 +305,21 @@ export default function WelcomePage() {
           unmountOnExit
         >
           <Tooltip title="Create a new project" arrow>
-          <Fab
-            color="primary"
-            aria-label="add"
-            sx={{
-              position: "fixed",
-              bottom: 100,
-              right: 40,
-              zIndex: "9999",
-              height: 70,
-              width: 70,
-            }}
-            onClick={() => handleCreateProjectClick()}
-          >
-            <AddIcon />
-          </Fab>
+            <Fab
+              color="primary"
+              aria-label="add"
+              sx={{
+                position: "fixed",
+                bottom: 100,
+                right: 40,
+                zIndex: "9999",
+                height: 70,
+                width: 70,
+              }}
+              onClick={() => handleCreateProjectClick()}
+            >
+              <AddIcon />
+            </Fab>
           </Tooltip>
         </Slide>
       )}
