@@ -26,6 +26,7 @@ export default function WelcomePage() {
   const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
   const {
     user,
     projects: userProjects,
@@ -156,7 +157,6 @@ export default function WelcomePage() {
             email={user ? user.email : "Loading..."}
             bio={showBio ? `Part of ${userProjects.length} projects` : null}
           />
-
           {showProjectList ? (
             <Box
               component="main"
@@ -216,7 +216,6 @@ export default function WelcomePage() {
                     : "..."}
                 </Typography>
               </Box>
-
               <List
                 sx={{
                   width: "100%",
@@ -238,7 +237,6 @@ export default function WelcomePage() {
               </List>
             </Box>
           ) : null}
-
           {!showProjectList && (
             <Paper
               sx={{
@@ -300,6 +298,16 @@ export default function WelcomePage() {
         projects={userProjects}
         setProjects={setUserProjects}
       />
+      <style>
+        {
+          `*{ 
+            -ms-overflow-style: none; 
+          }
+          ::-webkit-scrollbar {
+            display: none;
+          }`
+        }
+      </style>
     </Box>
   );
 }

@@ -2,9 +2,17 @@ import React, { useContext, useState } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  AppBar, Box, Toolbar, IconButton,
-  Typography, Menu,
-  Container, Avatar, Tooltip, MenuItem, useMediaQuery
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Tooltip,
+  MenuItem,
+  useMediaQuery
 }
   from '@mui/material';
 import PropTypes from 'prop-types';
@@ -45,7 +53,7 @@ export default function Navbar({ authLoaded }) {
   return (
     <AppBar
       position="static"
-      sx={{ background: "transparent", boxShadow: "none" }}
+      sx={{ background: "transparent", boxShadow: "none", padding: '16px 0px' }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex' }}>
@@ -53,27 +61,25 @@ export default function Navbar({ authLoaded }) {
             component="img" sx={{ height: '50px' }}
             alt="logo" src={Logo}
           />
-
           {
             (aboveTablet) ? (
-              <Box sx={{ flexBasis: '16%', textAlign: 'center' }}>
+              <Box sx={{ paddingLeft: '16px', textAlign: 'center' }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h5' : 'h6'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
               </Box>
             ) : (
-              <Box sx={{ flexGrow: '1', textAlign: 'left', ml: 2 }}>
+              <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2 }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h6'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
               </Box>
             )
           }
-
           {
             (aboveTablet) && (
               <Box sx={{ display: 'flex', flexGrow: '2', justifyContent: 'center' }}>
@@ -88,7 +94,7 @@ export default function Navbar({ authLoaded }) {
                         sx={{
                           ...(location.pathname !== WELCOME_ROUTE && location.pathname === getRoute(pages[index], projectId) &&
                             { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
-                          ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1rem'
+                          ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
                         }}> {page}
                       </Typography>
                     </Link>
@@ -97,7 +103,6 @@ export default function Navbar({ authLoaded }) {
               </Box>
             )
           }
-
           {
             ((authLoaded) && (authState?.isAuthenticated)) && (
               <Box sx={{ textAlign: 'right', flexGrow: '1' }}>
@@ -124,12 +129,11 @@ export default function Navbar({ authLoaded }) {
                       </MenuItem>
                   ))}
                 </Menu>
-            <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
+                <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
 
               </Box>
             )
           }
-
           {
             (!aboveTablet) && (
               <Box sx={{ position: 'relative' }}>

@@ -347,6 +347,16 @@ export default function MadeToStick() {
           </Box>
         </Box>
       )}
+      <style>
+        {
+          `*{ 
+            -ms-overflow-style: none; 
+          }
+          ::-webkit-scrollbar {
+            display: none;
+          }`
+        }
+      </style>
     </Box>
   );
 };

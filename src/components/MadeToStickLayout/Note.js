@@ -100,7 +100,7 @@ export default function Note({
                   </IconButton>
                 </Box>
               </Box>
-              <Box onClick={(e) => e.stopPropagation()}>
+              <Box onClick={(e) => e.stopPropagation()} sx={{ padding: '0px 10px 10px 10px' }}>
                 {editButton &&
                   <CKEditor
                     editor={ClassicEditor}
@@ -139,12 +139,14 @@ export default function Note({
             </Box>
           )}
           {card.type === "IMAGE" && isEdit === card.i && (
-            <TextareaAutosize
-              style={{ width: "95%", overflow: "hidden", opacity: 0.5, fontFamily: "Roboto", backgroundColor: "white", border: "1px solid black", fontSize: "large", padding: "10px" }}
-              value={card.value}
-              name={card.i}
-              onChange={handleImageInputChange}
-            />
+            <Box sx={{ padding: '10px' }}>
+              <TextareaAutosize
+                style={{ width: "93%", overflow: "hidden", opacity: 0.5, fontFamily: "Roboto", backgroundColor: "white", border: "1px solid black", fontSize: "large", padding: "10px" }}
+                value={card.value}
+                name={card.i}
+                onChange={handleImageInputChange}
+              />
+            </Box>
           )}
         </Box>
       </Box>

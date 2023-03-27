@@ -1,8 +1,21 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-
-import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, TextField } from '@mui/material';
+import {
+  Grid,
+  Box,
+  IconButton,
+  Dialog,
+  ListItem,
+  List,
+  Typography,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
@@ -286,7 +299,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         {isSave() && (<Box>
           {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }} >
                 Save
               </Button>
             </Box>
@@ -296,7 +310,8 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         {isSaveDraft() && (<Box>
           {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-              <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+              <Button variant="contained" color='customButton2' onClick={handleDraft}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
                 Save as Draft
               </Button>
             </Box>
