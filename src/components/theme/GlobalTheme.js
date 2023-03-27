@@ -35,6 +35,7 @@ const theme = createTheme({
     },
     backgroundColor: {
       main: '#e6eef2',
+      secondary: '#EEF2F5'
     },
     secondaryButton: {
       main: '#EEF2F5',

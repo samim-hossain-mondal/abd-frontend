@@ -80,6 +80,16 @@ export default function ScrollableHome({
           availabilityIsInViewPort={availabilityIsInViewPort}
         />
       </Box>
+      <style>
+        {
+          `*{ 
+            -ms-overflow-style: none; 
+          }
+          ::-webkit-scrollbar {
+            display: none;
+          }`
+        }
+      </style>
     </RefreshContextProvider>
   );
 }

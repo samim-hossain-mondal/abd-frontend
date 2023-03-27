@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box } from '@mui/system';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { AccessAlarm, PendingActions } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
@@ -30,7 +29,6 @@ export default function QuickFilterPopover({ query, onChange }) {
       }}
       color="quickFilterPopover"
     >
-      {/* Date Filters */}
       <Box>
         <Typography
           sx={{
@@ -40,7 +38,6 @@ export default function QuickFilterPopover({ query, onChange }) {
         >
           Date Filters
         </Typography>
-
         {allowedDateFilters.map((date) => (
           <IconCheckbox
             Icon={AccessAlarm}
@@ -56,8 +53,6 @@ export default function QuickFilterPopover({ query, onChange }) {
             }}
           />
         ))}
-
-        {/* Status Filters */}
         <Typography
           sx={{
             marginTop: '30px',
@@ -67,7 +62,6 @@ export default function QuickFilterPopover({ query, onChange }) {
         >
           Status Filters
         </Typography>
-
         {poNotesStatus.map((status) => (
           <IconCheckbox
             Icon={PendingActions}
@@ -81,8 +75,6 @@ export default function QuickFilterPopover({ query, onChange }) {
             }}
           />
         ))}
-
-        {/* Custom Filters */}
         <Typography
           sx={{
             marginTop: '30px',
@@ -92,7 +84,6 @@ export default function QuickFilterPopover({ query, onChange }) {
         >
           Custom Filters
         </Typography>
-
         <DateFilterBox
           label={filters.startDate ? dateGetter(filters.startDate) : 'From Date'}
           disabled={Boolean(filters.date)}

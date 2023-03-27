@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Box, AppBar, Container, InputLabel, FormControl, Toolbar, Typography, Popover, Select, useMediaQuery } from '@mui/material';
+import {
+  Box,
+  AppBar,
+  Container,
+  InputLabel,
+  FormControl,
+  Toolbar,
+  Typography,
+  Popover,
+  Select,
+  useMediaQuery
+} from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import PropTypes from 'prop-types';
 import SearchBar from '../utilityFunctions/SearchBar';
@@ -12,17 +23,18 @@ export default function PONotesHeader({ query, setQuery }) {
   const handleQuickFilterClick = (event) => {
     setPositioningReferenceElement(event.currentTarget);
   };
-
   const handleClose = () => {
     setPositioningReferenceElement(null);
   };
+
   const aboveTablet = useMediaQuery('(min-width: 769px)');
   const open = Boolean(positioningReferenceElement);
   const id = open ? 'simple-popover' : undefined;
+
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
       <Container maxWidth="xl" padding='0' margin='0'>
-        <Toolbar disableGutters sx={(aboveTablet)?{display: 'flex', flexWrap: 'wrap'}:{display: 'flex', flexDirection: 'column'}}>
+        <Toolbar disableGutters sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ flexGrow: 2, display: { md: 'flex' } }}>
             <Typography
               data-testid="poNotesIdentifier"
@@ -37,7 +49,7 @@ export default function PONotesHeader({ query, setQuery }) {
             <Box sx={{ mr: 1 }}>
               <SearchBar query={query} setQuery={setQuery} />
             </Box>
-            <FormControl id="demo-select-small" sx={(aboveTablet)?{minWidth: '200px'}:{minWidth: '140px'}} size="small">
+            <FormControl id="demo-select-small" sx={(aboveTablet) ? { minWidth: '200px' } : { minWidth: '140px' }} size="small">
               <InputLabel id="demo-select-small">
                 <Box display='flex' align-items='center'>
                   Quick Filters
@@ -64,14 +76,7 @@ export default function PONotesHeader({ query, setQuery }) {
                 }}
               >
                 <QuickFilterPopover query={query} onChange={async (filters) => {
-                  const sanitizedFilters = quickFilterSanitizerPONotes(filters)
-                  // sanitizedFilters is an object with the following structure
-                  // {
-                  //   status: ['PENDING', 'COMPLETED', 'DRAFT'] | undefined,
-                  //   startDate: Date | undefined,
-                  //   endDate: Date | undefined,
-                  // }
-
+                  const sanitizedFilters = quickFilterSanitizerPONotes(filters);
                   setQuery({
                     ...query,
                     ...sanitizedFilters
@@ -79,12 +84,10 @@ export default function PONotesHeader({ query, setQuery }) {
                 }} />
               </Popover>
             </FormControl>
-            
           </Box>
           <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end' }}>
             <AddPONotes />
           </Box>
-          
         </Toolbar>
       </Container>
     </AppBar >
