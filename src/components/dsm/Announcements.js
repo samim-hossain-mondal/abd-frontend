@@ -122,10 +122,10 @@ export default function Announcements() {
       const reqBody = {
         content,
       }
-      const resData = await makeRequest(UPDATE_ANNOUNCMENT(projectId, editModalData.announcementId), { data: reqBody })
+      const resData = await makeRequest(UPDATE_ANNOUNCMENT(projectId, editModalData?.announcementId), { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setAnnouncements(announcements.map((announcement) => {
-        if (announcement.announcementId === editModalData.announcementId) {
+        if (announcement.announcementId === editModalData?.announcementId) {
           return {
             ...announcement,
             content,
@@ -144,9 +144,9 @@ export default function Announcements() {
 
   const handleDeleteAnnouncement = async () => {
     try {
-      const resData = await makeRequest(DELETE_ANNOUNCMENT(projectId, editModalData.announcementId))
+      const resData = await makeRequest(DELETE_ANNOUNCMENT(projectId, editModalData?.announcementId))
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
-      const announcementData = announcements.filter((announcement) => announcement.announcementId !== editModalData.announcementId);
+      const announcementData = announcements.filter((announcement) => announcement.announcementId !== editModalData?.announcementId);
       setAnnouncements([...announcementData]);
       handleEditModalClose();
       return resData;
@@ -236,11 +236,11 @@ export default function Announcements() {
                 onCloseButtonClick={handleEditModalClose}
                 primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
                 onPrimaryButtonClick={handleEditAnnouncement}
-                defaultValue={editModalData.content}
+                defaultValue={editModalData?.content}
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteAnnouncement}
-                authorize={user.memberId === editModalData.memberId}
+                authorize={user.memberId === editModalData?.memberId}
                />
             </Dialog>
           )
