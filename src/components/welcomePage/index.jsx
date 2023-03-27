@@ -9,8 +9,12 @@ import {
   List,
   Paper,
   useMediaQuery,
+  Fab,
+  Slide,
+  Tooltip
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
 import CardBox from "../elements/welcomePage/CardBox";
 import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
@@ -26,6 +30,7 @@ export default function WelcomePage() {
   const navigate = useNavigate();
   const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAddButton, setShowAddButton] = useState(true);
   const {
     user,
     projects: userProjects,
@@ -35,6 +40,7 @@ export default function WelcomePage() {
   const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
+  const footerRef = useRef(null);
 
   const handleScroll = () => {
     scrollRef.current = window.scrollY;
@@ -46,20 +52,29 @@ export default function WelcomePage() {
   };
 
   useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setShowAddButton(false);
+        } else {
+          setShowAddButton(true);
+        }
+      });
+    });
+
+    observer.observe(footerRef.current);
+
+    return () => {
+      observer.unobserve(footerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const element = document.getElementById('projects');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 3000);
   }, []);
 
   const handleProjectClick = async (projectId) => {
@@ -78,7 +93,7 @@ export default function WelcomePage() {
   };
 
   const handleLoginClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -128,7 +143,9 @@ export default function WelcomePage() {
         >
           {userProjects.length > 0
             ? `Welcome back, ${user.name} \u{1F44B}`
-            : `${texts.welcome} ${user?.name ? `, ${user.name}` : ""} \u{1F44B}`}
+            : `${texts.welcome} ${
+                user?.name ? `, ${user.name}` : ""
+              } \u{1F44B}`}
         </Typography>
         <Stack
           direction="column"
@@ -142,145 +159,175 @@ export default function WelcomePage() {
           <ImageCarousel />
         </Stack>
       </Container>
-      {showProjectList && <Container
-        id="projects"
-        component="main"
-        sx={{
-          mt: 4,
-          mb: 4,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          alignSelf: "center",
-        }}
-        maxWidth="lg"
-      >
-        <Stack
-          direction={isSmallerScreen ? "column" : "row"}
-          spacing={2}
-          sx={{ alignSelf: "center", width: "100%" }}
+      {showProjectList && (
+        <Container
+          id="projects"
+          component="main"
+          sx={{
+            mt: 4,
+            mb: 4,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            alignSelf: "center",
+          }}
+          maxWidth="lg"
         >
-          <ProfileCard
-            avatarUrl="/static/images/avatar/2.jpg"
-            name={user ? user.name : "Loading..."}
-            email={user ? user.email : "Loading..."}
-            bio={showBio ? `Part of ${userProjects.length} projects` : null}
-          />
+          <Stack
+            direction={isSmallerScreen ? "column" : "row"}
+            spacing={2}
+            sx={{ alignSelf: "center", width: "100%" }}
+          >
+            <ProfileCard
+              avatarUrl="/static/images/avatar/2.jpg"
+              name={user ? user.name : "Loading..."}
+              email={user ? user.email : "Loading..."}
+              bio={showBio ? `Part of ${userProjects.length} projects` : null}
+            />
 
-          {showProjectList ? (
-            <Box
-              component="main"
-              sx={{
-                mt: 8,
-                mb: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                boxShadow: 2,
-                paddingLeft: 0,
-                paddingRight: 0,
-                width: "100%",
-              }}
-            >
+            {showProjectList ? (
               <Box
-                component="p"
+                component="main"
                 sx={{
-                  fontSize: 20,
-                  py: 1,
-                  mt: 0,
-                  mb: 0,
-                  alignSelf: "center",
-                  backgroundColor: "white",
-                  width: "100%",
-                  boxShadow: 2,
+                  mt: 8,
+                  mb: 2,
                   display: "flex",
-                  justifyContent: "space-between",
-                  borderBottom: "5px solid #e0e0e0",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  boxShadow: 2,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  width: "100%",
                 }}
               >
-                <Typography
+                <Box
                   component="p"
                   sx={{
-                    fontSize: 23,
-                    px: 1,
+                    fontSize: 20,
+                    py: 1,
+                    mt: 0,
+                    mb: 0,
                     alignSelf: "center",
+                    backgroundColor: "white",
                     width: "100%",
+                    boxShadow: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    borderBottom: "5px solid #e0e0e0",
                   }}
                 >
-                  Your Projects
-                </Typography>
-                <Typography
-                  component="p"
+                  <Typography
+                    component="p"
+                    sx={{
+                      fontSize: 23,
+                      px: 1,
+                      alignSelf: "center",
+                      width: "100%",
+                    }}
+                  >
+                    Your Projects
+                  </Typography>
+                  <Typography
+                    component="p"
+                    sx={{
+                      fontSize: 15,
+                      px: 1,
+                      alignSelf: "center",
+                      fontWeight: 100,
+                      width: "100%",
+                      textAlign: "end",
+                      color: "grey.500",
+                    }}
+                  >
+                    {userProjects.length
+                      ? `${userProjects.length} Projects`
+                      : "..."}
+                  </Typography>
+                </Box>
+
+                <List
                   sx={{
-                    fontSize: 15,
-                    px: 1,
-                    alignSelf: "center",
-                    fontWeight: 100,
                     width: "100%",
-                    textAlign: "end",
-                    color: "grey.500",
+                    overflowY: "scroll",
+                    maxHeight: "400px",
+                    padding: 0,
+                    scrollBehavior: "smooth",
                   }}
                 >
-                  {userProjects.length
-                    ? `${userProjects.length} Projects`
-                    : "..."}
-                </Typography>
+                  {userProjects.map((project) => (
+                    <ProjectListItem
+                      key={project.projectId}
+                      project={project}
+                      handleProjectClick={() =>
+                        handleProjectClick(project.projectId)
+                      }
+                    />
+                  ))}
+                </List>
               </Box>
+            ) : null}
 
-              <List
+            {!showProjectList && (
+              <Paper
                 sx={{
-                  width: "100%",
-                  overflowY: "scroll",
-                  maxHeight: "400px",
-                  padding: 0,
-                  scrollBehavior: "smooth",
+                  mt: 8,
+                  mb: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  backgroundColor: "grey.200",
                 }}
               >
-                {userProjects.map((project) => (
-                  <ProjectListItem
-                    key={project.projectId}
-                    project={project}
-                    handleProjectClick={() =>
-                      handleProjectClick(project.projectId)
-                    }
-                  />
-                ))}
-              </List>
-            </Box>
-          ) : null}
-
-          {!showProjectList && (
-            <Paper
-              sx={{
-                mt: 8,
-                mb: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                paddingLeft: 0,
-                paddingRight: 0,
-                backgroundColor: "grey.200",
-              }}
-            >
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: 20,
-                  px: 1,
-                  alignSelf: "center",
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                {texts.getStarted}
-              </Typography>
-            </Paper>
-          )}
-        </Stack>
-      </Container>}
+                <Typography
+                  component="p"
+                  sx={{
+                    fontSize: 20,
+                    px: 1,
+                    alignSelf: "center",
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  {texts.getStarted}
+                </Typography>
+              </Paper>
+            )}
+          </Stack>
+        </Container>
+      )}
+      {showAddButton && user.memberId && (
+        <Slide
+          direction={showAddButton ? "up" : "down"}
+          in={showAddButton}
+          mountOnEnter
+          unmountOnExit
+        >
+          <Tooltip title="Create a new project" arrow>
+          <Fab
+            color="primary"
+            aria-label="add"
+            sx={{
+              position: "fixed",
+              bottom: 100,
+              right: 40,
+              zIndex: "9999",
+              height: 70,
+              width: 70,
+            }}
+            onClick={() => handleCreateProjectClick()}
+          >
+            <AddIcon />
+          </Fab>
+          </Tooltip>
+        </Slide>
+      )}
       <Box
         component="footer"
+        id="footer"
+        ref={footerRef}
         sx={{
           py: 4,
           px: 2,
@@ -292,19 +339,21 @@ export default function WelcomePage() {
           alignItems: "center",
           width: "100%",
           boxShadow: 5,
+          position: "relative",
+          zIndex: "999",
         }}
       >
         <Typography variant="body1" color="text.secondary" align="center">
           Get started with your own Agile board!
         </Typography>
         {user.memberId ? (
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "primary.main", color: "white" }}
-          onClick={handleCreateProjectClick}
-        >
-          Create New Project
-        </Button>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "primary.main", color: "white" }}
+            onClick={handleCreateProjectClick}
+          >
+            Create New Project
+          </Button>
         ) : (
           <Button
             variant="contained"
@@ -315,10 +364,7 @@ export default function WelcomePage() {
           </Button>
         )}
       </Box>
-      <NewProjectModal
-        open={showCreateModal}
-        setOpen={setShowCreateModal}
-      />
+      <NewProjectModal open={showCreateModal} setOpen={setShowCreateModal} />
     </Box>
   );
 }
