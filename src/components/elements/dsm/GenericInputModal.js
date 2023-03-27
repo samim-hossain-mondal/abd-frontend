@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getAllMembersData } from '../../utilityFunctions/User';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import { ErrorContext } from '../../contexts/ErrorContext';
+import DeleteDialog from '../DeleteDialog';
 
 function Item({ entity: { name, char } }) {
   return (
@@ -52,6 +53,8 @@ export default function GenericInputModal({
   const { projectDetails } = useContext(ProjectUserContext);
   const {setSuccess, setError} = useContext(ErrorContext);
 
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
   }, []);
@@ -80,6 +83,12 @@ export default function GenericInputModal({
       }
       }
     >
+      <DeleteDialog
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
+        handleDelete={deleteRequest}
+        description="Are you sure you want to delete this ?"
+      />
       {/* Action Buttons */}
       {
         (isDisabled !== undefined)
@@ -90,7 +99,9 @@ export default function GenericInputModal({
                 justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              {authorize && <IconButton onClick={deleteRequest} sx={{ padding: 0 }}>
+              {authorize && <IconButton onClick={() => {
+                setOpenDeleteDialog(true);
+              }} sx={{ padding: 0 }}>
                 <DeleteForeverIcon date-testid='delete-icon' />
               </IconButton>}
               <Box>
