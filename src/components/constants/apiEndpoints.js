@@ -164,17 +164,21 @@ export const GET_PROJECT_BY_ID = (projectId) => ({
   method: 'get',
 })
 
-export const DUMY = {}
+// ***** madeToStick Endpoints *****
+export const GET_MADE_TO_STICK = (projectId) => ({
+  url: `api/madeToStick/${projectId}`,
+  method: 'get',
+})
 
-// export const GET_PO_NOTES = {
-//   url: `${BACKEND_URL}/po-notes`,
-//   method: 'get',
-// }
+export const CREATE_MADE_TO_STICK = (projectId) => ({
+  url: `api/madeToStick/${projectId}`,
+  method: 'post',
+})
 
-// export const CREATE_PO_NOTE = {
-//   url: `${BACKEND_URL}/po-notes`,
-//   method: 'post',
-// }
+export const UPDATE_MADE_TO_STICK = (projectId, madeToStickId) => ({
+  url: `api/madeToStick/${projectId}/${madeToStickId}`,
+  method: 'put',
+})
 
 // export const UPDATE_PO_NOTE = {
 //   url: `${BACKEND_URL}/po-notes`,
@@ -202,4 +206,8 @@ export const DELETE_TEAM_INFORMATION = (id)=>({
 export const GET_ROLE_IN_PROJECT = (projectId,memberId) => ({
   url: `api/management/project/${projectId}/member/${memberId}`,
   method: 'get',
+})
+export const DELETE_MADE_TO_STICK = (projectId, madeToStickId) => ({
+  url: `api/madeToStick/${projectId}/${madeToStickId}`,
+  method: 'delete',
 })
