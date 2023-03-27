@@ -298,16 +298,6 @@ export default function WelcomePage() {
         projects={userProjects}
         setProjects={setUserProjects}
       />
-      <style>
-        {
-          `*{ 
-            -ms-overflow-style: none; 
-          }
-          ::-webkit-scrollbar {
-            display: none;
-          }`
-        }
-      </style>
     </Box>
   );
 }
