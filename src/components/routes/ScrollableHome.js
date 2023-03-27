@@ -60,19 +60,20 @@ export default function ScrollableHome({
   return (
     <RefreshContextProvider>
       <Box>
-        <Box ref={dsmRef}>
+        <div ref={dsmRef}>
           <DSMViewportContext.Provider value={dsmIsInViewPort}>
             <HomeContainer />
           </DSMViewportContext.Provider>
-        </Box>
-        <Box ref={poNotesRef}>
+        </div>
+        <div ref={poNotesRef}>
           <PONotesViewportContext.Provider value={poNotesIsInViewPort}>
             <PONotesContainer />
           </PONotesViewportContext.Provider>
-        </Box>
-        <Box ref={availabilityCalendarRef}>
-          <AvailabilityCalendar />
-        </Box>
+        </div>
+        <div ref={availabilityCalendarRef}>
+          {/* No need of context here as only one component requires the state */}
+          <AvailabilityCalendar availabilityIsInViewPort={availabilityIsInViewPort}/>
+        </div>
         <FabRefresh
           poNotesIsInViewPort={poNotesIsInViewPort}
           dsmIsInViewPort={dsmIsInViewPort}
@@ -89,7 +90,7 @@ export default function ScrollableHome({
           }`
         }
       </style>
-    </RefreshContextProvider >
+    </RefreshContextProvider>
   );
 }
 
