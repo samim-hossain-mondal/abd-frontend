@@ -88,11 +88,28 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
+    if(item.name !== null)
     setName(item.name);
-    const splitStartDate = item.startDate.split("T");
+    else
+    setName(user.name);
+    if(item.startDate === null)
+    {
+    setStartDate("");
+    }
+    else
+    {
+    const splitStartDate = item.startDate && item.startDate.split("T");
     setStartDate(splitStartDate[0]);
-    const splitEndDate = item.endDate.split("T");
+    }
+    if(item.endDate !== null)
+    {
+    const splitEndDate = item.endDate && item.endDate.split("T");
     setEndDate(splitEndDate[0]);
+    }
+    else
+    {
+      setEndDate("");
+    }
     setEmailId(item.emailId);
     setBio(item.bio);
     setProjectRole(item.projectRole);
@@ -307,8 +324,9 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   borderRadius: "10px",
                   fontFamily: "bebas-neue",
                   boxShadow: 1,
-                  height: "235px",
+                  height: "260px",
                   margin: "2% 2% 2% 0",
+                  overflow: "hidden",
                   border: "1px solid #CBD5DC",
                 }}
               >
@@ -326,8 +344,9 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                       padding: "0 5% 0 0",
                     }}
                   >
-                    {formatDate(item.startDate)}&nbsp; - &nbsp;
-                    {item.endDate < today ? formatDate(item.endDate) : "Till Date"}
+                    {(!item.startDate || !item.endDate) && "No value" }
+                    {(item.startDate && item.endDate)&& formatDate(item.startDate)}
+                    {(item.startDate && item.endDate) && (item.endDate < today ? formatDate(item.endDate) : " - Till Date")}
                   </Box>
                   <Box
                     sx={{
@@ -340,7 +359,17 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                       padding: "4% 0% 0% 6%",
                     }}
                   >
-                    {item.name}
+                    { (item.name) ? item.name : "Name not provided"}
+                  </Box>
+                  <Box
+                    sx={{
+                      color: "#8A9DAB",
+                      backgroundColor: "#E6EEF2",
+                      padding: "0% 0 2% 6%",
+                      fontSize: "large",
+                    }}
+                  >
+                    {item.emailId}
                   </Box>
                   <Box
                     sx={{
@@ -350,7 +379,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                       fontSize: "large",
                     }}
                   >
-                    {item.projectRole}
+                    {item.projectRole?item.projectRole:"Project Role not provided"}
                   </Box>
                   <Box
                     sx={{
@@ -436,16 +465,16 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   disabled={!(emailId === user.email)} />
                 <TextField
                   label="Your start date in the project"
-                  type="date"
-                  value={startDate}
+                  type={ startDate || (emailId === user.email) ?"date":"text"}
+                  value={startDate || "value not provided"}
                   onChange={(e) => setStartDate(e.target.value)}
                   fullWidth
                   margin="normal"
                   disabled={!(emailId === user.email)} />
                 <TextField
                   label="Your end date in the project"
-                  type="date"
-                  value={endDate}
+                  type={ endDate || (emailId === user.email) ?"date":"text"}
+                  value={endDate || "value not provided"}
                   onChange={(e) => setEndDate(e.target.value)}
                   fullWidth
                   margin="normal"
@@ -476,13 +505,14 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                     width: "97%",
                     padding: "1%",
                   }} />
-                <TextField
+                   <TextField
                   label="Your project Role in the project"
-                  value={projectRole}
+                  value={projectRole || (emailId === user.email)?projectRole:"value not provided"}
                   onChange={(e) => setProjectRole(e.target.value)}
                   fullWidth
                   margin="normal"
-                  disabled />
+                  disabled={!(emailId === user.email)}
+                   />
                 <TextField
                   label="Your email id"
                   value={emailId}
@@ -491,7 +521,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   margin="normal" />
                 <TextField
                   label="Your slack link"
-                  value={message}
+                  value={message || (emailId === user.email)?message:"value not provided"}
                   onChange={(e) => setMessage(e.target.value)}
                   fullWidth
                   margin="normal"
