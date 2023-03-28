@@ -1,8 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
-  Box, Card, CardContent, Typography,
-  Checkbox, styled, Tooltip, Link
+  Box,
+  Card,
+  Typography,
+  Checkbox,
+  styled,
+  Tooltip,
+  Link
 }
   from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -16,12 +21,8 @@ import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
-
-
 const Cards = styled(Card)(() => ({
-  width: 'auto',
-  height: 'auto',
-  borderRadius: 30,
+  borderRadius: 20,
 }));
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -76,20 +77,24 @@ export default function CustomCard({ checkBox, data, type }) {
     return false;
   }
 
+  // eslint-disable-next-line consistent-return
   const renderdueDate = () => {
     if (isActionItem()) {
-      return <Typography color="primary" fontWeight={500} mt={2} pl={1} >
-        <Typography variant="overline" display="inline-flex" gutterBottom pr={1}>
-          Needed By
-        </Typography>
-        {dateGetter(data.dueDate, false)}
-      </Typography >
+      return (
+        <Box display='flex' alignItems="baseline">
+          <Typography sx={{ fontSize: "0.75rem", marginRight: "5px" }}>
+            Needed by
+          </Typography>
+          <Typography color="primary" fontWeight={500} sx={{ fontSize: "0.95rem" }}>
+            {dateGetter(data.dueDate, false)}
+          </Typography >
+        </Box>
+      )
     }
-    return <Typography color="primary" fontWeight={500} mt={2} pl={1} sx={{ visibility: 'hidden ' }}> Needed By {dateGetter(data.dueDate, false)} </Typography>
   }
   const renderLink = () => {
     if (isActionItem() && data?.issueLink) {
-      return <Link target='_blank' href={data?.issueLink ?? '#'} variant="contained" size='small' sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>ISSUE LINK</Link>
+      return <Link fontSize="0.95rem" target='_blank' href={data?.issueLink ?? '#'} variant="contained" sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>ISSUE LINK</Link>
     }
     return true;
   }
@@ -97,26 +102,24 @@ export default function CustomCard({ checkBox, data, type }) {
   const renderCheckBox = () => {
     if (checkBox === true) {
       if (isDraft()) {
-        return <Checkbox color='primary' size="large" disabled />
+        return <Checkbox color='primary' size="medium" disabled />
       }
-      return <Checkbox color='primary' size="large" checked={checked} onChange={handleToggle} />
+      return <Checkbox color='primary' size="medium" checked={checked} onChange={handleToggle} />
     }
-    return <Checkbox color='primary' size="large" sx={{ visibility: 'hidden' }} />
+    return <Checkbox color='primary' size="medium" sx={{ visibility: 'hidden' }} />
   };
   return (
     <Box m={3}>
       <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} access={userRole === "ADMIN"} />
       <Cards>
-        <Box onClick={handleClickOpen}>
-          <CardContent >
-            <CardHeader>{renderCheckBox()}
+        <Box onClick={handleClickOpen} sx={{ padding: '5px 18px 12px 18px' }}>
+          <Box sx={{ padding: '0', margin: '0' }}>
+            <CardHeader>
+              {renderCheckBox()}
               {isDraft() ?
                 (<Status colour={statusDraft} status={STATUS.draft} />) :
                 (<Status colour={statusCompleted} status={STATUS.published} />)
               }
-              <Typography variant="caption" display="block" gutterBottom>
-                {dateGetter(data.createdAt, true)}
-              </Typography>
             </CardHeader>
             <Box>
               <Tooltip title={data.note}>
@@ -131,13 +134,18 @@ export default function CustomCard({ checkBox, data, type }) {
                 }}> {data.note}</Typography>
               </Tooltip>
             </Box>
-            <Box>
-              {renderdueDate()}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Box pr={2}> {renderLink()} </Box>
+            <Box marginTop="25px" display="flex" justifyContent='space-between' alignItems="baseline">
+              <Box> {renderdueDate()} </Box>
+              <Box>
+                <Box> {renderLink()} </Box>
               </Box>
             </Box>
-          </CardContent>
+            <Box marginTop="10px">
+              <Typography fontSize="0.65rem" variant="caption" display="block" gutterBottom>
+                Created at {dateGetter(data.createdAt, true)}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       </Cards>
     </Box>

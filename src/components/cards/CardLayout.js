@@ -31,8 +31,7 @@ CardLayout.propTypes = {
     issueLink: PropTypes.string,
     dueDate: PropTypes.string,
     createdAt: PropTypes.string.isRequired,
-    status: PropTypes.string,
-    // collabrators: PropTypes.arrayOf(PropTypes.string).isRequired,
+    status: PropTypes.string
   }))
 };
 CardLayout.defaultProps = {
