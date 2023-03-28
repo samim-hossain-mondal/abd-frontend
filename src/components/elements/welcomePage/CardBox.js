@@ -1,8 +1,9 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 
 function CardBox({ title, description }) {
+  const isSmallerScreen = useMediaQuery("(min-width: 600px)");
   return (
     <Box
       component="card"
@@ -14,7 +15,7 @@ function CardBox({ title, description }) {
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "white",
-        textAlign: "center",
+        textAlign: "left",
         mb: 3,
         mt: 3,
       }}
@@ -22,12 +23,10 @@ function CardBox({ title, description }) {
       <Box
         component="p"
         sx={{
-          fontSize: { xs: 20, sm: 23},
+          fontSize: isSmallerScreen ? 23 : 20,
           color: "text.primary",
           width: "100%",
-          borderTopLeftRadius: 2,
-          borderTopRightRadius: 2,
-          padding: 1,
+          padding: 2,
           margin: 0,
           backgroundColor: "grey.200",
           borderBottom: "5px solid #e0e0e0",

@@ -15,15 +15,16 @@ import { ExpandMore, OpenInNew } from "@mui/icons-material";
 import propTypes from "prop-types";
 
 function ProjectListItem({ project, handleProjectClick }) {
-  const isSmallerScreen = useMediaQuery("(min-width: 600px)");
+  const isLargeScreen = useMediaQuery("(min-width: 600px)");
   const [showDescription, setShowDescription] = useState(false);
-  // const [showSummary, setShowSummary] = useState(true);
+  const [showSummary, setShowSummary] = useState(true);
 
   return (
     <Accordion
       expanded={showDescription}
       onChange={(e) => {
         e.stopPropagation();
+        setShowSummary(!showSummary);
         setShowDescription(!showDescription);
       }}
       TransitionProps={{ unmountOnExit: true }}
@@ -44,14 +45,23 @@ function ProjectListItem({ project, handleProjectClick }) {
       >
         <Typography 
           sx={{ 
-            width: "25%", 
+            width: isLargeScreen? '25%' : '20%',
             flexShrink: 0,
-            flexGrow: isSmallerScreen ? 0 : 1,
+            flexGrow: isLargeScreen && showSummary ? 0 : 1,
+            marginRight: 5,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            WebkitAlignContent: "start",
+            textAlign: "start",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            wordBreak: "break-word",
           }}
         >
           {project.projectName}
         </Typography>
-        {isSmallerScreen ? (
+        {isLargeScreen && showSummary ? (
         <Typography 
           sx={{ 
             flexGrow: 1,
@@ -83,7 +93,7 @@ function ProjectListItem({ project, handleProjectClick }) {
           />
         </IconButton>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails sx={{ borderTop: "3px solid #e0e0e0" }}>
         <Typography>{project.projectDescription}</Typography>
       </AccordionDetails>
     </Accordion>

@@ -20,7 +20,7 @@ import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
 import ImageCarousel from "../elements/welcomePage/ImageCarousel";
 import StickyHeader from "../elements/welcomePage/StickyHeader";
-import ProfileCard from "../elements/welcomePage/ProfileCard";
+// import ProfileCard from "../elements/welcomePage/ProfileCard";
 import ProjectListItem from "../elements/welcomePage/ProjectListItem";
 import NewProjectModal from "../elements/NewProjectModal";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
@@ -37,7 +37,7 @@ export default function WelcomePage() {
     updateProjectDetails,
   } = useContext(ProjectUserContext);
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
-  const showBio = !isSmallerScreen;
+  // const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
   const footerRef = useRef(null);
@@ -123,19 +123,18 @@ export default function WelcomePage() {
           src={Logo}
           alt="logo"
           sx={{
-            height: 200,
-            width: 200,
+            height: isSmallerScreen ? 120 : 200,
+            width: isSmallerScreen ? 120 : 200,
             borderRadius: "50%",
             boxShadow: 5,
             alignSelf: "center",
           }}
         />
         <Typography
-          variant="h3"
+          variant={isSmallerScreen ? 'h4' : 'h3'}
           component="h3"
           sx={{
-            mt: 3,
-            mb: 5,
+            my: 2,
             alignSelf: "center",
             fontWeight: "bold",
             textAlign: "center",
@@ -151,14 +150,12 @@ export default function WelcomePage() {
           <Box
             component="main"
             sx={{
-              mt: 8,
+              mt: 3,
               mb: 2,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               boxShadow: 2,
-              paddingLeft: 0,
-              paddingRight: 0,
               width: "100%",
             }}
           >
@@ -174,6 +171,7 @@ export default function WelcomePage() {
                 width: "100%",
                 boxShadow: 2,
                 display: "flex",
+                flexDirection: isSmallerScreen ? "column" : "row",
                 justifyContent: "space-between",
                 borderBottom: "5px solid #e0e0e0",
               }}
@@ -181,8 +179,8 @@ export default function WelcomePage() {
               <Typography
                 component="p"
                 sx={{
-                  fontSize: 23,
-                  px: 1,
+                  fontSize: isSmallerScreen ? 20 : 25,
+                  px: 2,
                   alignSelf: "center",
                   width: "100%",
                 }}
@@ -193,12 +191,12 @@ export default function WelcomePage() {
                 component="p"
                 sx={{
                   fontSize: 15,
-                  px: 1,
+                  px: 2,
                   alignSelf: "center",
                   fontWeight: 100,
                   width: "100%",
-                  textAlign: "end",
-                  color: "grey.500",
+                  textAlign: isSmallerScreen ? "start" : "end",
+                  color: "grey.800",
                 }}
               >
                 {userProjects.length
@@ -211,7 +209,7 @@ export default function WelcomePage() {
               sx={{
                 width: "100%",
                 overflowY: "scroll",
-                maxHeight: "400px",
+                maxHeight: "500px",
                 padding: 0,
                 scrollBehavior: "smooth",
               }}
@@ -255,17 +253,17 @@ export default function WelcomePage() {
           }}
           maxWidth="lg"
         >
-          <Stack
+          {/* <Stack
             direction={isSmallerScreen ? "column" : "row"}
             spacing={2}
             sx={{ alignSelf: "center", width: "100%" }}
-          >
-            <ProfileCard
+          > */}
+            {/* <ProfileCard
               avatarUrl="/static/images/avatar/2.jpg"
               name={user ? user.name : "Loading..."}
               email={user ? user.email : "Loading..."}
               bio={showBio ? `Part of ${userProjects.length} projects` : null}
-            />
+            /> */}
 
             {!showProjectList && (
               <Paper
@@ -294,7 +292,7 @@ export default function WelcomePage() {
                 </Typography>
               </Paper>
             )}
-          </Stack>
+          {/* </Stack> */}
         </Container>
       )}
       {showAddButton && user.memberId && (
@@ -313,8 +311,10 @@ export default function WelcomePage() {
                 bottom: 100,
                 right: 40,
                 zIndex: "9999",
-                height: 70,
-                width: 70,
+                height: { xs: 50, sm: 60, md: 70 },
+                width: { xs: 50, sm: 60, md: 70 },
+                backgroundColor: "logoBlue.main",
+                color: "white",
               }}
               onClick={() => handleCreateProjectClick()}
             >
@@ -348,7 +348,7 @@ export default function WelcomePage() {
         {user.memberId ? (
           <Button
             variant="contained"
-            sx={{ backgroundColor: "primary.main", color: "white" }}
+            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
             onClick={handleCreateProjectClick}
           >
             Create New Project
@@ -356,7 +356,7 @@ export default function WelcomePage() {
         ) : (
           <Button
             variant="contained"
-            sx={{ backgroundColor: "primary.main", color: "white" }}
+            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
             onClick={handleLoginClick}
           >
             Login to Create Project
