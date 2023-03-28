@@ -59,7 +59,7 @@ export default function ScrollableHome({
 
   return (
     <RefreshContextProvider>
-      <Box>
+      <Box sx={{ marginTop: '95px' }}>
         <div ref={dsmRef}>
           <DSMViewportContext.Provider value={dsmIsInViewPort}>
             <HomeContainer />
@@ -71,7 +71,7 @@ export default function ScrollableHome({
           </PONotesViewportContext.Provider>
         </div>
         <div ref={availabilityCalendarRef}>
-          <AvailabilityCalendar />
+          <AvailabilityCalendar availabilityIsInViewPort={availabilityIsInViewPort} />
         </div>
         <FabRefresh
           poNotesIsInViewPort={poNotesIsInViewPort}

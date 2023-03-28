@@ -7,6 +7,7 @@ import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import Proptypes from 'prop-types';
 import { getAllMembersData } from '../utilityFunctions/User';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { ErrorContext } from '../contexts/ErrorContext';
 
 function Loading() {
   return <Box>Loading...</Box>;
@@ -29,6 +30,7 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
 
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
+  const { setError } = useContext(ErrorContext);
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails?.projectMembers ?? []));
@@ -38,6 +40,15 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
     const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));
     return similarUsers.map((user) => ({ name: user.email, char: '@' }));
   }
+
+  const handleChangeTextArea = (e) => {
+    if(e.target.value.length > 300)
+    {
+      setError("You can't write more than 300 characters");
+      return;
+    }
+    setContent(e.target.value);
+  };
 
   return (
     <ReactTextareaAutocomplete
@@ -57,13 +68,14 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
         padding: '15px 20px',
         height: '100px',
         borderRadius: '8px',
+        resize: 'none',
         ...sx,
       }}
       containerStyle={{
         margin: '5px auto'
       }}
       minChar={0}
-      onChange={(e) => setContent(e.target.value)}
+      onChange={(e) => handleChangeTextArea(e)}
       trigger={{
         ':': {
           dataProvider: token => emoji(token)

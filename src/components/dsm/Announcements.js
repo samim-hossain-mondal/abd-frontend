@@ -8,11 +8,11 @@ import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import ChatContainer from '../elements/dsm/ChatContainer';
 import { ErrorContext } from '../contexts/ErrorContext';
-import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME } from '../constants/dsm/Announcements';
+import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME, MODAL_PRIMARY_BUTTON_TEXT, MODAL_TITLE } from '../constants/dsm/Announcements';
 import { RefreshContext } from '../contexts/RefreshContext';
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { CREATE_ANNOUNCMENT, GET_ANNOUNCMENTS } from '../constants/apiEndpoints';
-import { ERROR_MESSAGE, SUCCESS_MESSAGE } from '../constants/dsm/index';
+import { CREATE_ANNOUNCMENT, DELETE_ANNOUNCMENT, GET_ANNOUNCMENTS, UPDATE_ANNOUNCMENT } from '../constants/apiEndpoints';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import { REFETCH_INTERVAL } from '../../config';
@@ -31,6 +31,23 @@ export default function Announcements() {
 
   const [announcements, setAnnouncements] = useState([]);
   const [openModal, setOpenAddModal] = useState(false);
+
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [editModalData, setEditModalData] = useState({});
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  const handleEditModalClose = () => {
+    setOpenEditModal(false);
+    setEditModalData({});
+    setIsDisabled(true);
+  };
+
+  const handleChatClick = (request) => {
+    setOpenEditModal(true);
+    setEditModalData({ ...request });
+    setIsDisabled(true);
+  };
+
   const handleAddButtonClick = (e) => {
     e.stopPropagation();
     setOpenAddModal(!openModal);
@@ -85,13 +102,6 @@ export default function Announcements() {
     return <div>Error! {error.message}</div>
   }
 
-  const handleChatClick = (announcement) => {
-    if (user.memberId !== announcement.memberId) {
-      setError(ERROR_MESSAGE.UNAUTHORIZED);
-
-    }
-  };
-
   const addAnnouncementToDB = async (content) => {
     try {
       const reqBody = {
@@ -106,6 +116,46 @@ export default function Announcements() {
       return false;
     }
   }
+
+  const handleEditAnnouncement = async (content) => {
+    try {
+      const reqBody = {
+        content,
+      }
+      const resData = await makeRequest(UPDATE_ANNOUNCMENT(projectId, editModalData?.announcementId), { data: reqBody })
+      setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
+      setAnnouncements(announcements.map((announcement) => {
+        if (announcement.announcementId === editModalData?.announcementId) {
+          return {
+            ...announcement,
+            content,
+          }
+        }
+        return announcement;
+      }));
+      handleEditModalClose();
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  const handleDeleteAnnouncement = async () => {
+    try {
+      const resData = await makeRequest(DELETE_ANNOUNCMENT(projectId, editModalData?.announcementId))
+      setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
+      const announcementData = announcements.filter((announcement) => announcement.announcementId !== editModalData?.announcementId);
+      setAnnouncements([...announcementData]);
+      handleEditModalClose();
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
 
   return (
     <Grid item height={gridHeightState.announcement.height}
@@ -138,13 +188,15 @@ export default function Announcements() {
           onClose={handleModalClose}
         >
           <GenericInputModal
-            title='Announcement Statement'
+            title={MODAL_TITLE}
             onCloseButtonClick={handleModalClose}
-            primaryButtonText='Post'
+            primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
             onPrimaryButtonClick={async (content) => {
               const newAnnouncement = await addAnnouncementToDB(content);
               if (newAnnouncement) {
-                setAnnouncements(() => [newAnnouncement, ...announcements])
+                getAnnouncements().then(resData => {
+                  setAnnouncements(resData);
+                });
                 handleModalClose();
               }
             }}
@@ -172,6 +224,28 @@ export default function Announcements() {
           ))}
 
         </AccordionDetails>
+        
+        {
+          (openEditModal) && (
+            <Dialog
+              open={openEditModal}
+              onClose={handleEditModalClose}
+            >
+              <GenericInputModal
+                title={MODAL_TITLE}
+                onCloseButtonClick={handleEditModalClose}
+                primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
+                onPrimaryButtonClick={handleEditAnnouncement}
+                defaultValue={editModalData?.content}
+                isDisabled={isDisabled}
+                setIsDisabled={setIsDisabled}
+                deleteRequest={handleDeleteAnnouncement}
+                authorize={user.memberId === editModalData?.memberId}
+               />
+            </Dialog>
+          )
+        }
+
       </Accordion>
     </ Grid >
   );

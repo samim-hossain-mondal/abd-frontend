@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@mui/material/Grid';
+import { Grid } from '@mui/material';
 import PropTypes from 'prop-types';
 import PONotesGridLayout from './poNotesTables/PONotesGridLayout';
 

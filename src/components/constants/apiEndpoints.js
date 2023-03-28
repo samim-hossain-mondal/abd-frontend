@@ -103,6 +103,16 @@ export const CREATE_ANNOUNCMENT = (projectId) => ({
   method: 'post',
 })
 
+export const UPDATE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'patch',
+})
+
+export const DELETE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'delete',
+})
+
 // ***** sentiments  Endpoints *****
 
 export const GET_SENTIMENTS = (projectId) => ({
@@ -174,19 +184,24 @@ export const ADD_PROJECT_MEMBER = (projectId) => ({
   method: 'post',
 })
 
-export const DUMY = {}
 
-// export const GET_PO_NOTES = {
-//   url: `${BACKEND_URL}/po-notes`,
-//   method: 'get',
-// }
+// ***** madeToStick Endpoints *****
+export const GET_MADE_TO_STICK = (projectId) => ({
+  url: `api/madeToStick/${projectId}`,
+  method: 'get',
+})
 
-// export const CREATE_PO_NOTE = {
-//   url: `${BACKEND_URL}/po-notes`,
-//   method: 'post',
-// }
+export const CREATE_MADE_TO_STICK = (projectId) => ({
+  url: `api/madeToStick/${projectId}`,
+  method: 'post',
+})
 
-// export const UPDATE_PO_NOTE = {
-//   url: `${BACKEND_URL}/po-notes`,
-//   method: 'patch',
-// }
+export const UPDATE_MADE_TO_STICK = (projectId, madeToStickId) => ({
+  url: `api/madeToStick/${projectId}/${madeToStickId}`,
+  method: 'put',
+})
+
+export const DELETE_MADE_TO_STICK = (projectId, madeToStickId) => ({
+  url: `api/madeToStick/${projectId}/${madeToStickId}`,
+  method: 'delete',
+})

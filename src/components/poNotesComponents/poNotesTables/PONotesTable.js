@@ -1,6 +1,5 @@
-import { Paper, CircularProgress, useMediaQuery } from '@mui/material'
-import React, { useContext, useEffect, useState } from 'react'
-import Box from '@mui/material/Box';
+import React, { useContext, useEffect, useState } from 'react';
+import { Box, Paper, CircularProgress, useMediaQuery } from '@mui/material'
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -13,9 +12,7 @@ import { RefreshContext } from '../../contexts/RefreshContext';
 import PONotesViewportContext from '../../contexts/PONotesViewportContext';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import { GET_PO_NOTES } from '../../constants/apiEndpoints';
-// import getAccessToken from '../../utilityFunctions/getAccessToken';
 
-// query params for get Api call
 const getStatusQuery = (type, status) => {
   if (type === 'KEY_DECISION' && status !== 'DRAFT') return '';
   return `&status=${status}`;
@@ -41,7 +38,7 @@ const getApiUrlQuery = (type, query, page, limit) => {
   }
   return apiQuery;
 };
-// table for the action items
+
 export default function PONotesTable(props) {
   const { setError } = useContext(ErrorContext);
   const { projectId } = useParams()
@@ -62,7 +59,6 @@ export default function PONotesTable(props) {
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return [];
     }
@@ -72,7 +68,7 @@ export default function PONotesTable(props) {
     getPONotes().then(resData => {
       setPONotes(resData);
     })
-  }, [])
+  }, [query]);
 
   if (refresh.poNotes) {
     getPONotes().then(resData => {
@@ -117,9 +113,7 @@ export default function PONotesTable(props) {
                 color: 'poNotesHeader.contrastText'
               }}
               >
-                {/* calling the action item table header and passing count of action items in the table as props in countOfItems variable */}
                 <Box>
-                  {/* Information regarding each PO Notes type(Action Items, Key decisions and Agenda Items are passed as props to table header) */}
                   <PONotesTableHeader heading={heading}
                     definition={definition}
                     accessibilityInformation={accessibilityInformation}
@@ -128,8 +122,7 @@ export default function PONotesTable(props) {
               </Box>
             </Box>
             <Box>
-              <Box>
-                {/* Data from get Api call using query params is passed to cardlayout for displaying it in cards */}
+              <Box sx={{ backgroundColor: 'backgroundColor.secondary' }}>
                 <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={poNotes} /> </Box>
             </Box>
           </Box>
@@ -138,7 +131,7 @@ export default function PONotesTable(props) {
       <Box>Loading....</Box>
   )
 }
-// props validation
+
 PONotesTable.propTypes = {
   definition: PropTypes.string.isRequired,
   checkBox: PropTypes.bool.isRequired,

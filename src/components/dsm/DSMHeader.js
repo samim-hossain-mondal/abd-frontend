@@ -3,9 +3,11 @@ import { AppBar, Typography, Box, Container, Toolbar } from '@mui/material';
 
 export default function DSMHeader() {
   return (
-    <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none'}}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{display: 'flex', justifyContent: 'space-between'}}>
+    <Box>
+      <Box sx={{ backgroundColor: 'primary.light', padding: '5px' }} />
+      <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }} >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box>
               <Typography
                 data-testid="poNotesIdentifier"
@@ -16,8 +18,9 @@ export default function DSMHeader() {
                 Daily Standup (DSM)
               </Typography>
             </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </Box >
   );
 };

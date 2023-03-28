@@ -1,8 +1,21 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-
-import { Grid, Box, IconButton, Dialog, ListItem, List, Typography, MenuItem, Button, FormControl, InputLabel, Select, TextField } from '@mui/material';
+import {
+  Grid,
+  Box,
+  IconButton,
+  Dialog,
+  ListItem,
+  List,
+  Typography,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
@@ -15,7 +28,7 @@ import RichTextArea from '../elements/RichTextArea';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
-import { GENERIC_NAME } from '../constants/PONotes';
+import { GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 const getNextDate = (days) => {
@@ -48,7 +61,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         getISODateToTimlineFormat(data?.dueDate) :
         getNextDate(1)
     );
-  const [type, setType] = useState(updateItem ? data?.type : 'ACTION_ITEM');
+  const [type, setType] = useState(updateItem ? data?.type : PO_NOTES_TYPES.ACTION_ITEM);
   const [statement, setStatement] = useState(updateItem ? data?.note : '');
   const [issueLink, setIssueLink] = useState(updateItem ? data?.issueLink ?? '' : '');
   const getEditColor = () => (updateItem && !lock) ? 'primary.main' : 'secondary.main'
@@ -73,9 +86,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         'status': status,
       };
 
-      if (type === 'ACTION_ITEM' && updateItem) body.issueLink = issueLink;
+      if (type === PO_NOTES_TYPES.ACTION_ITEM && updateItem && issueLink.length > 0) body.issueLink = issueLink;
 
-      if (type === 'ACTION_ITEM') body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
+      if (type === PO_NOTES_TYPES.ACTION_ITEM) body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
 
 
       if (updateItem) {
@@ -109,11 +122,11 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
   };
 
   const handleSave = () => {
-    handleSubmit(type === 'KEY_DECISION' && data.status !== 'DRAFT' ? 'NONE' : data.status);
+    handleSubmit(type === PO_NOTES_TYPES.KEY_DECISION && data.status !== 'DRAFT' ? 'NONE' : data.status);
   };
 
   const handlePublish = () => {
-    handleSubmit(type === 'KEY_DECISION' ? 'NONE' : 'PENDING');
+    handleSubmit(type === PO_NOTES_TYPES.KEY_DECISION ? 'NONE' : 'PENDING');
   };
 
   const handleNoteType = (event) => {
@@ -131,7 +144,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
-      await makeRequest(DELETE_PO_NOTE(projectId))
+      await makeRequest(DELETE_PO_NOTE(projectId, data?.noteId))
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
     }
     catch (err) {
@@ -199,9 +212,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
             PO Note Type
           </Typography>
           <List>
-            <ListItem>
-              <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
-                <FormControl sx={{ minWidth: 200 }} size="small">
+            <ListItem sx={{display: 'flex'}}>
+              <Box sx={{ display: { md: 'flex' }, flexGrow: 1 }}>
+                <FormControl sx={{ flexGrow: 1, width: '100%'}} size="small">
                   <InputLabel id="demo-select-small-2">Note Type</InputLabel>
                   <Select
                     data-testid="noteTypeSelect"
@@ -212,9 +225,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
                     onChange={handleNoteType}
                     disabled={lock}
                   >
-                    <MenuItem value="ACTION_ITEM">Action Item</MenuItem>
-                    <MenuItem value="KEY_DECISION">Key Decision</MenuItem>
-                    <MenuItem value="AGENDA_ITEM">Agenda Item</MenuItem>
+                    <MenuItem value="ACTION_ITEM">{noteTypes[0]}</MenuItem>
+                    <MenuItem value="KEY_DECISION">{noteTypes[1]}</MenuItem>
+                    <MenuItem value="AGENDA_ITEM">{noteTypes[2]}</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -249,7 +262,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
             </ListItem>
           </List>
         </Box>
-        {updateItem && type === 'ACTION_ITEM' && <Box>
+        {updateItem && type === PO_NOTES_TYPES.ACTION_ITEM && <Box>
           <Typography style={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }} >Issue Link</Typography>
           <List>
             <ListItem>
@@ -284,9 +297,10 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         </Box>
         )}
         {isSave() && (<Box>
-          {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
+          {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }} >
                 Save
               </Button>
             </Box>
@@ -294,9 +308,10 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         </Box>
         )}
         {isSaveDraft() && (<Box>
-          {(statement.trim() !== '') && (issueLink.trim() !== '') && !lock &&
+          {(statement.trim() !== '') && !lock &&
             <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-              <Button variant="contained" color='customButton2' onClick={handleDraft} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+              <Button variant="contained" color='customButton2' onClick={handleDraft}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
                 Save as Draft
               </Button>
             </Box>

@@ -4,12 +4,17 @@
 
 @media screen and (max-width: 768px) {
   .rbc-agenda-date-cell, .rbc-agenda-time-cell {
-    width: 100px;
+    min-width: 120px;
   }
 }
 
-@media screen and (max-width: 590px) {
-  .rbc-agenda-date-cell, .rbc-agenda-time-cell {
-    width: 50px;
+@media screen and (max-width: 480px) {
+  .rbc-agenda-date-cell, .rbc-agenda-time-cell, .rbc-agenda-event-cell {
+    min-width: 95px;
+    font-size: small;
+  }
+  button{
+    width: 60px;
+    font-size: 2vw;
   }
 }
