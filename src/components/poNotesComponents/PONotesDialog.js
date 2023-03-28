@@ -30,6 +30,7 @@ import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiE
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { RefreshContext } from '../contexts/RefreshContext';
 
 const getNextDate = (days) => {
   const date = new Date();
@@ -54,6 +55,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
   const [lock, setLock] = useState(updateItem)
   const { projectId } = useParams();
   const { userRole } = useContext(ProjectUserContext)
+  const { setRefresh } = useContext(RefreshContext);
 
   const [timeline, setTimeline] =
     useState(
@@ -97,11 +99,13 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
           return;
         }
         await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body })
+        setRefresh(refresh => ({ ...refresh, poNotes: true }));
         setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       }
       else {
         await makeRequest(CREATE_PO_NOTE(projectId), { data: body })
         setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
+        setRefresh(refresh => ({ ...refresh, poNotes: true }));
       }
     }
     catch (err) {
@@ -146,6 +150,7 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
       }
       await makeRequest(DELETE_PO_NOTE(projectId, data?.noteId))
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
+      setRefresh(refresh => ({ ...refresh, poNotes: true }));
     }
     catch (err) {
       setError(err.message);
