@@ -33,7 +33,10 @@ function Item({ title, description, image }) {
         shiftDuration={900}
         showLoading
         easing="ease-in-out"
-        sx={{ position: "absolute", top: 0, left: 0 }}
+        sx={{ 
+          position: isLargeScreen ? "absolute" : "relative", 
+          top: 0, 
+          left: 0 }}
       />
       <Box
         component="p"
@@ -46,13 +49,14 @@ function Item({ title, description, image }) {
           backgroundColor: "#4d4b4b",
           color: '#fefefe',
           opacity: 0.9,
-          position: "absolute",
+          position: isLargeScreen ? "absolute" : "relative",
           top: 0,
           left: 0,
         }}
       >
         {title}
       </Box>
+      { isLargeScreen && (
       <Box
         component="p"
         sx={{
@@ -69,6 +73,7 @@ function Item({ title, description, image }) {
       >
         {description}
       </Box>
+    )}
     </Box>
   );
 }
