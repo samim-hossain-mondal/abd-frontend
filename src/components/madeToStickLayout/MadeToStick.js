@@ -239,11 +239,11 @@ export default function MadeToStick() {
   };
 
   return (
-    <Box>
+    <Box sx={{ marginTop: '110px' }}>
       {isMobile === false && (
         <Box sx={{ marginTop: "1%" }}>
-          <Box style={{ marginLeft: '1.5%' }}>
-            <Button style={{ margin: "0 2% 1% 2%" }} variant="contained" color='customButton1'
+          <Box style={{ marginLeft: '50px', marginRight: '50px' }}>
+            <Button style={{ margin: "0 2% 1% 0" }} variant="contained" color='customButton1'
               onClick={() => {
                 if (isMobile === false) handleSave();
               }}
@@ -310,7 +310,7 @@ export default function MadeToStick() {
         </Box>
       )}
       {isMobile === true && (
-        <Box sx={{ paddingRight: "1%", paddingLeft: "1%" }}>
+        <Box sx={{ paddingRight: "1%", paddingLeft: "1%", paddingTop: "15px" }}>
           <Box className="layout" layout={layout} cols={1} width={windowWidth * 0.95}
             sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", flexWrap: "wrap", alignItems: "center" }}
           >

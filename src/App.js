@@ -88,12 +88,14 @@ function AppRoutes() {
             <SecureRoute>
               {
                 authLoaded &&
-                <ScrollableHome
-                  poNotesRef={poNotesRef}
-                  dsmRef={dsmRef}
-                  availabilityCalendarRef={availabilityCalendarRef}
-                  handleScroll={handleScroll}
-                  scrollTo='dsm' />
+                <Box>
+                  <ScrollableHome
+                    poNotesRef={poNotesRef}
+                    dsmRef={dsmRef}
+                    availabilityCalendarRef={availabilityCalendarRef}
+                    handleScroll={handleScroll}
+                    scrollTo='dsm' />
+                </Box>
               }
             </SecureRoute>} />
           <Route path={`/:projectId${MADE_TO_STICK_ROUTE}`} exact element={
