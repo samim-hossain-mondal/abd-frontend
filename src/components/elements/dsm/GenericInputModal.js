@@ -61,6 +61,15 @@ export default function GenericInputModal({
     return similarUsers.map((user) => ({ name: user.email, char: '@' }));
   }
 
+  const handleChangeTextArea = (e) => {
+    if(e.target.value.length > 300)
+    {
+      setError("You can't write more than 300 characters");
+      return;
+    }
+    setContent(e.target.value);
+  }
+
   return (
     <Box
       sx={matchesLargeSize ? {
@@ -146,20 +155,24 @@ export default function GenericInputModal({
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
             multiline: true,
             rows: 4,
+            borderRadius: '8px',
             fontSize: '16px',
             lineHeight: '20px',
             height: '130px',
             fontFamily: 'Roboto, sans-serif',
+            resize: 'none'
           } : {
             width: '80%',
             padding: '20px',
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
+            borderRadius: '8px',
             multiline: true,
             rows: 4,
             fontSize: '16px',
             lineHeight: '20px',
             height: '130px',
             fontFamily: 'Roboto, sans-serif',
+            resize: 'none'
           }}
           containerStyle={{
             width: '100%',
@@ -186,7 +199,7 @@ export default function GenericInputModal({
           value={content}
           rows={4}
           placeholder={placeholder}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => handleChangeTextArea(e)}
           disabled={isDisabled}
         />
       </Box>

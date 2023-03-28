@@ -212,9 +212,9 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
             PO Note Type
           </Typography>
           <List>
-            <ListItem>
-              <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
-                <FormControl sx={{ minWidth: 200 }} size="small">
+            <ListItem sx={{display: 'flex'}}>
+              <Box sx={{ display: { md: 'flex' }, flexGrow: 1 }}>
+                <FormControl sx={{ flexGrow: 1, width: '100%'}} size="small">
                   <InputLabel id="demo-select-small-2">Note Type</InputLabel>
                   <Select
                     data-testid="noteTypeSelect"
