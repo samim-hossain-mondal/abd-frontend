@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   Box,
   Typography,
-  Container,
   Tooltip,
   IconButton,
   Avatar,
@@ -54,15 +53,6 @@ function StickyHeader({ userName }) {
         zIndex: 99,
       }}
     >
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
         <Box
           sx={{
             display: "flex",
@@ -71,6 +61,7 @@ function StickyHeader({ userName }) {
             alignItems: "center",
             cursor: "pointer",
           }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
         <Box
           component="img"
@@ -94,7 +85,6 @@ function StickyHeader({ userName }) {
           <Avatar alt={userName} src="/static/images/avatar/2.jpg" sx={{height: 50, width: 50}}/>
         </IconButton>
       </Tooltip>
-      </Container>
       <Menu
         id="menu-appbar"
         sx={{ mt: "45px" }}
