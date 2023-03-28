@@ -112,11 +112,8 @@ function ProjectModal({
       <Dialog
         PaperProps={{
           sx: {
-            position: "absolute",
-            top: "48%",
-            left: "69%",
-            right: "auto",
-            transform: "translate(-50%, -50%)",
+            display: "flex",
+            justifyContent: "center",
             p: 2,
           },
         }}

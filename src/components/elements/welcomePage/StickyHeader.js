@@ -37,6 +37,7 @@ function StickyHeader({ userName }) {
   const logout = async () => oktaAuth.signOut('/');
 
   return (
+    <>
     <Box
       component="header"
       sx={{
@@ -107,8 +108,9 @@ function StickyHeader({ userName }) {
           )
         )}
       </Menu>
-      <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
     </Box>
+      <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
+      </>
   );
 }
 

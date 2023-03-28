@@ -36,13 +36,8 @@ function NewProjectModal({ open, setOpen }) {
     <Dialog
       PaperProps={{
         sx: {
-          position: "absolute",
-          top: "48%",
-          left: "69%",
-          transform: "translate(-50%, -50%)",
-          width: "80%",
-          maxWidth: "400px",
-          p: 2,
+         display: "flex",
+         justifyContent: "center",
         },
       }}
       open={open}

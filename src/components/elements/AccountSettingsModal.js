@@ -1,13 +1,16 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useContext } from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
+// import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
+
 import { PropTypes } from "prop-types";
 import axios from "axios";
 import ProjectModal from "./ProjectModal";
-import Transition from "../utilityFunctions/OverlayTransition";
+import Transition from "../utilityFunctions/SideBarTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
+// eslint-disable-next-line import/no-named-as-default
 import NewProjectModal from "./NewProjectModal";
 import { DOMAIN } from "../../config";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
@@ -32,6 +35,10 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         setError(error.response.data.message);
       });
   }, []);
+
+  const handleClose = () => {
+    setOpenSettings(false);
+  };
 
   const handleCancelChanges = () => {
     setOpenEditModel(false);
@@ -227,6 +234,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const handleEditModel = (id) => {
+    setOpenSettings(false);
     axios
       .get(`${DOMAIN}/api/management/project/${id}`)
       .then((response) => {
@@ -263,54 +271,42 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   const handleAddNew = () => {
     setOpenNewProjectModal(true);
+    setOpenSettings(false);
   };
 
   return (
+    <Box fullHeight sx={{display:"flex",justifyContent:"flex-end"}} className="cont">
     <Dialog
+    id="joiiii"
       open={open}
       TransitionComponent={Transition}
-      onClose={() => setOpenSettings(false)}
-      maxWidth="md"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-      }}
-      PaperProps={{
-        sx: {
-          position: "absolute",
-          top: "48%",
-          left: "40%",
-          transform: "translate(-50%, -50%)",
-          width: "70%",
-          maxWidth: "300px",
-          height: "350px",
-          p: 2,
-        },
-      }}
+     onClose={handleClose}
+     PaperProps={{ sx: { position:"absolute",right: -30,maxHeight:"100%",height:"100%",width:"50%",minWidth:"320px",background:"#F5F5F5"} }}
     >
-      <DialogContent>
+      <DialogContent id="dd">
         <Box
-          sx={{ display: "flex", flexDirection: "column", textAlign: "center" }}
+        id="ff"
+          sx={{ display: "flex", flexDirection: "column", textAlign: "center",justifyContent:"center",alignItems:"center" }}
         >
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between",width:"80%",flexWrap:"wrap",minHeight:"50px",borderBottom:"2px dashed gray"}} >
             <Typography variant="h5" mb={5}>
               Manage Projects
-            </Typography>
-            <AddIcon onClick={handleAddNew} />
-            {openNewProjectModal && (
-              <NewProjectModal
-                open={openNewProjectModal}
-                projects={projects}
-                setProjects={setProjects}
-                setOpen={setOpenNewProjectModal}
-                projectInfo={projectInfo}
-              />
-            )}
+            </Typography >
+            <Box mt={0.5}>
+            <AddCircleRoundedIcon  sx={{color:"blue"}}onClick={handleAddNew} />
+            </Box>
           </Box>
+
           <Box
+          mt={5}
             sx={{
               display: "flex",
               flexDirection: "column",
+              fontFamily: "Poppins",
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              overflowY: "scroll",
             }}
             mb={4}
           >
@@ -319,17 +315,17 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 <Box
                   sx={{
                     display: "flex",
+                    width: "80%",
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    backgroundColor:"#E6EEF2",
+                    height:"50px",
+                    borderRadius:"10px",
+                    alignItems:"center",
                   }}
+                  mx={2}
+                  mb={2}
                 >
-                  <Box sx={{ display: "flex" }}>
-                    {project.projectId === selectedProject ? (
-                      <CheckBoxSharpIcon sx={{ color: "green" }} />
-                    ) : (
-                      <CheckBoxSharpIcon style={{ visibility: "hidden" }} />
-                    )}
-                  </Box>
                   <Box
                     sx={{
                       display: "flex",
@@ -338,35 +334,60 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      marginLeft:"25px"
                     }}
                   >
+                   {project.projectId === selectedProject ? (
+                      <Typography sx={{ fontSize: "20px",color:"primary.main",paddingBottom: "3px",
+                      "borderBottomStyle": "solid",
+                      "borderBottomWidth": "2px",
+                      "width": "fitContent"
+                      }}>
+                        {project.projectName}
+                      </Typography>
+                    ) : (
                     <Typography
-                      sx={{ fontSize: "20px" }}
+                      sx={{ fontSize: "20px",cursor:"pointer"}}
                       onClick={() => {
                         handleSelectedProject(project.projectId);
                       }}
                     >
                       {project.projectName}
                     </Typography>
+                    )}
                   </Box>
 
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "space-between",
+                      marginRight:"25px"
                     }}
                   >
                     <Typography
                       onClick={() => {
                         handleEditModel(project.projectId);
                       }}
+                      sx={{ cursor:"pointer" }}
                     >
-                      <ArrowForwardIcon />
+                      <OpenInNewRoundedIcon sx={{color:"gray"}}/>
                     </Typography>
                   </Box>
                 </Box>
               ))}
-            {openEditModel && (
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
+    {openNewProjectModal && (
+      <NewProjectModal
+        open={openNewProjectModal}
+        projects={projects}
+        setProjects={setProjects}
+        setOpen={setOpenNewProjectModal}
+        projectInfo={projectInfo}
+      />
+    )}
+      {openEditModel && (
               <ProjectModal
                 open={openEditModel}
                 handleClose={setOpenEditModel}
@@ -382,10 +403,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 handleCancelChanges={handleCancelChanges}
               />
             )}
-          </Box>
-        </Box>
-      </DialogContent>
-    </Dialog>
+    </Box>
   );
 }
 
