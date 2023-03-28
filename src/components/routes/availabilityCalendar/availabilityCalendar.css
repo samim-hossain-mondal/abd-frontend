@@ -8,6 +8,10 @@
   }
 }
 
+.rbc-btn-group{
+  margin: 10px;
+}
+
 @media screen and (max-width: 480px) {
   .rbc-agenda-date-cell, .rbc-agenda-time-cell, .rbc-agenda-event-cell {
     min-width: 95px;
