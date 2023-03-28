@@ -1,78 +1,61 @@
 import React, { useState } from "react";
-import { Box, Collapse, IconButton, Tooltip } from "@mui/material";
-import { ExpandLess, ExpandMore, ArrowCircleRight } from "@mui/icons-material";
+import {
+  // Box,
+  // Collapse,
+  // IconButton,
+  // Tooltip,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IconButton,
+  useMediaQuery
+} from "@mui/material";
+import { ExpandMore, OpenInNew } from "@mui/icons-material";
 import propTypes from "prop-types";
 
 function ProjectListItem({ project, handleProjectClick }) {
+  const isSmallerScreen = useMediaQuery("(min-width: 600px)");
   const [showDescription, setShowDescription] = useState(false);
+  // const [showSummary, setShowSummary] = useState(true);
 
   return (
-    <Box
-      key={project.projectId}
-      component="card"
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
+    <Accordion
+      expanded={showDescription}
+      onChange={(e) => {
+        e.stopPropagation();
+        setShowDescription(!showDescription);
+      }}
+      TransitionProps={{ unmountOnExit: true }}
+      sx = {{
         backgroundColor: "white",
-        textAlign: "start",
-        borderBottom: "1px solid #e0e0e0",
+        "&:hover": {
+          backgroundColor: "grey.200",
+        },
       }}
     >
-      <Box
-        component="p"
+      <AccordionSummary
+        expandIcon={<ExpandMore />}
         sx={{
-          fontSize: 15,
-          width: "100%",
-          padding: 1,
-          margin: 0,
-          backgroundColor: "white",
-          fontWeight: 200,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "column"}}>
-          <Box>{project.projectName}</Box>
-          <Box sx={{ fontSize: 12, color: 'grey.800' }}>{[project._count.projectMembers, ' members']}</Box>
-        </Box>
-        <Box>
-          <Tooltip
-            title={showDescription ? "Hide Description" : "Show Description"}
-          >
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDescription(!showDescription);
-              }}
-            >
-              {showDescription ? <ExpandLess sx={{color: 'logoBlue.main'}}/> : <ExpandMore sx={{color: 'logoBlue.main'}}/>}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Go to project dashboard">
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                handleProjectClick(project.projectId);
-              }}
-            >
-              <ArrowCircleRight sx={{color: 'logoBlue.main'}}/>
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
-      <Collapse in={showDescription} timeout="auto" unmountOnExit>
-        <Box
-          component="p"
-          paddingX={1}
-          sx={{
-            fontSize: 15,
-            color: "text.primary",
-            width: "100%",
-            px: 1,
+        <Typography 
+          sx={{ 
+            width: "25%", 
+            flexShrink: 0,
+            flexGrow: isSmallerScreen ? 0 : 1,
+          }}
+        >
+          {project.projectName}
+        </Typography>
+        {isSmallerScreen ? (
+        <Typography 
+          sx={{ 
+            flexGrow: 1,
+            color: "text.secondary",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
@@ -81,12 +64,110 @@ function ProjectListItem({ project, handleProjectClick }) {
             overflow: "hidden",
             textOverflow: "ellipsis",
             wordBreak: "break-word",
-          }}
+            marginRight: 5
+            }}
         >
           {project.projectDescription}
-        </Box>
-      </Collapse>
-    </Box>
+        </Typography>
+        ) : null}
+        <IconButton
+          sx={{ 
+            justifyContent: "flex-end" 
+          }}
+        >
+          <OpenInNew 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleProjectClick(project.projectId);
+            }}
+          />
+        </IconButton>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Typography>{project.projectDescription}</Typography>
+      </AccordionDetails>
+    </Accordion>
+
+    // <Box
+    //   key={project.projectId}
+    //   component="card"
+    //   sx={{
+    //     display: "flex",
+    //     flexDirection: "column",
+    //     width: "100%",
+    //     justifyContent: "space-between",
+    //     alignItems: "flex-start",
+    //     backgroundColor: "white",
+    //     textAlign: "start",
+    //     borderBottom: "1px solid #e0e0e0",
+    //   }}
+    // >
+    //   <Box
+    //     component="p"
+    //     sx={{
+    //       fontSize: 15,
+    //       width: "100%",
+    //       padding: 1,
+    //       margin: 0,
+    //       backgroundColor: "white",
+    //       fontWeight: 200,
+    //       display: "flex",
+    //       justifyContent: "space-between",
+    //       alignItems: "center",
+    //     }}
+    //   >
+    //     <Box sx={{ display: "flex", flexDirection: "column"}}>
+    //       <Box>{project.projectName}</Box>
+    //       <Box sx={{ fontSize: 12, color: 'grey.800' }}>{[project._count.projectMembers, ' members']}</Box>
+    //     </Box>
+    //     <Box>
+    //       <Tooltip
+    //         title={showDescription ? "Hide Description" : "Show Description"}
+    //       >
+    //         <IconButton
+    //           onClick={(e) => {
+    //             e.stopPropagation();
+    //             setShowDescription(!showDescription);
+    //           }}
+    //         >
+    //           {showDescription ? <ExpandLess sx={{color: 'logoBlue.main'}}/> : <ExpandMore sx={{color: 'logoBlue.main'}}/>}
+    //         </IconButton>
+    //       </Tooltip>
+    //       <Tooltip title="Go to project dashboard">
+    //         <IconButton
+    //           onClick={(e) => {
+    //             e.stopPropagation();
+    //             handleProjectClick(project.projectId);
+    //           }}
+    //         >
+    //           <ArrowCircleRight sx={{color: 'logoBlue.main'}}/>
+    //         </IconButton>
+    //       </Tooltip>
+    //     </Box>
+    //   </Box>
+    //   <Collapse in={showDescription} timeout="auto" unmountOnExit>
+    //     <Box
+    //       component="p"
+    //       paddingX={1}
+    //       sx={{
+    //         fontSize: 15,
+    //         color: "text.primary",
+    //         width: "100%",
+    //         px: 1,
+    //         display: "-webkit-box",
+    //         WebkitLineClamp: 2,
+    //         WebkitBoxOrient: "vertical",
+    //         WebkitAlignContent: "start",
+    //         textAlign: "start",
+    //         overflow: "hidden",
+    //         textOverflow: "ellipsis",
+    //         wordBreak: "break-word",
+    //       }}
+    //     >
+    //       {project.projectDescription}
+    //     </Box>
+    //   </Collapse>
+    // </Box>
   );
 }
 
