@@ -40,7 +40,7 @@ export default function WelcomePage() {
   // const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
-  const footerRef = useRef(null);
+  const footerActionRef = useRef(null);
 
   const handleScroll = () => {
     scrollRef.current = window.scrollY;
@@ -61,11 +61,9 @@ export default function WelcomePage() {
         }
       });
     });
-
-    observer.observe(footerRef.current);
-
+    observer.observe(footerActionRef.current);
     return () => {
-      observer.unobserve(footerRef.current);
+      observer.unobserve(footerActionRef.current);
     };
   }, []);
 
@@ -106,7 +104,7 @@ export default function WelcomePage() {
       }}
     >
       <CssBaseline />
-      {stickyHeader ? <StickyHeader userName={user ? user.name : ""} /> : null}
+      {stickyHeader && <StickyHeader userName={user ? user.name : ""} />}
       <Container
         component="main"
         sx={{
@@ -131,7 +129,7 @@ export default function WelcomePage() {
           }}
         />
         <Typography
-          variant={isSmallerScreen ? 'h4' : 'h3'}
+          variant={isSmallerScreen ? "h4" : "h3"}
           component="h3"
           sx={{
             my: 2,
@@ -258,40 +256,40 @@ export default function WelcomePage() {
             spacing={2}
             sx={{ alignSelf: "center", width: "100%" }}
           > */}
-            {/* <ProfileCard
+          {/* <ProfileCard
               avatarUrl="/static/images/avatar/2.jpg"
               name={user ? user.name : "Loading..."}
               email={user ? user.email : "Loading..."}
               bio={showBio ? `Part of ${userProjects.length} projects` : null}
             /> */}
 
-            {!showProjectList && (
-              <Paper
+          {!showProjectList && (
+            <Paper
+              sx={{
+                mt: 8,
+                mb: 2,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                paddingLeft: 0,
+                paddingRight: 0,
+                backgroundColor: "grey.200",
+              }}
+            >
+              <Typography
+                component="p"
                 sx={{
-                  mt: 8,
-                  mb: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  backgroundColor: "grey.200",
+                  fontSize: 20,
+                  px: 1,
+                  alignSelf: "center",
+                  textAlign: "center",
+                  width: "100%",
                 }}
               >
-                <Typography
-                  component="p"
-                  sx={{
-                    fontSize: 20,
-                    px: 1,
-                    alignSelf: "center",
-                    textAlign: "center",
-                    width: "100%",
-                  }}
-                >
-                  {texts.getStarted}
-                </Typography>
-              </Paper>
-            )}
+                {texts.getStarted}
+              </Typography>
+            </Paper>
+          )}
           {/* </Stack> */}
         </Container>
       )}
@@ -308,7 +306,7 @@ export default function WelcomePage() {
               aria-label="add"
               sx={{
                 position: "fixed",
-                bottom: 100,
+                bottom: 40,
                 right: 40,
                 zIndex: "9999",
                 height: { xs: 50, sm: 60, md: 70 },
@@ -326,7 +324,6 @@ export default function WelcomePage() {
       <Box
         component="footer"
         id="footer"
-        ref={footerRef}
         sx={{
           py: 4,
           px: 2,
@@ -355,6 +352,8 @@ export default function WelcomePage() {
           </Button>
         ) : (
           <Button
+            id="footerAction"
+            ref={footerActionRef}
             variant="contained"
             sx={{ backgroundColor: "logoBlue.main", color: "white" }}
             onClick={handleLoginClick}
