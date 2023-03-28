@@ -1,13 +1,12 @@
 import React from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import Carousel from "react-material-ui-carousel"; 
+import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
-import Image from "mui-image"; 
+import Image from "mui-image";
 import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
-
-  const matches = useMediaQuery("(min-width:600px)");
+  const isLargeScreen = useMediaQuery("(min-width:600px)");
 
   return (
     <Box
@@ -15,56 +14,57 @@ function Item({ title, description, image }) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "white",
-        textAlign: "center",
+        textAlign: "left",
         boxShadow: 1,
+        position: "relative",
       }}
     >
-      <Box
-        component="p"
-        sx={{
-          fontSize: matches ? 23 : 20,
-          color: "text.primary",
-          width: "100%",
-          padding: 1,
-          margin: 0,
-          backgroundColor: "grey.200",
-          borderBottom: "5px solid #e0e0e0",
-        }}
-      >
-        {title}
-      </Box>
       <Image
         src={image}
-        height= {matches ? "75%" : "50%"}
-        width= {matches ? "75%" : "50%"}
-        fit= "cover"
+        height="100%"
+        width="100%"
+        fit="cover"
         duration={0}
         errorIcon
         shift={null}
         shiftDuration={900}
-        showLoading 
+        showLoading
         easing="ease-in-out"
-        sx={{ marginTop: 2, marginBottom: 2 }}
+        sx={{ position: "absolute", top: 0, left: 0 }}
       />
-      {/* <Box
-        component="img"
-        sx={{
-          width: "100%",
-        }}
-        src={image}
-        alt="image"
-      /> */}
       <Box
         component="p"
         sx={{
-          fontSize: matches ? 20 : 18,
-          color: "text.primary",
+          fontSize: isLargeScreen ? 23 : 20,
+          // color: "text.primary",
           width: "100%",
-          px: 2,
+          padding: 2,
+          margin: 0,
+          backgroundColor: "#4d4b4b",
+          color: '#fefefe',
+          opacity: 0.9,
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      >
+        {title}
+      </Box>
+      <Box
+        component="p"
+        sx={{
+          fontSize: isLargeScreen ? 20 : 18,
+          color: "#fefefe",
+          backgroundColor: "#4d4b4b",
+          width: "100%",
+          padding: 2,
+          bottom: 0,
+          position: "absolute",
+          opacity: 0.9,
+          margin: 0
         }}
       >
         {description}
@@ -77,32 +77,40 @@ function ImageCarousel() {
   return (
     <Carousel
       autoPlay
-      animation="slide"
-      indicators={false}
+      animation="fade"
+      indicators
       timeout={500}
-      navButtonsAlwaysVisible
+      navButtonsAlwaysVisible={false}
       cycleNavigation
-      fullHeightHover={false}    
-      navButtonsProps={{         
+      fullHeightHover={false}
+      style={{
+        position: "relative",
+      }}
+      navButtonsProps={{
         style: {
-            borderRadius: '50%',
-            marginInline: 10,
-            width: 30,
-            height: 30,
-            zIndex: 1,
-        }
-      }} 
+          borderRadius: "50%",
+          marginInline: 10,
+          width: 30,
+          height: 30,
+          zIndex: 2,
+          opacity: 0.4,
+        },
+      }}
       activeIndicatorIconButtonProps={{
         style: {
-          transform: 'scale(1.5)', 
-        }
+          color: "#fefefe",
+          transform: "scale(1.5)",
+        },
       }}
-      indicatorIconButtonProps={{
+      indicatorContainerProps={{
         style: {
-          marginTop: 15,
+          position: 'absolute',
+          bottom: '0.2%',
+          zIndex: 2,
         }
       }}
-      sx = {{
+      sx={{
+        position: "relative",
         width: "100%",
         height: "100%",
         boxShadow: 1,
