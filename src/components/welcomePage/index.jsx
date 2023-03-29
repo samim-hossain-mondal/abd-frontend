@@ -57,6 +57,15 @@ export default function WelcomePage() {
     navigate("/");
   };
 
+  let projectCountText;
+  if (userProjects.length > 0) {
+    projectCountText = `${userProjects.length} projects for ${user.email}`;
+  } else if (user.memberId) {
+    projectCountText = "You have no active projects";
+  } else {
+    projectCountText = "Login and create a new project";
+  }
+
   return (
     <Box
       sx={{
@@ -98,9 +107,7 @@ export default function WelcomePage() {
               color: "secondary.main",
             }}
           >
-            {userProjects.length > 0
-              ? `${userProjects.length} projects for ${user.email}`
-              : `Login and create a new project`}
+            {projectCountText}
           </Typography>
         </Box>
         {showProjectList ? (
