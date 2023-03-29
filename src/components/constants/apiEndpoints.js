@@ -179,6 +179,17 @@ export const GET_PROJECT_BY_ID = (projectId) => ({
   method: 'get',
 })
 
+export const CREATE_PROJECT = {
+  url: "/api/management/project",
+  method: 'post'
+}
+
+export const ADD_PROJECT_MEMBER = (projectId) => ({
+  url: `api/management/project/${projectId}/member`,
+  method: 'post',
+})
+
+
 // ***** madeToStick Endpoints *****
 export const GET_MADE_TO_STICK = (projectId) => ({
   url: `api/madeToStick/${projectId}`,

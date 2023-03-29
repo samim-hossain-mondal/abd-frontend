@@ -47,6 +47,7 @@ export default function PONotesTable(props) {
 
   const type = HEADINGS[heading].toUpperCase();
   const apiUrlQuery = getApiUrlQuery(type, query, 1, 100);
+
   const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const getPONotes = async () => {

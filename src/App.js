@@ -8,10 +8,12 @@ import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
-import Navbar from './components/elements/NavBar';
+
+import Navbar from './components/elements/NavBar'; 
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';
-import WelcomePage from './components/welcomePage/WelcomePage';
+import WelcomePage from './components/welcomePage';
+
 import ScrollableHome from './components/routes/ScrollableHome'
 import {
   CALENDAR_ROUTE,
@@ -26,6 +28,7 @@ import { ErrorContext } from './components/contexts/ErrorContext';
 import LoginCallbackPage from './components/elements/LoginCallbackPage';
 import getDBOffSetTime from './components/utilityFunctions/getOffsetTimestamp';
 import getTodayDate from './components/utilityFunctions/getTodayDate';
+
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
@@ -54,8 +57,9 @@ function AppRoutes() {
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
 
-  const { updateUserDetails } = useContext(ProjectUserContext);
 
+  const { updateUserDetails } = useContext(ProjectUserContext);
+  
   const { setError, setSuccess } = useContext(ErrorContext);
   const setAxiosHeader = async () => {
     if (!authState) {
@@ -89,9 +93,9 @@ function AppRoutes() {
     <QueryClientProvider client={queryClient}>
       <Box className="App">
         {authLoaded && window.location.pathname !== '/welcome' && (
-          <Box>
-            <Navbar authLoaded={authLoaded} />
-          </Box>
+        <Box>
+          <Navbar authLoaded={authLoaded} />
+        </Box>
         )}
         <Routes>
           <Route path='/' exact element={<Login />} />

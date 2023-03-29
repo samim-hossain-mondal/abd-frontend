@@ -97,7 +97,7 @@ function ProjectModal({
         handleDelete={() => {
           handleDeleteProject(projectInfo.projectId);
         }}
-        description="Are u sure want to delete this Project"
+        description="Are you sure want to delete this project?"
       />
 
       <DeleteDialog
@@ -107,16 +107,13 @@ function ProjectModal({
           removeCollaborator(selectedCollaborator);
           setDeleteProjectMemberAlert(false);
         }}
-        description="Are u sure want to delete this Project Member"
+        description="Are you sure want to remove this project member?"
       />
       <Dialog
         PaperProps={{
           sx: {
-            position: "absolute",
-            top: "48%",
-            left: "69%",
-            right: "auto",
-            transform: "translate(-50%, -50%)",
+            display: "flex",
+            justifyContent: "center",
             p: 2,
           },
         }}

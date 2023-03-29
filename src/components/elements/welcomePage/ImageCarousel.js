@@ -1,44 +1,31 @@
 import React from "react";
-import { Box } from "@mui/material";
-import Carousel from "react-material-ui-carousel"; 
+import { Box, useMediaQuery } from "@mui/material";
+import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
-import Image from "mui-image"; 
+import Image from "mui-image";
 import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
+  const isLargeScreen = useMediaQuery("(min-width:600px)");
+
   return (
     <Box
       component="card"
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "100%",
-        borderRadius: 2,
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "white",
-        textAlign: "center",
-        mt: 2,
-        border: "5px solid #e0e0e0",
+        textAlign: "left",
+        boxShadow: 1,
+        position: "relative",
       }}
     >
-      <Box
-        component="p"
-        sx={{
-          fontSize: 25,
-          color: "text.primary",
-          width: "100%",
-          padding: 1,
-          margin: 0,
-          backgroundColor: "grey.200",
-        }}
-      >
-        {title}
-      </Box>
       <Image
         src={image}
-        height="75%"
-        width="75%"
+        height="100%"
+        width="100%"
         fit="cover"
         duration={0}
         errorIcon
@@ -46,22 +33,47 @@ function Item({ title, description, image }) {
         shiftDuration={900}
         showLoading
         easing="ease-in-out"
-        sx={{ marginTop: 2, marginBottom: 2 }}
+        sx={{ 
+          position: isLargeScreen ? "absolute" : "relative", 
+          top: 0, 
+          left: 0 }}
       />
-      {/* <Box
-        component="img"
-        sx={{
-          width: "100%",
-        }}
-        src={image}
-        alt="image"
-      /> */}
       <Box
         component="p"
-        sx={{ fontSize: 20, color: "text.primary", width: "100%", px: 2 }}
+        sx={{
+          fontSize: isLargeScreen ? 23 : 20,
+          // color: "text.primary",
+          width: "100%",
+          padding: 2,
+          margin: 0,
+          backgroundColor: "#4d4b4b",
+          color: '#fefefe',
+          opacity: 0.9,
+          position: isLargeScreen ? "absolute" : "relative",
+          top: 0,
+          left: 0,
+        }}
+      >
+        {title}
+      </Box>
+      { isLargeScreen && (
+      <Box
+        component="p"
+        sx={{
+          fontSize: isLargeScreen ? 20 : 18,
+          color: "#fefefe",
+          backgroundColor: "#4d4b4b",
+          width: "100%",
+          padding: 2,
+          bottom: 0,
+          position: "absolute",
+          opacity: 0.9,
+          margin: 0
+        }}
       >
         {description}
       </Box>
+    )}
     </Box>
   );
 }
@@ -70,30 +82,43 @@ function ImageCarousel() {
   return (
     <Carousel
       autoPlay
-      animation="slide"
+      animation="fade"
       indicators
       timeout={500}
-      navButtonsAlwaysVisible
+      navButtonsAlwaysVisible={false}
       cycleNavigation
-      fullHeightHover={false}    
-      navButtonsProps={{         
+      fullHeightHover={false}
+      style={{
+        position: "relative",
+      }}
+      navButtonsProps={{
         style: {
-            borderRadius: '50%',
-            marginInline: 10,
-            width: 30,
-            height: 30,
-            zIndex: 1,
-        }
-      }} 
+          borderRadius: "50%",
+          marginInline: 10,
+          width: 30,
+          height: 30,
+          zIndex: 2,
+          opacity: 0.4,
+        },
+      }}
       activeIndicatorIconButtonProps={{
         style: {
-          transform: 'scale(1.5)', 
+          color: "#fefefe",
+          transform: "scale(1.5)",
+        },
+      }}
+      indicatorContainerProps={{
+        style: {
+          position: 'absolute',
+          bottom: '0.2%',
+          zIndex: 2,
         }
       }}
-      indicatorIconButtonProps={{
-        style: {
-          marginTop: 15,
-        }
+      sx={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        boxShadow: 1,
       }}
     >
       {slides.map((slide) => (
