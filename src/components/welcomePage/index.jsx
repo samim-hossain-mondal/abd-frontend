@@ -1,12 +1,10 @@
-import { React, useState, useEffect, useRef, useContext } from "react";
+import { React, useState, useContext } from "react";
 import {
   Box,
   Typography,
   Container,
   CssBaseline,
   Stack,
-  Button,
-  // List,
   Paper,
   useMediaQuery,
   Fab,
@@ -31,7 +29,7 @@ export default function WelcomePage() {
   const navigate = useNavigate();
   // const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showAddButton, setShowAddButton] = useState(true);
+  // const [showAddButton, setShowAddButton] = useState(true);
   const {
     user,
     projects: userProjects,
@@ -39,41 +37,6 @@ export default function WelcomePage() {
   } = useContext(ProjectUserContext);
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
   const showProjectList = userProjects.length > 0;
-  // const scrollRef = useRef(0);
-  const footerActionRef = useRef(null);
-
-  // const handleScroll = () => {
-  //   scrollRef.current = window.scrollY;
-  //   if (scrollRef.current > 350) {
-  //     setStickyHeader(true);
-  //   } else {
-  //     setStickyHeader(false);
-  //   }
-  // };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setShowAddButton(false);
-        } else {
-          setShowAddButton(true);
-        }
-      });
-    });
-    observer.observe(footerActionRef.current);
-    return () => {
-      observer.unobserve(footerActionRef.current);
-    };
-  }, []);
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
 
   const handleProjectClick = async (projectId) => {
     console.log("Project Clicked", projectId);
@@ -104,7 +67,11 @@ export default function WelcomePage() {
       }}
     >
       <CssBaseline />
-      <StickyHeader userName={user ? user.name : ""} />
+      <StickyHeader
+        userName={user ? user.name : ""}
+        handleCreateProjectClick={handleCreateProjectClick}
+        handleLoginClick={handleLoginClick}
+      />
       <Container
         component="main"
         sx={{
@@ -118,26 +85,24 @@ export default function WelcomePage() {
         maxWidth="lg"
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography
-          variant="h4"
-        >
-          {userProjects.length > 0
-            ? `Welcome back, ${user.name} \u{1F44B}`
-            : `${texts.welcome} ${
-                user?.name ? `, ${user.name}` : ""
-              } \u{1F44B}`}
-        </Typography>
-        <Typography
-          variant="h5"
-          sx= {{
-            fontSize: isSmallerScreen ? 15 : 20,
-            color: "secondary.main"
-          }}
-        >
-          {userProjects.length > 0
-            ? `${userProjects.length} projects for ${user.email}`
-            : `You have no projects yet`}
-        </Typography>
+          <Typography variant="h4">
+            {userProjects.length > 0
+              ? `Welcome back, ${user.name} \u{1F44B}`
+              : `${texts.welcome} ${
+                  user?.name ? `, ${user.name}` : ""
+                } \u{1F44B}`}
+          </Typography>
+          <Typography
+            variant="h5"
+            sx={{
+              fontSize: isSmallerScreen ? 15 : 20,
+              color: "secondary.main",
+            }}
+          >
+            {userProjects.length > 0
+              ? `${userProjects.length} projects for ${user.email}`
+              : `You have no projects yet`}
+          </Typography>
         </Box>
         {showProjectList ? (
           <Box
@@ -152,70 +117,6 @@ export default function WelcomePage() {
               width: "100%",
             }}
           >
-            {/* <Box
-              component="p"
-              sx={{
-                fontSize: 20,
-                py: 1,
-                mt: 0,
-                mb: 0,
-                alignSelf: "center",
-                backgroundColor: "grey.200",
-                width: "100%",
-                boxShadow: 2,
-                display: "flex",
-                flexDirection: isSmallerScreen ? "column" : "row",
-                justifyContent: "space-between",
-                borderBottom: "5px solid #e0e0e0",
-              }}
-            >
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: isSmallerScreen ? 20 : 25,
-                  px: 2,
-                  alignSelf: "center",
-                  width: "100%",
-                }}
-              >
-                Your Projects
-              </Typography>
-              <Typography
-                component="p"
-                sx={{
-                  fontSize: 15,
-                  px: 2,
-                  alignSelf: "center",
-                  fontWeight: 100,
-                  width: "100%",
-                  textAlign: isSmallerScreen ? "start" : "end",
-                  color: "grey.800",
-                }}
-              >
-                {userProjects.length
-                  ? `${userProjects.length} Projects`
-                  : "..."}
-              </Typography>
-            </Box> */}
-            {/* <List
-              sx={{
-                width: "100%",
-                overflowY: "scroll",
-                maxHeight: "500px",
-                padding: 0,
-                scrollBehavior: "smooth",
-              }}
-            >
-              {userProjects.map((project) => (
-                <ProjectListItem
-                  key={project.projectId}
-                  project={project}
-                  handleProjectClick={() =>
-                    handleProjectClick(project.projectId)
-                  }
-                />
-              ))}
-            </List> */}
             <PaginatedCards
               projects={userProjects.sort((a, b) => b.projectId - a.projectId)}
               handleProjectClick={handleProjectClick}
@@ -249,18 +150,6 @@ export default function WelcomePage() {
           }}
           maxWidth="lg"
         >
-          {/* <Stack
-            direction={isSmallerScreen ? "column" : "row"}
-            spacing={2}
-            sx={{ alignSelf: "center", width: "100%" }}
-          > */}
-          {/* <ProfileCard
-              avatarUrl="/static/images/avatar/2.jpg"
-              name={user ? user.name : "Loading..."}
-              email={user ? user.email : "Loading..."}
-              bio={showBio ? `Part of ${userProjects.length} projects` : null}
-            /> */}
-
           {!showProjectList && (
             <Paper
               sx={{
@@ -288,13 +177,12 @@ export default function WelcomePage() {
               </Typography>
             </Paper>
           )}
-          {/* </Stack> */}
         </Container>
       )}
-      {showAddButton && user.memberId && (
+      {isSmallerScreen && user.memberId && (
         <Slide
-          direction={showAddButton ? "up" : "down"}
-          in={showAddButton}
+          direction="up"
+          in
           mountOnEnter
           unmountOnExit
         >
@@ -340,25 +228,6 @@ export default function WelcomePage() {
         <Typography variant="body1" color="text.secondary" align="center">
           Get started with your own Agile board!
         </Typography>
-        {user.memberId ? (
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
-            onClick={handleCreateProjectClick}
-          >
-            Create New Project
-          </Button>
-        ) : (
-          <Button
-            id="footerAction"
-            ref={footerActionRef}
-            variant="contained"
-            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
-            onClick={handleLoginClick}
-          >
-            Login to Create Project
-          </Button>
-        )}
       </Box>
       <NewProjectModal open={showCreateModal} setOpen={setShowCreateModal} />
     </Box>
