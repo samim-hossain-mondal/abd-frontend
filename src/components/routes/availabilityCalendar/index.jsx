@@ -291,6 +291,7 @@ export default function AvailabilityCalendar({availabilityIsInViewPort}) {
             onSelectEvent={(event) => handleEditModal(event)}
             onSelectSlot={handleSelect}
             eventPropGetter={eventStyleGetter}
+            dayLayoutAlgorithm="no-overlap"
           />
           {inputModal && (
             <Dialog open={inputModal} onClose={handleInputModalClose}>
