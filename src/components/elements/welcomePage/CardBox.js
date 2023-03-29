@@ -40,7 +40,9 @@ function CardBox({ title, description }) {
           fontSize: { xs: 15, sm: 18}, 
           color: "text.primary", 
           width: "100%", 
-          px: 2 
+          padding: 2,
+          whiteSpace: "pre-wrap", 
+          margin: 0,
         }}
       >
         {description}
