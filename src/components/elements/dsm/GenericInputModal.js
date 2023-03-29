@@ -135,27 +135,16 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        mt: '8px'
-      }}>
-        <Typography variant="h5">{title}</Typography>
-        <ContentCopyIcon onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(content);
-            setSuccess('Copied to clipboard')
-          } catch (err) {
-            setError('Failed to copy to clipboard');
-          }
-        }} />
-      </Box>
+      <Typography variant="h5" sx={{
+        mt: '8px',
+      }}>{title}</Typography>
 
       {/* TextField */}
       <Box sx={{
         width: '100%',
         margin: '16px 0',
-        padding: 0
+        padding: 0,
+        position: 'relative'
       }}>
         <ReactTextareaAutocomplete
           className="autocomplete-textarea"
@@ -213,6 +202,20 @@ export default function GenericInputModal({
           onChange={(e) => handleChangeTextArea(e)}
           disabled={isDisabled}
         />
+
+        <ContentCopyIcon sx={{
+          position: 'absolute',
+          right: '16px',
+          bottom: '16px',
+          cursor: 'pointer',
+        }} onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
       </Box>
 
       {children}
