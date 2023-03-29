@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
+import { Button, IconButton, Typography, List, ListItem, ListItemButton } from '@mui/material';
 
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
@@ -51,7 +51,7 @@ export default function GenericInputModal({
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
-  const {setSuccess, setError} = useContext(ErrorContext);
+  const { setSuccess, setError } = useContext(ErrorContext);
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
