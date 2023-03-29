@@ -9,10 +9,11 @@ import {
   CardActions,
   useMediaQuery,
   IconButton,
-  Chip
+  Chip,
+  Box
 } from "@mui/material";
 import propTypes from "prop-types";
-import { OpenInNew } from "@mui/icons-material";
+import { OpenInNew, Person } from "@mui/icons-material";
 
 function ProjectCard({ project, handleProjectClick }) {
   const isLargeScreen = useMediaQuery("(min-width: 800px)");
@@ -23,9 +24,13 @@ function ProjectCard({ project, handleProjectClick }) {
       }}
     >
       <CardContent>
-        <Typography 
+        <Box 
         sx={{ 
-            fontSize: isLargeScreen ? 14 : 12,
+            // fontSize: isLargeScreen ? 14 : 12,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBottom: 1,
         }} 
         color="text.secondary" gutterBottom>
           {/* TODO: this is just a dummy implementation */}
@@ -35,7 +40,14 @@ function ProjectCard({ project, handleProjectClick }) {
             variant='outlined' 
             color="success"
           />
-        </Typography>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            }}>
+          <Person />
+          <Typography sx={{fontSize: 12, marginLeft: 1}}>{project._count.projectMembers}</Typography>
+          </Box>
+        </Box>
         <Typography 
             variant="h5" 
             component="div"
@@ -51,13 +63,20 @@ function ProjectCard({ project, handleProjectClick }) {
         </Typography>
         <Typography 
         sx={{ 
-            mb: 1.5,
             fontSize: isLargeScreen ? 14 : 12,
+            display: "-webkit-box",
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: "vertical",
+            WebkitAlignContent: "start",
+            textAlign: "start",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            wordBreak: "break-word",
         }} 
         color="text.secondary">
-          adjective
+          {project.projectDescription}
         </Typography>
-        <Typography
+        {/* <Typography
           variant="body2"
           sx={{
             display: "-webkit-box",
@@ -71,13 +90,14 @@ function ProjectCard({ project, handleProjectClick }) {
           }}
         >
           {project.projectDescription}
-        </Typography>
+        </Typography> */}
       </CardContent>
       <CardActions
         sx={{
             display: "flex",
             justifyContent: "space-between",
             padding: 1,
+            paddingTop: 0,
             flexShrink: 0,
         }}
       >
@@ -152,6 +172,9 @@ ProjectCard.propTypes = {
     projectId: propTypes.number,
     projectName: propTypes.string,
     projectDescription: propTypes.string,
+    _count: propTypes.shape({
+      projectMembers: propTypes.number,
+    }),
   }),
   handleProjectClick: propTypes.func.isRequired,
 };
