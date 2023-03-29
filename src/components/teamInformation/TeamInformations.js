@@ -7,11 +7,9 @@ import {
   TextField,
   Button,
   TextareaAutosize,
-
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import {useParams} from "react-router-dom";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
@@ -53,7 +51,6 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
       GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId),
     )
       .then((response) => {
-        console.log(user);
         setData(response);
         const index = response.findIndex((item) => item.emailId === user.email);
         if(index===-1)
@@ -74,7 +71,6 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
         GET_ROLE_IN_PROJECT(projectId,memberId),
       )
         .then((response) => {
-          console.log(response);
           setProjectRole(response.role);
         })
       } catch (error) {
@@ -82,16 +78,9 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
       }
   }, []);
 
-  const handleDeleteDialog = () => {
-    setDeleteDialogOpen(true);
-  };
-
   const handleOpenModal = (item) => {
     setSelectedItem(item);
-    if(item.name !== null)
     setName(item.name);
-    else
-    setName(user.name);
     if(item.startDate === null)
     {
     setStartDate("");
@@ -119,10 +108,10 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleCloseModal = () => {
     setSelectedItem(null);
-    setName(user.name);
+    setName(name);
     setStartDate("");
     setEndDate("");
-    setEmailId(user.email);
+    setEmailId(emailId);
     setProjectRole(projectRole);
     setBio("");
     setMessage("");
@@ -170,6 +159,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
       }
     } else {
       try {
+        console.log('m',message)
         makeRequest(
           PUT_TEAM_INFORMATION(selectedItem.id),
           {
@@ -278,7 +268,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   return (
         <>
         <DeleteDialog open={deleteDialogOpen} setOpen={setDeleteDialogOpen} handleDelete={handleDelete} description="Are you sure want to delete this Profile"/>
-        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }} className="body">
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", backgroundColor: "#e6eef2" }} className="body">
       <Box sx={{ width: "95%", height: "3%" }}>
         <Button
           style={{ margin: "2% 2% 1% 0%", visibility: showAddProfile ? "visible" : "hidden" }}
@@ -346,7 +336,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   >
                     {(!item.startDate || !item.endDate) && "No value" }
                     {(item.startDate && item.endDate)&& formatDate(item.startDate)}
-                    {(item.startDate && item.endDate) && (item.endDate < today ? formatDate(item.endDate) : " - Till Date")}
+                    {(item.startDate && item.endDate) && (item.endDate < today ?(" - ", formatDate(item.endDate)) : " - Till Date")}
                   </Box>
                   <Box
                     sx={{
@@ -445,11 +435,6 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                     <Typography variant="h5">Details</Typography>
                   </Box>
                   <Box>
-                    {emailId === user.email ? (
-                      <IconButton edge="end" color="inherit" aria-label="close">
-                        <DeleteForeverRoundedIcon onClick={handleDeleteDialog} />
-                      </IconButton>
-                    ) : null}
                     <IconButton color="inherit" aria-label="close">
                       <CloseIcon onClick={handleCloseModal} />
                     </IconButton>
