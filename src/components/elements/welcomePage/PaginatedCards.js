@@ -9,6 +9,7 @@ import {
   CardActions,
   useMediaQuery,
   IconButton,
+  Chip
 } from "@mui/material";
 import propTypes from "prop-types";
 import { OpenInNew } from "@mui/icons-material";
@@ -27,7 +28,13 @@ function ProjectCard({ project, handleProjectClick }) {
             fontSize: isLargeScreen ? 14 : 12,
         }} 
         color="text.secondary" gutterBottom>
-          {"{Project Status Here}"}
+          {/* TODO: this is just a dummy implementation */}
+          <Chip 
+            label='IN PROGRESS' 
+            size='small' 
+            variant='outlined' 
+            color="success"
+          />
         </Typography>
         <Typography 
             variant="h5" 
