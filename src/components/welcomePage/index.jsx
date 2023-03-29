@@ -6,7 +6,7 @@ import {
   CssBaseline,
   Stack,
   Button,
-  List,
+  // List,
   Paper,
   useMediaQuery,
   Fab,
@@ -21,9 +21,10 @@ import { texts } from "../constants/welcomePage";
 import ImageCarousel from "../elements/welcomePage/ImageCarousel";
 import StickyHeader from "../elements/welcomePage/StickyHeader";
 // import ProfileCard from "../elements/welcomePage/ProfileCard";
-import ProjectListItem from "../elements/welcomePage/ProjectListItem";
+// import ProjectListItem from "../elements/welcomePage/ProjectListItem";
 import NewProjectModal from "../elements/NewProjectModal";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
+import PaginatedCards from "../elements/welcomePage/PaginatedCards";
 import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
@@ -153,11 +154,11 @@ export default function WelcomePage() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              boxShadow: 2,
+              boxShadow: 0,
               width: "100%",
             }}
           >
-            <Box
+            {/* <Box
               component="p"
               sx={{
                 fontSize: 20,
@@ -201,9 +202,8 @@ export default function WelcomePage() {
                   ? `${userProjects.length} Projects`
                   : "..."}
               </Typography>
-            </Box>
-
-            <List
+            </Box> */}
+            {/* <List
               sx={{
                 width: "100%",
                 overflowY: "scroll",
@@ -221,7 +221,11 @@ export default function WelcomePage() {
                   }
                 />
               ))}
-            </List>
+            </List> */}
+            <PaginatedCards
+              projects={userProjects.sort((a, b) => b.projectId - a.projectId)}
+              handleProjectClick={handleProjectClick}
+            />
           </Box>
         ) : null}
         <Stack
