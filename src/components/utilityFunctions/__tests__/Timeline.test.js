@@ -9,4 +9,16 @@ describe('Timeline', () => {
     render(<Timeline timeline={timeline} isSubmit={isSubmit} setTimeline={()=>{}}/>);
     expect(screen.getByText('Timeline')).toBeTruthy();
   });
+
+  it('should set timeline date is entered', () => {
+    const timeline = '2021-02-01T00:00:00';
+    const isSubmit = false;
+    const setTimeline = jest.fn();
+    render(<Timeline timeline={timeline} isSubmit={isSubmit} setTimeline={setTimeline}/>);
+    expect(screen.getByText('Timeline')).toBeTruthy();
+    const date = screen.getByLabelText('Select date');
+    date.value = '2021-02-02T00:00:00';
+    date.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(setTimeline).toHaveBeenCalledTimes(1);
+  });
 });

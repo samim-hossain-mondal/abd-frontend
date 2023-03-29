@@ -23,9 +23,10 @@ export default function SearchBar({ query, setQuery }) {
   }
 
   return (
-    <form onSubmit={(e)=>{handleSubmit(e)}} onChange={(e)=>debounced(e.target.value)}>
+    <form onSubmit={(e)=>{handleSubmit(e)}} onChange={(e)=>debounced(e.target.value)} data-testid='search-form'>
       <TextField
         id="search-bar"
+        data-testid="search-bar"
         className="text"
         label="Search"
         variant="outlined" placeholder="Search..." size="small"
