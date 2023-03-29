@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef, useContext } from "react";
+import { React, useState, useEffect, useRef, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -12,19 +12,19 @@ import {
   Fab,
   Slide,
   Tooltip,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import CardBox from "../elements/welcomePage/CardBox";
-import Logo from "../../assets/images/agileLogo.png";
-import { texts } from "../constants/welcomePage";
-import ImageCarousel from "../elements/welcomePage/ImageCarousel";
-import StickyHeader from "../elements/welcomePage/StickyHeader";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import CardBox from '../elements/welcomePage/CardBox';
+import Logo from '../../assets/images/agileLogo.png';
+import { texts } from '../constants/welcomePage';
+import ImageCarousel from '../elements/welcomePage/ImageCarousel';
+import StickyHeader from '../elements/welcomePage/StickyHeader';
 // import ProfileCard from "../elements/welcomePage/ProfileCard";
-import ProjectListItem from "../elements/welcomePage/ProjectListItem";
-import NewProjectModal from "../elements/NewProjectModal";
-import { ProjectUserContext } from "../contexts/ProjectUserContext";
-import { HOME_ROUTE } from "../constants/routes";
+import ProjectListItem from '../elements/welcomePage/ProjectListItem';
+import NewProjectModal from '../elements/NewProjectModal';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { HOME_ROUTE } from '../constants/routes';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function WelcomePage() {
     projects: userProjects,
     updateProjectDetails,
   } = useContext(ProjectUserContext);
-  const isSmallerScreen = useMediaQuery("(max-width: 600px)");
+  const isSmallerScreen = useMediaQuery('(max-width: 600px)');
   // const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
   const scrollRef = useRef(0);
@@ -68,18 +68,17 @@ export default function WelcomePage() {
   }, []);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   const handleProjectClick = async (projectId) => {
-    console.log("Project Clicked", projectId);
     updateProjectDetails(projectId)
       .then(() => {
-        window.open(`/${projectId}`.concat(HOME_ROUTE), "_blank");
+        window.open(`/${projectId}`.concat(HOME_ROUTE), '_blank');
       })
       .catch((err) => {
         console.log(err);
@@ -91,127 +90,119 @@ export default function WelcomePage() {
   };
 
   const handleLoginClick = () => {
-    navigate("/");
+    navigate('/');
   };
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        backgroundColor: "backgroundColor.main",
-      }}
-    >
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        backgroundColor: 'backgroundColor.main',
+      }}>
       <CssBaseline />
-      {stickyHeader && <StickyHeader userName={user ? user.name : ""} />}
+      {stickyHeader && <StickyHeader userName={user ? user.name : ''} />}
       <Container
-        component="main"
+        component='main'
         sx={{
           mt: 5,
           mb: 2,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
-        maxWidth="lg"
-      >
+        maxWidth='lg'>
         <Box
-          component="img"
+          component='img'
           src={Logo}
-          alt="logo"
+          alt='logo'
           sx={{
             height: isSmallerScreen ? 120 : 200,
             width: isSmallerScreen ? 120 : 200,
-            borderRadius: "50%",
+            borderRadius: '50%',
             boxShadow: 5,
-            alignSelf: "center",
+            alignSelf: 'center',
           }}
         />
         <Typography
-          variant={isSmallerScreen ? "h4" : "h3"}
-          component="h3"
+          variant={isSmallerScreen ? 'h4' : 'h3'}
+          component='h3'
           sx={{
             my: 2,
-            alignSelf: "center",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
+            alignSelf: 'center',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}>
           {userProjects.length > 0
             ? `Welcome back, ${user.name} \u{1F44B}`
             : `${texts.welcome} ${
-                user?.name ? `, ${user.name}` : ""
+                user?.name ? `, ${user.name}` : ''
               } \u{1F44B}`}
         </Typography>
         {showProjectList ? (
           <Box
-            component="main"
+            component='main'
             sx={{
               mt: 3,
               mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               boxShadow: 2,
-              width: "100%",
-            }}
-          >
+              width: '100%',
+            }}>
             <Box
-              component="p"
+              component='p'
               sx={{
                 fontSize: 20,
                 py: 1,
                 mt: 0,
                 mb: 0,
-                alignSelf: "center",
-                backgroundColor: "grey.200",
-                width: "100%",
+                alignSelf: 'center',
+                backgroundColor: 'grey.200',
+                width: '100%',
                 boxShadow: 2,
-                display: "flex",
-                flexDirection: isSmallerScreen ? "column" : "row",
-                justifyContent: "space-between",
-                borderBottom: "5px solid #e0e0e0",
-              }}
-            >
+                display: 'flex',
+                flexDirection: isSmallerScreen ? 'column' : 'row',
+                justifyContent: 'space-between',
+                borderBottom: '5px solid #e0e0e0',
+              }}>
               <Typography
-                component="p"
+                component='p'
                 sx={{
                   fontSize: isSmallerScreen ? 20 : 25,
                   px: 2,
-                  alignSelf: "center",
-                  width: "100%",
-                }}
-              >
+                  alignSelf: 'center',
+                  width: '100%',
+                }}>
                 Your Projects
               </Typography>
               <Typography
-                component="p"
+                component='p'
                 sx={{
                   fontSize: 15,
                   px: 2,
-                  alignSelf: "center",
+                  alignSelf: 'center',
                   fontWeight: 100,
-                  width: "100%",
-                  textAlign: isSmallerScreen ? "start" : "end",
-                  color: "grey.800",
-                }}
-              >
+                  width: '100%',
+                  textAlign: isSmallerScreen ? 'start' : 'end',
+                  color: 'grey.800',
+                }}>
                 {userProjects.length
                   ? `${userProjects.length} Projects`
-                  : "..."}
+                  : '...'}
               </Typography>
             </Box>
 
             <List
               sx={{
-                width: "100%",
-                overflowY: "scroll",
-                maxHeight: "500px",
+                width: '100%',
+                overflowY: 'scroll',
+                maxHeight: '500px',
                 padding: 0,
-                scrollBehavior: "smooth",
-              }}
-            >
+                scrollBehavior: 'smooth',
+              }}>
               {userProjects.map((project) => (
                 <ProjectListItem
                   key={project.projectId}
@@ -225,12 +216,11 @@ export default function WelcomePage() {
           </Box>
         ) : null}
         <Stack
-          direction="column"
+          direction='column'
           spacing={2}
-          sx={{ alignSelf: "center", width: "100%" }}
-        >
+          sx={{ alignSelf: 'center', width: '100%' }}>
           <CardBox
-            title="Why use My Agile Dashboard?"
+            title='Why use My Agile Dashboard?'
             description={texts.whyMyAgile}
           />
           <ImageCarousel />
@@ -238,19 +228,18 @@ export default function WelcomePage() {
       </Container>
       {showProjectList && (
         <Container
-          id="projects"
-          component="main"
+          id='projects'
+          component='main'
           sx={{
             mt: 4,
             mb: 4,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            alignSelf: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
           }}
-          maxWidth="lg"
-        >
+          maxWidth='lg'>
           {/* <Stack
             direction={isSmallerScreen ? "column" : "row"}
             spacing={2}
@@ -268,24 +257,22 @@ export default function WelcomePage() {
               sx={{
                 mt: 8,
                 mb: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
                 paddingLeft: 0,
                 paddingRight: 0,
-                backgroundColor: "grey.200",
-              }}
-            >
+                backgroundColor: 'grey.200',
+              }}>
               <Typography
-                component="p"
+                component='p'
                 sx={{
                   fontSize: 20,
                   px: 1,
-                  alignSelf: "center",
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
+                  alignSelf: 'center',
+                  textAlign: 'center',
+                  width: '100%',
+                }}>
                 {texts.getStarted}
               </Typography>
             </Paper>
@@ -295,69 +282,64 @@ export default function WelcomePage() {
       )}
       {showAddButton && user.memberId && (
         <Slide
-          direction={showAddButton ? "up" : "down"}
+          direction={showAddButton ? 'up' : 'down'}
           in={showAddButton}
           mountOnEnter
-          unmountOnExit
-        >
-          <Tooltip title="Create a new project" arrow>
+          unmountOnExit>
+          <Tooltip title='Create a new project' arrow>
             <Fab
-              color="primary"
-              aria-label="add"
+              color='primary'
+              aria-label='add'
               sx={{
-                position: "fixed",
+                position: 'fixed',
                 bottom: 40,
                 right: 40,
-                zIndex: "9999",
+                zIndex: '9999',
                 height: { xs: 50, sm: 60, md: 70 },
                 width: { xs: 50, sm: 60, md: 70 },
-                backgroundColor: "logoBlue.main",
-                color: "white",
+                backgroundColor: 'logoBlue.main',
+                color: 'white',
               }}
-              onClick={() => handleCreateProjectClick()}
-            >
+              onClick={() => handleCreateProjectClick()}>
               <AddIcon />
             </Fab>
           </Tooltip>
         </Slide>
       )}
       <Box
-        component="footer"
-        id="footer"
+        component='footer'
+        id='footer'
         sx={{
           py: 4,
           px: 2,
-          mt: "auto",
-          backgroundColor: "grey.200",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-          width: "100%",
+          mt: 'auto',
+          backgroundColor: 'grey.200',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          width: '100%',
           boxShadow: 5,
-          position: "relative",
-          zIndex: "999",
-        }}
-      >
-        <Typography variant="body1" color="text.secondary" align="center">
+          position: 'relative',
+          zIndex: '999',
+        }}>
+        <Typography variant='body1' color='text.secondary' align='center'>
           Get started with your own Agile board!
         </Typography>
         {user.memberId ? (
           <Button
-            variant="contained"
-            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
-            onClick={handleCreateProjectClick}
-          >
+            variant='contained'
+            sx={{ backgroundColor: 'logoBlue.main', color: 'white' }}
+            onClick={handleCreateProjectClick}>
             Create New Project
           </Button>
         ) : (
           <Button
-            id="footerAction"
+            id='footerAction'
             ref={footerActionRef}
-            variant="contained"
-            sx={{ backgroundColor: "logoBlue.main", color: "white" }}
-            onClick={handleLoginClick}
-          >
+            variant='contained'
+            sx={{ backgroundColor: 'logoBlue.main', color: 'white' }}
+            onClick={handleLoginClick}>
             Login to Create Project
           </Button>
         )}

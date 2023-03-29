@@ -17,10 +17,10 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Stack } from '@mui/system';
 import { CSVLink } from "react-csv";
 import { useParams } from 'react-router-dom';
 import getDBOffSetTime from "../utilityFunctions/getOffsetTimestamp";
@@ -30,7 +30,7 @@ import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext";
 import SentimentMeterDialog from './SentimentMeterDialog';
 import { SentimentMeterInfo } from '../constants/SentimentMeter';
 import { RefreshContext } from '../contexts/RefreshContext';
-import makeRequest from '../utilityFunctions/makeRequest';
+import makeRequest from '../utilityFunctions/makeRequest/index';
 import { ErrorContext } from '../contexts/ErrorContext';
 import { SUCCESS_MESSAGE } from "../constants/dsm/index"
 import { GENERIC_NAME } from '../constants/dsm/Sentiments';
@@ -38,6 +38,9 @@ import getTodayDate from '../utilityFunctions/getTodayDate';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 export default function Sentiment() {
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
+  const breakpoint500 = useMediaQuery('(min-width:500px)');
+  const breakpoint391 = useMediaQuery('(min-width:391px)');
   const { setError, setSuccess } = useContext(ErrorContext)
   const [sentimentResponse, setSentimentResponse] = useState(undefined);
   const [sentimentObj, setSentimentObj] = useState({})
@@ -113,26 +116,26 @@ export default function Sentiment() {
   const feelings = [
     {
       name: 'HAPPY',
-      icon: <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: 40 }} />,
-      iconSelected: <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: 50 }} />,
+      icon: <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
       color: 'emoji.happy'
     },
     {
       name: 'GOOD',
-      icon: <SentimentSatisfiedOutlinedIcon sx={{ fontSize: 40 }} />,
-      iconSelected: <SentimentSatisfiedTwoToneIcon sx={{ fontSize: 50 }} />,
+      icon: <SentimentSatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentSatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
       color: 'emoji.good'
     },
     {
       name: 'OK',
-      icon: <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: 40 }} />,
-      iconSelected: <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: 50 }} />,
+      icon: <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
       color: 'emoji.ok'
     },
     {
       name: 'BAD',
-      icon: <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: 40 }} />,
-      iconSelected: <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: 50 }} />,
+      icon: <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
       color: 'emoji.bad'
     }
   ]
@@ -188,7 +191,7 @@ export default function Sentiment() {
     getSentimeterStats(queryDate).then(stats => {
       setSentimeterData(stats)
     })
-  }, [sentimentResponse])
+  }, [sentimentResponse, userRole])
 
   if (refresh.sentiment) {
     const queryDate = getTodayDate();
@@ -251,7 +254,6 @@ export default function Sentiment() {
   }
 
   const getOffSetTimeDate = (date, offSetTime) => {
-    console.log(date, offSetTime);
     if (date) return new Date(new Date(date).getTime() + offSetTime).toISOString().split('T')[0]
     return null;
   }
@@ -286,8 +288,8 @@ export default function Sentiment() {
         marginBottom: "10px", paddingBottom: "10px",
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
-      }} height={gridHeightState.sentiment.height} >
-      <Grid item xs={gridHeightState.celebration.fullExpanded ? 8 : 12}>
+      }} height={breakpoint500 ? gridHeightState.sentiment.height : gridHeightState.sentiment.height} >
+      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12}>
         <Accordion expanded={gridHeightState.sentiment.expanded} onChange={handleExpandSentiment} sx={{
           height: gridHeightState.sentiment.expanded ? "100%" : "auto",
         }}>
@@ -307,20 +309,24 @@ export default function Sentiment() {
               id="panel1a-header"
               sx={{
                 flexGrow: 1,
+                paddingRight: 0,
+                paddingLeft: breakpoint391 ? "none" : "5px"
               }}
             >
               <Typography onClick={() => { }} variant="dsmMain"
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '10px' : "5px" }}
+                fontSize={breakpoint500 ? "1.25rem" : "1rem"}
                 width="100%" >
                 How are you feeling today?
-                <InformationModel heading={SentimentMeterInfo.heading}
+                <InformationModel
+                  heading={SentimentMeterInfo.heading}
                   definition={SentimentMeterInfo.definition}
                   accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />
               </Typography>
             </AccordionSummary>
             {isLeaderOrAdmin() &&
               <IconButton
-                sx={{ borderRadius: 100 }}
+                sx={{ borderRadius: 100, width: breakpoint391 ? "none" : "30px" }}
                 aria-label="more"
                 id="long-button"
                 aria-controls={open ? 'long-menu' : undefined}
@@ -349,21 +355,23 @@ export default function Sentiment() {
               </Menu>
             }
           </Box>
-          <AccordionDetails sx={{ padding: '0px' }}>
-            <Stack direction="row" spacing={10} sx={{ justifyContent: "center" }}>
+          <AccordionDetails sx={{ padding: '0px 5% 0px 0px' }}>
+            <Grid container direction="row" spacing={10} sx={{ justifyContent: "center" }}>
               {feelings.map((feeling) => (
-                <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, padding: "0px", color: feeling.color }} >
-                  {feeling.name === sentimentResponse ?
-                    feeling.iconSelected : feeling.icon
-                  }
-                </IconButton>
+                <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, padding: "0px", color: feeling.color }} >
+                    {feeling.name === sentimentResponse ?
+                      feeling.iconSelected : feeling.icon
+                    }
+                  </IconButton>
+                </Grid>
               ))}
-            </Stack>
+            </Grid>
           </AccordionDetails>
         </Accordion>
       </Grid>
       {
-        gridHeightState.celebration.fullExpanded && (
+        breakpoint1080 && gridHeightState.celebration.fullExpanded && (
           <Grid item xs={1.7}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
@@ -374,14 +382,14 @@ export default function Sentiment() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography variant='dsmSubMain'>Requests</Typography>
+                <Typography fontSize="1rem" variant='dsmSubMain'>Requests</Typography>
               </AccordionSummary>
             </Accordion>
           </Grid>
         )
       }
       {
-        gridHeightState.celebration.fullExpanded && (
+        breakpoint1080 && gridHeightState.celebration.fullExpanded && (
           <Grid item xs={2} height="auto">
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
@@ -392,7 +400,7 @@ export default function Sentiment() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography variant='dsmSubMain'>Announcements</Typography>
+                <Typography fontSize="1rem" variant='dsmSubMain'>Announcements</Typography>
               </AccordionSummary>
             </Accordion>
           </Grid>

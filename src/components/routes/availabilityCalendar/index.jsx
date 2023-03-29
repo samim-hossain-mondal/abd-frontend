@@ -11,7 +11,8 @@ import {
   Typography,
   Container,
   Grid,
-  CircularProgress
+  CircularProgress,
+  useMediaQuery,
 } from '@mui/material';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
@@ -43,7 +44,8 @@ import './availabilityCalendar.css';
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-export default function AvailabilityCalendar({availabilityIsInViewPort}) {
+export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { projectId } = useParams();
   const [eventsData, setEventsData] = useState([]);
   const [inputModal, setInputModal] = useState(false);
@@ -82,29 +84,38 @@ export default function AvailabilityCalendar({availabilityIsInViewPort}) {
     handleMount();
   }, []);
 
-  const { error, isError, isLoading } = useQuery('events', async () => {
-    if (availabilityIsInViewPort) {
-      const resData = await makeRequest(GET_LEAVES(projectId));
-      setEventsData(resData);
-      return resData;
-    }
-    return [];
-  },
+  const { error, isError, isLoading } = useQuery(
+    'events',
+    async () => {
+      if (availabilityIsInViewPort) {
+        const resData = await makeRequest(GET_LEAVES(projectId));
+        setEventsData(resData);
+        return resData;
+      }
+      return [];
+    },
     {
       refetchInterval: REFETCH_INTERVAL,
     }
   );
 
   if (isLoading) {
-    return <CircularProgress />
+    return <CircularProgress />;
   }
   if (isError) {
-    return <div>Error! {error.message}</div>
+    return <div>Error! {error.message}</div>;
   }
 
   const eventsPrimaryData = eventsData?.map((eventData) => {
-    const { startDate, endDate, event, userFullName, memberId, leaveId, isRisk } =
-      eventData;
+    const {
+      startDate,
+      endDate,
+      event,
+      userFullName,
+      memberId,
+      leaveId,
+      isRisk,
+    } = eventData;
     return {
       start: new Date(startDate),
       end: new Date(endDate),
@@ -278,7 +289,9 @@ export default function AvailabilityCalendar({availabilityIsInViewPort}) {
         <Box
           sx={{
             gap: '5vh',
-            padding: '50px 50px 50px 50px',
+            padding: breakpoint1080
+              ? '50px 50px 50px 50px'
+              : '25px 25px 25px 25px',
           }}>
           <Calendar
             views={VIEWS}

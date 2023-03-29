@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress, useMediaQuery } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { Stack } from '@mui/system';
@@ -23,7 +23,7 @@ ISSUES:
 */
 
 export default function Requests() {
-
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { user } = useContext(ProjectUserContext);
 
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -115,7 +115,6 @@ export default function Requests() {
     return <div>Error! {error.message}</div>
   }
 
-
   const addRequestToDB = async (content) => {
     try {
       const reqBody = {
@@ -175,7 +174,11 @@ export default function Requests() {
   };
 
   return (
-    <Grid item height={gridHeightState.request.height} sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}>
+    <Grid item height={gridHeightState.request.height}
+      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}
+      marginBottom={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "40px" : 'none'
+      }
+    >
       <Accordion expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
         height: gridHeightState.request.expanded ? '100%' : 'none',
         overflow: 'auto',
@@ -290,6 +293,6 @@ export default function Requests() {
           )
         }
       </Accordion>
-    </Grid>
+    </Grid >
   );
 };

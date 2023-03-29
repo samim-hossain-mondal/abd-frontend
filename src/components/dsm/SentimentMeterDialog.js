@@ -35,11 +35,7 @@ ChartJS.register(
 );
 
 export default function SentimentMeterDialog({ open, setOpen, csvReport, feelingsArray, weekStats, todayStats }) {
-
   const [compareButton, setCompareButton] = useState(false);
-
-  console.log("avgData >>>", weekStats);
-  console.log("todayData >>>", todayStats);
 
   const sentimentData = {
     labels: feelingsArray,
@@ -91,7 +87,7 @@ export default function SentimentMeterDialog({ open, setOpen, csvReport, feeling
       },
       {
         label: 'Today',
-        data: weekStats,
+        data: todayStats,
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
     ],
@@ -123,9 +119,12 @@ export default function SentimentMeterDialog({ open, setOpen, csvReport, feeling
           <Box padding='50px'>
             {
               compareButton ?
-                (<Bar data={barData} options={options} height='200px' width='200px' />)
+                (<Bar data={barData} options={options}
+                  height="200px" width="200px"
+                // width='50%' aspectRatio="1/1"
+                />)
                 :
-                (<Pie data={sentimentData} height='200px' width='200px' />)
+                (<Pie data={sentimentData} height="200px" width="200px" />)
             }
           </Box>
           <DialogContentText id="alert-dialog-description">

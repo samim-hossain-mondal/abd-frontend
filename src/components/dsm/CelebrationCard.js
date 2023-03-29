@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, IconButton, Typography } from '@mui/material';
+import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, IconButton, Typography, useMediaQuery } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import PlusOneRoundedIcon from '@mui/icons-material/PlusOneRounded';
 import PropTypes from 'prop-types';
@@ -19,6 +19,7 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import stringAvatar from '../utilityFunctions/getStringColor';
 
 export default function CelebrationCard({ celebration, isPreview, onDeleteCelebration }) {
+  const breakpoint391 = useMediaQuery('(min-width:391px)');
   const { user } = useContext(ProjectUserContext)
   const { setError, setSuccess } = useContext(ErrorContext)
   const [reacted, setReacted] = useState(false);
@@ -71,8 +72,9 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   return newCelebration ?
     <Card
       sx={{
-        minWidth: '310px',
-        maxWidth: "310px",
+        width: isPreview ? "100%" : '40%',
+        maxWidth: breakpoint391 ? "310px" : "95%",
+        minWidth: breakpoint391 ? "310px" : "95%",
         cursor: !isPreview ? 'pointer' : '',
         borderRadius: '8px',
         border: '2px solid',
@@ -85,13 +87,13 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
     >
       <CardContent sx={{ paddingBottom: '0px' }}>
         <Grid container sx={{ maxHeight: '160px', minHeight: '50px' }}>
-          <Grid item xs={2} sx={{ maxHeight: 'inherit', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center', }}>
+          <Grid item xs={2} sx={{ paddingRight: "50px", maxHeight: 'inherit', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center', }}>
             {newCelebration.isAnonymous ?
               <Avatar><PersonOutlineRoundedIcon /></Avatar> :
               <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc)} />
             }
           </Grid>
-          <Grid item xs={10} sx={{ maxHeight: 'inherit', overflow: 'auto' }}>
+          <Grid item xs={9.1} sx={{ maxHeight: 'inherit', overflow: 'auto' }}>
             <Typography
               variant='contentMain'
               sx={{ fontSize: 14 }}
