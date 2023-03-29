@@ -186,19 +186,7 @@ function CardList() {
       }
     }
   };
-  const handleAddCard = () => {
-    const newCard = {
-      name,
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
-      emailId: user.email,
-      bio: "",
-      projectRole,
-      message: "",
-    };
-    setIsAddCard(true);
-    handleOpenModal(newCard);
-  };
+  
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
     return dateInengbFormat.toLocaleDateString("en-GB");
@@ -251,9 +239,10 @@ function CardList() {
   filterData = filterData.filter(
     // check item.bio contains the sercahValue
     (item) => {
-    const value = item.bio;
+    const value = item.bio && item.bio.toLowerCase();
     if(value)
-    return value.includes(searchValue)
+    return value.includes(searchValue.toLowerCase())
+    return false;
     }
   );
   return (
