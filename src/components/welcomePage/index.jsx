@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CardBox from "../elements/welcomePage/CardBox";
-import Logo from "../../assets/images/agileLogo.png";
+// import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
 import ImageCarousel from "../elements/welcomePage/ImageCarousel";
 import StickyHeader from "../elements/welcomePage/StickyHeader";
@@ -29,7 +29,7 @@ import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
   const navigate = useNavigate();
-  const [stickyHeader, setStickyHeader] = useState(false);
+  // const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAddButton, setShowAddButton] = useState(true);
   const {
@@ -38,19 +38,18 @@ export default function WelcomePage() {
     updateProjectDetails,
   } = useContext(ProjectUserContext);
   const isSmallerScreen = useMediaQuery("(max-width: 600px)");
-  // const showBio = !isSmallerScreen;
   const showProjectList = userProjects.length > 0;
-  const scrollRef = useRef(0);
+  // const scrollRef = useRef(0);
   const footerActionRef = useRef(null);
 
-  const handleScroll = () => {
-    scrollRef.current = window.scrollY;
-    if (scrollRef.current > 350) {
-      setStickyHeader(true);
-    } else {
-      setStickyHeader(false);
-    }
-  };
+  // const handleScroll = () => {
+  //   scrollRef.current = window.scrollY;
+  //   if (scrollRef.current > 350) {
+  //     setStickyHeader(true);
+  //   } else {
+  //     setStickyHeader(false);
+  //   }
+  // };
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -68,13 +67,13 @@ export default function WelcomePage() {
     };
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   const handleProjectClick = async (projectId) => {
     console.log("Project Clicked", projectId);
@@ -105,7 +104,7 @@ export default function WelcomePage() {
       }}
     >
       <CssBaseline />
-      {stickyHeader && <StickyHeader userName={user ? user.name : ""} />}
+      <StickyHeader userName={user ? user.name : ""} />
       <Container
         component="main"
         sx={{
@@ -114,30 +113,13 @@ export default function WelcomePage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          alignItems: "flex-start",
         }}
         maxWidth="lg"
       >
-        <Box
-          component="img"
-          src={Logo}
-          alt="logo"
-          sx={{
-            height: isSmallerScreen ? 120 : 200,
-            width: isSmallerScreen ? 120 : 200,
-            borderRadius: "50%",
-            boxShadow: 5,
-            alignSelf: "center",
-          }}
-        />
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Typography
-          variant={isSmallerScreen ? "h4" : "h3"}
-          component="h3"
-          sx={{
-            my: 2,
-            alignSelf: "center",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
+          variant="h4"
         >
           {userProjects.length > 0
             ? `Welcome back, ${user.name} \u{1F44B}`
@@ -145,6 +127,18 @@ export default function WelcomePage() {
                 user?.name ? `, ${user.name}` : ""
               } \u{1F44B}`}
         </Typography>
+        <Typography
+          variant="h5"
+          sx= {{
+            fontSize: isSmallerScreen ? 15 : 20,
+            color: "secondary.main"
+          }}
+        >
+          {userProjects.length > 0
+            ? `${userProjects.length} projects for ${user.email}`
+            : `You have no projects yet`}
+        </Typography>
+        </Box>
         {showProjectList ? (
           <Box
             component="main"
