@@ -12,18 +12,15 @@ import { RefreshContext } from '../../contexts/RefreshContext';
 import PONotesViewportContext from '../../contexts/PONotesViewportContext';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import { GET_PO_NOTES } from '../../constants/apiEndpoints';
+import { PO_NOTES_TYPES } from '../../constants/PONotes';
 
-const getStatusQuery = (type, status) => {
-  if (type === 'KEY_DECISION' && status !== 'DRAFT') return '';
-  return `&status=${status}`;
-}
 const getApiUrlQuery = (type, query, page, limit) => {
   const apiQuery = {
     type,
     page,
     limit,
-    ...(query.status && {
-      status: getStatusQuery(type, query.status)
+    ...(query.status && type !== PO_NOTES_TYPES.KEY_DECISION && {
+      status: query.status
     }),
     ...(query.search && {
       search: query.search
