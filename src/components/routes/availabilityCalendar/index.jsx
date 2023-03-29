@@ -28,7 +28,6 @@ import {
   LOADING_TEXT,
   SNACKBAR_TEXT,
 } from '../../constants/Timeline/Calendar';
-import './availabilityCalendar.css';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import {
   CREATE_LEAVE,
@@ -37,6 +36,9 @@ import {
   UPDATE_LEAVE,
 } from '../../constants/apiEndpoints';
 import { REFETCH_INTERVAL } from '../../../config';
+
+import './availabilityCalendar.css';
+
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
