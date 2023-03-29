@@ -76,7 +76,6 @@ export default function WelcomePage() {
         component="main"
         sx={{
           mt: 5,
-          mb: 2,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -101,7 +100,7 @@ export default function WelcomePage() {
           >
             {userProjects.length > 0
               ? `${userProjects.length} projects for ${user.email}`
-              : `You have no projects yet`}
+              : `Login and create a new project`}
           </Typography>
         </Box>
         {showProjectList ? (
@@ -211,9 +210,7 @@ export default function WelcomePage() {
         component="footer"
         id="footer"
         sx={{
-          py: 4,
-          px: 2,
-          mt: "auto",
+          padding: 4,
           backgroundColor: "grey.200",
           display: "flex",
           flexDirection: "row",
@@ -225,8 +222,11 @@ export default function WelcomePage() {
           zIndex: "999",
         }}
       >
-        <Typography variant="body1" color="text.secondary" align="center">
-          Get started with your own Agile board!
+        <Typography variant="h5" color="text.secondary" align="center" sx={{fontSize: isSmallerScreen ? 15 : 20}}>
+          Created by The Firm, for The Firm
+        </Typography>
+        <Typography variant="h5" color="text.secondary" align="center" sx={{fontSize: isSmallerScreen ? 15 : 20}}>
+          2023
         </Typography>
       </Box>
       <NewProjectModal open={showCreateModal} setOpen={setShowCreateModal} />

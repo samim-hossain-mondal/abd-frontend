@@ -94,16 +94,16 @@ function StickyHeader({
           <>
           {isLargeScreen && (
           <Button
-            variant="contained"
+            variant="outlined"
             sx={{ 
-              backgroundColor: "logoBlue.main", 
-              color: "white", 
+              color: "logoBlue.main", 
               margin: 1,
               padding: 1,
+              fontWeight: "bold"
             }}
             onClick={handleCreateProjectClick}
           >
-            Create New Project
+            Create Project
           </Button>
           )}
           <Tooltip title="Open settings">
@@ -121,16 +121,16 @@ function StickyHeader({
         </>
         ) : (
           <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "logoBlue.main",
-              color: "white",
-              margin: 1,
-              padding: 1,
-            }}
+          variant="outlined"
+          sx={{ 
+            color: "logoBlue.main", 
+            margin: 1,
+            padding: 1,
+            fontWeight: "bold",
+          }}
             onClick={handleLoginClick}
           >
-            Login to Create Project
+            Login
           </Button>
         )}
         </Box>
