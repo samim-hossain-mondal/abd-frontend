@@ -7,6 +7,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { Box, Button } from "@mui/material";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
+// eslint-disable-next-line import/no-unresolved
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import axios from "axios";
