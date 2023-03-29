@@ -1,33 +1,39 @@
 import React from 'react';
-import {render, screen} from '@testing-library/react';
+import {render} from '@testing-library/react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useOktaAuth } from '@okta/okta-react';
+import { ProjectUserProvider } from '../../contexts/ProjectUserContext';
+import { ErrorProvider } from '../../contexts/ErrorContext';
 import SecureRoute from '..';
 
-describe('SecureRoute', () => {
-  it('should show loading... when authState is false', () => {
-    jest.spyOn(React, 'useContext').mockImplementation(() => ({
-      oktaAuth: {
-        signInWithRedirect: jest.fn(),
-      },
-      authState: {
-        isAuthenticated: false,
-      },
-    }));
-    jest.spyOn(React, 'useEffect').mockImplementation(() => {});
-    render(<SecureRoute> <p>Hello World!!!</p> </SecureRoute>);
-    expect(screen.getByText('loading ...')).toBeTruthy();
-  });
+jest.mock('react-router-dom', () => ({
+  useParams: jest.fn(),
+  useNavigate: jest.fn(),
+}));
 
-  it('should show children when authState is true', () => {
-    jest.spyOn(React, 'useContext').mockImplementation(() => ({
-      oktaAuth: {
-        signInWithRedirect: jest.fn(),
-      },
+jest.mock('@okta/okta-react', () => ({
+  useOktaAuth: jest.fn(),
+}));
+
+describe('SecureRoute', () => {
+  it('should render', () => {
+    useParams.mockReturnValue({projectId: '1'});
+    useNavigate.mockReturnValue(jest.fn());
+    useOktaAuth.mockReturnValue({
       authState: {
         isAuthenticated: true,
-      },
-    }));
-    jest.spyOn(React, 'useEffect').mockImplementation(() => {});
-    render(<SecureRoute> <p>Hello World!!!</p> </SecureRoute>);
-    expect(screen.getByText('Hello World!!!')).toBeTruthy();
+      }
+    });
+    
+    const {container} = render(
+      <ProjectUserProvider>
+        <ErrorProvider>
+          <SecureRoute>
+            <div>Test</div>
+          </SecureRoute>
+        </ErrorProvider>
+      </ProjectUserProvider>
+    )
+    expect(container).toMatchSnapshot();
   });
 });

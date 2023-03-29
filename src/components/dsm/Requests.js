@@ -28,9 +28,10 @@ export default function Requests() {
 
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
-  const { projectId } = useParams();
-
+  const DSMInViewPort = useContext(DSMViewportContext);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+  
+  const { projectId } = useParams();
 
   const handleExpandRequests = () => {
     dispatchGridHeight({ type: 'REQUEST' })
@@ -41,7 +42,6 @@ export default function Requests() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
-  const DSMInViewPort = useContext(DSMViewportContext);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
 
   const handleEditModalClose = () => {

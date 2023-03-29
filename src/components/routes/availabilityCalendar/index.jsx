@@ -94,6 +94,7 @@ export default function AvailabilityCalendar({availabilityIsInViewPort}) {
       refetchInterval: REFETCH_INTERVAL,
     }
   );
+
   if (isLoading) {
     return <CircularProgress />
   }
@@ -247,7 +248,7 @@ export default function AvailabilityCalendar({availabilityIsInViewPort}) {
   };
 
   return eventsData ? (
-    <Box sx={{ fontFamily: 'Roboto !important' }} id='availability-calendar'>
+    <Box sx={{ fontFamily: 'Roboto !important' }} data-testid='availability-calendar'>
       <Box>
         <AppBar
           position='static'
