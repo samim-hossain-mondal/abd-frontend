@@ -19,6 +19,7 @@ import {
   GET_ROLE_IN_PROJECT
 } from "../constants/apiEndpoints";
 import makeRequest from "../utilityFunctions/makeRequest/index";
+import SlackLogo from "../../assets/images/Slack_icon.png"
 import { ErrorContext } from "../contexts/ErrorContext";
 import {ProjectUserContext} from "../contexts/ProjectUserContext";
 import DeleteDialog from "../elements/DeleteDialog";
@@ -158,8 +159,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
         setError("Error in making the request");
       }
     } else {
-      try {
-        console.log('m',message)
+      try { 
         makeRequest(
           PUT_TEAM_INFORMATION(selectedItem.id),
           {
@@ -295,11 +295,12 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
             flexWrap: "wrap",
             justifyContent: "center",
             backgroundColor: "#e6eef2",
+            overflow:"scroll"
           }}
         >
           <Box
             sx={{
-              marginTop: "3%",
+              marginTop: "0%",
               display: "flex",
               flexDirection: "row",
               flexWrap: "wrap",
@@ -324,7 +325,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                 >
                   <Box
                     sx={{
-                      backgroundColor: "#CBD5DC",
+                      backgroundColor: "whitesmoke",
                       display: "flex",
                       flexDirection: "row",
                       justifyContent: "flex-end",
@@ -336,12 +337,12 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   >
                     {(!item.startDate || !item.endDate) && "No value" }
                     {(item.startDate && item.endDate)&& formatDate(item.startDate)}
-                    {(item.startDate && item.endDate) && (item.endDate < today ?(" - ", formatDate(item.endDate)) : " - Till Date")}
+                    {(item.startDate && item.endDate) && (item.endDate < today ?(` - ${ formatDate(item.endDate)}`) : " - Till Date")}
                   </Box>
                   <Box
                     sx={{
                       fontSize: "xx-large",
-                      backgroundColor: "#E6EEF2",
+                      backgroundColor: "white",
                       height: "60px",
                       display: "flex",
                       flexDirection: "row",
@@ -354,7 +355,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   <Box
                     sx={{
                       color: "#8A9DAB",
-                      backgroundColor: "#E6EEF2",
+                      backgroundColor: "white",
                       padding: "0% 0 2% 6%",
                       fontSize: "large",
                     }}
@@ -364,7 +365,7 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   <Box
                     sx={{
                       color: "#8A9DAB",
-                      backgroundColor: "#E6EEF2",
+                      backgroundColor: "white",
                       padding: "0% 0 7% 6%",
                       fontSize: "large",
                     }}
@@ -373,23 +374,21 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   </Box>
                   <Box
                     sx={{
-                      backgroundColor: "white",
+                      backgroundColor: "whitesmoke",
                       color: "blue",
                       height: "50px",
                       display: "flex",
                       fontSize: "large",
                     }}
                   >
-                    <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
-                      <Button>Bio</Button>
-                    </Box>
-                    <Box sx={{ margin: "0.7% 5% 2% 2%" }}>
+                    
+                    <Box sx={{ margin: "2% 5% 2% 2%" }}>
                       <Button
                         href={item.message}
                         target="_blank"
                         onClick={handleMessageClick}
                       >
-                        Message
+                    <img src={SlackLogo} alt='slack' height="20px" width="20px" /> &nbsp;MESSAGE
                       </Button>
                     </Box>
                   </Box>
@@ -483,7 +482,6 @@ const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
                   minRows={13}
                   className="my-textarea"
                   disabled={!(emailId === user.email)}
-
                   style={{
                     fontFamily: "Roboto",
                     fontSize: "large",
