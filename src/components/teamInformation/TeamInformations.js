@@ -7,10 +7,11 @@ import {
   TextField,
   Button,
   TextareaAutosize,
-} from "@mui/material";
+ InputAdornment } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
+import { Search } from '@mui/icons-material';
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
@@ -44,6 +45,11 @@ function CardList() {
   const [message, setMessage] = useState("");
   const [showAddProfile, setShowAddProfile] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [searchValue, setSearchValue]= useState("");
+  const handleSearchValueChange =(event)=>{
+    setSearchValue(event.target.value);
+  }
+
   useEffect(() => {
     try {
       makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
@@ -240,6 +246,16 @@ function CardList() {
   const handleMessageClick = () => {
     setIsMessageClicked(true);
   };
+  let filterData= data;
+  if(filterData && searchValue!=="" )
+  filterData = filterData.filter(
+    // check item.bio contains the sercahValue
+    (item) => {
+    const value = item.bio;
+    if(value)
+    return value.includes(searchValue)
+    }
+  );
   return (
     <>
       <DeleteDialog
@@ -259,23 +275,21 @@ function CardList() {
         className="body"
       >
         <Box sx={{ width: "95%", height: "3%" }}>
-          <Button
-            style={{
-              margin: "2% 2% 1% 0%",
-              visibility: showAddProfile ? "visible" : "hidden",
-            }}
-            variant="contained"
-            sx={{
-              backgroundColor: "#7784EE",
-            }}
-            onClick={() => {
-              handleAddCard();
-            }}
-            name="save"
-            type="button"
-          >
-            Add Your Profile
-          </Button>
+        <TextField
+        variant="outlined"
+        placeholder="Search"
+        value={searchValue}
+        onChange={handleSearchValueChange}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton>
+                <Search />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
         </Box>
         <Box
           sx={{
@@ -305,8 +319,8 @@ function CardList() {
                 width: "85%",
               }}
             >
-              {data &&
-                data.map((item) => (
+              {filterData &&
+                filterData.map((item) => (
                   <Box
                     key={item.id}
                     sx={{
