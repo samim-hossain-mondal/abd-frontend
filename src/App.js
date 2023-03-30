@@ -30,7 +30,6 @@ import getDBOffSetTime from './components/utilityFunctions/getOffsetTimestamp';
 import getTodayDate from './components/utilityFunctions/getTodayDate';
 
 
-
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
   clientId: process.env.REACT_APP_OKTA_CLIENT_ID,

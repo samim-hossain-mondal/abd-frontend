@@ -6,6 +6,14 @@ export const DSM_REQUEST_TYPES = [
   'RESOURCE'
 ];
 
+export const DSM_REQUEST_STATUS = {
+  'PENDING': 'PENDING',
+  'APPROVED': 'APPROVED',
+  'REJECTED': 'REJECTED'
+}
+
+export const isRequestCompleted = (status) => status === DSM_REQUEST_STATUS.APPROVED
+
 export const TITLE = 'Request Statement';
 export const PRIMARY_BUTTON_TEXT = {
   'POST': 'Post',

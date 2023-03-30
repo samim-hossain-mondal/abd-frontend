@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 import { Avatar, Typography } from '@mui/material';
 import stc from 'string-to-color';
 
-export default function ChatContainer({ name, src, content, date, onClick }) {
+export default function ChatContainer({ name, src, content, date, onClick, afterDate }) {
   return (
     <Box
       sx={{
@@ -25,6 +25,8 @@ export default function ChatContainer({ name, src, content, date, onClick }) {
             month: 'short',
             day: 'numeric',
           })}
+          {' '}
+          {afterDate}
         </Typography>
       </Box>
     </Box>
@@ -37,6 +39,7 @@ ChatContainer.propTypes = {
   content: PropTypes.string,
   date: PropTypes.instanceOf(Date),
   onClick: PropTypes.func,
+  afterDate: PropTypes.node,
 };
 
 ChatContainer.defaultProps = {
@@ -45,4 +48,5 @@ ChatContainer.defaultProps = {
   content: '',
   date: '',
   onClick: () => { },
+  afterDate: ''
 };

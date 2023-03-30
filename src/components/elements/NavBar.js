@@ -65,7 +65,7 @@ export default function Navbar({ authLoaded }) {
             (aboveTablet) ? (
               <Box sx={{ paddingLeft: '16px', textAlign: 'center' }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
@@ -73,7 +73,7 @@ export default function Navbar({ authLoaded }) {
             ) : (
               <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2 }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
