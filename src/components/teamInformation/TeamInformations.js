@@ -6,14 +6,15 @@ import {
   Modal,
   TextField,
   Button,
- InputAdornment } from "@mui/material";
+  InputAdornment,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
-import { Search } from '@mui/icons-material';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import Slide from '@material-ui/core/Slide';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Search } from "@mui/icons-material";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import Slide from "@material-ui/core/Slide";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
@@ -34,6 +35,7 @@ function CardList() {
   const [today] = useState(new Date().toISOString().slice(0, 10));
   const [isMessageClicked, setIsMessageClicked] = useState(false);
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [memberId] = useState(user.memberId);
   const [isAddCard, setIsAddCard] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -46,15 +48,14 @@ function CardList() {
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [searchValue, setSearchValue]= useState("");
-  const handleSearchValueChange =(event)=>{
-    setSearchValue(event.target.value);
-  }
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     try {
       makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
         (response) => {
           setData(response);
+          setFilteredData(response);
         }
       );
     } catch (error) {
@@ -168,7 +169,7 @@ function CardList() {
           });
           setData(updatedData);
           setSuccess("Information updated successfully");
-          setIsAddCard(false)
+          setIsAddCard(false);
           handleCloseModal();
         });
       } catch (error) {
@@ -176,7 +177,6 @@ function CardList() {
       }
     }
   };
-
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
     return dateInengbFormat.toLocaleDateString("en-GB");
@@ -223,17 +223,35 @@ function CardList() {
   const handleMessageClick = () => {
     setIsMessageClicked(true);
   };
-  let filterData= data;
-  if(filterData && searchValue!=="" )
-  {
-  filterData = filterData.filter(
-    (item) => {
-    const value = item?.bio?.toLowerCase();
-    return value?.includes(searchValue?.toLowerCase())
-
-    }
-  );
+  function debounce(fn, delay) {
+    let timerId;
+    return function (...args) {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    };
   }
+
+  const filterContent = (inputValue) => {
+    if (inputValue !== "") {
+      const filterData = data.filter((item) => {
+        const value = item?.bio?.toLowerCase();
+        return value?.includes(inputValue?.toLowerCase());
+      });
+      setFilteredData(filterData);
+    } else {
+      setFilteredData(data);
+    }
+  };
+  const handleSearchValueChange = (event) => {
+    const inputValue = event.target.value;
+    debounce(() => filterContent(inputValue), 500)();
+    setSearchValue(event.target.value);
+  };
+
   return (
     <>
       <DeleteDialog
@@ -243,153 +261,154 @@ function CardList() {
         description="Are you sure want to delete this Profile"
       />
       <Box
-          width= "100%"
-          display= "flex"
-          flexDirection= "column"
-          alignItems= "center"
-          backgroundColor= "#e6eef2"
-          className="body"
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        backgroundColor="#e6eef2"
+        className="body"
       >
-        <Box  
-          width= "100%"
-          height= "3%"
+        <Box
+          width="100%"
+          height="3%"
           marginRight="23.5%"
           marginTop="2%"
           display="flex"
-          justifyContent="flex-end">
-        <TextField  
-        variant="outlined"
-        placeholder="Search"
-        value={searchValue}
-        onChange={handleSearchValueChange}
-        style={{backgroundColor:"white", color:"blue"}}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end" color="blue">
-              <IconButton color="blue">
-                <Search color="blue" />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-        </Box>
-        <Box
-            width= "100%" 
-            display= "flex" 
-            justifyContent= "center"
-            height= "90vh"
+          justifyContent="flex-end"
         >
+          <TextField
+            variant="outlined"
+            placeholder="Search"
+            value={searchValue}
+            onChange={handleSearchValueChange}
+            style={{ backgroundColor: "white", color: "blue" }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" color="blue">
+                  <IconButton color="blue">
+                    <Search color="blue" />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+        <Box width="100%" display="flex" justifyContent="center" height="90vh">
           <Box
-              display= "flex"
-              width= "95%"
-              flexWrap= "wrap"
-              justifyContent= "center"
-              backgroundColor= "#e6eef2"
-              overflow= "scroll"
-          
+            display="flex"
+            width="95%"
+            flexWrap="wrap"
+            justifyContent="center"
+            backgroundColor="#e6eef2"
+            overflow="scroll"
           >
             <Box
-                marginTop= "0%"
-                display= "flex"
-                flexDirection= "row"
-                flexWrap= "wrap"
-                width= "85%"
+              marginTop="0%"
+              display="flex"
+              flexDirection="row"
+              flexWrap="wrap"
+              width="85%"
             >
-               <Slide direction="up" in={filterData!==null} mountOnEnter unmountOnExit>
-      <Box>{
-                filterData.map((item) => (
-                  <Box
-                    key={item.id}
-                    sx={{
-                      width: 448,
-                      borderRadius: "10px",
-                      fontFamily: "bebas-neue",
-                      boxShadow: 1,
-                      height: "260px",
-                      margin: "2% 2% 2% 0",
-                      overflow: "hidden",
-                      border: "1px solid #CBD5DC",
-                    }}
-                  >
-                    <Box onClick={() => handleOpenModal(item)}>
-                      <Box
-                          backgroundColor= "whitesmoke"
-                          display= "flex"
-                          flexDirection= "row"
-                          justifyContent= "flex-end"
-                          alignItems= "center"
-                          width= "95%"
-                          height= "50px"
-                          padding= "0 5% 0 0"
-                      >
-                        {(!item.startDate || !item.endDate) && "No value"}
-                        {item.startDate &&
-                          item.endDate &&
-                          formatDate(item.startDate)}
-                        {item.startDate &&
-                          item.endDate &&
-                          (item.endDate < today
-                            ? ` - ${formatDate(item.endDate)}`
-                            : " - Till Date")}
-                      </Box>
-                      <Box
-                          fontSize= "xx-large"
+              <Slide
+                direction="up"
+                in={filteredData !== null}
+                mountOnEnter
+                unmountOnExit
+              >
+                <Box>
+                  {filteredData.map((item) => (
+                    <Box
+                      key={item.id}
+                      sx={{
+                        width: 448,
+                        borderRadius: "10px",
+                        fontFamily: "bebas-neue",
+                        boxShadow: 1,
+                        height: "260px",
+                        margin: "2% 2% 2% 0",
+                        overflow: "hidden",
+                        border: "1px solid #CBD5DC",
+                      }}
+                    >
+                      <Box onClick={() => handleOpenModal(item)}>
+                        <Box
+                          backgroundColor="whitesmoke"
+                          display="flex"
+                          flexDirection="row"
+                          justifyContent="flex-end"
+                          alignItems="center"
+                          width="95%"
+                          height="50px"
+                          padding="0 5% 0 0"
+                        >
+                          {(!item.startDate || !item.endDate) && "No value"}
+                          {item.startDate &&
+                            item.endDate &&
+                            formatDate(item.startDate)}
+                          {item.startDate &&
+                            item.endDate &&
+                            (item.endDate < today
+                              ? ` - ${formatDate(item.endDate)}`
+                              : " - Till Date")}
+                        </Box>
+                        <Box
+                          fontSize="xx-large"
                           backgroundColor="white"
-                          height= "60px"
-                          display= "flex"
-                          flexDirection= "row"
-                          justifyContent= "flex-start"
-                          padding= "4% 0% 0% 6%"
-                      >
-                        {item.name ? item.name : "Name not provided"}
-                      </Box>
-                      <Box
-                          color= "#8A9DAB"
-                          backgroundColor= "white"
+                          height="60px"
+                          display="flex"
+                          flexDirection="row"
+                          justifyContent="flex-start"
+                          padding="4% 0% 0% 6%"
+                        >
+                          {item.name ? item.name : "Name not provided"}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
                           padding="0% 0 2% 6%"
                           fontSize="large"
-                      >
-                        {item.emailId}
-                      </Box>
-                      <Box
-                          color= "#8A9DAB"
-                          backgroundColor= "white"
-                          padding= "0% 0 7% 6%"
-                          fontSize= "large"
-                      >
-                        {item.projectRole
-                          ? item.projectRole
-                          : "Project Role not provided"}
-                      </Box>
-                      <Box
-                          backgroundColor= "whitesmoke"
-                          color= "blue"
-                          height= "50px"
-                          display= "flex"
-                          fontSize= "large"
-                      >
-                        <Box  margin= "2% 5% 2% 2%" >
-                          <Button
-                            href={item.message}
-                            target="_blank"
-                            onClick={handleMessageClick}
-                          >
-                            <img
-                              src={SlackLogo}
-                              alt="slack"
-                              height="20px"
-                              width="20px"
-                            />{" "}
-                            &nbsp;MESSAGE
-                          </Button>
+                        >
+                          {item.emailId}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
+                          padding="0% 0 7% 6%"
+                          fontSize="large"
+                        >
+                          {item.projectRole
+                            ? item.projectRole
+                            : "Project Role not provided"}
+                        </Box>
+                        <Box
+                          backgroundColor="whitesmoke"
+                          color="blue"
+                          height="50px"
+                          display="flex"
+                          fontSize="large"
+                        >
+                          <Box margin="2% 5% 2% 2%">
+                            <Button
+                              href={item.message}
+                              target="_blank"
+                              onClick={handleMessageClick}
+                            >
+                              <img
+                                src={SlackLogo}
+                                alt="slack"
+                                height="20px"
+                                width="20px"
+                              />{" "}
+                              &nbsp;MESSAGE
+                            </Button>
+                          </Box>
                         </Box>
                       </Box>
                     </Box>
-                  </Box>
-                ))}</Box>
-    </Slide>
-              
+                  ))}
+                </Box>
+              </Slide>
+
               <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
@@ -402,23 +421,23 @@ function CardList() {
                 }}
               >
                 <Box
-                    top= "50%"
-                    left= "50%"
-                    right= "50%"
-                    width= "35%"
-                    marginTop="2%"
-                    marginBottom= "2%"
-                    height="88%"
-                    overflow= "scroll"
-                    backgroundColor= "#fff"
-                    padding= "1rem"
-                    borderRadius= "4px"
+                  top="50%"
+                  left="50%"
+                  right="50%"
+                  width="35%"
+                  marginTop="2%"
+                  marginBottom="2%"
+                  height="88%"
+                  overflow="scroll"
+                  backgroundColor="#fff"
+                  padding="1rem"
+                  borderRadius="4px"
                 >
                   <Box
-                      justifyContent= "space-between"
-                      width= "100%"
-                      display= "flex"
-                      columnGap= "2%"
+                    justifyContent="space-between"
+                    width="100%"
+                    display="flex"
+                    columnGap="2%"
                   >
                     <Box>
                       <Typography variant="h5">Details</Typography>
@@ -471,19 +490,22 @@ function CardList() {
                     editor={ClassicEditor}
                     disabled={!(emailId === user.email)}
                     config={{
-                      toolbar:(emailId === user.email) ? [
-                        'heading',
-                        '|',
-                        'bold',
-                        'italic',
-                        'link',
-                        'bulletedList',
-                        'numberedList',
-                        'blockQuote',
-                        'insertTable',
-                        'undo',
-                        'redo',
-                      ]:[],
+                      toolbar:
+                        emailId === user.email
+                          ? [
+                              "heading",
+                              "|",
+                              "bold",
+                              "italic",
+                              "link",
+                              "bulletedList",
+                              "numberedList",
+                              "blockQuote",
+                              "insertTable",
+                              "undo",
+                              "redo",
+                            ]
+                          : [],
                     }}
                     onChange={(event, editor) => {
                       setBio(editor.getData());
