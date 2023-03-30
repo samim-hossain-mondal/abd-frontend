@@ -26,7 +26,6 @@ import { ErrorContext } from "../contexts/ErrorContext";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import DeleteDialog from "../elements/DeleteDialog";
 
-
 function CardList() {
   const { projectId } = useParams();
   const { user } = useContext(ProjectUserContext);
