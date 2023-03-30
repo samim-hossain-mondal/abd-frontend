@@ -34,92 +34,15 @@ ChartJS.register(
   Title
 );
 
-export default function SentimentMeterDialog({ open, setOpen, data, csvReport }) {
-
+export default function SentimentMeterDialog({ open, setOpen, csvReport, feelingsArray, weekStats, todayStats }) {
   const [compareButton, setCompareButton] = useState(false);
 
-  const feeling = {
-    feeling_1: 'HAPPY',
-    feeling_2: 'GOOD',
-    feeling_3: 'OK',
-    feeling_4: 'BAD'
-  }
-
-  const getDay = (date) => {
-    const convertDate = new Date(date);
-    let day = convertDate.getDate();
-    if (day < 10) {
-      day = `0${day}`;
-    }
-    return day;
-  }
-
-  const filterDataByDay = (day) => {
-    const filteredData = data.filter((sentiment) => {
-      const currentData = getDay(sentiment.createdAt);
-      return currentData === day;
-    })
-    return filteredData;
-  }
-
-  const filteredData = filterDataByDay(getDay(new Date()));
-
-  const getLast7days = () => {
-    const lastWeek = [];
-    for (let i = 0; i < 7; i += 1) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      lastWeek.push(getDay(date));
-    }
-    return lastWeek;
-  }
-
-  const countFeeling = (weekData, sentiment) => {
-    let count = 0;
-    weekData.forEach((item) => {
-      if (item.sentiment === sentiment) {
-        count += 1;
-      }
-    });
-    return count;
-  }
-
-  const calcSentimentCountWeekAvg = () => {
-    const last7days = getLast7days();
-    const sentimentOfWeek = [];
-    last7days.forEach((day) => {
-      sentimentOfWeek.push(filterDataByDay(day));
-    })
-    const happyAvg = sentimentOfWeek.map((item) => countFeeling(item, feeling.feeling_1)).reduce((a, b) => a + b, 0) / 5;
-    const goodAvg = sentimentOfWeek.map((item) => countFeeling(item, feeling.feeling_2)).reduce((a, b) => a + b, 0) / 5;
-    const okAvg = sentimentOfWeek.map((item) => countFeeling(item, feeling.feeling_3)).reduce((a, b) => a + b, 0) / 5;
-    const badAvg = sentimentOfWeek.map((item) => countFeeling(item, feeling.feeling_4)).reduce((a, b) => a + b, 0) / 5;
-    return [happyAvg, goodAvg, okAvg, badAvg];
-  }
-
-  const avgData = calcSentimentCountWeekAvg();
-
-  const filteredSentiment = filteredData.map((item) => item.sentiment);
-  const countSentiment = (sentiment) => {
-    let count = 0;
-    filteredSentiment.forEach((item) => {
-      if (item === sentiment) {
-        count += 1;
-      }
-    });
-    return count;
-  };
-
   const sentimentData = {
-    labels: [feeling.feeling_1, feeling.feeling_2, feeling.feeling_3, feeling.feeling_4],
+    labels: feelingsArray,
     datasets: [
       {
         label: '# of Sentiments',
-        data: [
-          countSentiment(feeling.feeling_1),
-          countSentiment(feeling.feeling_2),
-          countSentiment(feeling.feeling_3),
-          countSentiment(feeling.feeling_4)],
+        data: todayStats,
         backgroundColor: [
           'rgb(0, 0, 255, 0.5)',
           'rgb(60, 179, 113, 0.5)',
@@ -159,16 +82,12 @@ export default function SentimentMeterDialog({ open, setOpen, data, csvReport })
     datasets: [
       {
         label: 'Week Average',
-        data: avgData,
+        data: weekStats,
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       },
       {
         label: 'Today',
-        data: [
-          countSentiment(feeling.feeling_1),
-          countSentiment(feeling.feeling_2),
-          countSentiment(feeling.feeling_3),
-          countSentiment(feeling.feeling_4)],
+        data: todayStats,
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
     ],
@@ -200,9 +119,12 @@ export default function SentimentMeterDialog({ open, setOpen, data, csvReport })
           <Box padding='50px'>
             {
               compareButton ?
-                (<Bar data={barData} options={options} height='200px' width='200px' />)
+                (<Bar data={barData} options={options}
+                  height="200px" width="200px"
+                // width='50%' aspectRatio="1/1"
+                />)
                 :
-                (<Pie data={sentimentData} height='200px' width='200px' />)
+                (<Pie data={sentimentData} height="200px" width="200px" />)
             }
           </Box>
           <DialogContentText id="alert-dialog-description">

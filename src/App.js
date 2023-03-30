@@ -26,6 +26,9 @@ import {
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
 import LoginCallbackPage from './components/elements/LoginCallbackPage';
+import getDBOffSetTime from './components/utilityFunctions/getOffsetTimestamp';
+import getTodayDate from './components/utilityFunctions/getTodayDate';
+
 
 
 const oktaAuth = new OktaAuth({
@@ -70,9 +73,18 @@ function AppRoutes() {
     await updateUserDetails(setError, setSuccess);
   };
 
+  const setAxiosHeaderTimeOffset = async () => {
+    const todayDateString = getTodayDate();
+    axios.defaults.headers.common.OffsetTime = getDBOffSetTime(todayDateString);
+  }
+
   useEffect(() => {
     setAxiosHeader();
   }, [authState]);
+
+  useEffect(() => {
+    setAxiosHeaderTimeOffset();
+  }, []);
 
   const handleScroll = (ref) => {
     ref.current.scrollIntoView();

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Paper, CircularProgress, useMediaQuery } from '@mui/material'
+import { Box, Paper, CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -48,7 +48,7 @@ export default function PONotesTable(props) {
   const type = HEADINGS[heading].toUpperCase();
   const apiUrlQuery = getApiUrlQuery(type, query, 1, 100);
 
-  const breakpoint500 = useMediaQuery('(min-width:500px)');
+  // const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const getPONotes = async () => {
     try {
@@ -100,8 +100,11 @@ export default function PONotesTable(props) {
   const countOfItems = poNotes.length;
   return (
     poNotes ?
-      <Box sx={{ width: (breakpoint500) ? '480px' : '280px' }}>
-        <Box component={Paper} sx={{ height: '80vh' }}>
+      <Box
+        sx={{
+          width: "100%"
+        }}>
+        <Box component={Paper} sx={{ height: '80vh', width: "100%" }}>
           <Box aria-label='simple table'>
             <Box>
               <Box align='center' sx={{

@@ -115,8 +115,13 @@ export const DELETE_ANNOUNCMENT = (projectId, announcementId) => ({
 
 // ***** sentiments  Endpoints *****
 
-export const GET_SENTIMENTS = (projectId) => ({
-  url: `api/dsm/sentiment-meter/${projectId}`,
+export const GET_SENTIMENTS_BY_DATE = (projectId, date) => ({
+  url: `api/dsm/sentiment-meter/${projectId}/date/${date}`,
+  method: 'get',
+})
+
+export const GET_TODAY_SENTIMENT_OF_MEMBER = (projectId) => ({
+  url: `api/dsm/sentiment-meter/${projectId}/today`,
   method: 'get',
 })
 
@@ -201,6 +206,33 @@ export const UPDATE_MADE_TO_STICK = (projectId, madeToStickId) => ({
   method: 'put',
 })
 
+// export const UPDATE_PO_NOTE = {
+//   url: `${BACKEND_URL}/po-notes`,
+//   method: 'patch',
+// }
+ export const GET_TEAM_INFORMATION_BY_PROJECT_ID= (projectId) => ({
+  url: `api/teamInformations/projectId/${projectId}`,
+  method: 'GET',
+})
+export const POST_TEAM_INFORMATION = {
+  url: `api/teamInformations`,
+  method: 'POST',
+}
+export const PUT_TEAM_INFORMATION = (id)=>({
+  url: `api/teamInformations/${id}`,
+  method: 'PUT',
+
+})
+export const DELETE_TEAM_INFORMATION = (id)=>({
+  url: `api/teamInformations/${id}`,
+  method: 'DELETE',
+})
+
+// ***** projects  Endpoints *****
+export const GET_ROLE_IN_PROJECT = (projectId,memberId) => ({
+  url: `api/management/project/${projectId}/member/${memberId}`,
+  method: 'get',
+})
 export const DELETE_MADE_TO_STICK = (projectId, madeToStickId) => ({
   url: `api/madeToStick/${projectId}/${madeToStickId}`,
   method: 'delete',

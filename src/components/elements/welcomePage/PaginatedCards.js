@@ -37,12 +37,20 @@ function ProjectCard({ project, handleProjectClick }) {
           gutterBottom
         >
           {/* TODO: this is just a dummy implementation */}
+          {project.projectId % 2 === 0 ? (
           <Chip
             label="IN PROGRESS"
             size="small"
             variant="outlined"
+            color="primary"
+          />) : (
+          <Chip
+            label="COMPLETED"
+            size="small"
+            variant="outlined"
             color="success"
           />
+          )}
           <Tooltip title="Number of members">
             <Box
               sx={{

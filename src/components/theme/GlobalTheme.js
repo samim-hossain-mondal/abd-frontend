@@ -56,6 +56,9 @@ const theme = createTheme({
     },
     success: {
       main: '#4CAF50',
+    },
+    warning: {
+      main: '#f44336',
     }
   },
   components: {

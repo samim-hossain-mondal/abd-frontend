@@ -14,11 +14,9 @@ export default function Note({
   card, isEdit, handleCloseButton, handleEditImgLink, handleDelete, handleImageInputChange, handleCardInputChange
 }) {
   const [editButton, setEditButton] = useState(false);
-
   const handleEditButton = (value) => {
     setEditButton(value);
   };
-
   return (
     <Box
       className="card"

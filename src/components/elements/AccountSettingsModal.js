@@ -130,7 +130,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
           }
           return project;
         });
-        console.log('new', newProjectArray);
         setProjects(newProjectArray);
       })
       .catch((error) => {

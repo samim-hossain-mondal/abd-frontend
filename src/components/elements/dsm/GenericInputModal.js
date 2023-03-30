@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
+import { Button, IconButton, Typography, List, ListItem, ListItemButton } from '@mui/material';
 
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
@@ -51,7 +51,7 @@ export default function GenericInputModal({
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
-  const {setSuccess, setError} = useContext(ErrorContext);
+  const { setSuccess, setError } = useContext(ErrorContext);
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -135,27 +135,16 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        mt: '8px'
-      }}>
-        <Typography variant="h5">{title}</Typography>
-        <ContentCopyIcon onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(content);
-            setSuccess('Copied to clipboard')
-          } catch (err) {
-            setError('Failed to copy to clipboard');
-          }
-        }} />
-      </Box>
+      <Typography variant="h5" sx={{
+        mt: '8px',
+      }}>{title}</Typography>
 
       {/* TextField */}
       <Box sx={{
         width: '100%',
         margin: '16px 0',
-        padding: 0
+        padding: 0,
+        position: 'relative'
       }}>
         <ReactTextareaAutocomplete
           className="autocomplete-textarea"
@@ -213,6 +202,20 @@ export default function GenericInputModal({
           onChange={(e) => handleChangeTextArea(e)}
           disabled={isDisabled}
         />
+
+        <ContentCopyIcon sx={{
+          position: 'absolute',
+          right: '16px',
+          bottom: '16px',
+          cursor: 'pointer',
+        }} onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
       </Box>
 
       {children}

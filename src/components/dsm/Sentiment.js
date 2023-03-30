@@ -17,21 +17,129 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Stack } from '@mui/system';
-import axios from 'axios';
 import { CSVLink } from "react-csv";
+import { useParams } from 'react-router-dom';
+import getDBOffSetTime from "../utilityFunctions/getOffsetTimestamp";
+import { CREATE_SENTIMENT, GET_SENTIMENTS_BY_DATE, GET_TODAY_SENTIMENT_OF_MEMBER, UPDATE_SENTIMENT } from '../constants/apiEndpoints';
 import InformationModel from '../elements/InformationModel';
 import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext";
 import SentimentMeterDialog from './SentimentMeterDialog';
-import preventParentClick from '../utilityFunctions/PreventParentClick';
 import { SentimentMeterInfo } from '../constants/SentimentMeter';
-import { DOMAIN } from '../../config';
 import { RefreshContext } from '../contexts/RefreshContext';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { ErrorContext } from '../contexts/ErrorContext';
+import { SUCCESS_MESSAGE } from "../constants/dsm/index"
+import { GENERIC_NAME } from '../constants/dsm/Sentiments';
+import getTodayDate from '../utilityFunctions/getTodayDate';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
 export default function Sentiment() {
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
+  const breakpoint500 = useMediaQuery('(min-width:500px)');
+  const breakpoint391 = useMediaQuery('(min-width:391px)');
+  const { setError, setSuccess } = useContext(ErrorContext)
+  const [sentimentResponse, setSentimentResponse] = useState(undefined);
+  const [sentimentObj, setSentimentObj] = useState({})
+  const { projectId } = useParams()
+
+  const { userRole } = useContext(ProjectUserContext);
+  const isLeaderOrAdmin = () => (userRole === "ADMIN" || userRole === "LEADER")
+  // const isLeaderOrAdmin = () => false;
+
+  const [weekStats, setWeekStats] = useState([])
+  const [todayStats, setTodayStats] = useState([])
+
+  const createSentiment = async (sentiment) => {
+    const reqBody = {
+      sentiment
+    }
+    const resData = await makeRequest(CREATE_SENTIMENT(projectId), { data: reqBody })
+    setSentimentResponse(sentiment);
+    setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED)
+    return resData;
+  }
+
+  const updateSentiment = async (sentiment) => {
+    const reqBody = {
+      sentiment
+    }
+    const resData = await makeRequest(UPDATE_SENTIMENT(projectId, sentimentObj.sentimentId), { data: reqBody })
+    setSentimentResponse(sentiment);
+    setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED)
+    return resData;
+  }
+
+  const getSentiments = async (date) => {
+    try {
+      const resData = await makeRequest(GET_SENTIMENTS_BY_DATE(projectId, date));
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return [];
+    }
+  }
+
+  const getTodaySentimentOfMember = async () => {
+    try {
+      const resData = await makeRequest(GET_TODAY_SENTIMENT_OF_MEMBER(projectId));
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return null;
+    }
+  }
+
+  const handleOnClickResponse = async (response) => {
+    try {
+      if (!sentimentObj.sentimentId) {
+        const newSentiment = await createSentiment(response);
+        setSentimentObj(newSentiment);
+      }
+      else {
+        const updatedSentiment = await updateSentiment(response === sentimentResponse ? "NULL" : response);
+        setSentimentObj(updatedSentiment)
+      }
+      if (response === sentimentResponse) setSentimentResponse(undefined);
+      else setSentimentResponse(response);
+    }
+    catch (err) {
+      setError(err.message);
+    }
+  }
+
+  const feelings = [
+    {
+      name: 'HAPPY',
+      icon: <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      color: 'emoji.happy'
+    },
+    {
+      name: 'GOOD',
+      icon: <SentimentSatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentSatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      color: 'emoji.good'
+    },
+    {
+      name: 'OK',
+      icon: <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      color: 'emoji.ok'
+    },
+    {
+      name: 'BAD',
+      icon: <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
+      iconSelected: <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      color: 'emoji.bad'
+    }
+  ]
+
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const handleExpandSentiment = () => {
@@ -40,10 +148,6 @@ export default function Sentiment() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const openMenu = Boolean(anchorEl);
-
-  if(refresh.sentiment){
-    setRefresh(val => ({...val, sentiment: false}));
-  }
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,203 +160,127 @@ export default function Sentiment() {
     setAnchorEl(null);
   };
 
-  const getDay = (date) => {
-    const convertDate = new Date(date);
-    const day = convertDate.getDate();
-    return day.toString();
+  const [sentimeterData, setSentimeterData] = useState([]);
+
+  const getSentimeterStats = async (queryDate) => {
+    try {
+      // Date from query/filter
+      if (isLeaderOrAdmin()) {
+        const resData = await getSentiments(queryDate);
+        return resData;
+      }
+      return [];
+    }
+    catch (err) {
+      setError(err.message);
+      return [];
+    }
   }
 
-  if (localStorage.getItem('currentDay') === null) {
-    localStorage.setItem('currentDay', getDay(new Date()));
-  }
-
-  if (localStorage.getItem('currentDay') !== null && localStorage.getItem('currentDay') !== getDay(new Date())) {
-    localStorage.setItem('currentDay', getDay(new Date()));
-    localStorage.setItem('sentimentId', 0);
-    localStorage.setItem('currentFeeling', '');
-  }
-
-  if (localStorage.getItem('sentimentId') === null) {
-    localStorage.setItem('sentimentId', 0);
-  }
-
-  if (localStorage.getItem('currentFeeling') === null) {
-    localStorage.setItem('currentFeeling', '');
-  }
-
-  const [data, setData] = useState([]);
-  const [currentFeeling, setCurrentFeeling] = useState(localStorage.getItem('currentFeeling'));
-  const [sentimentId, setSentimentId] = useState(localStorage.getItem('sentimentId'));
-  const [sentimentUpdation, setSentimentUpdation] = useState(false);
-
-  const [feelingHappy, setFeelingHappy] = useState(localStorage.getItem('currentFeeling') === 'HAPPY');
-  const [feelingGood, setFeelingGood] = useState(localStorage.getItem('currentFeeling') === 'GOOD');
-  const [feelingOk, setFeelingOk] = useState(localStorage.getItem('currentFeeling') === 'OK');
-  const [feelingBad, setFeelingBad] = useState(localStorage.getItem('currentFeeling') === 'BAD');
-
-  if (localStorage.getItem('sentimentId') !== 0) {
-    localStorage.setItem('sentimentId', sentimentId);
-  }
-
-  const anonymusAuthor = "Anonymus";
-  const feeling = {
-    feeling_1: 'HAPPY',
-    feeling_2: 'GOOD',
-    feeling_3: 'OK',
-    feeling_4: 'BAD'
-  }
-
-  const filterDataByDay = (day) => {
-    const filteredData = data.filter((sentiment) => {
-      const currentData = getDay(sentiment.createdAt);
-      return currentData === day;
+  useEffect(() => {
+    getTodaySentimentOfMember().then(todaySentiment => {
+      if (todaySentiment !== null) {
+        setSentimentResponse(todaySentiment.sentiment)
+        setSentimentObj(todaySentiment)
+      }
     })
-    return filteredData;
+  }, [])
+
+  useEffect(() => {
+    const queryDate = getTodayDate();
+    getSentimeterStats(queryDate).then(stats => {
+      setSentimeterData(stats)
+    })
+  }, [sentimentResponse, userRole])
+
+  if (refresh.sentiment) {
+    const queryDate = getTodayDate();
+    getSentimeterStats(queryDate).then(stats => {
+      setSentimeterData(stats)
+    })
+    getTodaySentimentOfMember().then(todaySentiment => {
+      if (todaySentiment !== null) {
+        setSentimentResponse(todaySentiment.sentiment)
+        setSentimentObj(todaySentiment)
+      }
+    })
+    setRefresh(val => ({ ...val, sentiment: false }));
   }
 
-  const filteredData = filterDataByDay(getDay(new Date()));
+  const feelingsArray = ["HAPPY", "GOOD", "OK", "BAD"]
 
-  const headers = [
-    { label: "sentimentId", key: "sentimentId" },
-    { label: "author", key: "author" },
-    { label: "sentiment", key: "sentiment" },
-    { label: "createdAt", key: "createdAt" }
-  ]
+  const formatedDataByLabels = (groupData) => {
+    if (groupData) {
+      const formatedData = [];
+      groupData.forEach((item) => {
+        formatedData[item.sentiment] = item.count;
+      });
+      return formatedData;
+    }
+    return [];
+  }
+
+  const calcSentimentCountWeekAvg = (dataArray, dayDiff) => {
+    const noOfDays = (dayDiff + 1) > 5 ? 5 : (dayDiff + 1);
+    const formatedData = formatedDataByLabels(dataArray);
+    return feelingsArray.map((item) => {
+      if (!formatedData[item]) return 0;
+      return formatedData[item] / noOfDays;
+    })
+  }
+
+  const calcSentimentCountToday = (dataArray) => {
+    const formatedData = formatedDataByLabels(dataArray);
+    return feelingsArray.map((item) => {
+      if (!formatedData[item]) return 0;
+      return formatedData[item];
+    })
+  }
+
+  useEffect(() => {
+    if (isLeaderOrAdmin()) {
+      setWeekStats(calcSentimentCountWeekAvg(sentimeterData.thisWeek?.data, sentimeterData.thisWeek?.dayDifference))
+      setTodayStats(calcSentimentCountToday(sentimeterData.today?.data))
+    }
+  }, [sentimeterData])
+
+  const getCSVHeaders = () => {
+    const headers = [{ label: "", key: "name" }, { label: "Date", key: "date" }]
+    feelings.forEach(emoji => {
+      headers.push({ label: emoji.name, key: emoji.name })
+    })
+    headers.push({ label: "Total Responses", key: "totalCount" })
+    return headers;
+  }
+
+  const getOffSetTimeDate = (date, offSetTime) => {
+    if (date) return new Date(new Date(date).getTime() + offSetTime).toISOString().split('T')[0]
+    return null;
+  }
+
+  const createCSVReportData = () => {
+    const todayDateString = getTodayDate();
+    const offSetTime = getDBOffSetTime(todayDateString);
+    const todayRow = { name: "Today", date: `${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}` }
+    const weekRow = {
+      name: "This Week",
+      date:
+        `(${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}) - (${getOffSetTimeDate(sentimeterData.thisWeek?.lastDay, offSetTime)})`
+    }
+    todayStats.forEach((item, index) => {
+      todayRow[feelings[index].name] = item;
+      weekRow[feelings[index].name] = weekStats[index];
+    })
+    todayRow.totalCount = todayStats.reduce((a, b) => a + b, 0);
+    weekRow.totalCount = weekStats.reduce((a, b) => a + b, 0);
+    return [todayRow, weekRow];
+  }
 
   const csvReport = {
-    data: filteredData,
-    headers,
+    data: createCSVReportData(),
+    headers: getCSVHeaders(),
     filename: `SentimentMeter-${new Date().toLocaleDateString()}.csv`
   };
-
-  const getDataByDay = async () => {
-    const response = await axios.get(`${DOMAIN}/api/dsm/sentiment-meter`);
-    setData(response.data);
-  }
-  useEffect(() => {
-    getDataByDay();
-    setSentimentUpdation(false);
-  }, [sentimentId, sentimentUpdation])
-
-  const handleSentimentHappy = async () => {
-    setFeelingHappy(!feelingHappy);
-    if (!feelingHappy && currentFeeling !== feeling.feeling_1 && currentFeeling !== '') {
-      await axios.patch(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`, {
-        sentiment: feeling.feeling_1
-      })
-      localStorage.setItem('currentFeeling', feeling.feeling_1);
-      setCurrentFeeling(feeling.feeling_1);
-      setSentimentUpdation(true);
-    }
-    else if (!feelingHappy) {
-      const response = await axios.post(`${DOMAIN}/api/dsm/sentiment-meter`, {
-        sentiment: feeling.feeling_1,
-        author: anonymusAuthor
-      })
-      setCurrentFeeling(feeling.feeling_1);
-      setSentimentId(response.data.sentimentId);
-      localStorage.setItem('currentFeeling', feeling.feeling_1);
-    }
-    else {
-      await axios.delete(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`)
-      setSentimentId(0);
-      setCurrentFeeling('');
-      localStorage.setItem('currentFeeling', '');
-    }
-    setFeelingGood(false);
-    setFeelingOk(false);
-    setFeelingBad(false);
-  }
-
-  const handleSentimentGood = async () => {
-    setFeelingGood(!feelingGood);
-    if (!feelingGood && currentFeeling !== feeling.feeling_2 && currentFeeling !== '') {
-      await axios.patch(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`, {
-        sentiment: feeling.feeling_2
-      })
-      localStorage.setItem('currentFeeling', feeling.feeling_2);
-      setCurrentFeeling(feeling.feeling_2);
-      setSentimentUpdation(true);
-    }
-    else if (!feelingGood) {
-      const response = await axios.post(`${DOMAIN}/api/dsm/sentiment-meter`, {
-        sentiment: feeling.feeling_2,
-        author: anonymusAuthor
-      })
-      setCurrentFeeling(feeling.feeling_2);
-      setSentimentId(response.data.sentimentId);
-      localStorage.setItem('currentFeeling', feeling.feeling_2);
-    }
-    else {
-      await axios.delete(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`)
-      setSentimentId(0);
-      setCurrentFeeling('');
-      localStorage.setItem('currentFeeling', '');
-    }
-    setFeelingHappy(false);
-    setFeelingOk(false);
-    setFeelingBad(false);
-  }
-
-  const handleSentimentOk = async () => {
-    setFeelingOk(!feelingOk);
-    if (!feelingOk && currentFeeling !== feeling.feeling_3 && currentFeeling !== '') {
-      await axios.patch(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`, {
-        sentiment: feeling.feeling_3
-      })
-      localStorage.setItem('currentFeeling', feeling.feeling_3);
-      setCurrentFeeling(feeling.feeling_3);
-      setSentimentUpdation(true);
-    }
-    else if (!feelingOk) {
-      const response = await axios.post(`${DOMAIN}/api/dsm/sentiment-meter`, {
-        sentiment: feeling.feeling_3,
-        author: anonymusAuthor
-      })
-      setCurrentFeeling(feeling.feeling_3);
-      setSentimentId(response.data.sentimentId);
-      localStorage.setItem('currentFeeling', feeling.feeling_3);
-    }
-    else {
-      await axios.delete(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`)
-      setSentimentId(0);
-      setCurrentFeeling('');
-      localStorage.setItem('currentFeeling', '');
-    }
-    setFeelingHappy(false);
-    setFeelingGood(false);
-    setFeelingBad(false);
-  }
-
-  const handleSentimentBad = async () => {
-    setFeelingBad(!feelingBad);
-    if (!feelingBad && currentFeeling !== feeling.feeling_4 && currentFeeling !== '') {
-      await axios.patch(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`, {
-        sentiment: feeling.feeling_4
-      })
-      localStorage.setItem('currentFeeling', feeling.feeling_4);
-      setCurrentFeeling(feeling.feeling_4);
-      setSentimentUpdation(true);
-    }
-    else if (!feelingBad) {
-      const response = await axios.post(`${DOMAIN}/api/dsm/sentiment-meter`, {
-        sentiment: feeling.feeling_4,
-        author: anonymusAuthor
-      })
-      setCurrentFeeling(feeling.feeling_4);
-      setSentimentId(response.data.sentimentId);
-      localStorage.setItem('currentFeeling', feeling.feeling_4);
-    }
-    else {
-      await axios.delete(`${DOMAIN}/api/dsm/sentiment-meter/${sentimentId}`)
-      setSentimentId(0);
-      setCurrentFeeling('');
-      localStorage.setItem('currentFeeling', '');
-    }
-    setFeelingHappy(false);
-    setFeelingGood(false);
-    setFeelingOk(false);
-  }
 
   return (
     <Grid item
@@ -260,98 +288,90 @@ export default function Sentiment() {
         marginBottom: "10px", paddingBottom: "10px",
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
-      }} height={gridHeightState.sentiment.height} >
-      <Grid item xs={gridHeightState.celebration.fullExpanded ? 8 : 12}>
+      }} height={breakpoint500 ? gridHeightState.sentiment.height : gridHeightState.sentiment.height} >
+      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12}>
         <Accordion expanded={gridHeightState.sentiment.expanded} onChange={handleExpandSentiment} sx={{
           height: gridHeightState.sentiment.expanded ? "100%" : "auto",
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <SentimentMeterDialog open={open} setOpen={setOpen} data={data} csvReport={csvReport} />
+            {isLeaderOrAdmin() &&
+              <SentimentMeterDialog
+                open={open} setOpen={setOpen}
+                feelingsArray={feelingsArray}
+                csvReport={csvReport}
+                weekStats={weekStats}
+                todayStats={todayStats}
+              />
+            }
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
               sx={{
                 flexGrow: 1,
+                paddingRight: 0,
+                paddingLeft: breakpoint391 ? "none" : "5px"
               }}
             >
-              <Typography onClick={preventParentClick(() => { })} variant="dsmMain"
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+              <Typography onClick={() => { }} variant="dsmMain"
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '10px' : "5px" }}
+                fontSize={breakpoint500 ? "1.25rem" : "1rem"}
                 width="100%" >
                 How are you feeling today?
-                <InformationModel heading={SentimentMeterInfo.heading}
+                <InformationModel
+                  heading={SentimentMeterInfo.heading}
                   definition={SentimentMeterInfo.definition}
                   accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />
               </Typography>
             </AccordionSummary>
-            <IconButton
-              sx={{ borderRadius: 100 }}
-              aria-label="more"
-              id="long-button"
-              aria-controls={open ? 'long-menu' : undefined}
-              aria-expanded={open ? 'true' : undefined}
-              aria-haspopup="true"
-              onClick={handleClick}
-            >
-              <MoreVertIcon sx={{ borderRadius: 50 }} />
-            </IconButton>
-            <Menu
-              id="long-menu"
-              MenuListProps={{
-                'aria-labelledby': 'long-button',
-              }}
-              anchorEl={anchorEl}
-              open={openMenu}
-              onClose={handleClose} >
-              <MenuItem onClick={handleDialog}>See Results</MenuItem>
-              <CSVLink {...csvReport} style={{ "text-decoration": "none", color: '#3D3D3D' }}>
-                <MenuItem onClick={handleClose}>
-                  Export Results
-                </MenuItem>
-              </CSVLink>
-            </Menu>
+            {isLeaderOrAdmin() &&
+              <IconButton
+                sx={{ borderRadius: 100, width: breakpoint391 ? "none" : "30px" }}
+                aria-label="more"
+                id="long-button"
+                aria-controls={open ? 'long-menu' : undefined}
+                aria-expanded={open ? 'true' : undefined}
+                aria-haspopup="true"
+                onClick={handleClick}
+              >
+                <MoreVertIcon sx={{ borderRadius: 50 }} />
+              </IconButton>
+            }
+            {isLeaderOrAdmin() &&
+              <Menu
+                id="long-menu"
+                MenuListProps={{
+                  'aria-labelledby': 'long-button',
+                }}
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleClose} >
+                <MenuItem onClick={handleDialog}>See Results</MenuItem>
+                <CSVLink {...csvReport} style={{ "text-decoration": "none", color: '#3D3D3D' }}>
+                  <MenuItem onClick={handleClose}>
+                    Export Results
+                  </MenuItem>
+                </CSVLink>
+              </Menu>
+            }
           </Box>
-          <AccordionDetails sx={{ padding: '0px' }}>
-            <Stack direction="row" spacing={10} sx={{ justifyContent: "center" }}>
-              <Box>
-                <IconButton onClick={handleSentimentHappy} sx={{ borderRadius: 100, padding: "0px", color: 'emoji.happy' }}>
-                  {
-                    feelingHappy ?
-                      <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: 40 }} />
-                      :
-                      <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: 40 }} />
-                  }
-                </IconButton>
-              </Box>
-              <IconButton onClick={handleSentimentGood} sx={{ borderRadius: 100, padding: "0px", color: 'emoji.good' }}>
-                {
-                  feelingGood ?
-                    <SentimentSatisfiedTwoToneIcon sx={{ fontSize: 40 }} />
-                    :
-                    <SentimentSatisfiedOutlinedIcon sx={{ fontSize: 40 }} />
-                }
-              </IconButton>
-              <IconButton onClick={handleSentimentOk} sx={{ borderRadius: 100, padding: "0px", color: 'emoji.ok' }}>
-                {
-                  feelingOk ?
-                    <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: 40 }} />
-                    :
-                    <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: 40 }} />
-                }
-              </IconButton>
-              <IconButton onClick={handleSentimentBad} sx={{ borderRadius: 100, padding: "0px", color: 'emoji.bad' }}>
-                {
-                  feelingBad ?
-                    <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: 40 }} />
-                    :
-                    <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: 40 }} />}
-              </IconButton>
-            </Stack>
+          <AccordionDetails sx={{ padding: '0px 5% 0px 0px' }}>
+            <Grid container direction="row" spacing={10} sx={{ justifyContent: "center" }}>
+              {feelings.map((feeling) => (
+                <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, padding: "0px", color: feeling.color }} >
+                    {feeling.name === sentimentResponse ?
+                      feeling.iconSelected : feeling.icon
+                    }
+                  </IconButton>
+                </Grid>
+              ))}
+            </Grid>
           </AccordionDetails>
         </Accordion>
       </Grid>
       {
-        gridHeightState.celebration.fullExpanded && (
+        breakpoint1080 && gridHeightState.celebration.fullExpanded && (
           <Grid item xs={1.7}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
@@ -362,14 +382,14 @@ export default function Sentiment() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography variant='dsmSubMain'>Requests</Typography>
+                <Typography fontSize="1rem" variant='dsmSubMain'>Requests</Typography>
               </AccordionSummary>
             </Accordion>
           </Grid>
         )
       }
       {
-        gridHeightState.celebration.fullExpanded && (
+        breakpoint1080 && gridHeightState.celebration.fullExpanded && (
           <Grid item xs={2} height="auto">
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
@@ -380,7 +400,7 @@ export default function Sentiment() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography variant='dsmSubMain'>Announcements</Typography>
+                <Typography fontSize="1rem" variant='dsmSubMain'>Announcements</Typography>
               </AccordionSummary>
             </Accordion>
           </Grid>

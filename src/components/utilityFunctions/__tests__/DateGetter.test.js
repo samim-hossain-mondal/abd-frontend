@@ -12,4 +12,10 @@ describe('DateGetter', () => {
     const expectedDate = '1 Feb, 2021 12:00 AM';
     expect(dateGetter(date, true)).toEqual(expectedDate);
   });
+
+  it('should return [DD Mon, YYYY] when timestamp is null', () => {
+    const date = null;
+    const expectedDate = '[DD Mon, YYYY]';
+    expect(dateGetter(date)).toEqual(expectedDate);
+  });
 });

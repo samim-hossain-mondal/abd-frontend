@@ -22,7 +22,7 @@ export default function Announcements() {
   const DSMInViewPort = useContext(DSMViewportContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
-  const { user } = useContext(ProjectUserContext)
+  const { user } = useContext(ProjectUserContext);
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
