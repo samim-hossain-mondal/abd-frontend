@@ -53,6 +53,12 @@ const theme = createTheme({
     },
     logoBlue: {
       main: '#4B93FC',
+    },
+    success: {
+      main: '#4CAF50',
+    },
+    warning: {
+      main: '#f44336',
     }
   },
   components: {

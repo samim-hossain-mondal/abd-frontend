@@ -24,12 +24,14 @@ function CardBox({ title, description }) {
         component="p"
         sx={{
           fontSize: isSmallerScreen ? 23 : 20,
-          color: "text.primary",
+          // color: "text.primary",
           width: "100%",
           padding: 2,
           margin: 0,
-          backgroundColor: "grey.200",
-          borderBottom: "5px solid #e0e0e0",
+          backgroundColor: "#4d4b4b",
+          color: '#fefefe',
+          opacity: 0.9,
+          // borderBottom: "5px solid #e0e0e0",
         }}
       >
         {title}
@@ -40,7 +42,9 @@ function CardBox({ title, description }) {
           fontSize: { xs: 15, sm: 18}, 
           color: "text.primary", 
           width: "100%", 
-          px: 2 
+          padding: 2,
+          whiteSpace: "pre-wrap", 
+          margin: 0,
         }}
       >
         {description}
