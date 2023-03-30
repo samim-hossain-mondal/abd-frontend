@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/forbid-prop-types */
 import { React, useState } from 'react';
 import {
   Dialog,
@@ -149,6 +149,8 @@ export default function SentimentMeterDialog({ open, setOpen, csvReport, feeling
 SentimentMeterDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
-  /* eslint-disable react/forbid-prop-types */
-  data: PropTypes.array.isRequired,
-};
+  csvReport: PropTypes.object.isRequired,
+  feelingsArray: PropTypes.array.isRequired,
+  weekStats: PropTypes.array.isRequired,
+  todayStats: PropTypes.array.isRequired,
+}

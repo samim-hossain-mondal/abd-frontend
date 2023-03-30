@@ -274,7 +274,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   return (
-    <Box fullHeight sx={{display:"flex",justifyContent:"flex-end"}} className="cont">
+    <Box sx={{display:"flex",justifyContent:"flex-end"}} className="cont">
     <Dialog
     id="joiiii"
       open={open}
@@ -312,6 +312,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
             {projects &&
               projects.map((project) => (
                 <Box
+                  key={project?.projectId}
                   sx={{
                     display: "flex",
                     width: "80%",

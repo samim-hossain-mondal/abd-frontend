@@ -96,7 +96,7 @@ export default function CustomCard({ checkBox, data, type }) {
     if (isActionItem() && data?.issueLink) {
       return <Link fontSize="0.95rem" target='_blank' href={data?.issueLink ?? '#'} variant="contained" sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>ISSUE LINK</Link>
     }
-    return true;
+    return ' ';
   }
 
   const renderCheckBox = () => {

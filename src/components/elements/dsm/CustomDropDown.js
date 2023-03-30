@@ -25,7 +25,7 @@ export default function CustomDropDown({ isMenu, value, openDropDown, setOpenDro
     <Grid container spacing={1} sx={{ padding: '5px', paddingLeft: '10px', height: '100%' }} role="button" onClick={() => setOpenDropDown(!openDropDown)}>
       <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
         <SegmentRoundedIcon sx={{
-          '-webkit-transform': 'scaleX(-1)',
+          WebkitTransform: 'scaleX(-1)',
           transform: 'scaleX(-1)'
         }} />
       </Grid>

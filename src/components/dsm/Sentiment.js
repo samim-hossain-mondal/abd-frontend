@@ -113,6 +113,7 @@ export default function Sentiment() {
     }
   }
 
+  // feeling name is treated as ID, hence it should be different for each feeling
   const feelings = [
     {
       name: 'HAPPY',
@@ -357,7 +358,7 @@ export default function Sentiment() {
           <AccordionDetails sx={{ p: 0 }}>
             <Grid container direction="row" sx={{ display: "flex", justifyContent: "center", height: "8vh" }}>
               {feelings.map((feeling) => (
-                <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Grid key={feeling.name} item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
                     {feeling.name === sentimentResponse ?
                       feeling.iconSelected : feeling.icon

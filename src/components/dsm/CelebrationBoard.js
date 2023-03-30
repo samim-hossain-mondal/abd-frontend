@@ -144,6 +144,7 @@ export default function CelebrationBoard() {
           <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={2}>
             {celebrations.map((celebration) => (
               <CelebrationCard
+                key={celebration?.celebrationId}
                 celebration={celebration}
                 isPreview={false}
                 onDeleteCelebration={onDeleteCelebration}
