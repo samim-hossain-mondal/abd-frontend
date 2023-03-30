@@ -45,7 +45,6 @@ function CardList() {
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
-  const [setShowAddProfile] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [searchValue, setSearchValue]= useState("");
   const handleSearchValueChange =(event)=>{
@@ -56,14 +55,6 @@ function CardList() {
       makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
         (response) => {
           setData(response);
-          const index = response.findIndex(
-            (item) => item.emailId === user.email
-          );
-          if (index === -1) {
-            setShowAddProfile(true);
-          } else {
-            setShowAddProfile(false);
-          }
         }
       );
     } catch (error) {
@@ -145,7 +136,6 @@ function CardList() {
             const updatedData = [...data, response];
             setData(updatedData);
             setIsAddCard(false);
-            setShowAddProfile(false);
             setSuccess("Information added successfully");
             handleCloseModal();
           } else {
@@ -178,8 +168,7 @@ function CardList() {
           });
           setData(updatedData);
           setSuccess("Information updated successfully");
-          setIsAddCard(false);
-          setShowAddProfile(false);
+          setIsAddCard(false)
           handleCloseModal();
         });
       } catch (error) {
@@ -208,7 +197,6 @@ function CardList() {
         (response) => {
           if (response.id === selectedItem.id) {
             setSuccess("Information deleted successfully");
-            setShowAddProfile(true);
           } else {
             setError("Error in deleting information");
             return;
@@ -237,14 +225,15 @@ function CardList() {
   };
   let filterData= data;
   if(filterData && searchValue!=="" )
+  {
   filterData = filterData.filter(
     (item) => {
-    const value = item.bio && item.bio.toLowerCase();
-    if(value)
-    return value.includes(searchValue.toLowerCase())
-    return false;
+    const value = item?.bio?.toLowerCase();
+    return value?.includes(searchValue?.toLowerCase())
+
     }
   );
+  }
   return (
     <>
       <DeleteDialog
@@ -254,16 +243,20 @@ function CardList() {
         description="Are you sure want to delete this Profile"
       />
       <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: "#e6eef2",
-        }}
-        className="body"
+          width= "100%"
+          display= "flex"
+          flexDirection= "column"
+          alignItems= "center"
+          backgroundColor= "#e6eef2"
+          className="body"
       >
-        <Box sx={{ width: "100%", height: "3%", marginRight:"23.5%",marginTop:"2%",display:"flex",justifyContent:"flex-end"}}>
+        <Box  
+          width= "100%"
+          height= "3%"
+          marginRight="23.5%"
+          marginTop="2%"
+          display="flex"
+          justifyContent="flex-end">
         <TextField  
         variant="outlined"
         placeholder="Search"
@@ -282,32 +275,26 @@ function CardList() {
       />
         </Box>
         <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            height: "90vh",
-          }}
+            width= "100%" 
+            display= "flex" 
+            justifyContent= "center"
+            height= "90vh"
         >
           <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              width: "95%",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              backgroundColor: "#e6eef2",
-              overflow: "scroll",
-            }}
+              display= "flex"
+              width= "95%"
+              flexWrap= "wrap"
+              justifyContent= "center"
+              backgroundColor= "#e6eef2"
+              overflow= "scroll"
+          
           >
             <Box
-              sx={{
-                marginTop: "0%",
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                width: "85%",
-              }}
+                marginTop= "0%"
+                display= "flex"
+                flexDirection= "row"
+                flexWrap= "wrap"
+                width= "85%"
             >
               {filterData &&
                 filterData.map((item) => (
@@ -326,16 +313,14 @@ function CardList() {
                   >
                     <Box onClick={() => handleOpenModal(item)}>
                       <Box
-                        sx={{
-                          backgroundColor: "whitesmoke",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          alignItems: "center",
-                          width: "95%",
-                          height: "50px",
-                          padding: "0 5% 0 0",
-                        }}
+                          backgroundColor= "whitesmoke"
+                          display= "flex"
+                          flexDirection= "row"
+                          justifyContent= "flex-end"
+                          alignItems= "center"
+                          width= "95%"
+                          height= "50px"
+                          padding= "0 5% 0 0"
                       >
                         {(!item.startDate || !item.endDate) && "No value"}
                         {item.startDate &&
@@ -348,50 +333,42 @@ function CardList() {
                             : " - Till Date")}
                       </Box>
                       <Box
-                        sx={{
-                          fontSize: "xx-large",
-                          backgroundColor: "white",
-                          height: "60px",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          padding: "4% 0% 0% 6%",
-                        }}
+                          fontSize= "xx-large"
+                          backgroundColor="white"
+                          height= "60px"
+                          display= "flex"
+                          flexDirection= "row"
+                          justifyContent= "flex-start"
+                          padding= "4% 0% 0% 6%"
                       >
                         {item.name ? item.name : "Name not provided"}
                       </Box>
                       <Box
-                        sx={{
-                          color: "#8A9DAB",
-                          backgroundColor: "white",
-                          padding: "0% 0 2% 6%",
-                          fontSize: "large",
-                        }}
+                          color= "#8A9DAB"
+                          backgroundColor= "white"
+                          padding="0% 0 2% 6%"
+                          fontSize="large"
                       >
                         {item.emailId}
                       </Box>
                       <Box
-                        sx={{
-                          color: "#8A9DAB",
-                          backgroundColor: "white",
-                          padding: "0% 0 7% 6%",
-                          fontSize: "large",
-                        }}
+                          color= "#8A9DAB"
+                          backgroundColor= "white"
+                          padding= "0% 0 7% 6%"
+                          fontSize= "large"
                       >
                         {item.projectRole
                           ? item.projectRole
                           : "Project Role not provided"}
                       </Box>
                       <Box
-                        sx={{
-                          backgroundColor: "whitesmoke",
-                          color: "blue",
-                          height: "50px",
-                          display: "flex",
-                          fontSize: "large",
-                        }}
+                          backgroundColor= "whitesmoke"
+                          color= "blue"
+                          height= "50px"
+                          display= "flex"
+                          fontSize= "large"
                       >
-                        <Box sx={{ margin: "2% 5% 2% 2%" }}>
+                        <Box  margin= "2% 5% 2% 2%" >
                           <Button
                             href={item.message}
                             target="_blank"
@@ -422,27 +399,23 @@ function CardList() {
                 }}
               >
                 <Box
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    right: "50%",
-                    width: "35%",
-                    marginTop: "2%",
-                    marginBottom: "2%",
-                    height: "88%",
-                    overflow: "scroll",
-                    backgroundColor: "#fff",
-                    padding: "1rem",
-                    borderRadius: "4px",
-                  }}
+                    top= "50%"
+                    left= "50%"
+                    right= "50%"
+                    width= "35%"
+                    marginTop="2%"
+                    marginBottom= "2%"
+                    height="88%"
+                    overflow= "scroll"
+                    backgroundColor= "#fff"
+                    padding= "1rem"
+                    borderRadius= "4px"
                 >
                   <Box
-                    sx={{
-                      justifyContent: "space-between",
-                      width: "100%",
-                      display: "flex",
-                      columnGap: "2%",
-                    }}
+                      justifyContent= "space-between"
+                      width= "100%"
+                      display= "flex"
+                      columnGap= "2%"
                   >
                     <Box>
                       <Typography variant="h5">Details</Typography>
