@@ -6,12 +6,13 @@ import {
   Modal,
   TextField,
   Button,
-  TextareaAutosize,
  InputAdornment } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
 import { Search } from '@mui/icons-material';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
@@ -24,6 +25,7 @@ import SlackLogo from "../../assets/images/Slack_icon.png";
 import { ErrorContext } from "../contexts/ErrorContext";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import DeleteDialog from "../elements/DeleteDialog";
+
 
 function CardList() {
   const { projectId } = useParams();
@@ -43,13 +45,12 @@ function CardList() {
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
   const [message, setMessage] = useState("");
-  const [showAddProfile, setShowAddProfile] = useState(null);
+  const [setShowAddProfile] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [searchValue, setSearchValue]= useState("");
   const handleSearchValueChange =(event)=>{
     setSearchValue(event.target.value);
   }
-
   useEffect(() => {
     try {
       makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
@@ -186,7 +187,7 @@ function CardList() {
       }
     }
   };
-  
+
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
     return dateInengbFormat.toLocaleDateString("en-GB");
@@ -237,7 +238,6 @@ function CardList() {
   let filterData= data;
   if(filterData && searchValue!=="" )
   filterData = filterData.filter(
-    // check item.bio contains the sercahValue
     (item) => {
     const value = item.bio && item.bio.toLowerCase();
     if(value)
@@ -263,17 +263,18 @@ function CardList() {
         }}
         className="body"
       >
-        <Box sx={{ width: "95%", height: "3%" }}>
-        <TextField
+        <Box sx={{ width: "100%", height: "3%", marginRight:"23.5%",marginTop:"2%",display:"flex",justifyContent:"flex-end"}}>
+        <TextField  
         variant="outlined"
         placeholder="Search"
         value={searchValue}
         onChange={handleSearchValueChange}
+        style={{backgroundColor:"white", color:"blue"}}
         InputProps={{
           endAdornment: (
-            <InputAdornment position="end">
-              <IconButton>
-                <Search />
+            <InputAdornment position="end" color="blue">
+              <IconButton color="blue">
+                <Search color="blue" />
               </IconButton>
             </InputAdornment>
           ),
@@ -490,20 +491,28 @@ function CardList() {
                   >
                     Enter your work in the project
                   </Box>
-                  <TextareaAutosize
-                    label="Your work in the project"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
-                    minRows={13}
-                    className="my-textarea"
+                  <CKEditor
+                    editor={ClassicEditor}
                     disabled={!(emailId === user.email)}
-                    style={{
-                      fontFamily: "Roboto",
-                      fontSize: "large",
-                      width: "97%",
-                      padding: "1%",
+                    config={{
+                      toolbar:(emailId === user.email) ? [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'link',
+                        'bulletedList',
+                        'numberedList',
+                        'blockQuote',
+                        'insertTable',
+                        'undo',
+                        'redo',
+                      ]:[],
                     }}
+                    onChange={(event, editor) => {
+                      setBio(editor.getData());
+                    }}
+                    data={bio || "Value not provided"}
                   />
                   <TextField
                     label="Your project Role in the project"
