@@ -116,26 +116,26 @@ export default function Sentiment() {
   const feelings = [
     {
       name: 'HAPPY',
-      icon: <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
-      iconSelected: <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      icon: <SentimentVerySatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 50 : 30 }} />,
+      iconSelected: <SentimentVerySatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
       color: 'emoji.happy'
     },
     {
       name: 'GOOD',
-      icon: <SentimentSatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
-      iconSelected: <SentimentSatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      icon: <SentimentSatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 50 : 30 }} />,
+      iconSelected: <SentimentSatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
       color: 'emoji.good'
     },
     {
       name: 'OK',
-      icon: <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
-      iconSelected: <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      icon: <SentimentDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 50 : 30 }} />,
+      iconSelected: <SentimentDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
       color: 'emoji.ok'
     },
     {
       name: 'BAD',
-      icon: <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
-      iconSelected: <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 80 : 50 }} />,
+      icon: <SentimentVeryDissatisfiedOutlinedIcon sx={{ fontSize: breakpoint391 ? 50 : 30 }} />,
+      iconSelected: <SentimentVeryDissatisfiedTwoToneIcon sx={{ fontSize: breakpoint391 ? 60 : 40 }} />,
       color: 'emoji.bad'
     }
   ]
@@ -164,7 +164,6 @@ export default function Sentiment() {
 
   const getSentimeterStats = async (queryDate) => {
     try {
-      // Date from query/filter
       if (isLeaderOrAdmin()) {
         const resData = await getSentiments(queryDate);
         return resData;
@@ -293,7 +292,7 @@ export default function Sentiment() {
         <Accordion expanded={gridHeightState.sentiment.expanded} onChange={handleExpandSentiment} sx={{
           height: gridHeightState.sentiment.expanded ? "100%" : "auto",
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '8vh' }}>
             {isLeaderOrAdmin() &&
               <SentimentMeterDialog
                 open={open} setOpen={setOpen}
@@ -314,8 +313,8 @@ export default function Sentiment() {
               }}
             >
               <Typography onClick={() => { }} variant="dsmMain"
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '10px' : "5px" }}
-                fontSize={breakpoint500 ? "1.25rem" : "1rem"}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
+                fontSize={breakpoint500 ? "1.25rem" : "1rem"} paddingLeft="6%"
                 width="100%" >
                 How are you feeling today?
                 <InformationModel
@@ -355,11 +354,11 @@ export default function Sentiment() {
               </Menu>
             }
           </Box>
-          <AccordionDetails sx={{ padding: '0px 5% 0px 0px' }}>
-            <Grid container direction="row" spacing={10} sx={{ justifyContent: "center" }}>
+          <AccordionDetails sx={{ p: 0 }}>
+            <Grid container direction="row" sx={{ display: "flex", justifyContent: "center", height: "8vh" }}>
               {feelings.map((feeling) => (
-                <Grid item xs={2} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, padding: "0px", color: feeling.color }} >
+                <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
                     {feeling.name === sentimentResponse ?
                       feeling.iconSelected : feeling.icon
                     }
