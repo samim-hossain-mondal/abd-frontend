@@ -247,6 +247,7 @@ export default function Requests() {
               content={request.content}
               date={new Date(request.createdAt)}
               onClick={() => handleChatClick(request)}
+              chipContent={request.type}
               afterDate={
                 isRequestCompleted(request.status) ? (
                   <DoneIcon
