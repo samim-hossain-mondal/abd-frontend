@@ -15,6 +15,7 @@ import {
   useMediaQuery
 }
   from '@mui/material';
+import stc from 'string-to-color';
 import PropTypes from 'prop-types';
 import MenuIcon from '@mui/icons-material/Menu';
 import { allPages, WELCOME_ROUTE } from '../constants/routes';
@@ -27,7 +28,7 @@ const settings = ['Profile', 'Account Settings', 'Logout'];
 
 export default function Navbar({ authLoaded }) {
   const pages = allPages
-  const { projectId } = useContext(ProjectUserContext)
+  const { projectId, user } = useContext(ProjectUserContext)
   const { oktaAuth, authState } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const aboveTablet = useMediaQuery('(min-width: 769px)');
@@ -108,7 +109,13 @@ export default function Navbar({ authLoaded }) {
               <Box sx={{ textAlign: 'right', flexGrow: '1' }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="PO" src="/static/images/avatar/2.jpg" />
+                  {
+                    user?.name ?
+                    <Avatar sx={{ bgcolor: stc(user?.name) }}>
+                      {user.name[0].toUpperCase()}
+                    </Avatar>
+                    : <Avatar />
+                  }
                   </IconButton>
                 </Tooltip>
                 <Menu
