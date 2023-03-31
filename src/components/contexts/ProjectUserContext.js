@@ -79,6 +79,7 @@ export function ProjectUserProvider({ children }) {
 
   const fetchProjectInfo = async () => {
     const { memberId } = user;
+    console.log("memberId", memberId);
     if (memberId !== null && projects.length > 0) {
       const requests = projects.map((project) =>
         axios

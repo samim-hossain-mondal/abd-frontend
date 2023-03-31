@@ -34,7 +34,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
       .catch((error) => {
         setError(error.response.data.message);
       });
-  }, []);
+  }, [open]);
 
   const handleClose = () => {
     setOpenSettings(false);
@@ -75,6 +75,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const addCollaborator = (lock) => {
+    console.log("projectInfo", projectInfo);
     if (projectInfo.role === "ADMIN" || projectInfo.role === "LEADER") {
       if (!lock) {
         const newCollaborator = { email: "", role: "", isNew: true };
