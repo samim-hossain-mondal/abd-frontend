@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SecureRoute should render 1`] = `
+<div>
+  loading ...
+  <div
+    class="MuiBox-root css-0"
+  />
+</div>
+`;

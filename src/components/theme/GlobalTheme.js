@@ -50,6 +50,15 @@ const theme = createTheme({
     poNotesHeader: {
       main: '#051C2C',
       contrastText: '#FFFFFF'
+    },
+    logoBlue: {
+      main: '#4B93FC',
+    },
+    success: {
+      main: '#4CAF50',
+    },
+    warning: {
+      main: '#f44336',
     }
   },
   components: {

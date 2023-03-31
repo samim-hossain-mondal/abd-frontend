@@ -138,7 +138,7 @@ export default function CelebrationGenericModal({
 
             {/* Title */}
             <Box sx={{ margin: '0 0 16px 0' }}>
-              <Typography variant="contentMain" marginButtom="20px" sx={{ fontSize: '16px', color: '#121212' }}>{title}</Typography>
+              <Typography variant="contentMain" sx={{ fontSize: '16px', color: '#121212' }}>{title}</Typography>
             </Box>
             <CustomDropDown isMenu={false} value={newCelebration.type} openDropDown={lock ? false : openDropDown} setOpenDropDown={lock ? () => { } : setOpenDropDown} />
             <Box
@@ -152,7 +152,7 @@ export default function CelebrationGenericModal({
               }}>
               {celebrationTypes.map((type) => {
                 if (type !== newCelebration.type)
-                  return <CustomDropDown isMenu value={type} handleChange={handleChange} />
+                  return <CustomDropDown key={type} isMenu value={type} handleChange={handleChange} />
                 return null;
               }
 
@@ -161,7 +161,7 @@ export default function CelebrationGenericModal({
 
             {/* TextField */}
             <Box sx={{ margin: '16px 0 10px 0' }}>
-              <Typography variant='contentMain' sx={{ 'font-weight': 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
+              <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
             </Box>
 
             <RichTextArea
@@ -184,7 +184,7 @@ export default function CelebrationGenericModal({
                 '&.Mui-checked': {
                   color: '#08A0F7',
                 }
-              }} onChange={() => updateAnonymous(!newCelebration.anonymous)} defaultChecked={newCelebration.anonymous} />} label="Post Anonymously" />
+              }} onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />} label="Post Anonymously" />
 
           </Box>
       }

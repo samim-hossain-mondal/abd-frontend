@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { TextField, useMediaQuery } from '@mui/material';
-import {useDebouncedCallback} from 'use-debounce';
+import { useDebouncedCallback } from 'use-debounce';
 import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar({ query, setQuery }) {
 
   const [searchInput, setSearchInput] = useState(query.search);
-  const aboveTablet = useMediaQuery('(min-width: 769px)');
+  const breakpoint391 = useMediaQuery('(min-width: 391px)');
 
   const debounced = useDebouncedCallback(
     (value) => {
@@ -23,18 +23,19 @@ export default function SearchBar({ query, setQuery }) {
   }
 
   return (
-    <form onSubmit={(e)=>{handleSubmit(e)}} onChange={(e)=>debounced(e.target.value)}>
+    <form onSubmit={(e)=>{handleSubmit(e)}} onChange={(e)=>debounced(e.target.value)} data-testid='search-form'>
       <TextField
         id="search-bar"
+        data-testid="search-bar"
         className="text"
         label="Search"
         variant="outlined" placeholder="Search..." size="small"
         InputProps={{
           endAdornment: (
-            <SearchIcon sx={{ color: 'primary.main' }}/>
+            <SearchIcon sx={{ color: 'primary.main' }} />
           ),
         }}
-        sx={{ width: aboveTablet ? '200px' : '138px' }}
+        sx={{ width: breakpoint391 ? '200px' : "148px" }}
       />
     </form>
   );

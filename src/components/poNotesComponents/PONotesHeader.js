@@ -27,29 +27,37 @@ export default function PONotesHeader({ query, setQuery }) {
     setPositioningReferenceElement(null);
   };
 
-  const aboveTablet = useMediaQuery('(min-width: 769px)');
+  const aboveTablet = useMediaQuery('(min-width: 650px)');
+  const breakpoint391 = useMediaQuery('(min-width: 391px)');
   const open = Boolean(positioningReferenceElement);
   const id = open ? 'simple-popover' : undefined;
 
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
-      <Container maxWidth="xl" padding='0' margin='0'>
+      <Container maxWidth="xl" padding='0' margin='20px'>
         <Toolbar disableGutters sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ flexGrow: 2, display: { md: 'flex' } }}>
+          <Box
+            height={aboveTablet ? "auto" : "60px"}
+            sx={{ flexGrow: 2, display: { md: 'flex' } }}
+          >
             <Typography
+              height="100%"
+              display="flex"
+              alignItems="center"
               data-testid="poNotesIdentifier"
               variant={aboveTablet ? 'h5' : 'h6'}
               noWrap
+              fontSize="1.5rem"
               sx={{ ml: 5, mr: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
             >
               PO Notes
             </Typography>
           </Box>
-          <Box sx={{ flexGrow: 0.2, display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <Box sx={{ flexGrow: 0.2, display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', marginBottom: aboveTablet ? "none" : "20px" }}>
             <Box sx={{ mr: 1 }}>
               <SearchBar query={query} setQuery={setQuery} />
             </Box>
-            <FormControl id="demo-select-small" sx={(aboveTablet) ? { minWidth: '200px' } : { minWidth: '140px' }} size="small">
+            <FormControl id="demo-select-small" sx={{ minWidth: breakpoint391 ? '200px' : "148px" }} size="small">
               <InputLabel id="demo-select-small">
                 <Box display='flex' align-items='center'>
                   Quick Filters
@@ -84,10 +92,17 @@ export default function PONotesHeader({ query, setQuery }) {
                 }} />
               </Popover>
             </FormControl>
+            {!aboveTablet &&
+              <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end', alignContent: "center" }}>
+                <AddPONotes />
+              </Box>
+            }
           </Box>
-          <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <AddPONotes />
-          </Box>
+          {aboveTablet &&
+            <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end', alignContent: "center" }}>
+              <AddPONotes />
+            </Box>
+          }
         </Toolbar>
       </Container>
     </AppBar >

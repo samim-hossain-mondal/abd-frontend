@@ -5,6 +5,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DateTimePicker from '../../elements/timeline/DateTimePicker/Index';
+import DeleteDialog from '../../elements/DeleteDialog';
 
 export default function GenericInputModal({
   onCloseButtonClick,
@@ -26,6 +27,8 @@ export default function GenericInputModal({
   const [isRisk, setIsRisk] = useState(defaultIsRisk ?? false);
   const [startDate, setStartDate] = useState(defaultStartDate ?? new Date());
   const [endDate, setEndDate] = useState(defaultEndDate ?? new Date());
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  
   const breakpoint411 = useMediaQuery('(min-width:411px)');
   return (
     <Box
@@ -39,6 +42,13 @@ export default function GenericInputModal({
         position: 'relative'
       }}
     >
+      <DeleteDialog
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
+        handleDelete={()=>{handleDelete(defaultID)}}
+        description="Are you sure you want to delete this ?"
+      />
+
       {
         ((handleDelete===undefined)||(isDisabled))? (
           <Box sx={{ textAlign: 'right' }}>
@@ -50,7 +60,7 @@ export default function GenericInputModal({
           <Box
             sx={{ textAlign: 'right'}}
           >
-            <IconButton data-testid='delete-icon' onClick={()=>{handleDelete(defaultID)}} sx={{ padding: 0 }}>
+            <IconButton data-testid='delete-icon' onClick={()=>{setOpenDeleteDialog(true)}} sx={{ padding: 0 }}>
               <DeleteForeverIcon />
             </IconButton>
             <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>

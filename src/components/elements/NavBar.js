@@ -52,8 +52,8 @@ export default function Navbar({ authLoaded }) {
   const location = useLocation();
   return (
     <AppBar
-      position="static"
-      sx={{ background: "transparent", boxShadow: "none", padding: '16px 0px' }}
+      position="fixed"
+      sx={{ backgroundColor: 'white', boxShadow: "none", padding: '16px 0px' }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex' }}>
@@ -65,7 +65,7 @@ export default function Navbar({ authLoaded }) {
             (aboveTablet) ? (
               <Box sx={{ paddingLeft: '16px', textAlign: 'center' }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
@@ -73,7 +73,7 @@ export default function Navbar({ authLoaded }) {
             ) : (
               <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2 }}>
                 <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h4'} color="secondary.main"
+                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>

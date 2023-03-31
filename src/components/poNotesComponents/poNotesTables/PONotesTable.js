@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Paper, CircularProgress, useMediaQuery } from '@mui/material'
+import { Box, Paper, CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -12,18 +12,15 @@ import { RefreshContext } from '../../contexts/RefreshContext';
 import PONotesViewportContext from '../../contexts/PONotesViewportContext';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import { GET_PO_NOTES } from '../../constants/apiEndpoints';
+import { PO_NOTES_TYPES } from '../../constants/PONotes';
 
-const getStatusQuery = (type, status) => {
-  if (type === 'KEY_DECISION' && status !== 'DRAFT') return '';
-  return `&status=${status}`;
-}
 const getApiUrlQuery = (type, query, page, limit) => {
   const apiQuery = {
     type,
     page,
     limit,
-    ...(query.status && {
-      status: getStatusQuery(type, query.status)
+    ...(query.status && type !== PO_NOTES_TYPES.KEY_DECISION && {
+      status: query.status
     }),
     ...(query.search && {
       search: query.search
@@ -50,7 +47,8 @@ export default function PONotesTable(props) {
 
   const type = HEADINGS[heading].toUpperCase();
   const apiUrlQuery = getApiUrlQuery(type, query, 1, 100);
-  const breakpoint500 = useMediaQuery('(min-width:500px)');
+
+  // const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const getPONotes = async () => {
     try {
@@ -102,8 +100,11 @@ export default function PONotesTable(props) {
   const countOfItems = poNotes.length;
   return (
     poNotes ?
-      <Box sx={{ width: (breakpoint500) ? '480px' : '280px' }}>
-        <Box component={Paper} sx={{ height: '80vh' }}>
+      <Box
+        sx={{
+          width: "100%"
+        }}>
+        <Box component={Paper} sx={{ height: '80vh', width: "100%" }}>
           <Box aria-label='simple table'>
             <Box>
               <Box align='center' sx={{

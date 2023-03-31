@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography,List, ListItem, ListItemButton } from '@mui/material';
+import { Button, IconButton, Typography, List, ListItem, ListItemButton } from '@mui/material';
 
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
@@ -13,6 +13,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getAllMembersData } from '../../utilityFunctions/User';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import { ErrorContext } from '../../contexts/ErrorContext';
+import DeleteDialog from '../DeleteDialog';
 
 function Item({ entity: { name, char } }) {
   return (
@@ -50,15 +51,26 @@ export default function GenericInputModal({
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
-  const {setSuccess, setError} = useContext(ErrorContext);
+  const { setSuccess, setError } = useContext(ErrorContext);
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
-  });
+  }, []);
 
   const getSimilarUsers = (text) => {
     const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));
     return similarUsers.map((user) => ({ name: user.email, char: '@' }));
+  }
+
+  const handleChangeTextArea = (e) => {
+    if(e.target.value.length > 300)
+    {
+      setError("You can't write more than 300 characters");
+      return;
+    }
+    setContent(e.target.value);
   }
 
   return (
@@ -80,6 +92,12 @@ export default function GenericInputModal({
       }
       }
     >
+      <DeleteDialog
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
+        handleDelete={deleteRequest}
+        description="Are you sure you want to delete this ?"
+      />
       {/* Action Buttons */}
       {
         (isDisabled !== undefined)
@@ -90,7 +108,9 @@ export default function GenericInputModal({
                 justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              {authorize && <IconButton onClick={deleteRequest} sx={{ padding: 0 }}>
+              {authorize && <IconButton onClick={() => {
+                setOpenDeleteDialog(true);
+              }} sx={{ padding: 0 }}>
                 <DeleteForeverIcon date-testid='delete-icon' />
               </IconButton>}
               <Box>
@@ -115,27 +135,16 @@ export default function GenericInputModal({
 
 
       {/* Title */}
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        mt: '8px'
-      }}>
-        <Typography variant="h5">{title}</Typography>
-        <ContentCopyIcon onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(content);
-            setSuccess('Copied to clipboard')
-          } catch (err) {
-            setError('Failed to copy to clipboard');
-          }
-        }} />
-      </Box>
+      <Typography variant="h5" sx={{
+        mt: '8px',
+      }}>{title}</Typography>
 
       {/* TextField */}
       <Box sx={{
         width: '100%',
         margin: '16px 0',
-        padding: 0
+        padding: 0,
+        position: 'relative'
       }}>
         <ReactTextareaAutocomplete
           className="autocomplete-textarea"
@@ -146,20 +155,24 @@ export default function GenericInputModal({
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
             multiline: true,
             rows: 4,
+            borderRadius: '8px',
             fontSize: '16px',
             lineHeight: '20px',
             height: '130px',
             fontFamily: 'Roboto, sans-serif',
+            resize: 'none'
           } : {
             width: '80%',
             padding: '20px',
             boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
+            borderRadius: '8px',
             multiline: true,
             rows: 4,
             fontSize: '16px',
             lineHeight: '20px',
             height: '130px',
             fontFamily: 'Roboto, sans-serif',
+            resize: 'none'
           }}
           containerStyle={{
             width: '100%',
@@ -186,9 +199,23 @@ export default function GenericInputModal({
           value={content}
           rows={4}
           placeholder={placeholder}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => handleChangeTextArea(e)}
           disabled={isDisabled}
         />
+
+        <ContentCopyIcon sx={{
+          position: 'absolute',
+          right: '16px',
+          bottom: '16px',
+          cursor: 'pointer',
+        }} onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            setSuccess('Copied to clipboard')
+          } catch (err) {
+            setError('Failed to copy to clipboard');
+          }
+        }} />
       </Box>
 
       {children}

@@ -103,10 +103,25 @@ export const CREATE_ANNOUNCMENT = (projectId) => ({
   method: 'post',
 })
 
+export const UPDATE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'patch',
+})
+
+export const DELETE_ANNOUNCMENT = (projectId, announcementId) => ({
+  url: `api/dsm/announcements/${projectId}/${announcementId}`,
+  method: 'delete',
+})
+
 // ***** sentiments  Endpoints *****
 
-export const GET_SENTIMENTS = (projectId) => ({
-  url: `api/dsm/sentiment-meter/${projectId}`,
+export const GET_SENTIMENTS_BY_DATE = (projectId, date) => ({
+  url: `api/dsm/sentiment-meter/${projectId}/date/${date}`,
+  method: 'get',
+})
+
+export const GET_TODAY_SENTIMENT_OF_MEMBER = (projectId) => ({
+  url: `api/dsm/sentiment-meter/${projectId}/today`,
   method: 'get',
 })
 
@@ -163,6 +178,17 @@ export const GET_PROJECT_BY_ID = (projectId) => ({
   url: `api/management/project/${projectId}`,
   method: 'get',
 })
+
+export const CREATE_PROJECT = {
+  url: "/api/management/project",
+  method: 'post'
+}
+
+export const ADD_PROJECT_MEMBER = (projectId) => ({
+  url: `api/management/project/${projectId}/member`,
+  method: 'post',
+})
+
 
 // ***** madeToStick Endpoints *****
 export const GET_MADE_TO_STICK = (projectId) => ({

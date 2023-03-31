@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress, useMediaQuery } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import Masonry from '@mui/lab/Masonry';
@@ -18,6 +19,7 @@ import { GET_CELEBRATIONS } from '../constants/apiEndpoints';
 import { RefreshContext } from '../contexts/RefreshContext';
 
 export default function CelebrationBoard() {
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { projectId } = useParams();
   const { setError } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
@@ -46,7 +48,8 @@ export default function CelebrationBoard() {
   }
 
   const handleExpandCelebration = () => {
-    dispatchGridHeight({ type: 'CELEBRATION' })
+    if (breakpoint1080)
+      dispatchGridHeight({ type: 'CELEBRATION' })
   };
 
   const handleAddButtonClick = (e) => {
@@ -106,19 +109,21 @@ export default function CelebrationBoard() {
       paddingTop={gridHeightState.celebration.fullExpanded || !gridHeightState.sentiment.expanded ? topPadding : 'none'}
     >
       <Accordion
-        expanded={gridHeightState.celebration.expanded}
+        expanded={gridHeightState.celebration.expanded || !breakpoint1080}
         onChange={handleExpandCelebration} sx={{
           overflow: 'auto',
           height: gridHeightState.celebration.expanded ? '100%' : 'auto'
         }}>
         <AccordionSummary
-          expandIcon={(gridHeightState.celebration.fullExpanded) ?
-            <IconButton>
-              <FullscreenExitIcon />
-            </IconButton> :
-            <IconButton>
-              <FullscreenIcon />
-            </IconButton>}
+          expandIcon={
+            !breakpoint1080 ? null : ((gridHeightState.celebration.fullExpanded) ?
+              <IconButton>
+                <FullscreenExitIcon />
+              </IconButton> :
+              <IconButton>
+                <FullscreenIcon />
+              </IconButton>)
+          }
           aria-controls="panel2a-content"
           id="panel2a-header"
           sx={{
@@ -136,9 +141,10 @@ export default function CelebrationBoard() {
           </IconButton>
         </AccordionSummary>
         <AccordionDetails>
-          <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} spacing={2}>
+          <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={2}>
             {celebrations.map((celebration) => (
               <CelebrationCard
+                key={celebration?.celebrationId}
                 celebration={celebration}
                 isPreview={false}
                 onDeleteCelebration={onDeleteCelebration}

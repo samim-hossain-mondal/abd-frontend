@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress, useMediaQuery, FormControlLabel, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AddCircle as AddCircleIcon } from '@mui/icons-material';
+import { AddCircle as AddCircleIcon, Done as DoneIcon } from '@mui/icons-material';
 import { Stack } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
@@ -9,7 +9,7 @@ import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import { ErrorContext } from '../contexts/ErrorContext';
 import ChatContainer from '../elements/dsm/ChatContainer';
-import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME } from '../constants/dsm/Requests';
+import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, DSM_REQUEST_STATUS } from '../constants/dsm/Requests';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
@@ -17,20 +17,22 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import { REFETCH_INTERVAL } from '../../config';
 import { RefreshContext } from '../contexts/RefreshContext';
+import { isAdmin } from '../constants/users';
 /*
 ISSUES: 
         1. someplace key is missing console is showing error
 */
 
 export default function Requests() {
-
-  const { user } = useContext(ProjectUserContext);
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
+  const { user, userRole } = useContext(ProjectUserContext);
 
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
-  const { projectId } = useParams();
-
+  const DSMInViewPort = useContext(DSMViewportContext);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+  
+  const { projectId } = useParams();
 
   const handleExpandRequests = () => {
     dispatchGridHeight({ type: 'REQUEST' })
@@ -41,7 +43,6 @@ export default function Requests() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
-  const DSMInViewPort = useContext(DSMViewportContext);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
 
   const handleEditModalClose = () => {
@@ -115,7 +116,6 @@ export default function Requests() {
     return <div>Error! {error.message}</div>
   }
 
-
   const addRequestToDB = async (content) => {
     try {
       const reqBody = {
@@ -137,15 +137,14 @@ export default function Requests() {
       const reqBody = {
         content,
         type: requestType,
+        status: editModalData.status,
       }
       const resData = await makeRequest(UPDATE_TEAM_REQUEST(projectId, editModalData.requestId), { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setRequests(requests.map((request) => {
         if (request.requestId === editModalData.requestId) {
           return {
-            ...request,
-            content,
-            type: requestType,
+            ...resData
           }
         }
         return request;
@@ -175,7 +174,11 @@ export default function Requests() {
   };
 
   return (
-    <Grid item height={gridHeightState.request.height} sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}>
+    <Grid item height={gridHeightState.request.height}
+      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}
+      marginBottom={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "40px" : 'none'
+      }
+    >
       <Accordion expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
         height: gridHeightState.request.expanded ? '100%' : 'none',
         overflow: 'auto',
@@ -244,6 +247,21 @@ export default function Requests() {
               content={request.content}
               date={new Date(request.createdAt)}
               onClick={() => handleChatClick(request)}
+              chipContent={request.type}
+              afterDate={
+                isRequestCompleted(request.status) ? (
+                  <DoneIcon
+                    sx={{
+                      fontSize: "1rem",
+                      position: "relative",
+                      top: "2px",
+                      color: "green",
+                    }}
+                  />
+                ) : (
+                  ""
+                )
+              }
             />
           ))}
         </AccordionDetails>
@@ -264,32 +282,43 @@ export default function Requests() {
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteRequest}
-                authorize={user.memberId === editModalData.memberId}
+                authorize={user.memberId === editModalData.memberId || isAdmin(userRole)}
               >
                 <Typography>
                   Tags
                 </Typography>
                 <br />
-                {
-                  (!isDisabled)
-                    ? (
-                      <Stack spacing={1} direction="row">
-                        <Chip label="Meeting" onClick={() => setRequestType(DSM_REQUEST_TYPES[0])} color={requestType === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
-                        <Chip label="Resource" onClick={() => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
-                      </Stack>
-                    )
-                    : (
-                      <Stack spacing={1} direction="row">
-                        <Chip label="Meeting" color={editModalData.type === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
-                        <Chip label="Resource" color={editModalData.type === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
-                      </Stack>
-                    )
-                }
+                <Stack spacing={1} direction="row">
+                  <Chip label="Meeting" onClick={isDisabled ? undefined : () => setRequestType(DSM_REQUEST_TYPES[0])} color={requestType === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
+                  <Chip label="Resource" onClick={isDisabled ? undefined : () => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
+                </Stack>
+                <br />
+                {isAdmin(userRole) && !isDisabled && (
+                  <>
+                  {/* mui checkbox for status named as completed */}
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={isRequestCompleted(editModalData.status)}
+                          onChange={(e) => {
+                            setEditModalData({
+                              ...editModalData,
+                              status: e.target.checked ? DSM_REQUEST_STATUS.APPROVED : DSM_REQUEST_STATUS.PENDING,
+                            })
+                          }}
+                          name="completed"
+                          color="primary"
+                        />
+                      }
+                      label="Completed"
+                    />
+                  </>
+                )}
               </GenericInputModal>
             </Dialog>
           )
         }
       </Accordion>
-    </Grid>
+    </Grid >
   );
 };
