@@ -231,7 +231,7 @@ function CardList() {
   };
   function debounce(fn, delay) {
     let timerId;
-    return function (...args) {
+    return function handleTimeout(...args) {
       if (timerId) {
         clearTimeout(timerId);
       }
@@ -260,7 +260,8 @@ function CardList() {
   useEffect(() => {
     setFilteredData(data);
     debounce(() => filterContent(searchValue), 500)();
-  }, [data]);
+  }
+    , [data]);
   return (
     <Box sx={{ backgroundColor: "#e6eef2", display: "flex", height: "100vh" }}>
       <DeleteDialog
@@ -275,10 +276,12 @@ function CardList() {
         flexDirection="column"
         alignItems="center"
         backgroundColor="#e6eef2"
-        sx={{ overflow: "scroll" }}
+        className="body"
+        height="100vh"
+        sx={{ overflow: 'scroll' }}
       >
         <Box
-          sx={{ marginTop: "7%" }}
+          sx={{ marginTop: '10%' }}
           width="100%"
           height="3%"
           marginRight="20.5%"
@@ -492,7 +495,6 @@ function CardList() {
                       </IconButton>
                     </Box>
                   </Box>
-
                   <TextField
                     label="Enter your full name"
                     value={name}
@@ -537,18 +539,18 @@ function CardList() {
                       toolbar:
                         emailId === user.email
                           ? [
-                              "heading",
-                              "|",
-                              "bold",
-                              "italic",
-                              "link",
-                              "bulletedList",
-                              "numberedList",
-                              "blockQuote",
-                              "insertTable",
-                              "undo",
-                              "redo",
-                            ]
+                            "heading",
+                            "|",
+                            "bold",
+                            "italic",
+                            "link",
+                            "bulletedList",
+                            "numberedList",
+                            "blockQuote",
+                            "insertTable",
+                            "undo",
+                            "redo",
+                          ]
                           : [],
                     }}
                     onChange={(event, editor) => {

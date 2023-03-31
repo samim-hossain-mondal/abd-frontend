@@ -137,7 +137,7 @@ export default function CelebrationBoard({ selectedDate }) {
             }
           }}
         >
-          <Typography variant="dsmSubMain">Daily Retro Board</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>Daily Retro Board</Typography>
           {
             dateGetter(selectedDate) === dateGetter(new Date()) && (
               <IconButton onClick={(e) => handleAddButtonClick(e)}>

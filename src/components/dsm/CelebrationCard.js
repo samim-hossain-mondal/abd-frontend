@@ -76,7 +76,7 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         maxWidth: breakpoint391 ? "155px" : "95%",
         minWidth: breakpoint391 ? "155px" : "95%",
         cursor: !isPreview ? 'pointer' : '',
-        background: newCelebration.type === celebrationType.CELEBRATION ? '#FFF6C8' : '#FFC8C8',
+        backgroundColor: newCelebration.type === celebrationType.CELEBRATION ? 'cardBackground.main' : 'cardBackground.secondary',
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
       }}
       onClick={() => {
@@ -131,18 +131,17 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         {newCelebration.type === celebrationType.CELEBRATION ?
           <IconButton onClick={updateReaction}>
             {reacted ?
-              <ThumbUpAltIcon sx={{ color: '#1976d2' }} /> :
-              <ThumbUpOffAltIcon sx={{ color: '#1976d2', opacity: '0.5' }} />
+              <ThumbUpAltIcon sx={{ color: 'secondaryButton.primary' }} /> :
+              <ThumbUpOffAltIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
             }
             <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
           </IconButton> :
           <IconButton onClick={updateReaction}>
             {
               reacted ?
-                <PlusOneRoundedIcon sx={{ color: '#1976d2' }} /> :
-                <PlusOneRoundedIcon sx={{ color: '#1976d2', opacity: '0.5' }} />
+                <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary' }} /> :
+                <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
             }
-            {/* <PlusOneRoundedIcon sx={{color=...{!reacted ? '' : '#1976d2'} }}/> */}
             <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
           </IconButton>
         }

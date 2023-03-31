@@ -39,6 +39,7 @@ const theme = createTheme({
     },
     secondaryButton: {
       main: '#EEF2F5',
+      primary: '#1976d2',
       contrastText: '#000',
     },
     emoji: {
@@ -53,6 +54,10 @@ const theme = createTheme({
     },
     logoBlue: {
       main: '#4B93FC',
+    },
+    cardBackground: {
+      main: '#FFF6C8',
+      secondary: '#FFC8C8'
     },
     success: {
       main: '#4CAF50',

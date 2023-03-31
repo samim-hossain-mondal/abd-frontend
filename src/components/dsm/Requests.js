@@ -34,7 +34,7 @@ export default function Requests({ selectedDate }) {
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
-  
+
   const { projectId } = useParams();
 
   const handleExpandRequests = () => {
@@ -195,7 +195,7 @@ export default function Requests({ selectedDate }) {
           }}
         >
           {/* All Content/Development of Requests HEADER goes here */}
-          <Typography variant="dsmSubMain">Requests</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>Requests</Typography>
           {
             format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
               <IconButton onClick={(e) => handleAddButtonClick(e)}>
@@ -205,7 +205,6 @@ export default function Requests({ selectedDate }) {
           }
 
         </AccordionSummary>
-
         <Dialog
           open={openModal}
           onClose={handleModalClose}
@@ -298,7 +297,7 @@ export default function Requests({ selectedDate }) {
                 <br />
                 {isAdmin(userRole) && !isDisabled && (
                   <>
-                  {/* mui checkbox for status named as completed */}
+                    {/* mui checkbox for status named as completed */}
                     <FormControlLabel
                       control={
                         <Checkbox

@@ -315,7 +315,7 @@ export default function Sentiment() {
             >
               <Typography onClick={() => { }} variant="dsmMain"
                 sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
-                fontSize={breakpoint500 ? "1.25rem" : "1rem"} paddingLeft="6%"
+                fontSize={breakpoint500 ? "1.65rem" : "1.25rem"} paddingLeft="6%" textTransform='none'
                 width="100%" >
                 How are you feeling today?
                 <InformationModel

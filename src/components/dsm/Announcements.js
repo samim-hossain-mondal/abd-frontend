@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress, Divider,Box } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress, Divider, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
@@ -106,7 +106,7 @@ export default function Announcements({ selectedDate }) {
     return <div>Error! {error.message}</div>
   }
 
-  const addAnnouncementToDB = async (content,title) => {
+  const addAnnouncementToDB = async (content, title) => {
     try {
       const reqBody = {
         content,
@@ -122,7 +122,7 @@ export default function Announcements({ selectedDate }) {
     }
   }
 
-  const handleEditAnnouncement = async (content,title) => {
+  const handleEditAnnouncement = async (content, title) => {
     try {
       const reqBody = {
         content,
@@ -185,7 +185,7 @@ export default function Announcements({ selectedDate }) {
             }
           }}
         >
-          <Typography variant="dsmSubMain">{TITLE}</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{TITLE}</Typography>
           {
             (userRole === USER_ROLES.ADMIN) && (dateGetter(selectedDate) === dateGetter(new Date())) &&  (
               <IconButton onClick={handleAddButtonClick}>
@@ -201,8 +201,8 @@ export default function Announcements({ selectedDate }) {
           <AnnouncementInputModal
             onCloseButtonClick={handleModalClose}
             primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
-            onPrimaryButtonClick={async (content,title) => {
-              const newAnnouncement = await addAnnouncementToDB(content,title);
+            onPrimaryButtonClick={async (content, title) => {
+              const newAnnouncement = await addAnnouncementToDB(content, title);
               if (newAnnouncement) {
                 getAnnouncements().then(resData => {
                   setAnnouncements(resData);
@@ -210,10 +210,7 @@ export default function Announcements({ selectedDate }) {
                 handleModalClose();
               }
             }}
-
             placeholder={DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER}
-
-          // TODO: add children component to check for addition on slack channel
           />
 
         </Dialog>
@@ -235,12 +232,12 @@ export default function Announcements({ selectedDate }) {
                 date={new Date(announcement.createdAt)}
                 onClick={() => handleChatClick(announcement)}
               />
-              <Divider variant="inset"/>
+              <Divider variant="inset" />
             </Box>
           ))}
 
         </AccordionDetails>
-        
+
         {
           (openEditModal) && (
             <Dialog
@@ -257,7 +254,7 @@ export default function Announcements({ selectedDate }) {
                 deleteRequest={handleDeleteAnnouncement}
                 authorize={user.memberId === editModalData?.memberId}
                 title={editModalData?.title}
-               />
+              />
             </Dialog>
           )
         }
