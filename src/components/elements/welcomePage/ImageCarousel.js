@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import PropTypes from "prop-types";
@@ -7,7 +7,6 @@ import { slides } from "../../constants/welcomePage";
 
 function Item({ title, description, image }) {
   const isLargeScreen = useMediaQuery("(min-width:600px)");
-
   return (
     <Box
       component="card"
@@ -79,12 +78,22 @@ function Item({ title, description, image }) {
 }
 
 function ImageCarousel() {
+  const [firstImgLoaded, setFirstImgLoaded] = useState(false);
   return (
+    <>
+    <img
+      alt="hack"
+      src={slides[0].image}
+      onLoad={() => setFirstImgLoaded(true)}
+      style={{ display: 'none' }}
+    />
+    {firstImgLoaded && (
     <Carousel
-      autoPlay
+      autoPlay={5000}
       animation="fade"
       indicators
       timeout={500}
+      swipe={false}
       navButtonsAlwaysVisible={false}
       cycleNavigation
       fullHeightHover={false}
@@ -129,7 +138,8 @@ function ImageCarousel() {
           image={slide.image}
         />
       ))}
-    </Carousel>
+    </Carousel>)}
+    </>
   );
 }
 

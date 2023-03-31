@@ -110,6 +110,7 @@ function ProjectCard({ project, handleProjectClick }) {
             padding: 1,
             justifyContent: "flex-start",
             width: isLargeScreen ? 8 : 6,
+            color: "logoBlue.main",
           }}
         >
           VIEW
@@ -118,6 +119,7 @@ function ProjectCard({ project, handleProjectClick }) {
           size="small"
           sx={{
             padding: 1,
+            color: "logoBlue.main"
           }}
         >
           <Tooltip title="Open project dashboard">

@@ -1,4 +1,4 @@
-import { React, useState, useContext } from "react";
+import { React, useState, useContext, } from "react";
 import {
   Box,
   Typography,
@@ -14,12 +14,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import CardBox from "../elements/welcomePage/CardBox";
-// import Logo from "../../assets/images/agileLogo.png";
 import { texts } from "../constants/welcomePage";
 import ImageCarousel from "../elements/welcomePage/ImageCarousel";
 import StickyHeader from "../elements/welcomePage/StickyHeader";
-// import ProfileCard from "../elements/welcomePage/ProfileCard";
-// import ProjectListItem from "../elements/welcomePage/ProjectListItem";
+// import ProfileCard from "../elements/welcomePage/ProfileCard"; // TODO: parked for now
 import NewProjectModal from "../elements/NewProjectModal";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import PaginatedCards from "../elements/welcomePage/PaginatedCards";
@@ -27,9 +25,7 @@ import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
   const navigate = useNavigate();
-  // const [stickyHeader, setStickyHeader] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  // const [showAddButton, setShowAddButton] = useState(true);
   const {
     user,
     projects: userProjects,
@@ -39,7 +35,6 @@ export default function WelcomePage() {
   const showProjectList = userProjects.length > 0;
 
   const handleProjectClick = async (projectId) => {
-    console.log("Project Clicked", projectId);
     updateProjectDetails(projectId)
       .then(() => {
         window.open(`/${projectId}`.concat(HOME_ROUTE), "_blank");
@@ -227,6 +222,7 @@ export default function WelcomePage() {
           boxShadow: 5,
           position: "relative",
           zIndex: "999",
+          marginTop: user.memberId ? 0 : 6, // TODO: Change this to a better solution
         }}
       >
         <Typography variant="h5" color="text.secondary" align="center" sx={{fontSize: isSmallerScreen ? 15 : 20}}>

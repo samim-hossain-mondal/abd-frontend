@@ -98,6 +98,7 @@ function StickyHeader({
             sx={{ 
               color: "logoBlue.main", 
               margin: 1,
+              marginInline: 2,
               padding: 1,
               fontWeight: "bold"
             }}
@@ -125,7 +126,9 @@ function StickyHeader({
           sx={{ 
             color: "logoBlue.main", 
             margin: 1,
+            // marginInline: 2,
             padding: 1,
+            px: 2,
             fontWeight: "bold",
           }}
             onClick={handleLoginClick}
