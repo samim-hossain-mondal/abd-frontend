@@ -6,11 +6,15 @@ import {
   Modal,
   TextField,
   Button,
-  TextareaAutosize,
+  InputAdornment,
+  Slide
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
+import { Search } from "@mui/icons-material";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
   POST_TEAM_INFORMATION,
@@ -31,6 +35,7 @@ function CardList() {
   const [today] = useState(new Date().toISOString().slice(0, 10));
   const [isMessageClicked, setIsMessageClicked] = useState(false);
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [memberId] = useState(user.memberId);
   const [isAddCard, setIsAddCard] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -41,22 +46,17 @@ function CardList() {
   const [emailId, setEmailId] = useState(user.email);
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
+  const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
-  const [showAddProfile, setShowAddProfile] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
   useEffect(() => {
     try {
       makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
         (response) => {
           setData(response);
-          const index = response.findIndex(
-            (item) => item.emailId === user.email
-          );
-          if (index === -1) {
-            setShowAddProfile(true);
-          } else {
-            setShowAddProfile(false);
-          }
+          setFilteredData(response);
         }
       );
     } catch (error) {
@@ -89,6 +89,7 @@ function CardList() {
     setBio(item.bio);
     setProjectRole(item.projectRole);
     setMessage(item.message);
+    setRole(item.role);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
@@ -97,6 +98,7 @@ function CardList() {
     setStartDate("");
     setEndDate("");
     setEmailId(emailId);
+    setRole(role);
     setProjectRole(projectRole);
     setBio("");
     setMessage("");
@@ -138,7 +140,6 @@ function CardList() {
             const updatedData = [...data, response];
             setData(updatedData);
             setIsAddCard(false);
-            setShowAddProfile(false);
             setSuccess("Information added successfully");
             handleCloseModal();
           } else {
@@ -162,9 +163,10 @@ function CardList() {
             endDate,
           },
         }).then((response) => {
-          response.emailId = emailId;
+          console.log(response)
           const updatedData = data.map((item) => {
             if (item.id === selectedItem.id) {
+              response.role= role;
               return response;
             }
             return item;
@@ -172,26 +174,12 @@ function CardList() {
           setData(updatedData);
           setSuccess("Information updated successfully");
           setIsAddCard(false);
-          setShowAddProfile(false);
           handleCloseModal();
         });
       } catch (error) {
         setError("Error in making the request");
       }
     }
-  };
-  const handleAddCard = () => {
-    const newCard = {
-      name,
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
-      emailId: user.email,
-      bio: "",
-      projectRole,
-      message: "",
-    };
-    setIsAddCard(true);
-    handleOpenModal(newCard);
   };
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
@@ -213,7 +201,6 @@ function CardList() {
         (response) => {
           if (response.id === selectedItem.id) {
             setSuccess("Information deleted successfully");
-            setShowAddProfile(true);
           } else {
             setError("Error in deleting information");
             return;
@@ -240,6 +227,39 @@ function CardList() {
   const handleMessageClick = () => {
     setIsMessageClicked(true);
   };
+  function debounce(fn, delay) {
+    let timerId;
+    return function (...args) {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        fn(...args);
+      }, delay);
+    };
+  }
+
+  const filterContent = (inputValue) => {
+    if (inputValue !== "") {
+      const filterData = data.filter((item) => {
+        const value = item?.bio?.toLowerCase();
+        return value?.includes(inputValue?.toLowerCase());
+      });
+      setFilteredData(filterData);
+    } else {
+      setFilteredData(data);
+    }
+  };
+  const handleSearchValueChange = (event) => {
+    const inputValue = event.target.value;
+    debounce(() => filterContent(inputValue), 500)();
+    setSearchValue(event.target.value);
+  };
+useEffect(()=>{
+  setFilteredData(data);
+  debounce(() => filterContent(searchValue), 500)();
+}
+  ,[data])
   return (
     <>
       <DeleteDialog
@@ -249,163 +269,163 @@ function CardList() {
         description="Are you sure want to delete this Profile"
       />
       <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: "#e6eef2",
-        }}
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        backgroundColor="#e6eef2"
         className="body"
       >
-        <Box sx={{ width: "95%", height: "3%" }}>
-          <Button
-            style={{
-              margin: "2% 2% 1% 0%",
-              visibility: showAddProfile ? "visible" : "hidden",
-            }}
-            variant="contained"
-            sx={{
-              backgroundColor: "#7784EE",
-            }}
-            onClick={() => {
-              handleAddCard();
-            }}
-            name="save"
-            type="button"
-          >
-            Add Your Profile
-          </Button>
-        </Box>
         <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            height: "90vh",
-          }}
+        sx={{marginTop:'10%'}}
+          width="100%"
+          height="3%"
+          marginRight="23.5%"
+          marginTop="2%"
+          display="flex"
+          justifyContent="flex-end"
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              width: "95%",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              backgroundColor: "#e6eef2",
-              overflow: "scroll",
+          <TextField
+            variant="outlined"
+            placeholder="Search"
+            value={searchValue}
+            onChange={handleSearchValueChange}
+            style={{ backgroundColor: "white", color: "blue" }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end" color="blue">
+                  <IconButton color="blue">
+                    <Search color="blue" />
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
+          />
+        </Box>
+        <Box width="100%" display="flex" justifyContent="center" height="90vh">
+          <Box
+            display="flex"
+            width="95%"
+            flexWrap="wrap"
+            justifyContent="center"
+            backgroundColor="#e6eef2"
+            overflow="scroll"
           >
             <Box
-              sx={{
-                marginTop: "0%",
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                width: "85%",
-              }}
+              marginTop="0%"
+              display="flex"
+              flexDirection="row"
+              flexWrap="wrap"
+              width="85%"
             >
-              {data &&
-                data.map((item) => (
-                  <Box
-                    key={item.id}
-                    sx={{
-                      width: 448,
-                      borderRadius: "10px",
-                      fontFamily: "bebas-neue",
-                      boxShadow: 1,
-                      height: "260px",
-                      margin: "2% 2% 2% 0",
-                      overflow: "hidden",
-                      border: "1px solid #CBD5DC",
-                    }}
-                  >
-                    <Box onClick={() => handleOpenModal(item)}>
-                      <Box
-                        sx={{
-                          backgroundColor: "whitesmoke",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          alignItems: "center",
-                          width: "95%",
-                          height: "50px",
-                          padding: "0 5% 0 0",
-                        }}
-                      >
-                        {(!item.startDate || !item.endDate) && "No value"}
-                        {item.startDate &&
-                          item.endDate &&
-                          formatDate(item.startDate)}
-                        {item.startDate &&
-                          item.endDate &&
-                          (item.endDate < today
-                            ? ` - ${formatDate(item.endDate)}`
-                            : " - Till Date")}
-                      </Box>
-                      <Box
-                        sx={{
-                          fontSize: "xx-large",
-                          backgroundColor: "white",
-                          height: "60px",
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          padding: "4% 0% 0% 6%",
-                        }}
-                      >
-                        {item.name ? item.name : "Name not provided"}
-                      </Box>
-                      <Box
-                        sx={{
-                          color: "#8A9DAB",
-                          backgroundColor: "white",
-                          padding: "0% 0 2% 6%",
-                          fontSize: "large",
-                        }}
-                      >
-                        {item.emailId}
-                      </Box>
-                      <Box
-                        sx={{
-                          color: "#8A9DAB",
-                          backgroundColor: "white",
-                          padding: "0% 0 7% 6%",
-                          fontSize: "large",
-                        }}
-                      >
-                        {item.projectRole
-                          ? item.projectRole
-                          : "Project Role not provided"}
-                      </Box>
-                      <Box
-                        sx={{
-                          backgroundColor: "whitesmoke",
-                          color: "blue",
-                          height: "50px",
-                          display: "flex",
-                          fontSize: "large",
-                        }}
-                      >
-                        <Box sx={{ margin: "2% 5% 2% 2%" }}>
-                          <Button
-                            href={item.message}
-                            target="_blank"
-                            onClick={handleMessageClick}
-                          >
-                            <img
-                              src={SlackLogo}
-                              alt="slack"
-                              height="20px"
-                              width="20px"
-                            />{" "}
-                            &nbsp;MESSAGE
-                          </Button>
+              <Slide
+                direction="up"
+                in={filteredData !== null}
+                mountOnEnter
+                unmountOnExit
+              >
+                <Box>
+                  {filteredData.map((item) => (
+                    <Box
+                      key={item.id}
+                      sx={{
+                        width: 448,
+                        borderRadius: "10px",
+                        fontFamily: "bebas-neue",
+                        boxShadow: 1,
+                        height: "290px",
+                        margin: "2% 2% 2% 0",
+                        overflow: "hidden",
+                        border: "1px solid #CBD5DC",
+                      }}
+                    >
+                      <Box onClick={() => handleOpenModal(item)}>
+                        <Box
+                          backgroundColor="whitesmoke"
+                          display="flex"
+                          flexDirection="row"
+                          justifyContent="flex-end"
+                          alignItems="center"
+                          width="95%"
+                          height="50px"
+                          padding="0 5% 0 0"
+                        >
+                          {(!item.startDate || !item.endDate) && "No value"}
+                          {item.startDate &&
+                            item.endDate &&
+                            formatDate(item.startDate)}
+                          {item.startDate &&
+                            item.endDate &&
+                            (item.endDate < today
+                              ? ` - ${formatDate(item.endDate)}`
+                              : " - Till Date")}
+                        </Box>
+                        <Box
+                          fontSize="xx-large"
+                          backgroundColor="white"
+                          height="60px"
+                          display="flex"
+                          flexDirection="row"
+                          justifyContent="flex-start"
+                          padding="4% 0% 0% 6%"
+                        >
+                          {item.name ? item.name : "Name not provided"}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
+                          padding="0% 0 2% 6%"
+                          fontSize="large"
+                        >
+                          {item.emailId}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
+                          padding="0% 0 2% 6%"
+                          fontSize="large"
+                        >
+                          {item.role}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
+                          padding="0% 0 7% 6%"
+                          fontSize="large"
+                        >
+                          {item.projectRole
+                            ? item.projectRole
+                            : "Project Role not provided"}
+                        </Box>
+                        <Box
+                          backgroundColor="whitesmoke"
+                          color="blue"
+                          height="50px"
+                          display="flex"
+                          fontSize="large"
+                        >
+                          <Box margin="2% 5% 2% 2%">
+                            <Button
+                              href={item.message}
+                              target="_blank"
+                              onClick={handleMessageClick}
+                            >
+                              <img
+                                src={SlackLogo}
+                                alt="slack"
+                                height="20px"
+                                width="20px"
+                              />{" "}
+                              &nbsp;MESSAGE
+                            </Button>
+                          </Box>
                         </Box>
                       </Box>
                     </Box>
-                  </Box>
-                ))}
+                  ))}
+                </Box>
+              </Slide>
+
               <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
@@ -418,27 +438,23 @@ function CardList() {
                 }}
               >
                 <Box
-                  style={{
-                    top: "50%",
-                    left: "50%",
-                    right: "50%",
-                    width: "35%",
-                    marginTop: "2%",
-                    marginBottom: "2%",
-                    height: "88%",
-                    overflow: "scroll",
-                    backgroundColor: "#fff",
-                    padding: "1rem",
-                    borderRadius: "4px",
-                  }}
+                  top="50%"
+                  left="50%"
+                  right="50%"
+                  width="35%"
+                  marginTop="2%"
+                  marginBottom="2%"
+                  height="88%"
+                  overflow="scroll"
+                  backgroundColor="#fff"
+                  padding="1rem"
+                  borderRadius="4px"
                 >
                   <Box
-                    sx={{
-                      justifyContent: "space-between",
-                      width: "100%",
-                      display: "flex",
-                      columnGap: "2%",
-                    }}
+                    justifyContent="space-between"
+                    width="100%"
+                    display="flex"
+                    columnGap="2%"
                   >
                     <Box>
                       <Typography variant="h5">Details</Typography>
@@ -487,20 +503,31 @@ function CardList() {
                   >
                     Enter your work in the project
                   </Box>
-                  <TextareaAutosize
-                    label="Your work in the project"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Example: Front End: Login Page, Back End: Login API, Database: Login Table, etc."
-                    minRows={13}
-                    className="my-textarea"
+                  <CKEditor
+                    editor={ClassicEditor}
                     disabled={!(emailId === user.email)}
-                    style={{
-                      fontFamily: "Roboto",
-                      fontSize: "large",
-                      width: "97%",
-                      padding: "1%",
+                    config={{
+                      toolbar:
+                        emailId === user.email
+                          ? [
+                              "heading",
+                              "|",
+                              "bold",
+                              "italic",
+                              "link",
+                              "bulletedList",
+                              "numberedList",
+                              "blockQuote",
+                              "insertTable",
+                              "undo",
+                              "redo",
+                            ]
+                          : [],
                     }}
+                    onChange={(event, editor) => {
+                      setBio(editor.getData());
+                    }}
+                    data={bio || "Value not provided"}
                   />
                   <TextField
                     label="Your project Role in the project"
