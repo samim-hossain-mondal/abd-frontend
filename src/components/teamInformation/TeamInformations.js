@@ -46,6 +46,7 @@ function CardList() {
   const [emailId, setEmailId] = useState(user.email);
   const [bio, setBio] = useState("");
   const [projectRole, setProjectRole] = useState("");
+  const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -88,6 +89,7 @@ function CardList() {
     setBio(item.bio);
     setProjectRole(item.projectRole);
     setMessage(item.message);
+    setRole(item.role);
     setModalOpen(true);
   };
   const handleCloseModal = () => {
@@ -96,6 +98,7 @@ function CardList() {
     setStartDate("");
     setEndDate("");
     setEmailId(emailId);
+    setRole(role);
     setProjectRole(projectRole);
     setBio("");
     setMessage("");
@@ -160,9 +163,10 @@ function CardList() {
             endDate,
           },
         }).then((response) => {
-          response.emailId = emailId;
+          console.log(response)
           const updatedData = data.map((item) => {
             if (item.id === selectedItem.id) {
+              response.role= role;
               return response;
             }
             return item;
@@ -251,7 +255,11 @@ function CardList() {
     debounce(() => filterContent(inputValue), 500)();
     setSearchValue(event.target.value);
   };
-
+useEffect(()=>{
+  setFilteredData(data);
+  debounce(() => filterContent(searchValue), 500)();
+}
+  ,[data])
   return (
     <>
       <DeleteDialog
@@ -269,6 +277,7 @@ function CardList() {
         className="body"
       >
         <Box
+        sx={{marginTop:'10%'}}
           width="100%"
           height="3%"
           marginRight="23.5%"
@@ -324,7 +333,7 @@ function CardList() {
                         borderRadius: "10px",
                         fontFamily: "bebas-neue",
                         boxShadow: 1,
-                        height: "260px",
+                        height: "290px",
                         margin: "2% 2% 2% 0",
                         overflow: "hidden",
                         border: "1px solid #CBD5DC",
@@ -369,6 +378,14 @@ function CardList() {
                           fontSize="large"
                         >
                           {item.emailId}
+                        </Box>
+                        <Box
+                          color="#8A9DAB"
+                          backgroundColor="white"
+                          padding="0% 0 2% 6%"
+                          fontSize="large"
+                        >
+                          {item.role}
                         </Box>
                         <Box
                           color="#8A9DAB"
