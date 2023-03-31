@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect, useContext } from "react";
 import {
@@ -7,7 +8,8 @@ import {
   TextField,
   Button,
   InputAdornment,
-  Slide
+  Slide,
+  Grid
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
@@ -27,6 +29,7 @@ import SlackLogo from "../../assets/images/Slack_icon.png";
 import { ErrorContext } from "../contexts/ErrorContext";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import DeleteDialog from "../elements/DeleteDialog";
+
 
 function CardList() {
   const { projectId } = useParams();
@@ -275,6 +278,8 @@ useEffect(()=>{
         alignItems="center"
         backgroundColor="#e6eef2"
         className="body"
+        height="100vh"
+        sx={{overflow:'scroll'}}
       >
         <Box
         sx={{marginTop:'10%'}}
@@ -324,12 +329,25 @@ useEffect(()=>{
                 mountOnEnter
                 unmountOnExit
               >
-                <Box>
+                <Grid
+                        className="body"
+                        container
+                        spacing={2}
+                        rowGap={2}
+                        // justifyContent="center"
+                        alignItems="center"
+                
+                >
                   {filteredData.map((item) => (
-                    <Box
+                     <Grid item lg={4} md={4} sm={6} sx={{
+                      width: { lg: "448px", md: "440px", sm: "100%", xs: "100%" },
+                      height: 'auto',
+                      marginTop: '2%',
+                      overflow: 'hidden',
+                      borderRadius: '10px',
+                    }} ><Box
                       key={item.id}
                       sx={{
-                        width: 448,
                         borderRadius: "10px",
                         fontFamily: "bebas-neue",
                         boxShadow: 1,
@@ -339,91 +357,91 @@ useEffect(()=>{
                         border: "1px solid #CBD5DC",
                       }}
                     >
-                      <Box onClick={() => handleOpenModal(item)}>
-                        <Box
-                          backgroundColor="whitesmoke"
-                          display="flex"
-                          flexDirection="row"
-                          justifyContent="flex-end"
-                          alignItems="center"
-                          width="95%"
-                          height="50px"
-                          padding="0 5% 0 0"
-                        >
-                          {(!item.startDate || !item.endDate) && "No value"}
-                          {item.startDate &&
-                            item.endDate &&
-                            formatDate(item.startDate)}
-                          {item.startDate &&
-                            item.endDate &&
-                            (item.endDate < today
-                              ? ` - ${formatDate(item.endDate)}`
-                              : " - Till Date")}
-                        </Box>
-                        <Box
-                          fontSize="xx-large"
-                          backgroundColor="white"
-                          height="60px"
-                          display="flex"
-                          flexDirection="row"
-                          justifyContent="flex-start"
-                          padding="4% 0% 0% 6%"
-                        >
-                          {item.name ? item.name : "Name not provided"}
-                        </Box>
-                        <Box
-                          color="#8A9DAB"
-                          backgroundColor="white"
-                          padding="0% 0 2% 6%"
-                          fontSize="large"
-                        >
-                          {item.emailId}
-                        </Box>
-                        <Box
-                          color="#8A9DAB"
-                          backgroundColor="white"
-                          padding="0% 0 2% 6%"
-                          fontSize="large"
-                        >
-                          {item.role}
-                        </Box>
-                        <Box
-                          color="#8A9DAB"
-                          backgroundColor="white"
-                          padding="0% 0 7% 6%"
-                          fontSize="large"
-                        >
-                          {item.projectRole
-                            ? item.projectRole
-                            : "Project Role not provided"}
-                        </Box>
-                        <Box
-                          backgroundColor="whitesmoke"
-                          color="blue"
-                          height="50px"
-                          display="flex"
-                          fontSize="large"
-                        >
-                          <Box margin="2% 5% 2% 2%">
-                            <Button
-                              href={item.message}
-                              target="_blank"
-                              onClick={handleMessageClick}
-                            >
-                              <img
-                                src={SlackLogo}
-                                alt="slack"
-                                height="20px"
-                                width="20px"
-                              />{" "}
-                              &nbsp;MESSAGE
-                            </Button>
+                        <Box onClick={() => handleOpenModal(item)}>
+                          <Box
+                            backgroundColor="whitesmoke"
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="flex-end"
+                            alignItems="center"
+                            width="95%"
+                            height="50px"
+                            padding="0 5% 0 0"
+                          >
+                            {(!item.startDate || !item.endDate) && "No value"}
+                            {item.startDate &&
+                              item.endDate &&
+                              formatDate(item.startDate)}
+                            {item.startDate &&
+                              item.endDate &&
+                              (item.endDate < today
+                                ? ` - ${formatDate(item.endDate)}`
+                                : " - Till Date")}
+                          </Box>
+                          <Box
+                            fontSize="xx-large"
+                            backgroundColor="white"
+                            height="60px"
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="flex-start"
+                            padding="4% 0% 0% 6%"
+                          >
+                            {item.name ? item.name : "Name not provided"}
+                          </Box>
+                          <Box
+                            color="#8A9DAB"
+                            backgroundColor="white"
+                            padding="0% 0 2% 6%"
+                            fontSize="large"
+                          >
+                            {item.emailId}
+                          </Box>
+                          <Box
+                            color="#8A9DAB"
+                            backgroundColor="white"
+                            padding="0% 0 2% 6%"
+                            fontSize="large"
+                          >
+                            {item.role}
+                          </Box>
+                          <Box
+                            color="#8A9DAB"
+                            backgroundColor="white"
+                            padding="0% 0 7% 6%"
+                            fontSize="large"
+                          >
+                            {item.projectRole
+                              ? item.projectRole
+                              : "Project Role not provided"}
+                          </Box>
+                          <Box
+                            backgroundColor="whitesmoke"
+                            color="blue"
+                            height="50px"
+                            display="flex"
+                            fontSize="large"
+                          >
+                            <Box margin="2% 5% 2% 2%">
+                              <Button
+                                href={item.message}
+                                target="_blank"
+                                onClick={handleMessageClick}
+                              >
+                                <img
+                                  src={SlackLogo}
+                                  alt="slack"
+                                  height="20px"
+                                  width="20px" />{" "}
+                                &nbsp;MESSAGE
+                              </Button>
+                            </Box>
                           </Box>
                         </Box>
-                      </Box>
                     </Box>
+                    </Grid>
                   ))}
-                </Box>
+                </Grid>
               </Slide>
 
               <Modal
@@ -434,6 +452,7 @@ useEffect(()=>{
                   width: "100%",
                   display: "flex",
                   justifyContent: "center",
+                
                   alignContent: "center",
                 }}
               >
@@ -576,7 +595,7 @@ useEffect(()=>{
                   ) : null}
                 </Box>
               </Modal>
-            </Box>
+              </Box>
           </Box>
         </Box>
       </Box>
