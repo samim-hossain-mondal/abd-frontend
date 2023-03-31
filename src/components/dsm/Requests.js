@@ -5,13 +5,15 @@ import { AddCircle as AddCircleIcon, Done as DoneIcon } from '@mui/icons-materia
 import { Stack } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import format from 'date-fns/format';
+import { PropTypes } from 'prop-types';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import { ErrorContext } from '../contexts/ErrorContext';
 import ChatContainer from '../elements/dsm/ChatContainer';
 import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, DSM_REQUEST_STATUS } from '../constants/dsm/Requests';
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
+import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS_BY_DATE, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
@@ -23,9 +25,10 @@ ISSUES:
         1. someplace key is missing console is showing error
 */
 
-export default function Requests() {
+export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { user, userRole } = useContext(ProjectUserContext);
+
 
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
@@ -70,7 +73,7 @@ export default function Requests() {
 
   const getRequests = async () => {
     try {
-      const resData = await makeRequest(GET_TEAM_REQUESTS(projectId))
+      const resData = await makeRequest(GET_TEAM_REQUESTS_BY_DATE(projectId, format(selectedDate, 'yyyy-MM-dd')))
       return resData;
     }
     catch (err) {
@@ -90,7 +93,7 @@ export default function Requests() {
     getRequests().then((_requests) => {
       setRequests(_requests);
     })
-  }, [])
+  }, [selectedDate])
 
   const { error, isError, isLoading } = useQuery(requests, async () => {
     if (DSMInViewPort) {
@@ -168,7 +171,6 @@ export default function Requests() {
       return false;
     }
   };
-
   return (
     <Grid item height={gridHeightState.request.height}
       sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}
@@ -194,9 +196,13 @@ export default function Requests() {
         >
           {/* All Content/Development of Requests HEADER goes here */}
           <Typography variant="dsmSubMain">Requests</Typography>
-          <IconButton onClick={handleAddButtonClick}>
-            <AddCircleIcon color="primary" />
-          </IconButton>
+          {
+            format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
+              <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                <AddCircleIcon color="primary" />
+              </IconButton>
+            )
+          }
 
         </AccordionSummary>
 
@@ -228,6 +234,7 @@ export default function Requests() {
               <Chip label="Resource" onClick={() => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
             </Stack>
           </GenericInputModal>
+
         </Dialog>
 
         <AccordionDetails sx={{
@@ -242,7 +249,7 @@ export default function Requests() {
               name={request.author}
               content={request.content}
               date={new Date(request.createdAt)}
-              onClick={() => handleChatClick(request)}
+              onClick={() => format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleChatClick(request) : null}
               chipContent={request.type}
               afterDate={
                 isRequestCompleted(request.status) ? (
@@ -263,7 +270,7 @@ export default function Requests() {
         </AccordionDetails>
 
         {
-          (openEditModal) && (
+          (openEditModal) && format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
             <Dialog
               open={openEditModal}
               onClose={handleEditModalClose}
@@ -273,7 +280,7 @@ export default function Requests() {
                 onCloseButtonClick={handleEditModalClose}
                 // primaryButtonText='Mark as Discussed' right now just adding save
                 primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-                onPrimaryButtonClick={handleEditRequest}
+                onPrimaryButtonClick={format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleEditRequest : null}
                 defaultValue={editModalData.content}
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
@@ -317,4 +324,8 @@ export default function Requests() {
       </Accordion>
     </Grid >
   );
+};
+
+Requests.propTypes = {
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
 };

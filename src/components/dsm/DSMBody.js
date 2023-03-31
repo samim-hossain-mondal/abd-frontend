@@ -2,13 +2,14 @@ import { React, useContext } from 'react';
 import {
   Grid, Box, useMediaQuery
 } from '@mui/material';
+import PropTypes from 'prop-types';
 import CelebrationBoard from './CelebrationBoard';
 import Sentiment from './Sentiment';
 import Announcements from './Announcements';
 import Requests from './Requests';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 
-export default function DSMBody() {
+export default function DSMBody({ selectedDate }) {
   const { gridHeightState } = useContext(DSMBodyLayoutContext)
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const breakpoint391 = useMediaQuery('(min-width:391px)');
@@ -23,12 +24,12 @@ export default function DSMBody() {
           <Grid container spacing={2} sx={{ display: 'flex', flexWrap: 'wrap', height: breakpoint391 ? '78vh' : "78vh" }}>
             <Grid item xs={gridHeightState.celebration.fullExpanded || !breakpoint1080 ? 12 : 8} height="100%">
               <Sentiment />
-              <CelebrationBoard />
+              <CelebrationBoard selectedDate={selectedDate} />
             </Grid>
             {!gridHeightState.celebration.fullExpanded && breakpoint1080 && (
               <Grid item xs={4} height="100%">
-                <Requests />
-                <Announcements />
+                <Requests selectedDate={selectedDate} />
+                <Announcements selectedDate={selectedDate} />
               </Grid>
             )}
           </Grid >
@@ -56,3 +57,7 @@ export default function DSMBody() {
     </Grid >
   );
 }
+
+DSMBody.propTypes = {
+  selectedDate: PropTypes.instanceOf(Date).isRequired
+};

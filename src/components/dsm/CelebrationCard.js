@@ -8,6 +8,8 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import { useParams } from 'react-router-dom';
 import stc from 'string-to-color';
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
 import { celebrationType } from '../constants/dsm/Celebrations';
 import dateGetter from '../utilityFunctions/DateGetter';
 import { ErrorContext } from '../contexts/ErrorContext';
@@ -42,7 +44,7 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
     if (!isPreview && celebration?.reaction?.length > 0) {
       setReacted(celebration?.reaction.find(reaction => reaction.memberId === user.memberId))
     }
-  }, [])
+  }, [celebration])
 
   useEffect(() => {
   }, [reacted])
@@ -52,7 +54,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
       e.stopPropagation();
       e.preventDefault();
       if (isPreview) return setReacted(!reacted);
-
       const reqBody = {
         isReacted: !reacted
       }
@@ -67,7 +68,8 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
       return false;
     }
   }
-
+  // console.log(newCelebration.createdAt)
+  // && format(newCelebration.createdAt, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
   return newCelebration ?
     <Card
       sx={{
@@ -78,7 +80,7 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
       }}
       onClick={() => {
-        setOpenUpdateModal(!isPreview)
+        setOpenUpdateModal(format(parseISO(newCelebration.createdAt), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? !isPreview : false)
       }}
     >
       <CardContent sx={{ padding: '10px 10px 5px 10px', height: '100px' }}>

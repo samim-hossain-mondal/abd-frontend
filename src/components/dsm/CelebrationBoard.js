@@ -7,6 +7,7 @@ import Masonry from '@mui/lab/Masonry';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
+import { PropTypes } from 'prop-types';
 import CelebrationCard from './CelebrationCard';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import { REFETCH_INTERVAL } from '../../config';
@@ -15,10 +16,11 @@ import DSMViewportContext from '../contexts/DSMViewportContext';
 import AddCelebrationModal from './AddCelebrationModal';
 import { celebrationTypes } from '../constants/dsm/Celebrations';
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { GET_CELEBRATIONS } from '../constants/apiEndpoints';
+import { GET_CELEBRATIONS_BY_DATE } from '../constants/apiEndpoints';
 import { RefreshContext } from '../contexts/RefreshContext';
+import dateGetter from '../utilityFunctions/DateGetter';
 
-export default function CelebrationBoard() {
+export default function CelebrationBoard({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { projectId } = useParams();
   const { setError } = useContext(ErrorContext);
@@ -60,7 +62,7 @@ export default function CelebrationBoard() {
 
   const getCelebrations = async () => {
     try {
-      const resData = await makeRequest(GET_CELEBRATIONS(projectId))
+      const resData = await makeRequest(GET_CELEBRATIONS_BY_DATE(projectId, dateGetter(selectedDate)))
       return resData;
     }
     catch (err) {
@@ -81,7 +83,7 @@ export default function CelebrationBoard() {
     getCelebrations().then((_celebrations) => {
       setCelebrations(_celebrations);
     })
-  }, [])
+  }, [selectedDate])
 
   const { error, isError, isLoading } = useQuery(celebrations, async () => {
     if (DSMInViewPort) {
@@ -136,9 +138,14 @@ export default function CelebrationBoard() {
           }}
         >
           <Typography variant="dsmSubMain">Daily Retro Board</Typography>
-          <IconButton onClick={(e) => handleAddButtonClick(e)}>
-            <AddCircleIcon color="primary" />
-          </IconButton>
+          {
+            dateGetter(selectedDate) === dateGetter(new Date()) && (
+              <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                <AddCircleIcon color="primary" />
+              </IconButton>
+            )
+          }
+
         </AccordionSummary>
         <AccordionDetails>
           <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={4}>
@@ -164,4 +171,8 @@ export default function CelebrationBoard() {
       />
     </Grid >
   );
+};
+
+CelebrationBoard.propTypes = {
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
 };

@@ -4,6 +4,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
+import { PropTypes } from 'prop-types';
+// import { format } from 'date-fns';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
 import AnnouncementInputModal from '../elements/dsm/AnnouncementInputModal';
 import AnnouncementChatContainer from '../elements/dsm/AnnouncementChatContainer';
@@ -11,14 +13,15 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME, MODAL_PRIMARY_BUTTON_TEXT, TITLE } from '../constants/dsm/Announcements';
 import { RefreshContext } from '../contexts/RefreshContext';
 import makeRequest from '../utilityFunctions/makeRequest/index';
+import { ERROR_MESSAGE, SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { CREATE_ANNOUNCMENT, DELETE_ANNOUNCMENT, GET_ANNOUNCMENTS, UPDATE_ANNOUNCMENT } from '../constants/apiEndpoints';
-import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import { USER_ROLES } from '../constants/users';
 import { REFETCH_INTERVAL } from '../../config';
+import dateGetter from '../utilityFunctions/DateGetter';
 
-export default function Announcements() {
+export default function Announcements({ selectedDate }) {
   const { projectId } = useParams();
   const DSMInViewPort = useContext(DSMViewportContext);
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -61,7 +64,7 @@ export default function Announcements() {
   // OPTIMIZE: Is backend for announcements paginated ?
   const getAnnouncements = async () => {
     try {
-      const resData = await makeRequest(GET_ANNOUNCMENTS(projectId))
+      const resData = await makeRequest(GET_ANNOUNCEMENTS_BY_DATE(projectId, dateGetter(selectedDate)))
       return resData;
     }
     catch (err) {
@@ -81,7 +84,7 @@ export default function Announcements() {
     getAnnouncements().then((_announcements) => {
       setAnnouncements(_announcements);
     })
-  }, [])
+  }, [selectedDate])
 
   const { error, isError, isLoading } = useQuery(announcements, async () => {
     if (DSMInViewPort) {
@@ -184,7 +187,7 @@ export default function Announcements() {
         >
           <Typography variant="dsmSubMain">{TITLE}</Typography>
           {
-            (userRole === USER_ROLES.ADMIN) && (
+            (userRole === USER_ROLES.ADMIN) && (dateGetter(selectedDate) === dateGetter(new Date())) &&  (
               <IconButton onClick={handleAddButtonClick}>
                 <AddCircleIcon color="primary" />
               </IconButton>
@@ -262,4 +265,8 @@ export default function Announcements() {
       </Accordion>
     </ Grid >
   );
+};
+
+Announcements.propTypes = {
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
 };

@@ -37,6 +37,11 @@ export const GET_CELEBRATIONS = (projectId) => ({
   method: 'get',
 })
 
+export const GET_CELEBRATIONS_BY_DATE = (projectId, date) => ({
+  url: `api/dsm/celebrations/${projectId}/date/${date}`,
+  method: 'get',
+})
+
 export const GET_CELEBRATION_BY_ID = (projectId, celebrationId) => ({
   url: `api/dsm/celebrations/${projectId}/${celebrationId}`,
   method: 'get',
@@ -76,6 +81,11 @@ export const GET_TEAM_REQUESTS = (projectId) => ({
   method: 'get',
 })
 
+export const GET_TEAM_REQUESTS_BY_DATE = (projectId, date) => ({
+  url: `api/dsm/team-requests/${projectId}/date/${date}`,
+  method: 'get',
+})
+
 export const CREATE_TEAM_REQUEST = (projectId) => ({
   url: `api/dsm/team-requests/${projectId}`,
   method: 'post',
@@ -95,6 +105,11 @@ export const DELETE_TEAM_REQUEST = (projectId, requestId) => ({
 
 export const GET_ANNOUNCMENTS = (projectId) => ({
   url: `api/dsm/announcements/${projectId}`,
+  method: 'get',
+})
+
+export const GET_ANNOUNCEMENTS_BY_DATE = (projectId, date) => ({
+  url: `api/dsm/announcements/${projectId}/date/${date}`,
   method: 'get',
 })
 
