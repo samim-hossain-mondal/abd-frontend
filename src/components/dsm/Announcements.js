@@ -1,20 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress, Divider,Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext'
-import GenericInputModal from '../elements/dsm/GenericInputModal';
-import ChatContainer from '../elements/dsm/ChatContainer';
+import AnnouncementInputModal from '../elements/dsm/AnnouncementInputModal';
+import AnnouncementChatContainer from '../elements/dsm/AnnouncementChatContainer';
 import { ErrorContext } from '../contexts/ErrorContext';
-import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME, MODAL_PRIMARY_BUTTON_TEXT, MODAL_TITLE } from '../constants/dsm/Announcements';
+import { DSM_ANNOUNCEMENT_INPUT_PLACEHOLDER, GENERIC_NAME, MODAL_PRIMARY_BUTTON_TEXT, TITLE } from '../constants/dsm/Announcements';
 import { RefreshContext } from '../contexts/RefreshContext';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_ANNOUNCMENT, DELETE_ANNOUNCMENT, GET_ANNOUNCMENTS, UPDATE_ANNOUNCMENT } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
+import { USER_ROLES } from '../constants/users';
 import { REFETCH_INTERVAL } from '../../config';
 
 export default function Announcements() {
@@ -22,7 +23,7 @@ export default function Announcements() {
   const DSMInViewPort = useContext(DSMViewportContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
-  const { user } = useContext(ProjectUserContext);
+  const { user, userRole } = useContext(ProjectUserContext)
 
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
@@ -102,10 +103,11 @@ export default function Announcements() {
     return <div>Error! {error.message}</div>
   }
 
-  const addAnnouncementToDB = async (content) => {
+  const addAnnouncementToDB = async (content,title) => {
     try {
       const reqBody = {
         content,
+        title
       }
       const resData = await makeRequest(CREATE_ANNOUNCMENT(projectId), { data: reqBody })
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
@@ -117,10 +119,11 @@ export default function Announcements() {
     }
   }
 
-  const handleEditAnnouncement = async (content) => {
+  const handleEditAnnouncement = async (content,title) => {
     try {
       const reqBody = {
         content,
+        title
       }
       const resData = await makeRequest(UPDATE_ANNOUNCMENT(projectId, editModalData?.announcementId), { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
@@ -129,6 +132,7 @@ export default function Announcements() {
           return {
             ...announcement,
             content,
+            title
           }
         }
         return announcement;
@@ -178,21 +182,24 @@ export default function Announcements() {
             }
           }}
         >
-          <Typography variant="dsmSubMain">Announcements</Typography>
-          <IconButton onClick={handleAddButtonClick}>
-            <AddCircleIcon color="primary" />
-          </IconButton>
+          <Typography variant="dsmSubMain">{TITLE}</Typography>
+          {
+            (userRole === USER_ROLES.ADMIN) && (
+              <IconButton onClick={handleAddButtonClick}>
+                <AddCircleIcon color="primary" />
+              </IconButton>
+            )
+          }
         </AccordionSummary>
         <Dialog
           open={openModal}
           onClose={handleModalClose}
         >
-          <GenericInputModal
-            title={MODAL_TITLE}
+          <AnnouncementInputModal
             onCloseButtonClick={handleModalClose}
             primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
-            onPrimaryButtonClick={async (content) => {
-              const newAnnouncement = await addAnnouncementToDB(content);
+            onPrimaryButtonClick={async (content,title) => {
+              const newAnnouncement = await addAnnouncementToDB(content,title);
               if (newAnnouncement) {
                 getAnnouncements().then(resData => {
                   setAnnouncements(resData);
@@ -214,13 +221,19 @@ export default function Announcements() {
           gap: '16px',
         }}>
           {announcements.map((announcement) => (
-            <ChatContainer
+            <Box
               key={announcement.announcementId}
-              name={announcement.author}
-              content={announcement.content}
-              date={new Date(announcement.createdAt)}
-              onClick={() => handleChatClick(announcement)}
-            />
+            >
+              <AnnouncementChatContainer
+                key={announcement.announcementId}
+                name={announcement.author}
+                title={announcement.title}
+                content={announcement.content}
+                date={new Date(announcement.createdAt)}
+                onClick={() => handleChatClick(announcement)}
+              />
+              <Divider variant="inset"/>
+            </Box>
           ))}
 
         </AccordionDetails>
@@ -231,8 +244,7 @@ export default function Announcements() {
               open={openEditModal}
               onClose={handleEditModalClose}
             >
-              <GenericInputModal
-                title={MODAL_TITLE}
+              <AnnouncementInputModal
                 onCloseButtonClick={handleEditModalClose}
                 primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
                 onPrimaryButtonClick={handleEditAnnouncement}
@@ -241,6 +253,7 @@ export default function Announcements() {
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteAnnouncement}
                 authorize={user.memberId === editModalData?.memberId}
+                title={editModalData?.title}
                />
             </Dialog>
           )

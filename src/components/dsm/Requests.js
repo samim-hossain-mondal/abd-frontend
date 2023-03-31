@@ -53,10 +53,6 @@ export default function Requests() {
   };
 
   const handleChatClick = (request) => {
-    // if (user.memberId !== request.memberId) {
-    //   setError(ERROR_MESSAGE.UNAUTHORIZED);
-    //   return;
-    // }
     setOpenEditModal(true);
     setEditModalData({ ...request });
     setIsDisabled(true);
