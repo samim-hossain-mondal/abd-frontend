@@ -20,6 +20,7 @@ import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { isAdmin } from '../constants/users';
 
 const Cards = styled(Card)(() => ({
   borderRadius: 20,
@@ -104,7 +105,7 @@ export default function CustomCard({ checkBox, data, type }) {
       if (isDraft()) {
         return <Checkbox color='primary' size="medium" disabled />
       }
-      return <Checkbox color='primary' size="medium" checked={checked} onChange={handleToggle} />
+      return <Checkbox color='primary' size="medium" disabled={!isAdmin(userRole)} checked={checked} onChange={handleToggle} />
     }
     return <Checkbox color='primary' size="medium" sx={{ visibility: 'hidden' }} />
   };
