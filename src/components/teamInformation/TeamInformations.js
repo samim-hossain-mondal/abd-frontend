@@ -9,7 +9,7 @@ import {
   Button,
   InputAdornment,
   Slide,
-  Grid
+  Grid,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,7 +29,7 @@ import SlackLogo from "../../assets/images/Slack_icon.png";
 import { ErrorContext } from "../contexts/ErrorContext";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import DeleteDialog from "../elements/DeleteDialog";
-
+import { valueNotProvided } from "../constants/TeamInformation";
 
 function CardList() {
   const { projectId } = useParams();
@@ -166,10 +166,9 @@ function CardList() {
             endDate,
           },
         }).then((response) => {
-          console.log(response)
           const updatedData = data.map((item) => {
             if (item.id === selectedItem.id) {
-              response.role= role;
+              response.role = role;
               return response;
             }
             return item;
@@ -258,13 +257,12 @@ function CardList() {
     debounce(() => filterContent(inputValue), 500)();
     setSearchValue(event.target.value);
   };
-useEffect(()=>{
-  setFilteredData(data);
-  debounce(() => filterContent(searchValue), 500)();
-}
-  ,[data])
+  useEffect(() => {
+    setFilteredData(data);
+    debounce(() => filterContent(searchValue), 500)();
+  }, [data]);
   return (
-    <>
+    <Box sx={{ backgroundColor: "#e6eef2", display: "flex", height: "100vh" }}>
       <DeleteDialog
         open={deleteDialogOpen}
         setOpen={setDeleteDialogOpen}
@@ -277,37 +275,42 @@ useEffect(()=>{
         flexDirection="column"
         alignItems="center"
         backgroundColor="#e6eef2"
-        className="body"
-        height="100vh"
-        sx={{overflow:'scroll'}}
+        sx={{ overflow: "scroll" }}
       >
         <Box
-        sx={{marginTop:'10%'}}
+          sx={{ marginTop: "7%" }}
           width="100%"
           height="3%"
-          marginRight="23.5%"
-          marginTop="2%"
+          marginRight="20.5%"
+          marginTop="0.5%"
           display="flex"
           justifyContent="flex-end"
         >
-          <TextField
-            variant="outlined"
-            placeholder="Search"
-            value={searchValue}
-            onChange={handleSearchValueChange}
-            style={{ backgroundColor: "white", color: "blue" }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" color="blue">
-                  <IconButton color="blue">
-                    <Search color="blue" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Box sx={{ background: "white" }}>
+            <TextField
+              variant="outlined"
+              placeholder="Search"
+              value={searchValue}
+              onChange={handleSearchValueChange}
+              style={{ background: "white", color: "blue" }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    color="blue"
+                    sx={{ backgroundColor: "white" }}
+                    style={{ backgroundColor: "white" }}
+                  >
+                    <IconButton color="blue">
+                      <Search color="blue" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
         </Box>
-        <Box width="100%" display="flex" justifyContent="center" height="90vh">
+        <Box width="100%" display="flex" justifyContent="center">
           <Box
             display="flex"
             width="95%"
@@ -329,34 +332,38 @@ useEffect(()=>{
                 mountOnEnter
                 unmountOnExit
               >
-                <Grid
-                        className="body"
-                        container
-                        spacing={2}
-                        rowGap={2}
-                        // justifyContent="center"
-                        alignItems="center"
-                
-                >
+                <Grid className="body" container spacing={2} rowGap={2}>
                   {filteredData.map((item) => (
-                     <Grid item lg={4} md={4} sm={6} sx={{
-                      width: { lg: "448px", md: "440px", sm: "100%", xs: "100%" },
-                      height: 'auto',
-                      marginTop: '2%',
-                      overflow: 'hidden',
-                      borderRadius: '10px',
-                    }} ><Box
-                      key={item.id}
+                    <Grid
+                      item
+                      lg={4}
+                      md={4}
+                      sm={6}
                       sx={{
-                        borderRadius: "10px",
-                        fontFamily: "bebas-neue",
-                        boxShadow: 1,
-                        height: "290px",
-                        margin: "2% 2% 2% 0",
+                        width: {
+                          lg: "448px",
+                          md: "440px",
+                          sm: "100%",
+                          xs: "100%",
+                        },
+                        height: "auto",
+                        marginTop: "2%",
                         overflow: "hidden",
-                        border: "1px solid #CBD5DC",
+                        borderRadius: "10px",
                       }}
                     >
+                      <Box
+                        key={item.id}
+                        sx={{
+                          borderRadius: "10px",
+                          fontFamily: "bebas-neue",
+                          boxShadow: 1,
+                          height: "290px",
+                          margin: "2% 2% 2% 0",
+                          overflow: "hidden",
+                          border: "1px solid #CBD5DC",
+                        }}
+                      >
                         <Box onClick={() => handleOpenModal(item)}>
                           <Box
                             backgroundColor="whitesmoke"
@@ -432,18 +439,18 @@ useEffect(()=>{
                                   src={SlackLogo}
                                   alt="slack"
                                   height="20px"
-                                  width="20px" />{" "}
+                                  width="20px"
+                                />{" "}
                                 &nbsp;MESSAGE
                               </Button>
                             </Box>
                           </Box>
                         </Box>
-                    </Box>
+                      </Box>
                     </Grid>
                   ))}
                 </Grid>
               </Slide>
-
               <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
@@ -452,7 +459,7 @@ useEffect(()=>{
                   width: "100%",
                   display: "flex",
                   justifyContent: "center",
-                
+
                   alignContent: "center",
                 }}
               >
@@ -461,9 +468,10 @@ useEffect(()=>{
                   left="50%"
                   right="50%"
                   width="35%"
-                  marginTop="2%"
+                  minWidth="380px"
+                  marginTop="8%"
                   marginBottom="2%"
-                  height="88%"
+                  height="70%"
                   overflow="scroll"
                   backgroundColor="#fff"
                   padding="1rem"
@@ -546,14 +554,18 @@ useEffect(()=>{
                     onChange={(event, editor) => {
                       setBio(editor.getData());
                     }}
-                    data={bio || "Value not provided"}
+                    data={
+                      !(emailId === user.email) && !bio
+                        ? valueNotProvided
+                        : bio
+                    }
                   />
                   <TextField
                     label="Your project Role in the project"
                     value={
                       projectRole || emailId === user.email
                         ? projectRole
-                        : "value not provided"
+                        : valueNotProvided
                     }
                     onChange={(e) => setProjectRole(e.target.value)}
                     fullWidth
@@ -572,7 +584,7 @@ useEffect(()=>{
                     value={
                       message || emailId === user.email
                         ? message
-                        : "value not provided"
+                        : valueNotProvided
                     }
                     onChange={(e) => setMessage(e.target.value)}
                     fullWidth
@@ -584,7 +596,7 @@ useEffect(()=>{
                       variant="contained"
                       sx={{
                         width: "100%",
-                        margin: "0.75% 0 0.75% 0",
+                        margin: "2% 0 0.75% 0",
                         backgroundColor: "#7784EE",
                         color: "white",
                       }}
@@ -595,11 +607,11 @@ useEffect(()=>{
                   ) : null}
                 </Box>
               </Modal>
-              </Box>
+            </Box>
           </Box>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }
 export default CardList;
