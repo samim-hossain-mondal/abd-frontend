@@ -7,13 +7,13 @@ import {
   TextField,
   Button,
   InputAdornment,
+  Slide
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
 import { Search } from "@mui/icons-material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import Slide from "@material-ui/core/Slide";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
