@@ -180,9 +180,9 @@ export default function CelebrationGenericModal({
             {children}
             <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', fontFamily: 'Poppins' }} control={
               <Checkbox sx={{
-                color: '#08A0F7',
+                color: 'customButton1.main',
                 '&.Mui-checked': {
-                  color: '#08A0F7',
+                  color: 'customButton1.main',
                 }
               }} onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />} label="Post Anonymously" />
 

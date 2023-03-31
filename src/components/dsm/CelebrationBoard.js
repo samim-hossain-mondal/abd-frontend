@@ -135,13 +135,13 @@ export default function CelebrationBoard() {
             }
           }}
         >
-          <Typography variant="dsmSubMain">Celebration Board</Typography>
+          <Typography variant="dsmSubMain">Daily Retro Board</Typography>
           <IconButton onClick={(e) => handleAddButtonClick(e)}>
             <AddCircleIcon color="primary" />
           </IconButton>
         </AccordionSummary>
         <AccordionDetails>
-          <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={2}>
+          <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={4}>
             {celebrations.map((celebration) => (
               <CelebrationCard
                 key={celebration?.celebrationId}

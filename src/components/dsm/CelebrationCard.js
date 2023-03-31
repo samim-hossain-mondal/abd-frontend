@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, IconButton, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, Box, IconButton, Typography, useMediaQuery } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import PlusOneRoundedIcon from '@mui/icons-material/PlusOneRounded';
 import PropTypes from 'prop-types';
@@ -63,7 +63,6 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return false;
     }
@@ -72,33 +71,31 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
   return newCelebration ?
     <Card
       sx={{
-        width: isPreview ? "100%" : '40%',
-        maxWidth: breakpoint391 ? "310px" : "95%",
-        minWidth: breakpoint391 ? "310px" : "95%",
+        maxWidth: breakpoint391 ? "155px" : "95%",
+        minWidth: breakpoint391 ? "155px" : "95%",
         cursor: !isPreview ? 'pointer' : '',
-        borderRadius: '8px',
-        border: '2px solid',
-        borderColor: newCelebration.type === celebrationType.CELEBRATION ? '#044ED7' : '#FF6E00',
+        background: newCelebration.type === celebrationType.CELEBRATION ? '#FFF6C8' : '#FFC8C8',
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
       }}
       onClick={() => {
         setOpenUpdateModal(!isPreview)
       }}
     >
-      <CardContent sx={{ paddingBottom: '0px' }}>
-        <Grid container sx={{ maxHeight: '160px', minHeight: '50px' }}>
-          <Grid item xs={2} sx={{ paddingRight: "50px", maxHeight: 'inherit', display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center', }}>
-            {newCelebration.isAnonymous ?
-              <Avatar><PersonOutlineRoundedIcon /></Avatar> :
-              <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc)} />
-            }
-          </Grid>
-          <Grid item xs={9.1} sx={{ maxHeight: 'inherit', overflow: 'auto' }}>
+      <CardContent sx={{ padding: '10px 10px 5px 10px', height: '100px' }}>
+        <Grid container>
+          <Grid item xs={12} sx={{ maxHeight: 'inherit', overflow: 'auto' }}>
             <Typography
               variant='contentMain'
-              sx={{ fontSize: 14 }}
               color="#121212"
-            // gutterBottom
+              sx={{
+                fontSize: 14,
+                fontStyle: 'italic',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                display: '-webkit-box'
+              }}
             >
               {newCelebration.content}
             </Typography>
@@ -110,23 +107,41 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-          padding: '0px 20px 10px 20px'
+          padding: '0px 0px 5px 7px'
         }}
       >
-        <Typography variant='contentMain' display="block" marginTop="20px" fontSize="10px">
-          {dateGetter(newCelebration.createdAt, true)}
-        </Typography>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '5px'
+        }}>
+          {
+            newCelebration.isAnonymous ?
+              <Avatar sx={{ height: "25px", width: "25px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar> :
+              <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+          }
+          <Typography variant='contentMain' display="flex" fontSize="0.55rem" lineHeight='2'>
+            {dateGetter(newCelebration.createdAt, true)}
+          </Typography>
+        </Box>
         {newCelebration.type === celebrationType.CELEBRATION ?
           <IconButton onClick={updateReaction}>
             {reacted ?
-              <ThumbUpAltIcon /> :
-              <ThumbUpOffAltIcon color="disabled" />
+              <ThumbUpAltIcon sx={{ color: '#1976d2' }} /> :
+              <ThumbUpOffAltIcon sx={{ color: '#1976d2', opacity: '0.5' }} />
             }
-            <Typography fontSize="10px" paddingTop="15px">{reactCount}</Typography>
+            <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
           </IconButton> :
           <IconButton onClick={updateReaction}>
-            <PlusOneRoundedIcon color={!reacted ? 'disabled' : ''} />
-            <Typography fontSize="10px" paddingTop="15px">{reactCount}</Typography>
+            {
+              reacted ?
+                <PlusOneRoundedIcon sx={{ color: '#1976d2' }} /> :
+                <PlusOneRoundedIcon sx={{ color: '#1976d2', opacity: '0.5' }} />
+            }
+            {/* <PlusOneRoundedIcon sx={{color=...{!reacted ? '' : '#1976d2'} }}/> */}
+            <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
           </IconButton>
         }
       </CardActions>
