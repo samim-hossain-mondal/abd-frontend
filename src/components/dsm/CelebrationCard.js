@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, Box, IconButton, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, Box, IconButton, Typography, useMediaQuery, Tooltip } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import PlusOneRoundedIcon from '@mui/icons-material/PlusOneRounded';
 import PropTypes from 'prop-types';
@@ -121,30 +121,36 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         }}>
           {
             newCelebration.isAnonymous ?
-              <Avatar sx={{ height: "25px", width: "25px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar> :
-              <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+              <Tooltip title="Anonymous" placement='top'>
+                <Avatar sx={{ height: "30px", width: "30px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar>
+              </Tooltip> :
+              <Tooltip title={newCelebration.author ?? '  '} placement='top'>
+                <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+              </Tooltip>
           }
-          <Typography variant='contentMain' display="flex" fontSize="0.55rem" lineHeight='2'>
+          <Typography variant='contentMain' display="flex" fontSize="0.6rem" lineHeight='2'>
             {dateGetter(newCelebration.createdAt, true)}
           </Typography>
         </Box>
-        {newCelebration.type === celebrationType.CELEBRATION ?
-          <IconButton onClick={updateReaction}>
-            {reacted ?
-              <ThumbUpAltIcon sx={{ color: 'secondaryButton.primary' }} /> :
-              <ThumbUpOffAltIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
-            }
-            <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
-          </IconButton> :
-          <IconButton onClick={updateReaction}>
-            {
-              reacted ?
-                <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary' }} /> :
-                <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
-            }
-            <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
-          </IconButton>
-        }
+        <Tooltip title="React" placement='bottom'>
+          {newCelebration.type === celebrationType.CELEBRATION ?
+            <IconButton onClick={updateReaction}>
+              {reacted ?
+                <ThumbUpAltIcon sx={{ color: 'secondaryButton.primary' }} /> :
+                <ThumbUpOffAltIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
+              }
+              <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
+            </IconButton> :
+            <IconButton onClick={updateReaction}>
+              {
+                reacted ?
+                  <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary' }} /> :
+                  <PlusOneRoundedIcon sx={{ color: 'secondaryButton.primary', opacity: '0.5' }} />
+              }
+              <Typography fontSize="8px" paddingTop="15px">{reactCount}</Typography>
+            </IconButton>
+          }
+        </Tooltip>
       </CardActions>
       <UpdateCelebrationModal
         openModal={openUpdateModal}

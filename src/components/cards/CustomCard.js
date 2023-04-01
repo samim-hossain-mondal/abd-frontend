@@ -147,7 +147,7 @@ export default function CustomCard({ checkBox, data, type }) {
             </Box>
             <Box marginTop="10px">
               <Typography fontSize="0.65rem" variant="caption" display="block" gutterBottom>
-                Created at {dateGetter(data.createdAt, true)}
+                {dateGetter(data.createdAt, true)}
               </Typography>
             </Box>
           </Box>

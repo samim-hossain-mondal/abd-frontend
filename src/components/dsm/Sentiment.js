@@ -305,7 +305,7 @@ export default function Sentiment() {
               />
             }
             <AccordionSummary
-              expandIcon={<Tooltip title={(gridHeightState.sentiment.expanded)?'Collapse':'Expand'} placement='top'><ExpandMoreIcon /></Tooltip>}
+              expandIcon={<Tooltip title={(gridHeightState.sentiment.expanded) ? 'Collapse' : 'Expand'} placement='top'><ExpandMoreIcon /></Tooltip>}
               aria-controls="panel1a-content"
               id="panel1a-header"
               sx={{
@@ -362,11 +362,14 @@ export default function Sentiment() {
             <Grid container direction="row" sx={{ display: "flex", justifyContent: "center", height: "8vh" }}>
               {feelings.map((feeling) => (
                 <Grid key={feeling.name} item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
-                    {feeling.name === sentimentResponse ?
-                      feeling.iconSelected : feeling.icon
-                    }
-                  </IconButton>
+                  <Tooltip title={feeling.name} placement='top'>
+                    <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
+                      {feeling.name === sentimentResponse ?
+                        feeling.iconSelected :
+                        feeling.icon
+                      }
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               ))}
             </Grid>

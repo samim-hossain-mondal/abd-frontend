@@ -119,12 +119,16 @@ export default function CelebrationBoard({ selectedDate }) {
         <AccordionSummary
           expandIcon={
             !breakpoint1080 ? null : ((gridHeightState.celebration.fullExpanded) ?
-              <IconButton>
-                <FullscreenExitIcon />
-              </IconButton>:
-              <IconButton>
-                <FullscreenIcon />
-              </IconButton>)
+              <Tooltip title="Minimize" placement='top'>
+                <IconButton>
+                  <FullscreenExitIcon />
+                </IconButton>
+              </Tooltip> :
+              <Tooltip title="Expand" placement='top'>
+                <IconButton>
+                  <FullscreenIcon />
+                </IconButton>
+              </Tooltip>)
           }
           aria-controls="panel2a-content"
           id="panel2a-header"

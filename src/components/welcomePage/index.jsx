@@ -1,4 +1,4 @@
-import { React, useState, useContext, } from "react";
+import { React, useState, useContext } from 'react';
 import {
   Box,
   Typography,
@@ -10,18 +10,17 @@ import {
   Fab,
   Slide,
   Tooltip,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import CardBox from "../elements/welcomePage/CardBox";
-import { texts } from "../constants/welcomePage";
-import ImageCarousel from "../elements/welcomePage/ImageCarousel";
-import StickyHeader from "../elements/welcomePage/StickyHeader";
-// import ProfileCard from "../elements/welcomePage/ProfileCard"; // TODO: parked for now
-import NewProjectModal from "../elements/NewProjectModal";
-import { ProjectUserContext } from "../contexts/ProjectUserContext";
-import PaginatedCards from "../elements/welcomePage/PaginatedCards";
-import { HOME_ROUTE } from "../constants/routes";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import CardBox from '../elements/welcomePage/CardBox';
+import { texts } from '../constants/welcomePage';
+import ImageCarousel from '../elements/welcomePage/ImageCarousel';
+import StickyHeader from '../elements/welcomePage/StickyHeader';
+import NewProjectModal from '../elements/NewProjectModal';
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import PaginatedCards from '../elements/welcomePage/PaginatedCards';
+import { HOME_ROUTE } from '../constants/routes';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -31,13 +30,13 @@ export default function WelcomePage() {
     projects: userProjects,
     updateProjectDetails,
   } = useContext(ProjectUserContext);
-  const isSmallerScreen = useMediaQuery("(max-width: 600px)");
+  const isSmallerScreen = useMediaQuery('(max-width: 600px)');
   const showProjectList = userProjects.length > 0;
 
   const handleProjectClick = async (projectId) => {
     updateProjectDetails(projectId)
       .then(() => {
-        window.open(`/${projectId}`.concat(HOME_ROUTE), "_blank");
+        window.open(`/${projectId}`.concat(HOME_ROUTE), '_blank');
       })
       .catch((err) => {
         console.log(err);
@@ -49,75 +48,71 @@ export default function WelcomePage() {
   };
 
   const handleLoginClick = () => {
-    navigate("/");
+    navigate('/');
   };
 
   let projectCountText;
   if (userProjects.length > 0) {
     projectCountText = `${userProjects.length} projects for ${user.email}`;
   } else if (user.memberId) {
-    projectCountText = "You have no active projects";
+    projectCountText = 'You have no active projects';
   } else {
-    projectCountText = "Login and create a new project";
+    projectCountText = 'Login and create a new project';
   }
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        backgroundColor: "backgroundColor.main",
-      }}
-    >
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        backgroundColor: 'backgroundColor.main',
+      }}>
       <CssBaseline />
       <StickyHeader
-        userName={user ? user.name : ""}
+        userName={user ? user.name : ''}
         handleCreateProjectClick={handleCreateProjectClick}
         handleLoginClick={handleLoginClick}
       />
       <Container
-        component="main"
+        component='main'
         sx={{
           mt: 5,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "flex-start",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
         }}
-        maxWidth="lg"
-      >
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography variant="h4">
+        maxWidth='lg'>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant='h4'>
             {userProjects.length > 0
               ? `Welcome back, ${user.name} \u{1F44B}`
               : `${texts.welcome} ${
-                  user?.name ? `, ${user.name}` : ""
+                  user?.name ? `, ${user.name}` : ''
                 } \u{1F44B}`}
           </Typography>
           <Typography
-            variant="h5"
+            variant='h5'
             sx={{
               fontSize: isSmallerScreen ? 15 : 20,
-              color: "secondary.main",
-            }}
-          >
+              color: 'secondary.main',
+            }}>
             {projectCountText}
           </Typography>
         </Box>
         {showProjectList ? (
           <Box
-            component="main"
+            component='main'
             sx={{
               mt: 3,
               mb: 2,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               boxShadow: 0,
-              width: "100%",
-            }}
-          >
+              width: '100%',
+            }}>
             <PaginatedCards
               projects={userProjects.sort((a, b) => b.projectId - a.projectId)}
               handleProjectClick={handleProjectClick}
@@ -125,12 +120,11 @@ export default function WelcomePage() {
           </Box>
         ) : null}
         <Stack
-          direction="column"
+          direction='column'
           spacing={2}
-          sx={{ alignSelf: "center", width: "100%" }}
-        >
+          sx={{ alignSelf: 'center', width: '100%' }}>
           <CardBox
-            title="Why use My Agile Dashboard?"
+            title='Why use My Agile Dashboard?'
             description={texts.whyMyAgile}
           />
           <ImageCarousel />
@@ -138,42 +132,39 @@ export default function WelcomePage() {
       </Container>
       {showProjectList && (
         <Container
-          id="projects"
-          component="main"
+          id='projects'
+          component='main'
           sx={{
             mt: 4,
             mb: 4,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            alignSelf: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
           }}
-          maxWidth="lg"
-        >
+          maxWidth='lg'>
           {!showProjectList && (
             <Paper
               sx={{
                 mt: 8,
                 mb: 2,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
                 paddingLeft: 0,
                 paddingRight: 0,
-                backgroundColor: "grey.200",
-              }}
-            >
+                backgroundColor: 'grey.200',
+              }}>
               <Typography
-                component="p"
+                component='p'
                 sx={{
                   fontSize: 20,
                   px: 1,
-                  alignSelf: "center",
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
+                  alignSelf: 'center',
+                  textAlign: 'center',
+                  width: '100%',
+                }}>
                 {texts.getStarted}
               </Typography>
             </Paper>
@@ -181,54 +172,55 @@ export default function WelcomePage() {
         </Container>
       )}
       {isSmallerScreen && user.memberId && (
-        <Slide
-          direction="up"
-          in
-          mountOnEnter
-          unmountOnExit
-        >
-          <Tooltip title="Create a new project" arrow>
+        <Slide direction='up' in mountOnEnter unmountOnExit>
+          <Tooltip title='Create a new project' arrow>
             <Fab
-              color="primary"
-              aria-label="add"
+              color='primary'
+              aria-label='add'
               sx={{
-                position: "fixed",
+                position: 'fixed',
                 bottom: 40,
                 right: 40,
-                zIndex: "9999",
+                zIndex: '9999',
                 height: { xs: 50, sm: 60, md: 70 },
                 width: { xs: 50, sm: 60, md: 70 },
-                backgroundColor: "logoBlue.main",
-                color: "white",
+                backgroundColor: 'logoBlue.main',
+                color: 'white',
               }}
-              onClick={() => handleCreateProjectClick()}
-            >
+              onClick={() => handleCreateProjectClick()}>
               <AddIcon />
             </Fab>
           </Tooltip>
         </Slide>
       )}
       <Box
-        component="footer"
-        id="footer"
+        component='footer'
+        id='footer'
         sx={{
           padding: 4,
-          backgroundColor: "grey.200",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-          width: "100%",
+          backgroundColor: 'grey.200',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          width: '100%',
           boxShadow: 5,
-          position: "relative",
-          zIndex: "999",
+          position: 'relative',
+          zIndex: '999',
           marginTop: user.memberId ? 0 : 6, // TODO: Change this to a better solution
-        }}
-      >
-        <Typography variant="h5" color="text.secondary" align="center" sx={{fontSize: isSmallerScreen ? 15 : 20}}>
+        }}>
+        <Typography
+          variant='h5'
+          color='text.secondary'
+          align='center'
+          sx={{ fontSize: isSmallerScreen ? 15 : 20 }}>
           Created by The Firm, for The Firm
         </Typography>
-        <Typography variant="h5" color="text.secondary" align="center" sx={{fontSize: isSmallerScreen ? 15 : 20}}>
+        <Typography
+          variant='h5'
+          color='text.secondary'
+          align='center'
+          sx={{ fontSize: isSmallerScreen ? 15 : 20 }}>
           2023
         </Typography>
       </Box>
