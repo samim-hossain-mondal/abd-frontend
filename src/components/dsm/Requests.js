@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress, useMediaQuery, FormControlLabel, Checkbox } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress, useMediaQuery, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon, Done as DoneIcon } from '@mui/icons-material';
 import { Stack } from '@mui/system';
@@ -182,7 +182,11 @@ export default function Requests({ selectedDate }) {
         overflow: 'auto',
       }}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={
+            <Tooltip title={gridHeightState.request.expanded ? 'Collapse' : 'Expand'} placement='top'>
+              <ExpandMoreIcon />
+            </Tooltip>
+          }
           aria-controls="panel3a-content"
           id="panel3a-header"
           sx={{
@@ -198,9 +202,11 @@ export default function Requests({ selectedDate }) {
           <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>Requests</Typography>
           {
             format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
-              <IconButton onClick={(e) => handleAddButtonClick(e)}>
-                <AddCircleIcon color="primary" />
-              </IconButton>
+              <Tooltip title="Add Request" placement='top'>
+                <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                  <AddCircleIcon color="primary" />
+                </IconButton>
+              </Tooltip>
             )
           }
 

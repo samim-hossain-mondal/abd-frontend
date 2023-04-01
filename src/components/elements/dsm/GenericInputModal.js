@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography, List, ListItem, ListItemButton } from '@mui/material';
+import { Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip } from '@mui/material';
 
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
@@ -108,26 +108,40 @@ export default function GenericInputModal({
                 justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              {authorize && <IconButton onClick={() => {
-                setOpenDeleteDialog(true);
-              }} sx={{ padding: 0 }}>
-                <DeleteForeverIcon date-testid='delete-icon' />
-              </IconButton>}
+              {authorize && 
+                <Tooltip title="Delete Request" placement='top'>
+                  <IconButton onClick={() => {
+                      setOpenDeleteDialog(true);
+                    }} 
+                    sx={{ padding: 0 }}
+                  >
+                    <DeleteForeverIcon date-testid='delete-icon' />
+                  </IconButton>
+                </Tooltip>
+              }
               <Box>
-                {authorize && <IconButton onClick={() => setIsDisabled(false)}>
-                  <EditIcon data-testid='edit-icon' />
-                </IconButton>}
-                <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
-                  <CloseIcon />
-                </IconButton>
+                {authorize && 
+                  <Tooltip title="Edit Request" placement='top'>
+                    <IconButton onClick={() => setIsDisabled(false)}>
+                      <EditIcon data-testid='edit-icon' />
+                    </IconButton>
+                  </Tooltip>
+                }
+                <Tooltip title="Close" placement='top'>
+                  <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
+                    <CloseIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Box>
           )
           : (
             <Box sx={{ textAlign: 'right' }}>
-              <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
-                <CloseIcon />
-              </IconButton>
+              <Tooltip title="Close" placement='top'>
+                <IconButton onClick={() => onCloseButtonClick(content)} sx={{ padding: 0 }}>
+                  <CloseIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           )
       }
@@ -202,20 +216,21 @@ export default function GenericInputModal({
           onChange={(e) => handleChangeTextArea(e)}
           disabled={isDisabled}
         />
-
-        <ContentCopyIcon sx={{
-          position: 'absolute',
-          right: '16px',
-          bottom: '16px',
-          cursor: 'pointer',
-        }} onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(content);
-            setSuccess('Copied to clipboard')
-          } catch (err) {
-            setError('Failed to copy to clipboard');
-          }
-        }} />
+        <Tooltip title="Copy to clipboard" placement='top'>
+          <ContentCopyIcon sx={{
+            position: 'absolute',
+            right: '16px',
+            bottom: '16px',
+            cursor: 'pointer',
+          }} onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(content);
+              setSuccess('Copied to clipboard')
+            } catch (err) {
+              setError('Failed to copy to clipboard');
+            }
+          }} />
+        </Tooltip>
       </Box>
 
       {children}

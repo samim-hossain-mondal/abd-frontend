@@ -9,7 +9,8 @@ import {
   Typography,
   Popover,
   Select,
-  useMediaQuery
+  useMediaQuery,
+  Tooltip
 } from '@mui/material';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import PropTypes from 'prop-types';
@@ -54,9 +55,11 @@ export default function PONotesHeader({ query, setQuery }) {
             </Typography>
           </Box>
           <Box sx={{ flexGrow: 0.2, display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', marginBottom: aboveTablet ? "none" : "20px" }}>
-            <Box sx={{ mr: 1 }}>
-              <SearchBar query={query} setQuery={setQuery} />
-            </Box>
+            <Tooltip title='Search PO Notes' placement='top'>
+              <Box sx={{ mr: 1 }}>
+                <SearchBar query={query} setQuery={setQuery} />
+              </Box>
+            </Tooltip>
             <FormControl id="demo-select-small" sx={{ minWidth: breakpoint391 ? '200px' : "148px" }} size="small">
               <InputLabel id="demo-select-small">
                 <Box display='flex' align-items='center'>
@@ -65,14 +68,16 @@ export default function PONotesHeader({ query, setQuery }) {
                   <FilterAltOutlinedIcon fontSize='small' />
                 </Box>
               </InputLabel>
-              <Select
-                labelId="quick-filter-popover"
-                aria-describedby={id}
-                label="Quick Filters Icon"
-                onClick={handleQuickFilterClick}
-                value=""
-                disabled
-              />
+              <Tooltip title='Filter PO Notes' placement='top'>
+                <Select
+                  labelId="quick-filter-popover"
+                  aria-describedby={id}
+                  label="Quick Filters Icon"
+                  onClick={handleQuickFilterClick}
+                  value=""
+                  disabled
+                />
+              </Tooltip>
               <Popover
                 id='quick-filter-popover'
                 open={open}

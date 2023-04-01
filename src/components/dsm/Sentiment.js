@@ -18,7 +18,8 @@ import {
   AccordionSummary,
   AccordionDetails,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Tooltip
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { CSVLink } from "react-csv";
@@ -304,7 +305,7 @@ export default function Sentiment() {
               />
             }
             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<Tooltip title={(gridHeightState.sentiment.expanded)?'Collapse':'Expand'} placement='top'><ExpandMoreIcon /></Tooltip>}
               aria-controls="panel1a-content"
               id="panel1a-header"
               sx={{
@@ -325,17 +326,19 @@ export default function Sentiment() {
               </Typography>
             </AccordionSummary>
             {isLeaderOrAdmin() &&
-              <IconButton
-                sx={{ borderRadius: 100, width: breakpoint391 ? "none" : "30px" }}
-                aria-label="more"
-                id="long-button"
-                aria-controls={open ? 'long-menu' : undefined}
-                aria-expanded={open ? 'true' : undefined}
-                aria-haspopup="true"
-                onClick={handleClick}
-              >
-                <MoreVertIcon sx={{ borderRadius: 50 }} />
-              </IconButton>
+              <Tooltip title="See or Export Results" placement='top'>
+                <IconButton
+                  sx={{ borderRadius: 100, width: breakpoint391 ? "none" : "30px" }}
+                  aria-label="more"
+                  id="long-button"
+                  aria-controls={open ? 'long-menu' : undefined}
+                  aria-expanded={open ? 'true' : undefined}
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                >
+                  <MoreVertIcon sx={{ borderRadius: 50 }} />
+                </IconButton>
+              </Tooltip>
             }
             {isLeaderOrAdmin() &&
               <Menu

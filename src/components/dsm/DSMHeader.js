@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Typography, Box, Container, Toolbar, IconButton } from '@mui/material';
+import { AppBar, Typography, Box, Container, Toolbar, IconButton, Tooltip } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -49,9 +49,11 @@ export default function DSMHeader({ handleDate }) {
                 Daily Standup (DSM)
               </Typography>
               <Box sx={{ display: 'flex', alignContent: 'center' }}>
-                <IconButton onClick={handleDecrementDate}>
-                  <ArrowLeft />
-                </IconButton>
+                <Tooltip title="Previous Date" placement="top">
+                  <IconButton onClick={handleDecrementDate}>
+                    <ArrowLeft />
+                  </IconButton>
+                </Tooltip>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     disableFuture
@@ -61,9 +63,11 @@ export default function DSMHeader({ handleDate }) {
                     onChange={handleDateChange}
                   />
                 </LocalizationProvider>
-                <IconButton onClick={handleIncrementDate}>
-                  <ArrowRight />
-                </IconButton>
+                <Tooltip title="Next Date" placement="top">
+                  <IconButton onClick={handleIncrementDate}>
+                    <ArrowRight />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </Box>
           </Toolbar>

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, Checkbox, FormControlLabel, Grid, IconButton, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -110,21 +110,27 @@ export default function CelebrationGenericModal({
           }}
       >
         {update &&
-          <IconButton onClick={() => onDeleteButtonClick()}>
-            <DeleteForeverRoundedIcon color={!deleteAlert ? 'secondary' : 'primary'} />
-          </IconButton>
+          <Tooltip title="Delete" placement="top">
+            <IconButton onClick={() => onDeleteButtonClick()}>
+              <DeleteForeverRoundedIcon color={!deleteAlert ? 'secondary' : 'primary'} />
+            </IconButton>
+          </Tooltip>
         }
         <Box sx={{
           textAlign: 'right',
         }}>
           {update && !isPreview &&
-            <IconButton onClick={() => onEditButtonClick()}>
-              <EditRoundedIcon color={lock ? 'secondary' : 'primary'} />
-            </IconButton>
+            <Tooltip title="Edit" placement="top">
+              <IconButton onClick={() => onEditButtonClick()}>
+                <EditRoundedIcon color={lock ? 'secondary' : 'primary'} />
+              </IconButton>
+            </Tooltip>
           }
-          <IconButton onClick={(e) => onCloseButtonClick(e)}>
-            <CloseIcon />
-          </IconButton>
+          <Tooltip title="Close" placement="top">
+            <IconButton onClick={(e) => onCloseButtonClick(e)}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 

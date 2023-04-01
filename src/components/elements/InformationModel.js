@@ -4,6 +4,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Tooltip } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -33,9 +34,10 @@ export default function NestedModal(props) {
     setOpen(false);
   };
   return (
+    <Tooltip title="More Info" placement='top'>
     <Box sx={{ paddingLeft: '0.5%' }}>
       {/* Icon to open the modal */}
-      <InfoOutlinedIcon sx={{ fontSize: '18px' }} onClick={handleOpen} />
+      <InfoOutlinedIcon sx={{ fontSize: '18px', cursor: 'pointer' }} onClick={handleOpen} />
       <Modal
         open={open}
         onClose={handleClose}
@@ -67,6 +69,7 @@ export default function NestedModal(props) {
         </Box>
       </Modal>
     </Box>
+    </Tooltip>
   );
 }
 // Props validation

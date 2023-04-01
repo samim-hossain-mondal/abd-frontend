@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress, Divider, Box } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, CircularProgress, Divider, Box, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
@@ -173,7 +173,11 @@ export default function Announcements({ selectedDate }) {
         overflow: 'auto',
       }}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={
+            <Tooltip title={gridHeightState.announcement.expanded ? 'Collapse' : 'Expand'}>
+              <ExpandMoreIcon />
+            </Tooltip>
+          }
           aria-controls="panel4a-content"
           id="panel4a-header"
           sx={{
@@ -188,9 +192,11 @@ export default function Announcements({ selectedDate }) {
           <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{TITLE}</Typography>
           {
             (userRole === USER_ROLES.ADMIN) && (dateGetter(selectedDate) === dateGetter(new Date())) &&  (
-              <IconButton onClick={handleAddButtonClick}>
-                <AddCircleIcon color="primary" />
-              </IconButton>
+              <Tooltip title="Add Announcement">
+                <IconButton onClick={handleAddButtonClick}>
+                  <AddCircleIcon color="primary" />
+                </IconButton>
+              </Tooltip>
             )
           }
         </AccordionSummary>

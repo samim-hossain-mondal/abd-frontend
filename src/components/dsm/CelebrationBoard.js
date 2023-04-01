@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress, useMediaQuery } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, CircularProgress, useMediaQuery, Tooltip } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import Masonry from '@mui/lab/Masonry';
@@ -121,7 +121,7 @@ export default function CelebrationBoard({ selectedDate }) {
             !breakpoint1080 ? null : ((gridHeightState.celebration.fullExpanded) ?
               <IconButton>
                 <FullscreenExitIcon />
-              </IconButton> :
+              </IconButton>:
               <IconButton>
                 <FullscreenIcon />
               </IconButton>)
@@ -140,12 +140,13 @@ export default function CelebrationBoard({ selectedDate }) {
           <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>Daily Retro Board</Typography>
           {
             dateGetter(selectedDate) === dateGetter(new Date()) && (
-              <IconButton onClick={(e) => handleAddButtonClick(e)}>
-                <AddCircleIcon color="primary" />
-              </IconButton>
+              <Tooltip title="Add Celebration">
+                <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                  <AddCircleIcon color="primary" />
+                </IconButton>
+              </Tooltip>
             )
           }
-
         </AccordionSummary>
         <AccordionDetails>
           <Masonry className="celebration-masonry" sx={{ overflow: 'scroll' }} spacing={4}>

@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {Box,Fab} from '@mui/material';
+import {Box,Fab, Tooltip} from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PropTypes from 'prop-types';
 import { RefreshContext } from '../contexts/RefreshContext';
@@ -19,9 +19,11 @@ export default function FabRefresh({poNotesIsInViewPort, dsmIsInViewPort, availa
 
   return (
     <Box sx={{position: 'sticky', bottom: '1%', left: '99%', width: '65px', justifyContent: 'center'}}>
-      <Fab color="primary" aria-label="refresh" onClick={handleRefresh}>
-      <RefreshIcon />
-    </Fab>
+      <Tooltip title='Refresh' placement='top'>
+        <Fab color="primary" aria-label="refresh" onClick={handleRefresh}>
+          <RefreshIcon />
+        </Fab>
+      </Tooltip>
     </Box>
   );
 };

@@ -123,7 +123,8 @@ export default function PONotesTable(props) {
             </Box>
             <Box>
               <Box sx={{ backgroundColor: 'backgroundColor.secondary' }}>
-                <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={poNotes} /> </Box>
+                <CardLayout checkBox={checkBox} type={HEADINGS[heading]} data={poNotes} /> 
+              </Box>
             </Box>
           </Box>
         </Box>

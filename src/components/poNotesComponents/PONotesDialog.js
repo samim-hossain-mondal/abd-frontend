@@ -14,7 +14,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  TextField
+  TextField,
+  Tooltip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
@@ -171,40 +172,48 @@ export default function PONotesDialog({ updateItem, data, open, handleClose, acc
         TransitionComponent={Transition}
       >
         <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
-          {access && <Grid item xs={3}>
-            <IconButton
-              edge="start"
-              color="error"
-              onClick={handleDeleteAlert}
-              aria-label="close"
-              disabled={!updateItem}
-            >
-              <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
-            </IconButton>
+          {access && 
+          <Grid item xs={3}>
+            <Tooltip title="Delete" placement="top">
+              <IconButton
+                edge="start"
+                color="error"
+                onClick={handleDeleteAlert}
+                aria-label="close"
+                disabled={!updateItem}
+              >
+                <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
+              </IconButton>
+            </Tooltip>
           </Grid>
           }
           <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
-          {access && <Grid item xs={2} >
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleEditIcon}
-              aria-label="close"
-              disabled={!updateItem}
-            >
-              <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
-            </IconButton>
+          {access && 
+          <Grid item xs={2} >
+            <Tooltip title='Edit' placement='top'>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleEditIcon}
+                aria-label="close"
+                disabled={!updateItem}
+              >
+                <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
+              </IconButton>
+            </Tooltip>
           </Grid>
           }
           <Grid item xs={2}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-            >
-              <CloseIcon sx={{ color: "secondary.main" }} />
-            </IconButton>
+            <Tooltip title="Close" placement="top">
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
+              >
+                <CloseIcon sx={{ color: "secondary.main" }} />
+              </IconButton>
+            </Tooltip>
           </Grid>
         </Grid>
         <Box

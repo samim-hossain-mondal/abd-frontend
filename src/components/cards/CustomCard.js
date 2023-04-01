@@ -7,7 +7,7 @@ import {
   Checkbox,
   styled,
   Tooltip,
-  Link
+  Link,
 }
   from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -105,7 +105,11 @@ export default function CustomCard({ checkBox, data, type }) {
       if (isDraft()) {
         return <Checkbox color='primary' size="medium" disabled />
       }
-      return <Checkbox color='primary' size="medium" disabled={!isAdmin(userRole)} checked={checked} onChange={handleToggle} />
+      return (
+        <Tooltip title="Mark as completed" onClick={handleToggle}>
+          <Checkbox color='primary' size="medium" disabled={!isAdmin(userRole)} checked={checked} onChange={handleToggle} />
+        </Tooltip>
+      )
     }
     return <Checkbox color='primary' size="medium" sx={{ visibility: 'hidden' }} />
   };
