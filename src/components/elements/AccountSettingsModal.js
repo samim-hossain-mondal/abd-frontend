@@ -11,7 +11,7 @@ import ProjectModal from "./ProjectModal";
 import Transition from "../utilityFunctions/SideBarTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
 // eslint-disable-next-line import/no-named-as-default
-import NewProjectModal from "./NewProjectModal";
+import NewProjectModal from "./NewProjectModal/NewProjectModal";
 import { DOMAIN } from "../../config";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 
@@ -339,10 +339,8 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                     }}
                   >
                    {project.projectId === selectedProject ? (
-                      <Typography sx={{ fontSize: "20px",color:"primary.main",paddingBottom: "3px",
-                      "borderBottomStyle": "solid",
-                      "borderBottomWidth": "2px",
-                      "width": "fitContent"
+                      <Typography sx={{ fontSize: "20px",color:"primary.main",textDecoration:"underline", cursor:"pointer",
+                      textUnderlineOffset: "7px"
                       }}>
                         {project.projectName}
                       </Typography>

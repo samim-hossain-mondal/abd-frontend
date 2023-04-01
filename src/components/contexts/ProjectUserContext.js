@@ -75,6 +75,7 @@ export function ProjectUserProvider({ children }) {
       },
     };
     setProjects([...projects, project]);
+    return project;
   };
 
   const fetchProjectInfo = async () => {

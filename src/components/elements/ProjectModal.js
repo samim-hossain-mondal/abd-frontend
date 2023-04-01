@@ -125,7 +125,7 @@ function ProjectModal({
         <Grid
           container
           rowSpacing={1}
-          paddingTop="2%"
+          // paddingTop="2%"
           textAlign="center"
           alignItems="center"
         >
@@ -207,11 +207,12 @@ function ProjectModal({
                 value={name}
                 sx={{
                   fontSize: "16px",
-                  height: "20px",
-                  width: "277px",
-                  padding: "15px 20px",
-                  border: "2px solid #ccc",
+                  width: "100%",
+                  padding: "2px 20px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
                   fontFamily: "Roboto, sans-serif",
+                  boxShadow: "2px 2px 2px 2px rgba(0.1, 0, 0.1, 0)",
                 }}
                 onChange={(e) => {
                   projName(e.target.value);
@@ -275,14 +276,14 @@ function ProjectModal({
                 handleLock();
               }}
             >
-              Save Changes
+              Save
             </Button>
             <Button
               variant="contained"
               sx={{ width: "50%" }}
               onClick={handleCancelChanges}
             >
-              Cancel Changes
+              Cancel
             </Button>
           </Box>
         ) : null}

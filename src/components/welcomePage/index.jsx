@@ -10,17 +10,20 @@ import {
   Fab,
   Slide,
   Tooltip,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import CardBox from '../elements/welcomePage/CardBox';
-import { texts } from '../constants/welcomePage';
-import ImageCarousel from '../elements/welcomePage/ImageCarousel';
-import StickyHeader from '../elements/welcomePage/StickyHeader';
-import NewProjectModal from '../elements/NewProjectModal';
-import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import PaginatedCards from '../elements/welcomePage/PaginatedCards';
-import { HOME_ROUTE } from '../constants/routes';
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import CardBox from "../elements/welcomePage/CardBox";
+// import Logo from "../../assets/images/agileLogo.png";
+import { texts } from "../constants/welcomePage";
+import ImageCarousel from "../elements/welcomePage/ImageCarousel";
+import StickyHeader from "../elements/welcomePage/StickyHeader";
+// import ProfileCard from "../elements/welcomePage/ProfileCard";
+// import ProjectListItem from "../elements/welcomePage/ProjectListItem";
+import NewProjectModal from "../elements/NewProjectModal/NewProjectModal";
+import { ProjectUserContext } from "../contexts/ProjectUserContext";
+import PaginatedCards from "../elements/welcomePage/PaginatedCards";
+import { HOME_ROUTE } from "../constants/routes";
 
 export default function WelcomePage() {
   const navigate = useNavigate();
