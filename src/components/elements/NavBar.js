@@ -17,23 +17,39 @@ import {
   from '@mui/material';
 import stc from 'string-to-color';
 import PropTypes from 'prop-types';
+import { ExpandLess, ExpandMore, } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { allPages, WELCOME_ROUTE } from '../constants/routes';
+import { allPages, HOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
+import MobileTabs from './MobileTabs';
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
-export default function Navbar({ authLoaded }) {
+export default function Navbar({ 
+  authLoaded,
+  poNotesRef,
+  dsmRef,
+  availabilityCalendarRef,
+  handleScroll,
+}) {
   const pages = allPages
   const { projectId, user } = useContext(ProjectUserContext)
   const { oktaAuth, authState } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const aboveTablet = useMediaQuery('(min-width: 769px)');
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElNavMenu, setAnchorElNavMenu] = useState(null);
   const [openRoutesMenu, setOpenRoutesMenu] = useState(false);
+  const [openPageNavMenu, setOpenPageNavMenu] = useState(false);
+  const [activeOption, setActiveOption] = useState('Daily Retro');
+  const sections = [
+    {name: 'Daily Retro', ref: dsmRef},
+    {name: 'PO Notes', ref: poNotesRef},
+    {name: 'Availability Calendar', ref: availabilityCalendarRef},
+  ];
 
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
@@ -50,8 +66,20 @@ export default function Navbar({ authLoaded }) {
     setAnchorElUser(null);
   };
 
+  const handlePageNavMenu = (event) => {
+    setAnchorElNavMenu(event.currentTarget);
+    setOpenPageNavMenu(!openPageNavMenu);
+  };
+
+  const handleOptionClick = (sectionName, ref) => {
+    ref.current.scrollIntoView({ behavior: 'smooth' });
+    setActiveOption(sectionName);
+    setOpenPageNavMenu(false);
+  }
+
   const location = useLocation();
   return (
+    <>
     <AppBar
       position="fixed"
       sx={{ backgroundColor: 'white', boxShadow: "none", padding: '16px 0px' }}
@@ -83,22 +111,85 @@ export default function Navbar({ authLoaded }) {
           }
           {
             (aboveTablet) && (
-              <Box sx={{ display: 'flex', flexGrow: '2', justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', flexGrow: '2', justifyContent: 'center', alignItems: 'center' }}>
                 {pages.map((page, index) => (
                   <Box
                     key={page}
                     sx={{ ml: 5 }}
                   >
-                    <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={getRoute(pages[index], projectId)}>
-                      <Typography
-                        color='secondary.main'
-                        sx={{
-                          ...(location.pathname !== WELCOME_ROUTE && location.pathname === getRoute(pages[index], projectId) &&
-                            { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
-                          ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
-                        }}> {page}
-                      </Typography>
+                    <Box sx={{ position: 'relative' }}>
+                    <Link 
+                      style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} 
+                      to={getRoute(pages[index], projectId)}
+                      onClick={
+                        page === 'DSM' ? handlePageNavMenu : null
+                      }
+                    >
+                      <Box
+                        sx={{ display: 'flex', alignItems: 'center', }}
+                      >
+                        <Typography
+                          color='secondary.main'
+                          sx={{
+                            ...(location.pathname !== HOME_ROUTE && location.pathname === getRoute(pages[index], projectId) &&
+                              { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                            ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
+                          }}> {page}
+                        </Typography>
+                        {page === 'DSM' && (
+                        <IconButton
+                          sx={{ p: 0 }}
+                        >
+                          {openPageNavMenu ? <ExpandLess /> : <ExpandMore />}
+                        </IconButton>
+                        )}
+                      </Box>
                     </Link>
+                    {openPageNavMenu && (
+                      <Menu
+                        id="nav-menu"
+                        anchorEl={anchorElNavMenu}
+                        open={openPageNavMenu}
+                        PaperProps={{
+                          style: {
+                            maxHeight: 48 * 4.5,
+                            width: '12rem',
+                          },
+                        }}
+                        sx={{ marginTop: '0.6rem' }}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "center",
+                        }}
+                        onClose={
+                          (e) => {
+                            e.stopPropagation();
+                            setOpenPageNavMenu(false)
+                          }
+                        }
+                        keepMounted
+                      >
+                        {sections.map((section) => (
+                        <MenuItem 
+                          key={section.name} 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOptionClick(section.name, section.ref);
+                          }}
+                          sx={{
+                            ...(activeOption === section.name && { backgroundColor: 'logoBlue.main', color: 'white', ':hover': { backgroundColor: 'primary.main' } }),
+                          }}
+                          >
+                          <Typography textAlign="center">{section.name}</Typography>
+                        </MenuItem>
+                        ))}
+                      </Menu>
+                    )}
+                    </Box>
                   </Box>
                 ))}
               </Box>
@@ -160,10 +251,10 @@ export default function Navbar({ authLoaded }) {
                   keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
                   {pages.map((page, index) => (
-                    <MenuItem
+                    <MenuItem 
                       key={page}
                       sx={{ marginLeft: '10px' }}
-                      onClick={() => { setOpenRoutesMenu(false) }}
+                      onClick={page === 'DSM' ? handlePageNavMenu : () => { setOpenRoutesMenu(false) }}
                     >
                       <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={getRoute(pages[index], projectId)}>
                         <Typography
@@ -184,9 +275,24 @@ export default function Navbar({ authLoaded }) {
         </Toolbar>
       </Container>
     </AppBar>
+    (aboveTablet) && (
+      <MobileTabs 
+        sections={sections} 
+      />)
+    </>
   );
 }
 
 Navbar.propTypes = {
   authLoaded: PropTypes.bool.isRequired,
+  poNotesRef: PropTypes.object,
+  dsmRef: PropTypes.object,
+  availabilityCalendarRef: PropTypes.object,
+  handleScroll: PropTypes.func.isRequired,
+};
+
+Navbar.defaultProps = {
+  poNotesRef: null,
+  dsmRef: null,
+  availabilityCalendarRef: null,
 };

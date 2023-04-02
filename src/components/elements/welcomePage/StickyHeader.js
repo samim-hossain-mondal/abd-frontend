@@ -79,15 +79,14 @@ function StickyHeader({
             alt="logo"
             src={Logo}
           />
-          {isLargeScreen && (
-            <Typography
-              variant="h4"
-              color="secondary.main"
-              sx={{ marginLeft: 2, cursor: "pointer" }}
-            >
-              My Agile Board
-            </Typography>
-          )}
+          <Typography
+            variant="h4"
+            color="secondary.main"
+            fontSize="2rem"
+            sx={{ marginLeft: 2, cursor: "pointer" }}
+          >
+            My Agile Board
+          </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
         {user.memberId ? (

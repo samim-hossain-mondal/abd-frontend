@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { toRelativeUrl } from '@okta/okta-auth-js';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import { WELCOME_ROUTE } from '../constants/routes';
+import { HOME_ROUTE } from '../constants/routes';
 import { ErrorContext } from '../contexts/ErrorContext';
 import { UNAUTHORIZED_MSG } from '../constants/HttpMessages';
 
@@ -53,7 +53,7 @@ export default function SecureRoute({ children, welcome = false }) {
           }
         );
       } else {
-        navigate(WELCOME_ROUTE);
+        navigate(HOME_ROUTE);
         setProjectId(undefined);
         setIsProjectMember(false);
         setError(UNAUTHORIZED_MSG);

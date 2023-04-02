@@ -4,7 +4,7 @@ import { Security, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
@@ -18,10 +18,10 @@ import ScrollableHome from './components/routes/ScrollableHome'
 import {
   CALENDAR_ROUTE,
   HOME_ROUTE,
+  DSM_ROUTE,
   MADE_TO_STICK_ROUTE,
   OUR_TEAM_ROUTE,
   PO_NOTE_ROUTE,
-  WELCOME_ROUTE
 } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
@@ -56,7 +56,7 @@ function AppRoutes() {
   const poNotesRef = useRef(null);
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
-
+  const aboveTablet = useMediaQuery('(min-width: 600px)');
 
   const { updateUserDetails } = useContext(ProjectUserContext);
   
@@ -94,12 +94,19 @@ function AppRoutes() {
       <Box className="App">
         {authLoaded && window.location.pathname !== '/welcome' && (
         <Box>
-          <Navbar authLoaded={authLoaded} />
+          <Navbar 
+            authLoaded={authLoaded} 
+            poNotesRef={poNotesRef}
+            dsmRef={dsmRef}
+            availabilityCalendarRef={availabilityCalendarRef}
+            handleScroll={handleScroll}
+          />
+          {/* {aboveTablet && */}
         </Box>
         )}
         <Routes>
           <Route path='/' exact element={<Login />} />
-          <Route path={`/:projectId${HOME_ROUTE}`} exact element={
+          <Route path={`/:projectId${DSM_ROUTE}`} exact element={
             <SecureRoute>
               {
                 authLoaded &&
@@ -151,7 +158,7 @@ function AppRoutes() {
                   scrollTo='availabilityCalendar' />
               }
             </SecureRoute>} />
-          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
+          <Route path={HOME_ROUTE} element={< WelcomePage />} />
           <Route path='/login/callback' element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
