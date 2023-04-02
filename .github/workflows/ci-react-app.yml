@@ -32,8 +32,8 @@ jobs:
       - name: Installing dependencies
         run: npm ci
 
-      # - name: Building project just to check
-      #   run: npm run build --if-present --production
+      - name: Building project just to check
+        run: npm run build --if-present --production
 
       # - name: Testing project with coverage
       #   run: npm run test:coverage

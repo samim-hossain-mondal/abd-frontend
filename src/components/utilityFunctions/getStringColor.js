@@ -12,4 +12,4 @@ const stringAvatar = (name, stc, celebration = false) => ({
   children: `${name.split(' ')[0][0]}`,
 });
 
-module.exports = stringAvatar;
+export default stringAvatar;
