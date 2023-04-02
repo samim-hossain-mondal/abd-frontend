@@ -35,7 +35,9 @@ export default function PONotesHeader({ query, setQuery }) {
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
       <Container maxWidth="xl" padding='0' margin='20px'>
-        <Toolbar disableGutters sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}>
+        <Toolbar disableGutters
+          sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}
+        >
           <Box
             height={aboveTablet ? "auto" : "60px"}
             sx={{ flexGrow: 2, display: { md: 'flex' } }}
@@ -53,7 +55,9 @@ export default function PONotesHeader({ query, setQuery }) {
               PO Notes
             </Typography>
           </Box>
-          <Box sx={{ flexGrow: 0.2, display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', marginBottom: aboveTablet ? "none" : "20px" }}>
+          <Box
+            sx={{ flexGrow: 0.2, display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', marginBottom: aboveTablet ? "none" : "20px" }}
+          >
             <Tooltip title='Search PO Notes' placement='top'>
               <Box sx={{ mr: 1 }}>
                 <SearchBar query={query} setQuery={setQuery} />

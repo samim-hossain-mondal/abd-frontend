@@ -50,8 +50,6 @@ export default function PONotesTable(props) {
   const limit = 10;
   const [countOfItems, setCountOfItems] = useState(0);
 
-  // const breakpoint500 = useMediaQuery('(min-width:500px)');
-
   const getPONotes = async (params) => {
     try {
       const resData = await makeRequest(GET_PO_NOTES(projectId), { params })
@@ -150,8 +148,6 @@ export default function PONotesTable(props) {
                 <InfiniteScroll
                   dataLength={poNotes.length}
                   next={fetchMorePONoteData}
-                  // style={{ display: 'flex', flexDirection: 'column-reverse' }} // To put endMessage and loader to the top.
-                  // inverse //
                   hasMore={countOfItems > poNotes.length}
                   loader={
                     <Box sx={{ width: '100%' }}>

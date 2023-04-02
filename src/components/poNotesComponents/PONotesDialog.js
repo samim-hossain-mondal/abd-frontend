@@ -66,7 +66,11 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
       )
   );
   const [statement, setStatement] = useState(updateItem ? data?.note : '');
-  const [issueLink, setIssueLink] = useState(updateItem ? data?.issueLink ?? '' : '');
+  const [issueLink, setIssueLink] = useState(
+    updateItem ?
+      (data?.issueLink ? data?.issueLink : '') : ''
+  );
+
   const getEditColor = () => (updateItem && !lock) ? 'primary.main' : 'secondary.main'
   const handleEditIcon = () => {
     setLock(!lock);
@@ -89,8 +93,12 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
         'status': status,
       };
 
-      if (type === PO_NOTES_TYPES.ACTION_ITEM && updateItem && issueLink.length > 0) body.issueLink = issueLink;
-      if (type === PO_NOTES_TYPES.ACTION_ITEM) body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
+      if (type === PO_NOTES_TYPES.ACTION_ITEM) body = {
+        ...body, ...({
+          'dueDate': timeline === '' ? null : timeline,
+          'issueLink': issueLink === '' ? null : issueLink
+        })
+      }
 
       if (updateItem) {
         if (userRole !== USER_ROLES.ADMIN) {
@@ -173,34 +181,34 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
       >
         <Grid container rowSpacing={1} paddingTop="2%" paddingBottom="2%" textAlign="center" alignItems="center"  >
           {access && <Grid item xs={3}>
-          <Tooltip title="Delete" placement="top">
-            <IconButton
-              edge="start"
-              color="error"
-              onClick={handleDeleteAlert}
-              aria-label="close"
-              disabled={!updateItem}
-            >
-              <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
-            </IconButton>
-          </Tooltip>
-          </Grid>
-          }
-          <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
-          {access && 
-          <Grid item xs={2} >
-            <Tooltip title='Edit' placement='top'>
+            <Tooltip title="Delete" placement="top">
               <IconButton
                 edge="start"
-                color="inherit"
-                onClick={handleEditIcon}
+                color="error"
+                onClick={handleDeleteAlert}
                 aria-label="close"
                 disabled={!updateItem}
               >
-                <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
+                <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
               </IconButton>
             </Tooltip>
           </Grid>
+          }
+          <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
+          {access &&
+            <Grid item xs={2} >
+              <Tooltip title='Edit' placement='top'>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleEditIcon}
+                  aria-label="close"
+                  disabled={!updateItem}
+                >
+                  <EditRoundedIcon sx={{ color: getEditColor(), visibility: updateItem ? '' : 'hidden' }} />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           }
           <Grid item xs={2}>
             <Tooltip title="Close" placement="top">
