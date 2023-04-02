@@ -1,13 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Box, IconButton, Tooltip, useMediaQuery } from '@mui/material';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import propTypes from 'prop-types';
-import { USER_ROLES } from '../constants/users';
+import { Box, IconButton, Tooltip } from '@mui/material';
+import QueueSharpIcon from '@mui/icons-material/QueueSharp';
 import PONotesDialog from './PONotesDialog';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
-export default function AddPONotes({ defaultValue }) {
-  const breakpoint500 = useMediaQuery('(min-width:500px)');
+export default function AddPONotes() {
+
   const [addNote, setAddNote] = useState(false);
   const { userRole } = useContext(ProjectUserContext)
 
@@ -17,27 +15,15 @@ export default function AddPONotes({ defaultValue }) {
 
   return (
     <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
-      {userRole === USER_ROLES.ADMIN &&
+      {userRole === "ADMIN" &&
       <Tooltip title='Add PO Notes' placement='top'>
         <IconButton data-testid="AddPONotesFormIdentifier" aria-label="Add Notes"
-          component="label" sx={{ color: 'primary.main', padding: "0" }} >
-          <AddRoundedIcon onClick={handleNoteOpener} fontSize={breakpoint500 ? 'medium' : 'small'}
-            sx={{ backgroundColor: 'backgroundColor.secondary', borderRadius: '50%' }} />
+          component="label" sx={{ color: 'primary.main', padding: "0" }} onClick={handleNoteOpener}>
+          <QueueSharpIcon fontSize='large' />
         </IconButton>
       </Tooltip>
       }
-      {addNote &&
-        <PONotesDialog defaultValue={defaultValue}
-          updateItem={false}
-          open={addNote}
-          handleClose={handleNoteOpener}
-          access={userRole === USER_ROLES.ADMIN}
-        />
-      }
+      <PONotesDialog updateItem={false} open={addNote} handleClose={handleNoteOpener} access={userRole === "ADMIN"} />
     </Box >
   );
-};
-
-AddPONotes.propTypes = {
-  defaultValue: propTypes.string.isRequired,
 };

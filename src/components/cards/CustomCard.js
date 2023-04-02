@@ -20,7 +20,7 @@ import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import { USER_ROLES, isAdmin } from '../constants/users';
+import { isAdmin } from '../constants/users';
 
 const Cards = styled(Card)(() => ({
   borderRadius: 20,
@@ -56,7 +56,7 @@ export default function CustomCard({ checkBox, data, type }) {
     try {
       e.stopPropagation();
       e.preventDefault();
-      if (userRole !== USER_ROLES.ADMIN) {
+      if (userRole !== "ADMIN") {
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
@@ -82,18 +82,13 @@ export default function CustomCard({ checkBox, data, type }) {
   const renderdueDate = () => {
     if (isActionItem()) {
       return (
-        <Box>
-          {
-            data.dueDate !== null &&
-            <Box display='flex' alignItems="baseline">
-              <Typography sx={{ fontSize: "0.75rem", marginRight: "5px" }}>
-                Needed by
-              </Typography>
-              <Typography color="primary" fontWeight={500} sx={{ fontSize: "0.95rem" }}>
-                {dateGetter(data.dueDate, false)}
-              </Typography >
-            </Box>
-          }
+        <Box display='flex' alignItems="baseline">
+          <Typography sx={{ fontSize: "0.75rem", marginRight: "5px" }}>
+            Needed by
+          </Typography>
+          <Typography color="primary" fontWeight={500} sx={{ fontSize: "0.95rem" }}>
+            {dateGetter(data.dueDate, false)}
+          </Typography >
         </Box>
       )
     }
@@ -120,9 +115,7 @@ export default function CustomCard({ checkBox, data, type }) {
   };
   return (
     <Box m={3}>
-      {open &&
-        <PONotesDialog deafultValue={type} updateItem open={open} handleClose={handleClose} data={data} access={userRole === USER_ROLES.ADMIN} />
-      }
+      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} access={userRole === "ADMIN"} />
       <Cards>
         <Box onClick={handleClickOpen} sx={{ padding: '5px 18px 12px 18px' }}>
           <Box sx={{ padding: '0', margin: '0' }}>

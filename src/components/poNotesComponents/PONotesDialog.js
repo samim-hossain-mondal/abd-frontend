@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
@@ -21,7 +20,6 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import { actionItems, keyDecisions, GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
 import Transition from '../utilityFunctions/OverlayTransition';
 import Timeline from '../utilityFunctions/Timeline';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
@@ -31,9 +29,18 @@ import RichTextArea from '../elements/RichTextArea';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
+import { GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import { USER_ROLES } from '../constants/users';
 import { RefreshContext } from '../contexts/RefreshContext';
+
+const getNextDate = (days) => {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const dateString = date
+    .toISOString()
+    .substring(0, date.toISOString().indexOf("T"));
+  return dateString;
+};
 
 const getISODateToTimlineFormat = (isoDate = '') => {
   try {
@@ -44,7 +51,7 @@ const getISODateToTimlineFormat = (isoDate = '') => {
   }
 };
 
-export default function PONotesDialog({ defaultValue, updateItem, data, open, handleClose, access }) {
+export default function PONotesDialog({ updateItem, data, open, handleClose, access }) {
   const { setError, setSuccess } = useContext(ErrorContext);
   const [lock, setLock] = useState(updateItem)
   const { projectId } = useParams();
@@ -54,17 +61,10 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
   const [timeline, setTimeline] =
     useState(
       updateItem ?
-        (data?.dueDate === null ? '' :
-          getISODateToTimlineFormat(data?.dueDate)) : ''
+        getISODateToTimlineFormat(data?.dueDate) :
+        getNextDate(1)
     );
-
-  const [type, setType] = useState(
-    updateItem ?
-      data?.type : (
-        defaultValue === actionItems.heading ? PO_NOTES_TYPES.ACTION_ITEM :
-          (defaultValue === keyDecisions.heading ? PO_NOTES_TYPES.KEY_DECISION : PO_NOTES_TYPES.AGENDA_ITEM)
-      )
-  );
+  const [type, setType] = useState(updateItem ? data?.type : PO_NOTES_TYPES.ACTION_ITEM);
   const [statement, setStatement] = useState(updateItem ? data?.note : '');
   const [issueLink, setIssueLink] = useState(updateItem ? data?.issueLink ?? '' : '');
   const getEditColor = () => (updateItem && !lock) ? 'primary.main' : 'secondary.main'
@@ -90,10 +90,12 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
       };
 
       if (type === PO_NOTES_TYPES.ACTION_ITEM && updateItem && issueLink.length > 0) body.issueLink = issueLink;
+
       if (type === PO_NOTES_TYPES.ACTION_ITEM) body = { ...body, ...({ 'dueDate': timeline === '' ? null : timeline }) }
 
+
       if (updateItem) {
-        if (userRole !== USER_ROLES.ADMIN) {
+        if (userRole !== "ADMIN") {
           setError("ACCESS DENIED: ADMIN's can perform this action")
           return;
         }
@@ -143,7 +145,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
   };
   const handleDelete = async () => {
     try {
-      if (userRole !== USER_ROLES.ADMIN) {
+      if (userRole !== "ADMIN") {
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
@@ -162,28 +164,27 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
 
   return (
     <Box>
-      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete}
-        description="Are you sure to delete this PO Note?"
-      />
+      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={handleDelete} description="Are you sure to delete this PO Note?" />
       <Dialog
         disabled
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <Grid container rowSpacing={1} paddingTop="2%" paddingBottom="2%" textAlign="center" alignItems="center"  >
-          {access && <Grid item xs={3}>
-          <Tooltip title="Delete" placement="top">
-            <IconButton
-              edge="start"
-              color="error"
-              onClick={handleDeleteAlert}
-              aria-label="close"
-              disabled={!updateItem}
-            >
-              <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
-            </IconButton>
-          </Tooltip>
+        <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
+          {access && 
+          <Grid item xs={3}>
+            <Tooltip title="Delete" placement="top">
+              <IconButton
+                edge="start"
+                color="error"
+                onClick={handleDeleteAlert}
+                aria-label="close"
+                disabled={!updateItem}
+              >
+                <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
+              </IconButton>
+            </Tooltip>
           </Grid>
           }
           <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
@@ -220,14 +221,14 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
         />
         <Box>
           <Typography
-            sx={{ fontWeight: 700, ml: "15px" }}
+            sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "1px" }}
           >
             PO Note Type
           </Typography>
           <List>
-            <ListItem sx={{ display: 'flex', pt: 0 }}>
+            <ListItem sx={{display: 'flex'}}>
               <Box sx={{ display: { md: 'flex' }, flexGrow: 1 }}>
-                <FormControl sx={{ flexGrow: 1, width: '100%' }} size="medium">
+                <FormControl sx={{ flexGrow: 1, width: '100%'}} size="small">
                   <InputLabel id="demo-select-small-2">Note Type</InputLabel>
                   <Select
                     data-testid="noteTypeSelect"
@@ -249,12 +250,12 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
         </Box>
         <Box>
           <Typography
-            sx={{ fontWeight: 700, ml: "15px" }}
+            sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "20px" }}
           >
             Smart Statement
           </Typography>
           <List>
-            <ListItem sx={{ p: 0, ml: '8px', mr: '8px', width: 'auto' }}>
+            <ListItem>
               <RichTextArea
                 sx={{
                   multiline: true,
@@ -275,72 +276,61 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
             </ListItem>
           </List>
         </Box>
-        {
-          type === PO_NOTES_TYPES.ACTION_ITEM && (statement.trim() !== '') &&
-          <Box>
-            <Typography sx={{ fontWeight: 700, ml: '15px' }} >Issue Link
-              <Box sx={{ display: 'inline', fontSize: '0.75rem' }}> (optional)</Box>
-            </Typography>
-            <List>
-              <ListItem sx={{ pt: 0, pb: 0 }}>
-                <TextField
-                  sx={{ width: '100%' }}
-                  type='url'
-                  value={issueLink}
-                  onChange={(e) => setIssueLink(e.target.value.trim())}
-                  disabled={lock}
-                  placeholder={lock ? '' : 'https://example.com'}
-                />
-              </ListItem>
-            </List>
-          </Box>
-        }
+        {updateItem && type === PO_NOTES_TYPES.ACTION_ITEM && <Box>
+          <Typography style={{ fontWeight: 700, marginLeft: '20px', marginTop: '20px' }} >Issue Link</Typography>
+          <List>
+            <ListItem>
+              <TextField
+                sx={{ width: '100%' }}
+                type='url'
+                value={issueLink}
+                onChange={(e) => setIssueLink(e.target.value.trim())}
+                disabled={lock}
+                placeholder={lock ? '' : 'https://example.com'}
+              />
+            </ListItem>
+          </List>
+        </Box>}
         <Box>
-          {
-            type === "ACTION_ITEM" && (statement.trim() !== '') &&
+          {type === "ACTION_ITEM" && (
             <Timeline
               isSubmit={lock}
               timeline={timeline}
               setTimeline={setTimeline}
             />
+          )}
+        </Box>
+        {isPublish() && (<Box>
+          {(statement.trim() !== '') && !lock &&
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton1' onClick={handlePublish} sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Publish
+              </Button>
+            </Box>
           }
         </Box>
-        {isPublish() && (
-          <Box>
-            {(statement.trim() !== '') && !lock &&
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton1' onClick={handlePublish}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }}
-                >
-                  Publish
-                </Button>
-              </Box>
-            }
-          </Box>
         )}
-        {isSave() && (
-          <Box>
-            {(statement.trim() !== '') && !lock &&
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }} >
-                  Save
-                </Button>
-              </Box>
-            }
-          </Box>
+        {isSave() && (<Box>
+          {(statement.trim() !== '') && !lock &&
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }} >
+                Save
+              </Button>
+            </Box>
+          }
+        </Box>
         )}
-        {isSaveDraft() && (
-          <Box>
-            {(statement.trim() !== '') && !lock &&
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton2' onClick={handleDraft}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }}>
-                  Save as Draft
-                </Button>
-              </Box>
-            }
-          </Box>
+        {isSaveDraft() && (<Box>
+          {(statement.trim() !== '') && !lock &&
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button variant="contained" color='customButton2' onClick={handleDraft}
+                sx={{ borderRadius: '8px', width: '292px', heigth: '49px' }}>
+                Save as Draft
+              </Button>
+            </Box>
+          }
+        </Box>
         )}
       </Dialog >
     </Box >
@@ -348,11 +338,21 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
 };
 
 PONotesDialog.propTypes = {
-  defaultValue: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
   updateItem: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  data: PropTypes.object.isRequired,
-  access: PropTypes.bool.isRequired,
+  data: PropTypes.shape({
+    noteId: PropTypes.number.isRequired,
+    type: PropTypes.string.isRequired,
+    note: PropTypes.string.isRequired,
+    dueDate: PropTypes.string,
+    status: PropTypes.string.isRequired,
+    issueLink: PropTypes.string,
+  }),
+  access: PropTypes.bool
 };
+
+PONotesDialog.defaultProps = {
+  data: undefined,
+  access: false
+}

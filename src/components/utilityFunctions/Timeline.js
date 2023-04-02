@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, List, ListItem, TextField, Typography } from '@mui/material';
+import { Box, Typography, List, ListItem, TextField } from '@mui/material';
 
 export default function Timeline({ isSubmit, timeline, setTimeline }) {
   const handleTimeline = (e) => {
@@ -8,11 +8,9 @@ export default function Timeline({ isSubmit, timeline, setTimeline }) {
   };
   return (
     <Box disabled>
-      <Typography sx={{ fontWeight: 700, ml: '15px', pt: '8px' }}> Timeline
-        <Box sx={{ display: 'inline', fontSize: '0.75rem' }}> (optional)</Box>
-      </Typography>
+      <Typography sx={{ fontWeight: 700, marginLeft: '20px', marginTop: '2px' }}>Timeline</Typography>
       <List>
-        <ListItem sx={{ pt: 0, pb: 0 }}>
+        <ListItem>
           <TextField id="date" label="Select date" type="date"
             disabled={isSubmit} defaultValue={timeline} sx={{ width: '300px' }}
             InputLabelProps={{ shrink: true }} onChange={handleTimeline}
