@@ -7,7 +7,6 @@ function Step2Content({projectTitle, handleProjectTitle, projectDescription, han
     return (
       <Box mx={2} >
       <TextField
-        autoFocus
         margin="dense"
         id="name"
         label="Project Name"
@@ -19,7 +18,6 @@ function Step2Content({projectTitle, handleProjectTitle, projectDescription, han
         disabled={isProjectCreated}
       />
       <TextField
-        autoFocus
         margin="dense"
         id="name"
         label="Project Description"

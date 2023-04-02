@@ -33,7 +33,7 @@ export default function Navbar({
   poNotesRef,
   dsmRef,
   availabilityCalendarRef,
-  handleScroll,
+  // handleScroll,
 }) {
   const pages = allPages
   const { projectId, user } = useContext(ProjectUserContext)
@@ -285,10 +285,10 @@ export default function Navbar({
 
 Navbar.propTypes = {
   authLoaded: PropTypes.bool.isRequired,
-  poNotesRef: PropTypes.object,
-  dsmRef: PropTypes.object,
-  availabilityCalendarRef: PropTypes.object,
-  handleScroll: PropTypes.func.isRequired,
+  poNotesRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  dsmRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  availabilityCalendarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  // handleScroll: PropTypes.func.isRequired,
 };
 
 Navbar.defaultProps = {

@@ -11,7 +11,7 @@ import ProjectModal from "./ProjectModal";
 import Transition from "../utilityFunctions/SideBarTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
 // eslint-disable-next-line import/no-named-as-default
-import NewProjectModal from "./NewProjectModal/NewProjectModal";
+import NewProjectModal from "./NewProjectModal";
 import { DOMAIN } from "../../config";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
 

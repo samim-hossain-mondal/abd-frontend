@@ -1,5 +1,5 @@
 import { Tab } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/system';
 
@@ -29,5 +29,8 @@ function MobileTabs({
 export default MobileTabs;
 
 MobileTabs.propTypes = {
-    sections: PropTypes.array.isRequired,
+    sections: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        ref: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+    })).isRequired,
 };

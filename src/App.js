@@ -4,7 +4,7 @@ import { Security, useOktaAuth } from '@okta/okta-react';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Box, useMediaQuery } from '@mui/material';
+import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
@@ -56,7 +56,7 @@ function AppRoutes() {
   const poNotesRef = useRef(null);
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
-  const aboveTablet = useMediaQuery('(min-width: 600px)');
+  // const aboveTablet = useMediaQuery('(min-width: 600px)');
 
   const { updateUserDetails } = useContext(ProjectUserContext);
   
