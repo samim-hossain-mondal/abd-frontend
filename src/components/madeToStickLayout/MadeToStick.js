@@ -1,13 +1,11 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import GridLayout from "react-grid-layout";
 import { Resizable } from "react-resizable";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-// eslint-disable-next-line import/no-unresolved
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import axios from "axios";
@@ -16,14 +14,15 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import { BACKEND_URL, API_URL } from "../../constants/apiUrl";
 import Note from "./Note";
 import "react-quill/dist/quill.snow.css";
-import { SUCCESS_MESSAGE, ERROR_MESSAGE } from "../constants/MadeToStick";
+import { SUCCESS_MESSAGE, ERROR_MESSAGE, NOTE_TYPES } from "../constants/MadeToStick";
+import { USER_ROLES } from "../constants/users";
 
 export default function MadeToStick() {
   const [isPO, setIsPO] = useState(false);
   const [cardDetails, setCardDetails] = useState([]);
   const [mobileCardDetails, setMobileCardDetails] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isMobile, setIsMobile] = useState(windowWidth < 841);
+  const [isMobile, setIsMobile] = useState(windowWidth < 769);
   const [cards, setCards] = useState([]);
   const [layout, setLayout] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -34,11 +33,8 @@ export default function MadeToStick() {
 
   const userId = user.memberId;
 
-  const UserRole = {
-    ADMIN: "ADMIN",
-    LEADER: "LEADER",
-    MEMBER: "MEMBER"
-  }
+  const UserRole = USER_ROLES;
+  const TABLET_WIDTH = 769;
 
   useEffect(() => {
     const getUserRole = async () => {
@@ -54,10 +50,6 @@ export default function MadeToStick() {
     setIsEdit(i);
   };
 
-  const handleCloseButton = () => {
-    setIsEdit(false);
-  };
-
   useEffect(() => {
     const getCards = async () => {
       const res = await axios.get(`${API_URL}/${projectId}`);
@@ -68,7 +60,7 @@ export default function MadeToStick() {
   }, []);
 
   useEffect(() => {
-    if (windowWidth < 841) {
+    if (windowWidth < TABLET_WIDTH) {
       setIsMobile(true);
     } else {
       setIsMobile(false);
@@ -136,6 +128,17 @@ export default function MadeToStick() {
     setMobileCardDetails(updatedCardDetails);
   }, [layout]);
 
+  const editCard = async (i, value, backgroundColor, x, y, w, h, type, emailId) => {
+    try {
+      await axios.put(`${API_URL}/${projectId}/${i}`, {
+        i, value, backgroundColor, x, y, w, h, type, emailId,
+      });
+      setSuccess(SUCCESS_MESSAGE.SAVED);
+    } catch (error) {
+      setError(ERROR_MESSAGE.SAVE_ERROR);
+    }
+  };
+
   const handleSave = () => {
     const updatedCardDetails = cards.map((card, index) => {
       const { i, value, backgroundColor, type, emailId } = card;
@@ -144,17 +147,6 @@ export default function MadeToStick() {
     });
 
     setMobileCardDetails(updatedCardDetails);
-
-    const editCard = async (i, value, backgroundColor, x, y, w, h, type, emailId) => {
-      try {
-        await axios.put(`${API_URL}/${projectId}/${i}`, {
-          i, value, backgroundColor, x, y, w, h, type, emailId,
-        });
-        setSuccess(SUCCESS_MESSAGE.SAVED);
-      } catch (error) {
-        setError(ERROR_MESSAGE.SAVE_ERROR);
-      }
-    };
 
     // eslint-disable-next-line array-callback-return
     updatedCardDetails.map((card) => {
@@ -197,7 +189,7 @@ export default function MadeToStick() {
         y: 0,
         w: 5,
         h: 3,
-        type: "TEXT",
+        type: NOTE_TYPES.TEXT,
         emailId: "test",
       });
       setCards([...cards, response.data]);
@@ -216,7 +208,7 @@ export default function MadeToStick() {
         y: 0,
         w: 5,
         h: 3,
-        type: "IMAGE",
+        type: NOTE_TYPES.IMAGE,
         emailId: "test",
       });
       setCards([...cards, response.data]);
@@ -239,78 +231,106 @@ export default function MadeToStick() {
     setIsEdit(false);
   };
 
+  const handleCloseButton = () => {
+    handleSave();
+    setIsEdit(false);
+  };
+
   return (
-    <Box sx={{ marginTop: '110px' }}>
-      {isMobile === false && (
-        <Box sx={{ marginTop: "1%" }}>
-          <Box style={{ marginLeft: '50px', marginRight: '50px' }}>
-            <Button style={{ margin: "0 2% 1% 0" }} variant="contained" color='customButton1'
-              onClick={() => {
-                if (isMobile === false) handleSave();
-              }}
-              name="save" type="button"
-            >
-              Save layout
-            </Button>
-            <Button style={{ margin: "0 2% 1% 2%" }}
-              variant="contained" color='customButton1'
-              onClick={addTextCard}
-              name="add"
-              type="button" >
-              Add text card
-            </Button>
-            <Button
-              style={{ margin: "0 2% 1% 2%" }}
-              variant="contained" color='customButton1'
-              onClick={addImageCard}
-              name="add"
-              type="button"
-            >
-              Add Image card
-            </Button>
-          </Box>
-          <Box sx={{ overflow: 'scroll', backgroundColor: '#e6eef2', padding: '50px 50px 50px 50px', height: '100vh' }}>
-            <GridLayout
-              isDraggable={isPO}
-              isResizable={isPO}
-              className="layout"
-              layout={layout}
-              cols={isMobile === false ? 16 : 3}
-              rowHeight={100}
-              width={windowWidth * 0.92}
-              onLayoutChange={handleLayoutChange}
-              sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
-            >
-              {cards && cards.map((card) => (
-                <Box
-                  key={card.i}
-                  sx={{ overflow: "scroll", borderRadius: "1.5%", boxShadow: 3, borderColor: card.backgroundColor, backgroundColor: 'secondaryButton.main' }}
-                >
-                  <Resizable
-                    onResize={(e, data) => {
-                      handleResize(card.i, data.size.width, data.size.height, data);
-                    }}
+    <Box sx={{ marginTop: '110px'}}>
+      {(!isMobile)  && (
+          <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0'}}>
+            <Container maxWidth="xl">
+              <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Box>
+                  <Button
+                    variant="contained" color='customButton1'
+                    onClick={addTextCard}
+                    name="add"
+                    type="button"
+                    sx={{marginRight: '16px'}}
                   >
-                    <Note
-                      key={card.i}
-                      id={card.i}
-                      isPO={isPO}
-                      userId={userId}
-                      card={card}
-                      isEdit={isEdit}
-                      handleCloseButton={handleCloseButton}
-                      handleEditImgLink={handleEditImgLink}
-                      handleDelete={handleDelete}
-                      handleCardInputChange={handleCardInputChange}
-                      handleImageInputChange={handleImageInputChange} />
-                  </Resizable>
+                    Add text card
+                  </Button>
+                  <Button
+                    variant="contained" color='customButton1'
+                    onClick={addImageCard}
+                    name="add"
+                    type="button"
+                    sx={{marginRight: '16px'}}
+                  >
+                    Add Image card
+                  </Button>
                 </Box>
-              ))}
-            </GridLayout>
+                <Box>
+                  <Button
+                    variant="contained" 
+                    color='customButton1'
+                    onClick={() => {
+                      if (!isMobile) handleSave();
+                    }}
+                    name="save" type="button"
+                  >
+                    Save layout
+                  </Button>
+                </Box>
+              </Box>
+            </Container>
+            <Container maxWidth="xl">
+              <Box
+                sx={{ 
+                  backgroundColor: 'backgroundColor.main',  
+                  minHeight: '100vh',
+                  display:'flex', 
+                  alignItems:'stretch',
+                  flexGrow: 1,
+                  marginTop: '24px',
+                }}
+              >
+                <GridLayout
+                  isDraggable={isPO}
+                  isResizable={isPO}
+                  className="layout"
+                  layout={layout}
+                  cols={(!isMobile) ? 16 : 3}
+                  rowHeight={100}
+                  width={windowWidth * 0.92}
+                  onLayoutChange={handleLayoutChange}
+                  sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
+                >
+                  {cards && cards.map((card) => (
+                    <Box
+                      key={card.i}
+                      sx={{ overflow: "scroll", borderRadius: "1.5%", boxShadow: 3, borderColor: card.backgroundColor, backgroundColor: 'secondaryButton.main' }}
+                    >
+                      <Resizable
+                        onResize={(e, data) => {
+                          handleResize(card.i, data.size.width, data.size.height, data);
+                        }}
+                      >
+                        <Note
+                          key={card.i}
+                          id={card.i}
+                          isPO={isPO}
+                          userId={userId}
+                          card={card}
+                          isEdit={isEdit}
+                          handleCloseButton={handleCloseButton}
+                          handleEditImgLink={handleEditImgLink}
+                          handleDelete={handleDelete}
+                          handleCardInputChange={handleCardInputChange}
+                          handleImageInputChange={handleImageInputChange} 
+                          handleSave = {handleSave}
+                        />
+                      </Resizable>
+                    </Box>
+                  ))}
+                </GridLayout>
+              </Box>
+            </Container>
           </Box>
-        </Box>
       )}
-      {isMobile === true && (
+      {isMobile && (
         <Box sx={{ paddingRight: "1%", paddingLeft: "1%", paddingTop: "15px" }}>
           <Box className="layout" layout={layout} cols={1} width={windowWidth * 0.95}
             sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", flexWrap: "wrap", alignItems: "center" }}
@@ -325,13 +345,13 @@ export default function MadeToStick() {
                     className="card"
                     style={{
                       background:
-                        card.type === "IMAGE"
+                        card.type === NOTE_TYPES.IMAGE
                           ? `url(${card.value}) no-repeat center center/cover`
                           : card.backgroundColor, height: "250px", width: windowWidth * 0.91
                     }}
                   >
                     <Box className="card-text">
-                      {card.type === "TEXT" && (
+                      {card.type === NOTE_TYPES.TEXT && (
                         <CKEditor
                           disabled
                           editor={ClassicEditor}
