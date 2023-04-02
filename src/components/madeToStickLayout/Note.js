@@ -11,18 +11,23 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { NOTE_TYPES } from '../constants/MadeToStick';
 
 export default function Note({
-  card, isEdit, handleCloseButton, handleEditImgLink, handleDelete, handleImageInputChange, handleCardInputChange, handleSave
+  card, isEdit, handleCloseButton, handleEditImgLink, handleDelete, handleImageInputChange, handleCardInputChange, handleSave, isPO
 }) {
   const [editButton, setEditButton] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
   const handleEditButton = (value) => {
     setEditButton(value);
-    handleSave();
+    if(value===false){
+      handleSave();
+    }
   };
   return (
     <Box
       className="card"
       sx={{
         backgroundColor: "#EEF2F5",
+        overflow: 'scroll',
+        "&::-webkit-scrollbar": { width: 0 },
         "&:hover .edit-Value": { opacity: 1 }
       }}
       style={{
@@ -31,46 +36,54 @@ export default function Note({
             ? `url(${card.value}) no-repeat center center/cover`
             : card.backgroundColor, height: "100%", width: "100%",
       }}
+      onMouseEnter={() => setShowIcons(true)}
+      onMouseLeave={() => setShowIcons(false)}
     >
       <Box className="card-text">
         <Box sx={{ display: "flex" }}>
           <Box className="edit-Value"
             sx={{ display: "flex", opacity: 0, flexDirection: "row", flexWrap: "wrap" }}
           >
-            {card.type === NOTE_TYPES.IMAGE &&
-              (!isEdit)  &&
-              card.value.length !== 0 &&
-              card.value !== "Enter your image url here" && (
-                <Box
-                  sx={{ fontFamily: "Roboto", padding: '3px' }}
-                >
-                  <Tooltip title="Edit Image" placement='top'>
-                    <IconButton onClick={() => { handleEditImgLink(card.i) }}>
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
+            {
+              card.type === NOTE_TYPES.IMAGE &&
+                (!isEdit) && (isPO) &&
+                card.value.length !== 0 &&
+                card.value !== "Enter your image url here" && (
+                  <Box
+                    sx={{ fontFamily: "Roboto", padding: '3px' }}
+                  >
+                    <Tooltip title="Edit Image" placement='top'>
+                      <IconButton onClick={() => { handleEditImgLink(card.i) }}>
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                )
+            }
+
+            {
+              card.type === NOTE_TYPES.IMAGE && (
+                (card.value.length === 0 || card.value === "Enter your image url here") && (
+                  (!isEdit) && (isPO) && (
+                    <Box
+                      sx={{ fontFamily: "Roboto", padding: '3px' }}
+                    >
+                      <Tooltip title="Edit Image" placement='top'>
+                        <IconButton onClick={() => { handleEditImgLink(card.i) }}>
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  )
+                )
               )
             }
 
-            {card.type === NOTE_TYPES.IMAGE &&
-              (card.value.length === 0 || card.value === "Enter your image url here") &&
-              (!isEdit)  && (
+            {
+              card.type === NOTE_TYPES.IMAGE && (isPO) && (
                 <Box
                   sx={{ fontFamily: "Roboto", padding: '3px' }}
-                >
-                  <Tooltip title="Edit Image" placement='top'>
-                    <IconButton onClick={() => { handleEditImgLink(card.i) }}>
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              )}
-
-              {card.type === NOTE_TYPES.IMAGE && (
-                <Box
-                sx={{ fontFamily: "Roboto", padding: '3px' }}
-                className="hover-edit-delete-pin"
+                  className="hover-edit-delete-pin"
                 >
                   <Tooltip title="Delete" placement='top'>
                     <IconButton onClick={() => { handleDelete(card.i) }}>
@@ -78,34 +91,41 @@ export default function Note({
                     </IconButton>
                   </Tooltip>
                 </Box>
-              )}
+              )
+            }
           </Box>
-          {card.type === NOTE_TYPES.IMAGE && isEdit === card.i && (
-            <Box
-              sx={{ fontFamily: "Roboto", padding: '3px', display: 'flex', flexGrow: 1, justifyContent: 'flex-end' }}
-            >
-              <Tooltip title="Save" placement='top'>
-                <IconButton onClick={handleCloseButton}>
-                  <PushPinRoundedIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          )}
+          {
+            card.type === NOTE_TYPES.IMAGE && isEdit === card.i && (isPO) && (
+              <Box
+                sx={{ fontFamily: "Roboto", padding: '3px', display: 'flex', flexGrow: 1, justifyContent: 'flex-end' }}
+              >
+                <Tooltip title="Save" placement='top'>
+                  <IconButton onClick={handleCloseButton}>
+                    <PushPinRoundedIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )
+          }
         </Box>
         <Box
           sx={{ height: "auto", width: "auto", padding: "3px" }}
         >
-          {card.type === NOTE_TYPES.TEXT && (
+          {
+            card.type === NOTE_TYPES.TEXT && (
             <Box sx={{
               backgroundColor: "#EEF2F5",
               "&:hover .hover-edit-delete-pin": { opacity: 1 }
             }}>
               <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Box className="hover-edit-delete-pin" sx={{ display: "flex", opacity: 0, flexDirection: "row", flexWrap: "wrap"}}>
+                <Box 
+                  className="hover-edit-delete-pin" 
+                  sx={{ display: "flex", opacity: 1, flexDirection: "row", flexWrap: "wrap" }}
+                >
 
                   {/* USER only needs to see edit icon if they are not editing the note */}
                   {
-                    !editButton &&(
+                    !editButton && (isPO) && (showIcons) && (
                       <Tooltip title="Edit" placement='top'>
                         <IconButton onClick={() => { handleEditButton(true) }} >
                           <EditIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} />
@@ -113,18 +133,21 @@ export default function Note({
                       </Tooltip>
                     )
                   }
-
-                  <Tooltip title="Delete" placement='top'>
-                    <IconButton onClick={() => { handleDelete(card.i) }}>
-                      <DeleteIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} onClick={() => { handleDelete(card.i) }} />
-                    </IconButton>
-                  </Tooltip>
+                  {
+                    (isPO) && (showIcons) && (
+                      <Tooltip title="Delete" placement='top'>
+                        <IconButton onClick={() => { handleDelete(card.i) }}>
+                          <DeleteIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} onClick={() => { handleDelete(card.i) }} />
+                        </IconButton>
+                      </Tooltip>
+                    )
+                  }
                 </Box>
-                
+
                 {/* USER only needs to see pin icon if they are editing the note. Ii will be ALWAYS visible to remind user to save */}
                 {
-                  editButton &&(
-                    <Box 
+                  editButton && (isPO) && (
+                    <Box
                       sx={{
                         display: "flex",
                         flexDirection: "row",
@@ -139,39 +162,43 @@ export default function Note({
                     </Box>
                   )
                 }
-                
+
               </Box>
               <Box onClick={(e) => e.stopPropagation()}>
-                {editButton &&
-                  <CKEditor
-                    editor={ClassicEditor}
-                    config={{
-                      toolbar: [
-                        'heading',
-                        '|',
-                        'bold',
-                        'italic',
-                        'link',
-                        'bulletedList',
-                        'numberedList',
-                        'blockQuote',
-                        'insertTable',
-                        'undo',
-                        'redo',
-                      ]
-                    }}
-                    onChange={(event, editor) => handleCardInputChange(card.i, editor)}
-                    data={card.value}
-                  />
+                {
+                  editButton && (
+                    <CKEditor
+                      editor={ClassicEditor}
+                      config={{
+                        toolbar: [
+                          'heading',
+                          '|',
+                          'bold',
+                          'italic',
+                          'link',
+                          'bulletedList',
+                          'numberedList',
+                          'blockQuote',
+                          'insertTable',
+                          'undo',
+                          'redo',
+                        ]
+                      }}
+                      onChange={(event, editor) => handleCardInputChange(card.i, editor)}
+                      data={card.value}
+                    />
+                  )
                 }
-                {!editButton &&
-                  <CKEditor
-                    disabled
-                    editor={ClassicEditor}
-                    config={{ toolbar: [] }}
-                    onChange={(event, editor) => handleCardInputChange(card.i, event, editor)}
-                    data={card.value}
-                  />
+                {
+                  !editButton && (
+                    <CKEditor
+                      disabled
+                      editor={ClassicEditor}
+                      config={{ toolbar: [] }}
+                      onChange={(event, editor) => handleCardInputChange(card.i, event, editor)}
+                      data={card.value}
+                    />
+                  )
                 }
               </Box>
               <style>{`.ck.ck-editor__main>.ck-editor__editable {background-color: #EEF2F5; border: transparent; font-family: Roboto;}`}</style>
@@ -206,8 +233,10 @@ Note.propTypes = {
   handleImageInputChange: proptypes.func.isRequired,
   handleCardInputChange: proptypes.func.isRequired,
   handleSave: proptypes.func,
+  isPO: proptypes.bool,
 };
 
 Note.defaultProps = {
-  handleSave: () => {},
+  handleSave: () => { },
+  isPO: false,
 };

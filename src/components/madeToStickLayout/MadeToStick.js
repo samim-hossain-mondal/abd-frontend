@@ -239,66 +239,71 @@ export default function MadeToStick() {
   return (
     <Box sx={{ marginTop: '110px'}}>
       {(!isMobile)  && (
-          <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0'}}>
-            <Container maxWidth="xl">
-              <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Box>
-                  <Button
-                    variant="contained" color='customButton1'
-                    onClick={addTextCard}
-                    name="add"
-                    type="button"
-                    sx={{marginRight: '16px'}}
-                  >
-                    Add text card
-                  </Button>
-                  <Button
-                    variant="contained" color='customButton1'
-                    onClick={addImageCard}
-                    name="add"
-                    type="button"
-                    sx={{marginRight: '16px'}}
-                  >
-                    Add Image card
-                  </Button>
+        <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0'}}>
+          {
+            (isPO) && (
+              <Container maxWidth="xl" className="action-buttons">
+                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Box>
+                    <Button
+                      variant="contained" color='customButton1'
+                      onClick={addTextCard}
+                      name="add"
+                      type="button"
+                      sx={{marginRight: '16px'}}
+                    >
+                      Add text card
+                    </Button>
+                    <Button
+                      variant="contained" color='customButton1'
+                      onClick={addImageCard}
+                      name="add"
+                      type="button"
+                      sx={{marginRight: '16px'}}
+                    >
+                      Add Image card
+                    </Button>
+                  </Box>
+                  <Box>
+                    <Button
+                      variant="contained" 
+                      color='customButton1'
+                      onClick={() => {
+                        if (!isMobile) handleSave();
+                      }}
+                      name="save" type="button"
+                    >
+                      Save layout
+                    </Button>
+                  </Box>
                 </Box>
-                <Box>
-                  <Button
-                    variant="contained" 
-                    color='customButton1'
-                    onClick={() => {
-                      if (!isMobile) handleSave();
-                    }}
-                    name="save" type="button"
-                  >
-                    Save layout
-                  </Button>
-                </Box>
-              </Box>
-            </Container>
-            <Container maxWidth="xl">
-              <Box
-                sx={{ 
-                  backgroundColor: 'backgroundColor.main',  
-                  minHeight: '100vh',
-                  display:'flex', 
-                  alignItems:'stretch',
-                  flexGrow: 1,
-                  marginTop: '24px',
-                }}
+              </Container>
+            )
+          }
+          <Container maxWidth="xl">
+            <Box
+              sx={{ 
+                backgroundColor: 'backgroundColor.main',  
+                minHeight: '100vh',
+                display:'flex', 
+                alignItems:'stretch',
+                flexGrow: 1,
+                marginTop: '24px',
+              }}
+            >
+              <GridLayout
+                isDraggable={isPO}
+                isResizable={isPO}
+                className="layout"
+                layout={layout}
+                cols={(!isMobile) ? 16 : 3}
+                rowHeight={100}
+                width={windowWidth * 0.92}
+                onLayoutChange={handleLayoutChange}
+                sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
               >
-                <GridLayout
-                  isDraggable={isPO}
-                  isResizable={isPO}
-                  className="layout"
-                  layout={layout}
-                  cols={(!isMobile) ? 16 : 3}
-                  rowHeight={100}
-                  width={windowWidth * 0.92}
-                  onLayoutChange={handleLayoutChange}
-                  sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center" }}
-                >
-                  {cards && cards.map((card) => (
+                {
+                  cards && cards.map((card) => (
                     <Box
                       key={card.i}
                       sx={{ overflow: "scroll", borderRadius: "1.5%", boxShadow: 3, borderColor: card.backgroundColor, backgroundColor: 'secondaryButton.main' }}
@@ -324,14 +329,15 @@ export default function MadeToStick() {
                         />
                       </Resizable>
                     </Box>
-                  ))}
-                </GridLayout>
-              </Box>
-            </Container>
-          </Box>
+                  ))
+                }
+              </GridLayout>
+            </Box>
+          </Container>
+        </Box>
       )}
       {isMobile && (
-        <Box sx={{ paddingRight: "1%", paddingLeft: "1%", paddingTop: "15px" }}>
+        <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0', minHeight: '100vh'}}>
           <Box className="layout" layout={layout} cols={1} width={windowWidth * 0.95}
             sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", flexWrap: "wrap", alignItems: "center" }}
           >
