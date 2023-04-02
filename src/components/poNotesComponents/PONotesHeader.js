@@ -15,7 +15,6 @@ import {
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import PropTypes from 'prop-types';
 import SearchBar from '../utilityFunctions/SearchBar';
-import AddPONotes from './AddPONotes';
 import QuickFilterPopover from './poNotesTables/poNotesTablesHeader/QuickFilterPopover';
 import { quickFilterSanitizerPONotes } from '../utilityFunctions/filters';
 
@@ -97,17 +96,7 @@ export default function PONotesHeader({ query, setQuery }) {
                 }} />
               </Popover>
             </FormControl>
-            {!aboveTablet &&
-              <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end', alignContent: "center" }}>
-                <AddPONotes />
-              </Box>
-            }
           </Box>
-          {aboveTablet &&
-            <Box sx={{ ml: 2, display: 'flex', justifyContent: 'flex-end', alignContent: "center" }}>
-              <AddPONotes />
-            </Box>
-          }
         </Toolbar>
       </Container>
     </AppBar >
