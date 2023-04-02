@@ -12,7 +12,8 @@ export default function PONotesGridLayout({ query }
     <Box
       sx={{
         display: 'flex', flexDirection: (breakpoint1080) ? 'row' : 'column', flexWrap: 'nowrap',
-        gap: (breakpoint1080) ? '20px' : "50px", justifyContent: 'space-between', padding: breakpoint1080 ? '50px 50px 50px 50px' : '25px 25px 25px 25px',
+        gap: (breakpoint1080) ? '20px' : "50px", justifyContent: 'space-between',
+        padding: breakpoint1080 ? '50px 50px 50px 50px' : '25px 25px 25px 25px',
         alignItems: 'center',
       }}>
 

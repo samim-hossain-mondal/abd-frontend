@@ -66,7 +66,6 @@ export default function CelebrationBoard({ selectedDate }) {
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return [];
     }

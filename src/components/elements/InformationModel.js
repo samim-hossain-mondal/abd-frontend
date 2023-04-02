@@ -1,17 +1,14 @@
 import { React, useState } from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
+import { Typography, Box, Modal, Button, Tooltip } from '@mui/material';
 import PropTypes from 'prop-types';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Tooltip } from '@mui/material';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 450,
   fontFamily: 'Roboto',
   bgcolor: 'background.paper',
   boxShadow: 24,
@@ -20,59 +17,61 @@ const style = {
   pb: 3,
 };
 export default function NestedModal(props) {
-  // props destructuring
-  /* props contains values for heading, definition and accessibility information of the selected
-  PO notes type (Action item or Key decision or Agenda item) */
   const { heading, definition, accessibiltyInformation } = props;
   const [open, setOpen] = useState(false);
-  // function to open the modal
   const handleOpen = () => {
     setOpen(true);
   };
-  // function to close the modal
   const handleClose = () => {
     setOpen(false);
   };
   return (
     <Tooltip title="More Info" placement='top'>
-    <Box sx={{ paddingLeft: '0.5%' }}>
-      {/* Icon to open the modal */}
-      <InfoOutlinedIcon sx={{ fontSize: '18px', cursor: 'pointer' }} onClick={handleOpen} />
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
-      >
-        {/* Modal content */}
-        <Box sx={{ ...style }}  >
-
-          {/** Heading of the PO notes type (Action item or Key decision or Agenda item) */}
-          <h2 id="parent-modal-title">
-            <b>{heading} </b>
-          </h2>
-          {/** Definition of the PO notes type (Action item or Key decision or Agenda item) */}
-          <p id="parent-modal-description">
-            <b>{heading}</b>{definition}
-          </p>
-          {/** Accessibility information of the (Action item or Key decision or Agenda item) */}
-          <p id="parent-modal-description">
-            {accessibiltyInformation}
-          </p>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'row-reverse'
-          }}>
-            {/* Button to close the modal */}
-            <Button onClick={handleClose}>OK</Button>
+      <Box sx={{ paddingLeft: '0.5%' }}>
+        <InfoOutlinedIcon
+          sx={{
+            fontSize: 'large',
+            color: 'primary.main',
+            borderRadius: '50%',
+            ml: '15%',
+            cursor: 'pointer'
+          }}
+          onClick={handleOpen}
+        />
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="parent-modal-title"
+          aria-describedby="parent-modal-description"
+        >
+          <Box sx={{ ...style }}  >
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <Box>
+                <Typography variant='h4'> {heading} </Typography>
+              </Box>
+              <Box>
+                <Typography>
+                  <Box fontWeight='bold' display='inline'>{heading}</Box>
+                  {definition}
+                </Typography>
+                <Typography>
+                  {accessibiltyInformation}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row-reverse'
+            }}>
+              <Button onClick={handleClose}>OK</Button>
+            </Box>
           </Box>
-        </Box>
-      </Modal>
-    </Box>
+        </Modal>
+      </Box>
     </Tooltip>
   );
 }
-// Props validation
+
 NestedModal.propTypes = {
   heading: PropTypes.string.isRequired,
   definition: PropTypes.string.isRequired,
