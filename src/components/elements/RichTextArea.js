@@ -53,7 +53,7 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
   return (
     <Box sx={{
       width: '100%',
-      margin: '16px 0',
+      margin: '0px',
       padding: 0,
       position: 'relative'
     }}>

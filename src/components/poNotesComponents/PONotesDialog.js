@@ -265,7 +265,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
             </ListItem>
           </List>
         </Box>
-        <Box>
+        <Box sx={{ pb: '16px' }}>
           <Typography
             sx={{ fontWeight: 700, ml: "15px" }}
           >
@@ -281,6 +281,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
                   lineHeight: '20px',
                   width: '260px',
                   height: '150px',
+                  margin: '0px',
                   padding: '15px 20px',
                   border: '2px solid #ccc',
                   fontFamily: 'Roboto, sans-serif',
