@@ -13,7 +13,14 @@ import { GENERIC_NAME } from "../constants/dsm/Celebrations";
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { LoadingContext } from '../contexts/LoadingContext'
 
-export default function UpdateCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, updateCelebrationOnSubmit, onDeleteCelebration }) {
+export default function UpdateCelebrationModal({
+  openModal,
+  setOpenModal,
+  newCelebration,
+  setNewCelebration,
+  updateCelebrationOnSubmit,
+  onDeleteCelebration
+}) {
   const [preview, setPreview] = useState(false);
   const { user } = useContext(ProjectUserContext);
   const { projectId } = useParams();
@@ -25,6 +32,8 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
     e.stopPropagation();
     e.preventDefault();
     setOpenModal(false);
+    setPreview(false);
+    setLock(true);
   }
 
   const updateCelebrationToDB = async () => {

@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
-export default function DeleteDialog({ open, setOpen, handleDelete, description }) {
+export default function ReportDialog({ open, setOpen, handleReport, description }) {
 
   const handleClose = () => {
     setOpen(false);
   };
   const handleConfirm = async (e) => {
-    await handleDelete(e);
+    await handleReport(e);
     setOpen(false);
   };
 
@@ -33,7 +33,7 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
         }}
       >
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">{description}</DialogContentText>
+          <DialogContentText>{description}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleConfirm} color="error" >
@@ -48,9 +48,9 @@ export default function DeleteDialog({ open, setOpen, handleDelete, description 
   );
 }
 
-DeleteDialog.propTypes = {
+ReportDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
+  handleReport: PropTypes.func.isRequired,
   description: PropTypes.string.isRequired,
 };

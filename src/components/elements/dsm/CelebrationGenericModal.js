@@ -6,13 +6,15 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import ReportRoundedIcon from '@mui/icons-material/ReportRounded'; import CustomDropDown from './CustomDropDown';
+import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
+import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
 import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT } from '../../constants/dsm/Celebrations';
 import InstructionBox from './InstructionBox';
 import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
+import ReportDialog from '../ReportDialog';
 
 export default function CelebrationGenericModal({
   isNewCelebration,
@@ -30,7 +32,7 @@ export default function CelebrationGenericModal({
   update,
   lock,
   setLock,
-  handleDelete
+  handleDelete,
 }) {
 
   const { user } = useContext(ProjectUserContext);
@@ -49,7 +51,19 @@ export default function CelebrationGenericModal({
       content
     });
   }
+
   const [deleteAlert, setDeleteAlert] = useState(false);
+  const [reportAlert, setReportAlert] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const onReportButtonClick = () => {
+    setReportAlert(true);
+    setOpen(true);
+  }
+
+  const handleReport = () => {
+    setReportAlert(false);
+  }
 
   const onConfirmDelete = async (e) => {
     setDeleteAlert(false)
@@ -178,7 +192,9 @@ export default function CelebrationGenericModal({
             {
               user.memberId !== newCelebration.memberId && !isNewCelebration &&
               < Box sx={{ display: 'flex', flexDirection: 'row-reverse', paddingRight: '16px' }}>
-                <Button sx={{ display: 'flex', borderRadius: '8px', backgroundColor: 'transparent' }}>
+                <Button
+                  onClick={onReportButtonClick}
+                  sx={{ display: 'flex', borderRadius: '8px', backgroundColor: 'transparent' }}>
                   <ReportRoundedIcon sx={{ color: 'error.main', cursor: 'pointer', pr: '5px' }} />
                   <Typography sx={{ textTransform: 'none' }}>Report abuse</Typography>
                 </Button>
@@ -186,8 +202,17 @@ export default function CelebrationGenericModal({
             }
             {children}
             {
-              user.memberId === newCelebration.memberId &&
-              <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', fontFamily: 'Poppins' }} control={
+              reportAlert &&
+              <ReportDialog
+                open={open}
+                setOpen={setOpen}
+                handleReport={handleReport}
+                description='Are you sure to report this behavior as abusive?'
+              />
+            }
+            {
+              (!lock || isNewCelebration) &&
+              <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', paddingTop: '5px', fontFamily: 'Poppins' }} control={
                 <Checkbox sx={{
                   color: 'customButton1.main',
                   '&.Mui-checked': {
@@ -205,7 +230,7 @@ export default function CelebrationGenericModal({
               secondaryButtonText && (
                 <Button
                   sx={{
-                    margin: '16px 0 5px 0',
+                    margin: '8px 0 5px 0',
                     padding: '12px 0',
                     width: '100%',
                     borderRadius: '8px',
@@ -226,7 +251,7 @@ export default function CelebrationGenericModal({
           <Grid item xs={6}>
             <Button
               sx={{
-                margin: '16px 0 5px 0',
+                margin: '8px 0 5px 0',
                 padding: '12px 0',
                 width: '100%',
                 borderRadius: '8px',
