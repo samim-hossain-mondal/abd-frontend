@@ -28,6 +28,7 @@ import AccountSettingsModal from './AccountSettingsModal';
 import MobileTabs from './MobileTabs';
 import { LoadingContext } from '../contexts/LoadingContext';
 
+
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
 export default function Navbar({

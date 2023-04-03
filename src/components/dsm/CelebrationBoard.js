@@ -41,6 +41,7 @@ export default function CelebrationBoard({ selectedDate }) {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [isNewCelebration, setIsNewCelebration] = useState(false);
 
   const [newCelebration, setNewCelebration] = useState({
     type: celebrationTypes[0],
@@ -70,11 +71,11 @@ export default function CelebrationBoard({ selectedDate }) {
     e.stopPropagation();
     e.preventDefault();
     setOpenAddModal(true);
+    setIsNewCelebration(true);
   }
 
   const getCelebrations = async (params) => {
     try {
-      // const resData = await makeRequest(GET_CELEBRATIONS_BY_DATE(projectId, dateGetter(selectedDate)))
       const resData = await makeRequest(GET_CELEBRATIONS(projectId), setLoading, { params })
       return resData;
     }
@@ -120,10 +121,8 @@ export default function CelebrationBoard({ selectedDate }) {
 
   const { error, isError } = useQuery("", async () => {
     if (DSMInViewPort) {
-      // setLoaded(false);
       const resData = await fetchMoreCelebrations(true);
       setCelebrations(resData);
-      // setLoaded(true);
       return resData;
     }
     return [];
@@ -134,7 +133,7 @@ export default function CelebrationBoard({ selectedDate }) {
   );
 
   if (isError) {
-    return <div>Error! {error.message}</div>
+    return <Box>Error! {error.message}</Box>
   }
   const topPadding = (!gridHeightState.sentiment.expanded && !gridHeightState.celebration.fullExpanded) ? '2%' : '1%';
 
@@ -176,15 +175,11 @@ export default function CelebrationBoard({ selectedDate }) {
           }}
         >
           <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
-          {
-            // dateGetter(selectedDate) === dateGetter(new Date()) && (
-            <Tooltip title="Add Celebration">
-              <IconButton onClick={(e) => handleAddButtonClick(e)}>
-                <AddCircleIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-            // )
-          }
+          <Tooltip title="Add Celebration">
+            <IconButton onClick={(e) => handleAddButtonClick(e)}>
+              <AddCircleIcon color="primary" />
+            </IconButton>
+          </Tooltip>
         </AccordionSummary>
         <AccordionDetails
           sx={{
@@ -262,6 +257,7 @@ export default function CelebrationBoard({ selectedDate }) {
         setNewCelebration={setNewCelebration}
         setCelebrations={setCelebrations}
         celebrations={celebrations}
+        isNewCelebration={isNewCelebration}
       />
     </Grid >
   );
