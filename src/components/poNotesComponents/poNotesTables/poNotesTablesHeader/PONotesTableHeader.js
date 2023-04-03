@@ -16,13 +16,13 @@ export default function PONotesTableHeader(props) {
         sx={{ display: 'flex', justifyContent: 'center' }}>
         {
           (heading === agendaItems.heading) ? (
-            <Typography variant='h6'>
-              {agendaItems.subHeading.toUpperCase()}{' '}
+            <Typography variant='h6' fontSize='1.35rem'>
+              {agendaItems.subHeading}{' '}
               ({countOfItems})
             </Typography>
           ) : (
-            <Typography variant='h6'>
-              {heading.toUpperCase()}{' '}
+            <Typography variant='h6' fontSize='1.35rem'>
+              {heading}{' '}
               ({countOfItems})
             </Typography>
           )

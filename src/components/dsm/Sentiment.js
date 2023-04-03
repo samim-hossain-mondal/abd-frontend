@@ -157,7 +157,6 @@ export default function Sentiment() {
   return (
     <Grid item
       sx={{
-        // marginBottom: isMember(userRole) ? "10px" : "0px", paddingBottom: isMember(userRole) ? "10px" : "0px",
         marginBottom: "10px", paddingBottom: "10px",
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
@@ -186,8 +185,10 @@ export default function Sentiment() {
               }}
             >
               {isLeaderOrAdmin() ?
-                <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{userRole && HEADING}</Typography> :
-                <Typography onClick={() => { }} variant="dsmMain"
+                (<Typography variant="dsmSubMain" fontSize='1.25rem'
+                  sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{userRole && HEADING}
+                </Typography>) :
+                (<Typography onClick={() => { }} variant="dsmMain"
                   sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
                   fontSize={breakpoint500 ? "1.65rem" : "1.25rem"} paddingLeft="6%" textTransform='none'
                   width="100%" >
@@ -196,11 +197,20 @@ export default function Sentiment() {
                     heading={SentimentMeterInfo.heading}
                     definition={SentimentMeterInfo.definition}
                     accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />}
-                </Typography>
+                </Typography>)
               }
             </AccordionSummary>
             {userRole && isLeaderOrAdmin() &&
-              <Button variant="contained" onClick={handleDialog} sx={{ fontSize: "0.8rem", ...(!breakpoint500 && { fontSize: "0.6rem", width: "28%" }), marginRight: "16px", textTransform: "capitalize" }}>See Stats</Button>
+              <Button variant="contained" onClick={handleDialog}
+                sx={{
+                  fontSize: "0.85rem",
+                  ...(!breakpoint500 && { fontSize: "0.65rem", width: "28%" }),
+                  marginRight: "16px",
+                  textTransform: "capitalize",
+                  borderRadius: "8px",
+                }}>
+                See Results
+              </Button>
             }
           </Box>
           {userRole && isMember(userRole) &&

@@ -24,11 +24,11 @@ import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
-import MobileTabs from './MobileTabs'; // TODO: add tabs for mobile view
+import MobileTabs from './MobileTabs';
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
-export default function Navbar({ 
+export default function Navbar({
   authLoaded,
   poNotesRef,
   dsmRef,
@@ -45,9 +45,9 @@ export default function Navbar({
   const [openPageNavMenu, setOpenPageNavMenu] = useState(false);
   const [activeOption, setActiveOption] = useState('Daily Retro');
   const sections = [
-    {name: 'Daily Retro', ref: dsmRef},
-    {name: 'PO Notes', ref: poNotesRef},
-    {name: 'Availability Calendar', ref: availabilityCalendarRef},
+    { name: 'Daily Retro', ref: dsmRef },
+    { name: 'PO Notes', ref: poNotesRef },
+    { name: 'Availability Calendar', ref: availabilityCalendarRef },
   ];
 
   const handleOpenRoutesMenu = () => {
@@ -84,7 +84,6 @@ export default function Navbar({
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ display: 'flex', direction: 'column' }}>
-          {/* <Box sx={{ display: 'flex', flexGrow: '1', justifyContent: 'flex-start', alignItems: 'center' }}> */}
           <Box
             component="img" sx={{ height: '50px' }}
             alt="logo" src={Logo}
@@ -117,77 +116,77 @@ export default function Navbar({
                     sx={{ ml: 5 }}
                   >
                     <Box sx={{ position: 'relative' }}>
-                    <Link 
-                      style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} 
-                      to={getRoute(pages[index], projectId)}
-                      onClick={
-                        page === 'DSM' ? handlePageNavMenu : null
-                      }
-                    >
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center', }}
-                      >
-                        <Typography
-                          color='secondary.main'
-                          sx={{
-                            ...(location.pathname !== HOME_ROUTE && location.pathname === getRoute(pages[index], projectId) &&
-                              { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
-                            ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
-                          }}> {page}
-                        </Typography>
-                        {page === 'DSM' && (
-                        <IconButton
-                          sx={{ p: 0 }}
-                        >
-                          {openPageNavMenu ? <ExpandLess /> : <ExpandMore />}
-                        </IconButton>
-                        )}
-                      </Box>
-                    </Link>
-                    {openPageNavMenu && (
-                      <Menu
-                        id="nav-menu"
-                        anchorEl={anchorElNavMenu}
-                        open={openPageNavMenu}
-                        PaperProps={{
-                          style: {
-                            maxHeight: 48 * 4.5,
-                            width: '12rem',
-                          },
-                        }}
-                        sx={{ marginTop: '0.6rem' }}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "center",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "center",
-                        }}
-                        onClose={
-                          (e) => {
-                            e.stopPropagation();
-                            setOpenPageNavMenu(false)
-                          }
+                      <Link
+                        style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }}
+                        to={getRoute(pages[index], projectId)}
+                        onClick={
+                          page === 'DSM' ? handlePageNavMenu : null
                         }
-                        keepMounted
                       >
-                        {sections.map((section) => (
-                        <MenuItem 
-                          key={section.name} 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOptionClick(section.name, section.ref);
+                        <Box
+                          sx={{ display: 'flex', alignItems: 'center', }}
+                        >
+                          <Typography
+                            color='secondary.main'
+                            sx={{
+                              ...(location.pathname !== HOME_ROUTE && location.pathname === getRoute(pages[index], projectId) &&
+                                { textDecoration: 'underline', textUnderlineOffset: '10px', color: 'primary.main' }),
+                              ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
+                            }}> {page}
+                          </Typography>
+                          {page === 'DSM' && (
+                            <IconButton
+                              sx={{ p: 0 }}
+                            >
+                              {openPageNavMenu ? <ExpandLess /> : <ExpandMore />}
+                            </IconButton>
+                          )}
+                        </Box>
+                      </Link>
+                      {openPageNavMenu && (
+                        <Menu
+                          id="nav-menu"
+                          anchorEl={anchorElNavMenu}
+                          open={openPageNavMenu}
+                          PaperProps={{
+                            style: {
+                              maxHeight: 48 * 4.5,
+                              width: '12rem',
+                            },
                           }}
-                          sx={{
-                            ...(activeOption === section.name && { backgroundColor: 'logoBlue.main', color: 'white', ':hover': { backgroundColor: 'primary.main' } }),
+                          sx={{ marginTop: '0.6rem' }}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center",
                           }}
-                          >
-                          <Typography textAlign="center">{section.name}</Typography>
-                        </MenuItem>
-                        ))}
-                      </Menu>
-                    )}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                          }}
+                          onClose={
+                            (e) => {
+                              e.stopPropagation();
+                              setOpenPageNavMenu(false)
+                            }
+                          }
+                          keepMounted
+                        >
+                          {sections.map((section) => (
+                            <MenuItem
+                              key={section.name}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOptionClick(section.name, section.ref);
+                              }}
+                              sx={{
+                                ...(activeOption === section.name && { backgroundColor: 'logoBlue.main', color: 'white', ':hover': { backgroundColor: 'primary.main' } }),
+                              }}
+                            >
+                              <Typography textAlign="center">{section.name}</Typography>
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      )}
                     </Box>
                   </Box>
                 ))}
@@ -199,13 +198,13 @@ export default function Navbar({
               <Box sx={{ textAlign: 'right', flexGrow: '1' }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {
-                    user?.name ?
-                    <Avatar sx={{ bgcolor: stc(user?.name) }}>
-                      {user.name[0].toUpperCase()}
-                    </Avatar>
-                    : <Avatar />
-                  }
+                    {
+                      user?.name ?
+                        <Avatar sx={{ bgcolor: stc(user?.name) }}>
+                          {user.name[0].toUpperCase()}
+                        </Avatar>
+                        : <Avatar />
+                    }
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -250,7 +249,7 @@ export default function Navbar({
                   keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
                   {pages.map((page, index) => (
-                    <MenuItem 
+                    <MenuItem
                       key={page}
                       sx={{ marginLeft: '10px' }}
                       onClick={page === 'DSM' ? handlePageNavMenu : () => { setOpenRoutesMenu(false) }}
@@ -271,12 +270,12 @@ export default function Navbar({
               </Box>
             )
           }
-        {/* </Box> */}
+          {/* </Box> */}
         </Toolbar>
         {(!aboveTablet) && (
-        <MobileTabs 
-          sections={sections} 
-        />)}
+          <MobileTabs
+            sections={sections}
+          />)}
       </Container>
     </AppBar>
   );

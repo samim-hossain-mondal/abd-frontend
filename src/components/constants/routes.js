@@ -2,7 +2,7 @@ export const HOME_ROUTE = '/welcome';
 
 export const DSM_ROUTE = '/dsm';
 export const PO_NOTE_ROUTE = '/po-notes';
-export const OUR_TEAM_ROUTE = '/our-teams';
+export const OUR_TEAM_ROUTE = '/our-team';
 export const CALENDAR_ROUTE = '/availability-calendar';
 export const ANNOUNCEMENTS_ROUTE = '/announcements';
 export const REFERENCE_MATERIALS_ROUTE = '/reference-material';
@@ -13,7 +13,7 @@ export const HOME_PAGE_NAME = 'Home';
 export const DSM_PAGE_NAME = 'DSM';
 
 export const PO_NOTE_PAGE_NAME = 'PO Notes';
-export const OUR_TEAM_PAGE_NAME = 'Our Teams';
+export const OUR_TEAM_PAGE_NAME = 'Our Team';
 export const CALENDAR_PAGE_NAME = 'Availability Calendar';
 export const ANNOUNCEMENTS_PAGE_NAME = 'Announcements';
 export const REFERENCE_MATERIALS_PAGE_NAME = 'Reference Material';
