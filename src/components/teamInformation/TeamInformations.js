@@ -1,5 +1,3 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable import/no-extraneous-dependencies */
 import React, { useState, useEffect, useContext } from "react";
 import {
   IconButton,
@@ -8,8 +6,7 @@ import {
   TextField,
   Button,
   InputAdornment,
-  Slide,
-  Grid,
+  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,26 +16,25 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
   GET_TEAM_INFORMATION_BY_PROJECT_ID,
-  POST_TEAM_INFORMATION,
-  DELETE_TEAM_INFORMATION,
   PUT_TEAM_INFORMATION,
-  GET_ROLE_IN_PROJECT,
 } from "../constants/apiEndpoints";
 import makeRequest from "../utilityFunctions/makeRequest/index";
 import SlackLogo from "../../assets/images/Slack_icon.png";
 import { ErrorContext } from "../contexts/ErrorContext";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
-import DeleteDialog from "../elements/DeleteDialog";
+import InformationToolTip from "./InformationToolTip";
 import { valueNotProvided } from "../constants/TeamInformation";
+import TeamInformationCardContainer from "./TeamInformationCardContainer";
 
 function CardList() {
+  const breakpoint450 = useMediaQuery("(min-width:450px)");
   const { projectId } = useParams();
   const { user } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const [today] = useState(new Date().toISOString().slice(0, 10));
   const [isMessageClicked, setIsMessageClicked] = useState(false);
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [data, setData] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
   const [memberId] = useState(user.memberId);
   const [isAddCard, setIsAddCard] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,8 +47,10 @@ function CardList() {
   const [projectRole, setProjectRole] = useState("");
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [adminCards, setAdminCard] = useState(null);
+  const [leaderCards, setLeaderCard] = useState(null);
+  const [memberCards, setMemberCard] = useState(null);
 
   useEffect(() => {
     try {
@@ -62,13 +60,6 @@ function CardList() {
           setFilteredData(response);
         }
       );
-    } catch (error) {
-      setError("Error in making the request");
-    }
-    try {
-      makeRequest(GET_ROLE_IN_PROJECT(projectId, memberId)).then((response) => {
-        setProjectRole(response.role);
-      });
     } catch (error) {
       setError("Error in making the request");
     }
@@ -121,38 +112,11 @@ function CardList() {
       setError("Please fill all the fields");
       return;
     }
-    if (startDate > endDate) {
+    if (endDate && startDate > endDate) {
       setError("Start date cannot be greater than end date");
       return;
     }
-    if (isAddCard) {
-      try {
-        makeRequest(POST_TEAM_INFORMATION, {
-          data: {
-            name,
-            projectId: Number(projectId),
-            projectRole,
-            memberId,
-            message,
-            bio,
-            startDate,
-            endDate,
-          },
-        }).then((response) => {
-          if (response.id) {
-            const updatedData = [...data, response];
-            setData(updatedData);
-            setIsAddCard(false);
-            setSuccess("Information added successfully");
-            handleCloseModal();
-          } else {
-            setError("Error in adding information");
-          }
-        });
-      } catch (error) {
-        setError("Error in making the request");
-      }
-    } else {
+    
       try {
         makeRequest(PUT_TEAM_INFORMATION(selectedItem.id), {
           data: {
@@ -181,44 +145,11 @@ function CardList() {
       } catch (error) {
         setError("Error in making the request");
       }
-    }
+    
   };
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
     return dateInengbFormat.toLocaleDateString("en-GB");
-  };
-  const handleDelete = () => {
-    if (emailId !== user.email) {
-      setError("You can only delete your own information");
-      return;
-    }
-    const index = data.findIndex((item) => item.emailId === user.email);
-    if (index === -1) {
-      setModalOpen(false);
-      setDeleteDialogOpen(false);
-      return;
-    }
-    try {
-      makeRequest(DELETE_TEAM_INFORMATION(selectedItem.id), "DELETE").then(
-        (response) => {
-          if (response.id === selectedItem.id) {
-            setSuccess("Information deleted successfully");
-          } else {
-            setError("Error in deleting information");
-            return;
-          }
-          const updatedData = data.filter(
-            (item) => item.id !== selectedItem.id
-          );
-          setData(updatedData);
-          handleCloseModal();
-        }
-      );
-    } catch (error) {
-      setError("Error in deleting information");
-    } finally {
-      setDeleteDialogOpen(false);
-    }
   };
   useEffect(() => {
     if (isMessageClicked) {
@@ -244,13 +175,21 @@ function CardList() {
   const filterContent = (inputValue) => {
     if (inputValue !== "") {
       const filterData = data.filter((item) => {
-        const value = item?.bio?.toLowerCase();
-        return value?.includes(inputValue?.toLowerCase());
+        const bioValue = item?.bio?.toLowerCase();
+        const roleValue = item?.role?.toLowerCase();
+        const nameValue = item?.name?.toLowerCase();
+        const emailIdValue = item?.emailId?.toLowerCase();
+        const projectRoleValue = item?.projectRole?.toLowerCase();
+        return (
+          bioValue?.includes(inputValue?.toLowerCase()) ||
+          roleValue?.includes(inputValue?.toLowerCase()) ||
+          emailIdValue?.includes(inputValue?.toLowerCase()) ||
+          nameValue?.includes(inputValue?.toLowerCase()) ||
+          projectRoleValue?.includes(inputValue?.toLowerCase())
+        );
       });
       setFilteredData(filterData);
-    } else {
-      setFilteredData(data);
-    }
+    } else setFilteredData(data);
   };
   const handleSearchValueChange = (event) => {
     const inputValue = event.target.value;
@@ -260,36 +199,60 @@ function CardList() {
   useEffect(() => {
     setFilteredData(data);
     debounce(() => filterContent(searchValue), 500)();
-  }
-    , [data]);
+  }, [data]);
+  useEffect(() => {
+    const filterDataValue = filteredData && [...filteredData];
+    filterDataValue?.sort((a, b) => {
+      if (a.role < b.role) {
+        return -1;
+      }
+      if (a.role > b.role) {
+        return 1;
+      }
+      return 0;
+    });
+    setFilteredData(filterDataValue);
+    const adminCardValue = filterDataValue?.filter(
+      (item) => item.role === "ADMIN"
+    );
+    const leaderCardValue = filterDataValue?.filter(
+      (item) => item.role === "LEADER"
+    );
+    const memberCardValue = filterDataValue?.filter(
+      (item) => item.role === "MEMBER"
+    );
+    setAdminCard(adminCardValue);
+    setLeaderCard(leaderCardValue);
+    setMemberCard(memberCardValue);
+  }, [filteredData]);
+
   return (
-    <Box sx={{ backgroundColor: "#e6eef2", display: "flex", height: "100vh" }}>
-      <DeleteDialog
-        open={deleteDialogOpen}
-        setOpen={setDeleteDialogOpen}
-        handleDelete={handleDelete}
-        description="Are you sure want to delete this Profile"
-      />
+    <Box sx={{ backgroundColor: "#e6eef2", display: "flex", height: "100%" }}>
       <Box
         width="100%"
         display="flex"
         flexDirection="column"
-        alignItems="center"
         backgroundColor="#e6eef2"
         className="body"
         height="100vh"
-        sx={{ overflow: 'scroll' }}
+        sx={{ overflow: "scroll" }}
       >
         <Box
-          sx={{ marginTop: '10%' }}
+          position="absoulte"
           width="100%"
           height="3%"
-          marginRight="20.5%"
-          marginTop="0.5%"
+          marginTop="7rem"
+          marginBottom={!breakpoint450?"0.8rem":0}
           display="flex"
           justifyContent="flex-end"
         >
-          <Box sx={{ background: "white" }}>
+          <Box
+            sx={{
+              background: "white",
+              marginRight:  "3.75%",
+              marginBottom: "0.25%",
+            }}
+          >
             <TextField
               variant="outlined"
               placeholder="Search"
@@ -313,7 +276,12 @@ function CardList() {
             />
           </Box>
         </Box>
-        <Box width="100%" display="flex" justifyContent="center">
+        <Box
+          width="100%"
+          display="flex"
+          justifyContent="center"
+          marginTop="2rem"
+        >
           <Box
             display="flex"
             width="95%"
@@ -327,142 +295,49 @@ function CardList() {
               display="flex"
               flexDirection="row"
               flexWrap="wrap"
-              width="85%"
+              width="99%"
             >
-              <Slide
-                direction="up"
-                in={filteredData !== null}
-                mountOnEnter
-                unmountOnExit
-              >
-                <Grid className="body" container spacing={2} rowGap={2}>
-                  {filteredData.map((item) => (
-                    <Grid
-                      item
-                      lg={4}
-                      md={4}
-                      sm={6}
-                      sx={{
-                        width: {
-                          lg: "448px",
-                          md: "440px",
-                          sm: "100%",
-                          xs: "100%",
-                        },
-                        height: "auto",
-                        marginTop: "2%",
-                        overflow: "hidden",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <Box
-                        key={item.id}
-                        sx={{
-                          borderRadius: "10px",
-                          fontFamily: "bebas-neue",
-                          boxShadow: 1,
-                          height: "290px",
-                          margin: "2% 2% 2% 0",
-                          overflow: "hidden",
-                          border: "1px solid #CBD5DC",
-                        }}
-                      >
-                        <Box onClick={() => handleOpenModal(item)}>
-                          <Box
-                            backgroundColor="whitesmoke"
-                            display="flex"
-                            flexDirection="row"
-                            justifyContent="flex-end"
-                            alignItems="center"
-                            width="95%"
-                            height="50px"
-                            padding="0 5% 0 0"
-                          >
-                            {(!item.startDate || !item.endDate) && "No value"}
-                            {item.startDate &&
-                              item.endDate &&
-                              formatDate(item.startDate)}
-                            {item.startDate &&
-                              item.endDate &&
-                              (item.endDate < today
-                                ? ` - ${formatDate(item.endDate)}`
-                                : " - Till Date")}
-                          </Box>
-                          <Box
-                            fontSize="xx-large"
-                            backgroundColor="white"
-                            height="60px"
-                            display="flex"
-                            flexDirection="row"
-                            justifyContent="flex-start"
-                            padding="4% 0% 0% 6%"
-                          >
-                            {item.name ? item.name : "Name not provided"}
-                          </Box>
-                          <Box
-                            color="#8A9DAB"
-                            backgroundColor="white"
-                            padding="0% 0 2% 6%"
-                            fontSize="large"
-                          >
-                            {item.emailId}
-                          </Box>
-                          <Box
-                            color="#8A9DAB"
-                            backgroundColor="white"
-                            padding="0% 0 2% 6%"
-                            fontSize="large"
-                          >
-                            {item.role}
-                          </Box>
-                          <Box
-                            color="#8A9DAB"
-                            backgroundColor="white"
-                            padding="0% 0 7% 6%"
-                            fontSize="large"
-                          >
-                            {item.projectRole
-                              ? item.projectRole
-                              : "Project Role not provided"}
-                          </Box>
-                          <Box
-                            backgroundColor="whitesmoke"
-                            color="blue"
-                            height="50px"
-                            display="flex"
-                            fontSize="large"
-                          >
-                            <Box margin="2% 5% 2% 2%">
-                              <Button
-                                href={item.message}
-                                target="_blank"
-                                onClick={handleMessageClick}
-                              >
-                                <img
-                                  src={SlackLogo}
-                                  alt="slack"
-                                  height="20px"
-                                  width="20px"
-                                />{" "}
-                                &nbsp;MESSAGE
-                              </Button>
-                            </Box>
-                          </Box>
-                        </Box>
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Slide>
+              {adminCards && (
+                <TeamInformationCardContainer
+                  cardData={adminCards}
+                  handleOpenModal={handleOpenModal}
+                  handleMessageClick={handleMessageClick}
+                  formatDate={formatDate}
+                  SlackLogo={SlackLogo}
+                  today={today}
+                />
+              )}
+               {leaderCards && (
+                <TeamInformationCardContainer
+                  cardData={leaderCards}
+                  handleOpenModal={handleOpenModal}
+                  handleMessageClick={handleMessageClick}
+                  formatDate={formatDate}
+                  SlackLogo={SlackLogo}
+                  today={today}
+                />
+              )}
+              {memberCards && (
+                <TeamInformationCardContainer
+                  cardData={memberCards}
+                  handleOpenModal={handleOpenModal}
+                  handleMessageClick={handleMessageClick}
+                  formatDate={formatDate}
+                  SlackLogo={SlackLogo}
+                  today={today}
+                />
+              )}
+
               <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
                 sx={{
                   overflow: "scroll",
                   width: "100%",
+                  height: "auto",
                   display: "flex",
                   justifyContent: "center",
-
+                  fontFamily: "Roboto",
                   alignContent: "center",
                 }}
               >
@@ -471,13 +346,13 @@ function CardList() {
                   left="50%"
                   right="50%"
                   width="35%"
-                  minWidth="380px"
-                  marginTop="8%"
+                  minWidth="320px"
+                  marginTop="2%"
                   marginBottom="2%"
-                  height="70%"
+                  height="auto"
                   overflow="scroll"
                   backgroundColor="#fff"
-                  padding="1rem"
+                  padding="1.1rem"
                   borderRadius="4px"
                 >
                   <Box
@@ -486,8 +361,8 @@ function CardList() {
                     display="flex"
                     columnGap="2%"
                   >
-                    <Box>
-                      <Typography variant="h5">Details</Typography>
+                    <Box sx={{ marginBottom: "2%" }}>
+                      <Typography variant="h5">Member details</Typography>
                     </Box>
                     <Box>
                       <IconButton color="inherit" aria-label="close">
@@ -495,104 +370,197 @@ function CardList() {
                       </IconButton>
                     </Box>
                   </Box>
-                  <TextField
-                    label="Enter your full name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    disabled={!(emailId === user.email)}
-                  />
-                  <TextField
-                    label="Your start date in the project"
-                    type={startDate || emailId === user.email ? "date" : "text"}
-                    value={startDate || "value not provided"}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    disabled={!(emailId === user.email)}
-                  />
-                  <TextField
-                    label="Your end date in the project"
-                    type={endDate || emailId === user.email ? "date" : "text"}
-                    value={endDate || "value not provided"}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    disabled={!(emailId === user.email)}
-                  />
-                  <Box
-                    sx={{
-                      color: "grey",
-                      fontFamily: "Roboto",
-                      fontSize: "normal",
-                      fontWeight: "normal",
-                      padding: "2% 0% 1% 0%",
-                    }}
-                  >
-                    Enter your work in the project
+                  {(emailId === user.email || name) && (
+                    <Box>
+                      <Box marginLeft="0.5%" display="flex">
+                        <Box sx={{ fontSize: "1.1rem" }}>Full Name</Box>
+                      </Box>
+                      <TextField
+                        type="text"
+                        style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={!(emailId === user.email)}
+                      />
+                    </Box>
+                  )}
+                  {(emailId === user.email || startDate) && (
+                    <Box>
+                      <Box marginLeft="0.5%" display="flex">
+                        <Box sx={{ fontSize: "1.1rem" }}>Start Date</Box>
+                        <InformationToolTip
+                          sx={{ marginLeft: 0 }}
+                          content={"Member's start date in the project"}
+                        />
+                      </Box>
+                      <TextField
+                        type={
+                          startDate || emailId === user.email ? "date" : "text"
+                        }
+                        style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                        value={startDate || "value not provided"}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={!(emailId === user.email)}
+                      />
+                    </Box>
+                  )}
+                  {(emailId === user.email || endDate) && (
+                    <Box>
+                      <Box marginLeft="0.5%" display="flex">
+                        <Box sx={{ fontSize: "1.1rem" }}>End Date</Box>
+                        <InformationToolTip
+                          sx={{ marginLeft: 0 }}
+                          content={"Member's end date in the project"}
+                        />
+                      </Box>
+                      <TextField
+                        style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                        type={
+                          endDate || emailId === user.email ? "date" : "text"
+                        }
+                        value={endDate || "value not provided"}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={!(emailId === user.email)}
+                      />
+                    </Box>
+                  )}
+
+                  {(emailId === user.email || bio) && (
+                    <Box sx={{ marginBottom: "2%" }}>
+                      <Box sx={{ display: "flex" }}>
+                        {" "}
+                        <Box
+                          sx={{
+                            fontFamily: "Roboto",
+                            fontSize: "1.1rem",
+                            marginBottom: "0.75%",
+                            fontWeight: "normal",
+                          }}
+                        >
+                          Work in the project
+                        </Box>
+                        <InformationToolTip
+                          sx={{ marginLeft: 0 }}
+                          content={"Member's area of work in the project"}
+                        />
+                      </Box>
+                      <CKEditor
+                        editor={ClassicEditor}
+                        disabled={!(emailId === user.email)}
+                        config={{
+                          toolbar:
+                            emailId === user.email
+                              ? [
+                                  "heading",
+                                  "|",
+                                  "bold",
+                                  "italic",
+                                  "link",
+                                  "bulletedList",
+                                  "numberedList",
+                                  "blockQuote",
+                                  "insertTable",
+                                  "undo",
+                                  "redo",
+                                  "fontColor",
+                                ]
+                              : [],
+                        }}
+                        onChange={(event, editor) => {
+                          setBio(editor.getData());
+                        }}
+                        data={
+                          !(emailId === user.email) && !bio
+                            ? valueNotProvided
+                            : bio
+                        }
+                      />
+                    </Box>
+                  )}
+
+                  {(emailId === user.email || projectRole) && (
+                    <Box>
+                      <Box marginLeft="0.5%" display="flex">
+                        <Box sx={{ fontSize: "1.1rem" }}>Role</Box>
+                        <InformationToolTip
+                          sx={{ marginLeft: 0 }}
+                          content={"Member's role in the project"}
+                        />
+                      </Box>
+                      <TextField
+                        style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                        type="text"
+                        value={projectRole}
+                        onChange={(e) => setProjectRole(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={!(emailId === user.email)}
+                      />
+                    </Box>
+                  )}
+
+                  <Box>
+                    <Box marginLeft="0.5%" display="flex">
+                      <Box sx={{ fontSize: "1.1rem" }}>Access role</Box>
+                      <InformationToolTip
+                        sx={{ marginLeft: 0 }}
+                        content={"Member's access role in the project"}
+                      />
+                    </Box>
+                    <TextField
+                      style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                      type="text"
+                      value={role}
+                      fullWidth
+                      margin="normal"
+                      disabled
+                    />
                   </Box>
-                  <CKEditor
-                    editor={ClassicEditor}
-                    disabled={!(emailId === user.email)}
-                    config={{
-                      toolbar:
-                        emailId === user.email
-                          ? [
-                            "heading",
-                            "|",
-                            "bold",
-                            "italic",
-                            "link",
-                            "bulletedList",
-                            "numberedList",
-                            "blockQuote",
-                            "insertTable",
-                            "undo",
-                            "redo",
-                          ]
-                          : [],
-                    }}
-                    onChange={(event, editor) => {
-                      setBio(editor.getData());
-                    }}
-                    data={
-                      !(emailId === user.email) && !bio
-                        ? valueNotProvided
-                        : bio
-                    }
-                  />
-                  <TextField
-                    label="Your project Role in the project"
-                    value={
-                      projectRole || emailId === user.email
-                        ? projectRole
-                        : valueNotProvided
-                    }
-                    onChange={(e) => setProjectRole(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    disabled={!(emailId === user.email)}
-                  />
-                  <TextField
-                    label="Your email id"
-                    value={emailId}
-                    fullWidth
-                    disabled
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Your slack link"
-                    value={
-                      message || emailId === user.email
-                        ? message
-                        : valueNotProvided
-                    }
-                    onChange={(e) => setMessage(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    disabled={!(emailId === user.email)}
-                  />
+                  <Box>
+                    <Box marginLeft="0.5%" display="flex">
+                      <Box sx={{ fontSize: "1.1rem" }}>Email Id</Box>
+                      <InformationToolTip
+                        sx={{ marginLeft: 0 }}
+                        content={"Member's email id"}
+                      />
+                    </Box>
+
+                    <TextField
+                      style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                      type="text"
+                      value={emailId}
+                      fullWidth
+                      margin="normal"
+                      disabled
+                    />
+                  </Box>
+                  {(emailId === user.email || message) && (
+                    <Box>
+                      <Box marginLeft="0.5%" display="flex">
+                        <Box sx={{ fontSize: "1.1rem" }}>Message</Box>
+                        <InformationToolTip
+                          sx={{ marginLeft: 0 }}
+                          content={"Member's slack link"}
+                        />
+                      </Box>
+
+                      <TextField
+                        style={{ marginTop: "0.75%", marginBottom: "2.5%" }}
+                        type="text"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={!(emailId === user.email)}
+                      />
+                    </Box>
+                  )}
                   {emailId === user.email ? (
                     <Button
                       variant="contained"
