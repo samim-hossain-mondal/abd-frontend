@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, useMediaQuery, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AddCircle as AddCircleIcon, Done as DoneIcon } from '@mui/icons-material';
+import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { Box, Stack } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
@@ -318,20 +318,7 @@ export default function Requests({ selectedDate }) {
                     // onClick={() => format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleChatClick(request) : null}
                     onClick={() => handleChatClick(request)}
                     chipContent={request.type}
-                    afterDate={
-                      isRequestCompleted(request.status) ? (
-                        <DoneIcon
-                          sx={{
-                            fontSize: "1rem",
-                            position: "relative",
-                            top: "2px",
-                            color: "green",
-                          }}
-                        />
-                      ) : (
-                        ""
-                      )
-                    }
+                    isRequestDone={isRequestCompleted(request.status)}
                   />
                 ))}
               </InfiniteScroll >
