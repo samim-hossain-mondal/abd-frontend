@@ -35,7 +35,7 @@ function Step3Content({projId,projectTitle}) {
         if (newMemberNameRef.current) {
           newMemberNameRef.current.focus();
         }
-      }, [members]);
+      }, [members.length]);
 
       const removeMember = (index) => {
         setSelectedCollaborator(index);
