@@ -14,12 +14,14 @@ import {
   ListItem,
   Avatar,
   Divider,
+  useMediaQuery,
+  Tooltip,
 } from "@mui/material";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
-import SaveIcon from "@mui/icons-material/Save";
-import DeleteIcon from "@mui/icons-material/Delete";
+// import SaveIcon from "@mui/icons-material/Save";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { PropTypes } from "prop-types";
@@ -46,6 +48,7 @@ function ProjectModal({
   const [deleteProjectMemberAlert, setDeleteProjectMemberAlert] =
     React.useState(false);
   const [selectedCollaborator, setSelectedCollaborator] = React.useState(null);
+  const above546 = useMediaQuery("(min-width:546px)");
 
   const handelDeleteProjectMember = (index) => {
     setSelectedCollaborator(index);
@@ -125,9 +128,7 @@ function ProjectModal({
         <Grid
           container
           rowSpacing={1}
-          // paddingTop="2%"
-          textAlign="center"
-          alignItems="center"
+          ml={2}
         >
           <Grid item xs={3}>
             <IconButton
@@ -136,6 +137,7 @@ function ProjectModal({
               aria-label="close"
               onClick={handleDelete}
             >
+              <Tooltip title="Delete Project">
               <DeleteForeverRoundedIcon
                 sx={{
                   color: "secondary.main",
@@ -146,6 +148,7 @@ function ProjectModal({
                       : "hidden",
                 }}
               />
+              </Tooltip>
             </IconButton>
           </Grid>
           <Grid item xs={5} sx={{ visibility: "hidden" }} />
@@ -156,6 +159,7 @@ function ProjectModal({
               onClick={handleLock}
               aria-label="close"
             >
+              <Tooltip title="Edit Project">
               <EditRoundedIcon
                 sx={{
                   visibility:
@@ -166,10 +170,12 @@ function ProjectModal({
                       : "hidden",
                 }}
               />
+              </Tooltip>
             </IconButton>
           </Grid>
 
-          <Grid item xs={2}>
+          <Grid item xs={2} >
+            <Tooltip title="Close">
             <IconButton
               edge="start"
               color="inherit"
@@ -178,8 +184,9 @@ function ProjectModal({
               }}
               aria-label="close"
             >
-              <CloseIcon sx={{ color: "secondary.main" }} />
+              <CloseIcon  sx={{ color: "secondary.main" }} />
             </IconButton>
+            </Tooltip>
           </Grid>
         </Grid>
         <Box mt={2}>
@@ -241,7 +248,7 @@ function ProjectModal({
                   rows: 4,
                   fontSize: "16px",
                   lineHeight: "20px",
-                  width: "280px",
+                  width: "100%",
                   height: "120px",
                   padding: "15px 20px",
                   border: "2px solid #ccc",
@@ -300,18 +307,20 @@ function ProjectModal({
           mt={1}
         >
           <Typography variant="h5">Collaborators</Typography>
-          <PersonAdd
+          <Tooltip title="Add Collaborator">
+          <PersonAdd mr={0}
             onClick={() => {
               addCollaborator(lock);
             }}
           />
+          </Tooltip>
         </Box>
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             marginLeft: "20px",
-            marginTop: "20px",
+            marginRight: "20px",
             overflow: "auto",
           }}
           className="collabBody"
@@ -319,7 +328,8 @@ function ProjectModal({
         >
           {projectInfo &&
             projectInfo.projectMembers.map((collaborator, index) => (
-              <Box sx={{ display: "flex" }} mb={2} className="collabRow">
+              <Box sx={{ display: "flex", flexDirection:"column"}} mb={2} className="collabRow">
+                <Box sx={{ display: "flex", flexDirection:"row",flexWrap:"wrap"}} className="collabEssentialDetails">
                 <Box
                   className="collabAvatar"
                   mr={2}
@@ -338,14 +348,10 @@ function ProjectModal({
                     {emailInitals(collaborator.email)}
                   </Avatar>
                 </Box>
-                <Box
-                  className="collabDetails"
-                  sx={{ display: "flex", flexDirection: "column" }}
-                >
-                  <Box sx={{ display: "flex" }} className="collabEmail">
+                  <Box sx={{ display: "flex"}} className="collabEmail">
                     <Input
                       disableUnderline
-                      sx={{ height: "30px", width: "200px" }}
+                      sx={{ height: "30px", width: above546?"100%":"200px" }}
                       type="email"
                       placeholder="xyz@gmail.com"
                       value={collaborator.email}
@@ -358,41 +364,12 @@ function ProjectModal({
                         handleEmailChange(event.target.value, index)
                       }
                     />
-
-                    {!lock ? (
-                      <Box
-                        className="collabIcon"
-                        ml={2}
-                        sx={{ display: "flex", alignItems: "center" }}
-                      >
-                        {collaborator.isNew ? (
-                          <>
-                            <SaveIcon
-                              onClick={() => {
-                                handleSaveCollab(index);
-                              }}
-                            />
-                            <DeleteIcon
-                              onClick={() => {
-                                handelDeleteProjectMember(index);
-                              }}
-                            />
-                          </>
-                        ) : (
-                          !isAdmin(collaborator.role) && (
-                            <DeleteIcon
-                              onClick={() => {
-                                handelDeleteProjectMember(index);
-                              }}
-                            />
-                          )
-                        )}
-                      </Box>
-                    ) : null}
                   </Box>
-                  <Box className="collabRole">
+                  <Box className="collabRole" ml={1} sx={{
+                    marginTop:!above546? "10px":"0px",
+                  }}>
                     <Select
-                      sx={{ height: "30px", width: "200px" }}
+                      sx={{ height: "30px", width: "150px"}}
                       value={collaborator.role}
                       onChange={(event) =>
                         handleRoleChange(
@@ -410,8 +387,48 @@ function ProjectModal({
                       ))}
                     </Select>
                   </Box>
+                  </Box>
+                    {!lock ? (
+                      <Box
+                      mt={1}
+                        className="collabIcon"
+                        sx={{ display: "flex", alignItems: "center", justifyContent: "space-between"}}
+                      >
+                        {collaborator.isNew ? (
+                          <>
+                            <Button variant="outlined"
+                            color="success"
+                              onClick={() => {
+                                handleSaveCollab(index);
+                              }}
+                            >
+                            Save
+                            </Button>
+                            <Button variant="outlined"
+                            color="error"
+                              onClick={() => {
+                                handelDeleteProjectMember(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        ) : (
+                          collaborator.role !== "ADMIN" && (
+                            <Button variant="outlined"
+                            color="error"
+                              onClick={() => {
+                                handelDeleteProjectMember(index);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          )
+                        )}
+                      </Box>
+                    ) : null}
                 </Box>
-              </Box>
+
             ))}
         </Box>
       </Dialog>
