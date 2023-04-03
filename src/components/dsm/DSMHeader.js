@@ -40,7 +40,7 @@ export default function DSMHeader(
 
   return (
     <Box>
-      <Box sx={{ backgroundColor: 'primary.light', padding: '5px' }} />
+      <Box sx={{ backgroundColor: 'primary.light', padding: '5px', mt: 18 }} />
       <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }} >
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>

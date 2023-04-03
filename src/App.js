@@ -101,7 +101,6 @@ function AppRoutes() {
             availabilityCalendarRef={availabilityCalendarRef}
             handleScroll={handleScroll}
           />
-          {/* {aboveTablet && */}
         </Box>
         )}
         <Routes>

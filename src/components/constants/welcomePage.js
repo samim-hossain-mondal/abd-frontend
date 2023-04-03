@@ -5,8 +5,8 @@ const dsmImg = '../../assets/images/screens/dsm.png';
 
 const texts = {
     // whyMyAgile: 
-    // 'My Agile Dashboard is all about improving collaboration and transparency in any McKinsey Agile project.\n My Agile Dashboard provides you with an intuitive and user friendly web-based dashboard where you can effectively run your Daily Standup Meetings (DSMs), maintain Product Owner (PO) Notes about action items, stay informed about presence of team members using the availability calendar, organize project and team information so that it sticks to the mind.',
-    whyMyAgile: '\u{1F91D} Improve collaboration and \u{1F50D} transparency in any McKinsey Agile project\n\u{1F4BB} Intuitive and user-friendly web-based dashboard\n\u{1F4C5} Run your Daily Standup Meetings (DSMs) more efficiently\n\u{1F4CC} Maintain Product Owner (PO) Notes about action items\n\u{1F5D3} Stay informed about availability of team members\n\u{1F4D6} Make sticky notes on the go\n',
+    // 'My Agile Dashboard is all about improving collaboration and transparency in any Agile project.\n My Agile Dashboard provides you with an intuitive and user friendly web-based dashboard where you can effectively run your Daily Standup Meetings (DSMs), maintain Product Owner (PO) Notes about action items, stay informed about presence of team members using the availability calendar, organize project and team information so that it sticks to the mind.',
+    whyMyAgile: '\u{1F91D} Improve collaboration and \u{1F50D} transparency in any Agile project\n\u{1F4BB} Intuitive and user-friendly web-based dashboard\n\u{1F4C5} Run your Daily Standup Meetings (DSMs) more efficiently\n\u{1F4CC} Maintain Product Owner (PO) Notes about action items\n\u{1F5D3} Stay informed about availability of team members\n\u{1F4D6} Make sticky notes on the go\n',
     welcome: 'Welcome to My Agile Dashboard',
     welcomeBack: 'Welcome back',
     yourProjects: 'Your Projects \u{1F5C3}',

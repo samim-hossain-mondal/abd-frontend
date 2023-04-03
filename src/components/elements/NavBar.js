@@ -24,7 +24,7 @@ import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
-import MobileTabs from './MobileTabs';
+import MobileTabs from './MobileTabs'; // TODO: add tabs for mobile view
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
@@ -33,7 +33,6 @@ export default function Navbar({
   poNotesRef,
   dsmRef,
   availabilityCalendarRef,
-  // handleScroll,
 }) {
   const pages = allPages
   const { projectId, user } = useContext(ProjectUserContext)
@@ -79,13 +78,13 @@ export default function Navbar({
 
   const location = useLocation();
   return (
-    <>
     <AppBar
       position="fixed"
-      sx={{ backgroundColor: 'white', boxShadow: "none", padding: '16px 0px' }}
+      sx={{ backgroundColor: 'white', boxShadow: "none", padding: '16px 0px', }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ display: 'flex' }}>
+        <Toolbar disableGutters sx={{ display: 'flex', direction: 'column' }}>
+          {/* <Box sx={{ display: 'flex', flexGrow: '1', justifyContent: 'flex-start', alignItems: 'center' }}> */}
           <Box
             component="img" sx={{ height: '50px' }}
             alt="logo" src={Logo}
@@ -272,14 +271,14 @@ export default function Navbar({
               </Box>
             )
           }
+        {/* </Box> */}
         </Toolbar>
+        {(!aboveTablet) && (
+        <MobileTabs 
+          sections={sections} 
+        />)}
       </Container>
     </AppBar>
-    (aboveTablet) && (
-      <MobileTabs 
-        sections={sections} 
-      />)
-    </>
   );
 }
 
@@ -288,7 +287,6 @@ Navbar.propTypes = {
   poNotesRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   dsmRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   availabilityCalendarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-  // handleScroll: PropTypes.func.isRequired,
 };
 
 Navbar.defaultProps = {

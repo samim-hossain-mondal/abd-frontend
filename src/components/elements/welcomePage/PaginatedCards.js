@@ -5,11 +5,11 @@ import {
   CardContent,
   Pagination,
   Typography,
-  Button,
+  // Button,
   CardActions,
   useMediaQuery,
   IconButton,
-  Chip,
+  // Chip,
   Box,
   Tooltip,
 } from "@mui/material";
@@ -36,8 +36,8 @@ function ProjectCard({ project, handleProjectClick }) {
           color="text.secondary"
           gutterBottom
         >
-          {/* TODO: this is just a dummy implementation */}
-          {project.projectId % 2 === 0 ? (
+          {/* TODO: implement in next phase */}
+          {/* {project.projectId % 2 === 0 ? (
           <Chip
             label="IN PROGRESS"
             size="small"
@@ -50,7 +50,7 @@ function ProjectCard({ project, handleProjectClick }) {
             variant="outlined"
             color="success"
           />
-          )}
+          )} */}
           <Tooltip title="Number of members">
             <Box
               sx={{
@@ -104,7 +104,8 @@ function ProjectCard({ project, handleProjectClick }) {
           flexShrink: 0,
         }}
       >
-        <Button
+        {/* TODO: implement in next phase */}
+        {/* <Button
           sx={{
             fontSize: isLargeScreen ? 14 : 12,
             padding: 1,
@@ -114,7 +115,7 @@ function ProjectCard({ project, handleProjectClick }) {
           }}
         >
           VIEW
-        </Button>
+        </Button> */}
         <IconButton
           size="small"
           sx={{
