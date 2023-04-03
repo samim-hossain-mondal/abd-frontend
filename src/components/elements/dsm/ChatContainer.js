@@ -7,7 +7,7 @@ import DateDivider from '../DateDivider';
 import { getDateGroupName } from "../../utilityFunctions/dateMatcher";
 import { DSM_REQUEST_TYPES } from '../../constants/dsm/Requests';
 
-export default function ChatContainer({ name, src, content, date, previousRequestDate, onClick, afterDate, chipContent }) {
+export default function ChatContainer({ name, src, content, date, previousRequestDate, onClick, isRequestDone, chipContent }) {
 
   const [dateGroupName, setDateGroupName] = useState();
 
@@ -57,18 +57,29 @@ export default function ChatContainer({ name, src, content, date, previousReques
               {date.toLocaleString('en-US', {
                 hour: '2-digit', minute: '2-digit', hour12: true
               })}
-              {' '}
-              {afterDate}
             </Typography>
-            {
-              chipContent.length > 0 && <Chip label={chipContent} sx={{
-                cursor: onClick ? 'pointer' : 'default',
-                height: "24px",
-                width: "80px",
-                fontSize: "10px",
-                backgroundColor: chipContent === DSM_REQUEST_TYPES[0] ? "#e3f2fd" : "#ffebee",
-              }} />
-            }
+            <Box>
+              {
+                isRequestDone && <Chip label="COMPLETE" sx={{
+                  cursor: onClick ? 'pointer' : 'default',
+                  height: "24px",
+                  width: "80px",
+                  fontSize: "10px",
+                  backgroundColor: "#e8f5e9",
+                  marginRight: "8px"
+                }} />
+              }
+
+              {
+                chipContent.length > 0 && <Chip label={chipContent} sx={{
+                  cursor: onClick ? 'pointer' : 'default',
+                  height: "24px",
+                  width: "80px",
+                  fontSize: "10px",
+                  backgroundColor: chipContent === DSM_REQUEST_TYPES[0] ? "#e3f2fd" : "#ffebee",
+                }} />
+              }
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -83,7 +94,7 @@ ChatContainer.propTypes = {
   date: PropTypes.instanceOf(Date),
   onClick: PropTypes.func,
   chipContent: PropTypes.string,
-  afterDate: PropTypes.node,
+  isRequestDone: PropTypes.bool,
   previousRequestDate: (PropTypes.instanceOf(Date) || PropTypes.string).isRequired,
 };
 
@@ -94,5 +105,5 @@ ChatContainer.defaultProps = {
   date: '',
   onClick: undefined,
   chipContent: '',
-  afterDate: ''
+  isRequestDone: false
 };
