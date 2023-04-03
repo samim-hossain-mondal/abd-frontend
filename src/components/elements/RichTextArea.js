@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import { List, ListItem, ListItemButton, Typography } from '@mui/material'
+import { List, ListItem, ListItemButton, Tooltip, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import emoji from '@jukben/emoji-search';
 import { Box } from '@mui/system';
@@ -26,11 +26,12 @@ function Item({ entity: { name, char } }) {
   )
 }
 
-export default function RichTextArea({ value, placeholder, setContent, sx, disabled, enableTag }) {
+export default function RichTextArea({ value, placeholder, setContent, sx, disabled, enableTag, totalCharacters }) {
 
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
   const { setError } = useContext(ErrorContext);
+  const [charCount, setCharCount] = useState(value?.length ?? 0);
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails?.projectMembers ?? []));
@@ -42,59 +43,76 @@ export default function RichTextArea({ value, placeholder, setContent, sx, disab
   }
 
   const handleChangeTextArea = (e) => {
-    if(e.target.value.length > 300)
-    {
-      setError("You can't write more than 300 characters");
-      return;
+    if (e.target.value.length > totalCharacters ?? 300) {
+      setError(`You can't write more than ${totalCharacters ?? 300} characters`);
     }
-    setContent(e.target.value);
+    setCharCount(Math.min(e.target.value.length, totalCharacters));
+    setContent(String(e.target.value).slice(0, totalCharacters ?? 300));
   };
 
   return (
-    <ReactTextareaAutocomplete
-      className="autocomplete-textarea"
-      loadingComponent={Loading}
-      sx={{ ...sx }}
-      disabled={disabled}
-      value={value}
-      placeholder={placeholder}
-      style={{
-        fontFamily: 'Poppins',
-        color: '#121212',
-        width: '100%',
-        multiline: true,
-        rows: 4,
-        fontSize: '16px',
-        padding: '15px 20px',
-        height: '100px',
-        borderRadius: '8px',
-        resize: 'none',
-        ...sx,
-      }}
-      containerStyle={{
-        margin: '5px auto'
-      }}
-      minChar={0}
-      onChange={(e) => handleChangeTextArea(e)}
-      trigger={{
-        ':': {
-          dataProvider: token => emoji(token)
-            .slice(0, 3)
-            .map(({ name, char }) => ({ name, char })),
-          component: Item,
-          output: (item) => item.char
-        },
-        '@': enableTag ? {
-          dataProvider: token => getSimilarUsers(token)
-            .slice(0, 3)
-            .map(({ name, char }) => ({ name, char })),
-          component: Item,
-          output: (item) => item.char + item.name,
-        } : {}
+    <Box sx={{
+      width: '100%',
+      margin: '16px 0',
+      padding: 0,
+      position: 'relative'
+    }}>
+      <ReactTextareaAutocomplete
+        className="autocomplete-textarea"
+        loadingComponent={Loading}
+        sx={{ ...sx }}
+        disabled={disabled}
+        value={value}
+        placeholder={placeholder}
+        style={{
+          fontFamily: 'Poppins',
+          color: '#121212',
+          width: '100%',
+          multiline: true,
+          rows: 4,
+          fontSize: '16px',
+          padding: '15px 20px',
+          height: '100px',
+          borderRadius: '8px',
+          resize: 'none',
+          ...sx,
+        }}
+        containerStyle={{
+          margin: '5px auto'
+        }}
+        minChar={0}
+        onChange={(e) => handleChangeTextArea(e)}
+        trigger={{
+          ':': {
+            dataProvider: token => emoji(token)
+              .slice(0, 3)
+              .map(({ name, char }) => ({ name, char })),
+            component: Item,
+            output: (item) => item.char
+          },
+          '@': enableTag ? {
+            dataProvider: token => getSimilarUsers(token)
+              .slice(0, 3)
+              .map(({ name, char }) => ({ name, char })),
+            component: Item,
+            output: (item) => item.char + item.name,
+          } : {}
 
-        // For adding users we can use @ as trigger
-      }}
-    />)
+          // For adding users we can use @ as trigger
+        }}
+      />
+      {!disabled && <Tooltip title="Characters Limit" placement='top'>
+        <Typography sx={{
+          position: 'absolute',
+          left: '16px',
+          bottom: '-20px',
+          fontSize: '12px',
+        }}>
+          {charCount}/{totalCharacters ?? 300}
+        </Typography>
+      </Tooltip>}
+    </Box >
+  )
 }
 
 Item.propTypes = {
@@ -111,10 +129,11 @@ RichTextArea.propTypes = {
   sx: Proptypes.object.isRequired,
   disabled: Proptypes.bool,
   enableTag: Proptypes.bool,
+  totalCharacters: Proptypes.number,
 };
 
 RichTextArea.defaultProps = {
   disabled: false,
-  enableTag: false
-
+  enableTag: false,
+  totalCharacters: 300,
 };

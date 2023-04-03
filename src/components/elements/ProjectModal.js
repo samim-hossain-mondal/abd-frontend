@@ -24,6 +24,7 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { PropTypes } from "prop-types";
 import DeleteDialog from "./DeleteDialog";
+import { isAdmin, isLeader, roles } from '../constants/users';
 
 function ProjectModal({
   handleClose,
@@ -88,7 +89,6 @@ function ProjectModal({
     setLock(!lock);
   };
 
-  const Roles = ["ADMIN", "LEADER", "MEMBER"];
   return (
     <>
       <DeleteDialog
@@ -140,8 +140,8 @@ function ProjectModal({
                 sx={{
                   color: "secondary.main",
                   visibility:
-                    projectInfo.role === "ADMIN" ||
-                    projectInfo.role === "LEADER"
+                    isAdmin(projectInfo.role) ||
+                      isLeader(projectInfo.role)
                       ? ""
                       : "hidden",
                 }}
@@ -159,9 +159,9 @@ function ProjectModal({
               <EditRoundedIcon
                 sx={{
                   visibility:
-                    (projectInfo.role === "ADMIN" ||
-                      projectInfo.role === "LEADER") &&
-                    lock
+                    (isAdmin(projectInfo.role) ||
+                      isLeader(projectInfo.role)) &&
+                      lock
                       ? ""
                       : "hidden",
                 }}
@@ -351,7 +351,7 @@ function ProjectModal({
                       value={collaborator.email}
                       disabled={
                         lock ||
-                        collaborator.role === "ADMIN" ||
+                        isAdmin(collaborator.role) ||
                         !collaborator.isNew
                       }
                       onChange={(event) =>
@@ -379,7 +379,7 @@ function ProjectModal({
                             />
                           </>
                         ) : (
-                          collaborator.role !== "ADMIN" && (
+                          !isAdmin(collaborator.role) && (
                             <DeleteIcon
                               onClick={() => {
                                 handelDeleteProjectMember(index);
@@ -401,11 +401,11 @@ function ProjectModal({
                           projectInfo.projectMembers[index].isNew
                         )
                       }
-                      disabled={lock || collaborator.role === "ADMIN"}
+                      disabled={lock || isAdmin(collaborator.role)}
                     >
-                      {Roles.map((role) => (
-                        <MenuItem value={role} key={role}>
-                          {role}
+                      {roles.map((eachRole) => (
+                        <MenuItem value={eachRole} key={eachRole}>
+                          {eachRole}
                         </MenuItem>
                       ))}
                     </Select>

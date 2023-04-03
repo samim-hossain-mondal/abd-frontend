@@ -8,7 +8,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
-import { celebrationTypes, celebrationPlaceholder, instructions } from '../../constants/dsm/Celebrations';
+import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT } from '../../constants/dsm/Celebrations';
 import InstructionBox from './InstructionBox';
 import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
@@ -181,6 +181,7 @@ export default function CelebrationGenericModal({
               setContent={setContent}
               enableTag
               disabled={lock}
+              totalCharacters={CHAR_COUNT}
             />
 
             {children}

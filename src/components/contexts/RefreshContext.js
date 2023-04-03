@@ -1,9 +1,9 @@
-import React,{createContext,useState,useMemo} from 'react';
+import React, { createContext, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 export const RefreshContext = createContext();
 
-export function RefreshContextProvider({children}) {
+export function RefreshContextProvider({ children }) {
   const [refresh, setRefresh] = useState({
     poNotes: false,
     sentiment: false,
@@ -14,7 +14,7 @@ export function RefreshContextProvider({children}) {
   });
   const refreshContextValues = useMemo(() => ({ refresh, setRefresh }), [refresh]);
   return (
-    <RefreshContext.Provider value = {refreshContextValues}>
+    <RefreshContext.Provider value={refreshContextValues}>
       {children}
     </RefreshContext.Provider>
   );

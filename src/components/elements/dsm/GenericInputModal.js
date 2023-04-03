@@ -45,13 +45,15 @@ export default function GenericInputModal({
   isDisabled,
   setIsDisabled,
   deleteRequest,
-  authorize
+  authorize,
+  totalCharacters
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
   const { setSuccess, setError } = useContext(ErrorContext);
+  const [charCount, setCharCount] = useState(content.length ?? 0);
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -65,32 +67,23 @@ export default function GenericInputModal({
   }
 
   const handleChangeTextArea = (e) => {
-    if(e.target.value.length > 300)
-    {
-      setError("You can't write more than 300 characters");
-      return;
+    if (e.target.value.length > 300) {
+      setError(`You can't write more than ${totalCharacters ?? 300} characters`);
     }
-    setContent(e.target.value);
+    setCharCount(Math.min(e.target.value.length, totalCharacters));
+    setContent(String(e.target.value).slice(0, totalCharacters ?? 300));
   }
 
   return (
     <Box
-      sx={matchesLargeSize ? {
+      sx={{
         width: 'max(25vw, 340px)',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
         padding: '16px 24px 24px 24px',
-      } : {
-        width: 'max(25vw, 255px)',
-        boxSizing: 'border-box',
-        backgroundColor: '#FFFFFF',
-        boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
-        borderRadius: '8px',
-        padding: '16px 24px 24px 24px',
-      }
-      }
+      }}
     >
       <DeleteDialog
         open={openDeleteDialog}
@@ -108,11 +101,11 @@ export default function GenericInputModal({
                 justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              {authorize && 
+              {authorize &&
                 <Tooltip title="Delete Request" placement='top'>
                   <IconButton onClick={() => {
-                      setOpenDeleteDialog(true);
-                    }} 
+                    setOpenDeleteDialog(true);
+                  }}
                     sx={{ padding: 0 }}
                   >
                     <DeleteForeverIcon date-testid='delete-icon' />
@@ -120,10 +113,10 @@ export default function GenericInputModal({
                 </Tooltip>
               }
               <Box>
-                {authorize && 
+                {authorize &&
                   <Tooltip title="Edit Request" placement='top'>
-                    <IconButton onClick={() => setIsDisabled(false)}>
-                      <EditIcon data-testid='edit-icon' />
+                    <IconButton onClick={() => setIsDisabled(!isDisabled)}>
+                      <EditIcon data-testid='edit-icon' color={!isDisabled ? 'primary' : "none"} />
                     </IconButton>
                   </Tooltip>
                 }
@@ -156,7 +149,7 @@ export default function GenericInputModal({
       {/* TextField */}
       <Box sx={{
         width: '100%',
-        margin: '16px 0',
+        margin: '24px 0',
         padding: 0,
         position: 'relative'
       }}>
@@ -231,6 +224,16 @@ export default function GenericInputModal({
             }
           }} />
         </Tooltip>
+        {!isDisabled && <Tooltip title="Characters Limit" placement='top'>
+          <Typography sx={{
+            position: 'absolute',
+            left: '16px',
+            bottom: '-24px',
+            fontSize: '12px',
+          }}>
+            {charCount}/{totalCharacters ?? 300}
+          </Typography>
+        </Tooltip>}
       </Box>
 
       {children}
@@ -301,6 +304,7 @@ GenericInputModal.propTypes = {
   setIsDisabled: PropTypes.func,
   deleteRequest: PropTypes.func,
   authorize: PropTypes.bool,
+  totalCharacters: PropTypes.number,
 };
 
 GenericInputModal.defaultProps = {
@@ -314,4 +318,5 @@ GenericInputModal.defaultProps = {
   setIsDisabled: () => { },
   deleteRequest: () => { },
   authorize: false,
+  totalCharacters: 300,
 };

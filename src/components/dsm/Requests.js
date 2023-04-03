@@ -1,25 +1,28 @@
+/* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, CircularProgress, useMediaQuery, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, useMediaQuery, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon, Done as DoneIcon } from '@mui/icons-material';
-import { Stack } from '@mui/system';
+import { Box, Stack } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
 import { PropTypes } from 'prop-types';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import { ErrorContext } from '../contexts/ErrorContext';
 import ChatContainer from '../elements/dsm/ChatContainer';
-import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, DSM_REQUEST_STATUS } from '../constants/dsm/Requests';
+import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, DSM_REQUEST_STATUS, WATERMARK_FOR_MEMBERS, WATERMARK_FOR_PO, HEADING, CHAR_COUNT } from '../constants/dsm/Requests';
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS_BY_DATE, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
+import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import DSMViewportContext from '../contexts/DSMViewportContext';
 import { REFETCH_INTERVAL } from '../../config';
 import { RefreshContext } from '../contexts/RefreshContext';
-import { isAdmin } from '../constants/users';
+import { isAdmin, isMember } from '../constants/users';
+import SkeletonRequest from '../skeletons/dsm/request';
 /*
 ISSUES: 
         1. someplace key is missing console is showing error
@@ -34,11 +37,12 @@ export default function Requests({ selectedDate }) {
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
+  const [loaded, setLoaded] = useState(false);
 
   const { projectId } = useParams();
 
   const handleExpandRequests = () => {
-    dispatchGridHeight({ type: 'REQUEST' })
+    dispatchGridHeight({ type: 'REQUEST', userRole })
   };
 
   const [requests, setRequests] = useState([]);
@@ -47,6 +51,7 @@ export default function Requests({ selectedDate }) {
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
+  const [hasMore, setHasMore] = useState(true);
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
@@ -71,9 +76,10 @@ export default function Requests({ selectedDate }) {
     setOpenAddModal(false);
   }
 
-  const getRequests = async () => {
+  const getRequests = async (params) => {
     try {
-      const resData = await makeRequest(GET_TEAM_REQUESTS_BY_DATE(projectId, format(selectedDate, 'yyyy-MM-dd')))
+      // const resData = await makeRequest(GET_TEAM_REQUESTS_BY_DATE(projectId, format(selectedDate, 'yyyy-MM-dd')))
+      const resData = await makeRequest(GET_TEAM_REQUESTS(projectId), { params })
       return resData;
     }
     catch (err) {
@@ -81,23 +87,39 @@ export default function Requests({ selectedDate }) {
       return [];
     }
   }
+  const limit = 10;
+
+  const fetchMoreRequests = async (isRefresh = false) => {
+    const page = isRefresh ? 1 : Math.ceil(requests.length / limit) + 1;
+    const resData = await getRequests({ page, limit });
+    if (resData.length < limit) {
+      setHasMore(false);
+    }
+    const updateAnnouncements = [...requests, ...resData];
+
+    setRequests(isRefresh ? resData : updateAnnouncements);
+    return resData;
+  }
 
   if (refresh.request) {
-    getRequests().then(resData => {
-      setRequests(resData);
-    })
     setRefresh(val => ({ ...val, request: false }));
+    fetchMoreRequests(true).then(resData => {
+      setRequests(resData);
+      setHasMore(true);
+    })
   }
 
   useEffect(() => {
-    getRequests().then((_requests) => {
+    setLoaded(false);
+    fetchMoreRequests(true).then((_requests) => {
       setRequests(_requests);
+      setLoaded(true);
     })
   }, [selectedDate])
 
-  const { error, isError, isLoading } = useQuery(requests, async () => {
+  const { error, isError } = useQuery("", async () => {
     if (DSMInViewPort) {
-      const resData = await getRequests();
+      const resData = await fetchMoreRequests(true);
       setRequests(resData);
       return resData
     }
@@ -108,9 +130,6 @@ export default function Requests({ selectedDate }) {
     }
   );
 
-  if (isLoading) {
-    return <CircularProgress />
-  }
   if (isError) {
     return <div>Error! {error.message}</div>
   }
@@ -177,10 +196,12 @@ export default function Requests({ selectedDate }) {
       marginBottom={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "40px" : 'none'
       }
     >
-      <Accordion expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
-        height: gridHeightState.request.expanded ? '100%' : 'none',
-        overflow: 'auto',
-      }}>
+      <Accordion
+        id="scrollableRequestDiv"
+        expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
+          height: gridHeightState.request.expanded ? '100%' : 'none',
+          overflow: 'auto',
+        }}>
         <AccordionSummary
           expandIcon={
             <Tooltip title={gridHeightState.request.expanded ? 'Collapse' : 'Expand'} placement='top'>
@@ -199,15 +220,15 @@ export default function Requests({ selectedDate }) {
           }}
         >
           {/* All Content/Development of Requests HEADER goes here */}
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>Requests</Typography>
-          {
-            format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
-              <Tooltip title="Add Request" placement='top'>
-                <IconButton onClick={(e) => handleAddButtonClick(e)}>
-                  <AddCircleIcon color="primary" />
-                </IconButton>
-              </Tooltip>
-            )
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
+          {isMember(userRole) &&
+            // format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
+            <Tooltip title="Add Request" placement='top'>
+              <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                <AddCircleIcon color="primary" />
+              </IconButton>
+            </Tooltip>
+            // )
           }
 
         </AccordionSummary>
@@ -222,13 +243,14 @@ export default function Requests({ selectedDate }) {
             onPrimaryButtonClick={async (content) => {
               const isRequestSuccesfullyDone = await addRequestToDB(content);
               if (isRequestSuccesfullyDone) {
-                getRequests().then((_requests) => {
+                fetchMoreRequests(true).then((_requests) => {
                   setRequests(_requests);
                 });
                 handleModalClose();
               }
             }}
             placeholder={DSM_REQUEST_INPUT_PLACEHOLDER}
+            totalCharacters={CHAR_COUNT}
           >
             <Typography>
               Tags
@@ -245,37 +267,82 @@ export default function Requests({ selectedDate }) {
         <AccordionDetails sx={{
           display: 'flex',
           flexDirection: 'column',
-          padding: '16px',
+          padding: loaded && requests.length === 0 ? "10% 16px" : '0 16px',
           gap: '16px',
         }}>
-          {requests.map((request) => (
-            <ChatContainer
-              key={request.requestId}
-              name={request.author}
-              content={request.content}
-              date={new Date(request.createdAt)}
-              onClick={() => format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleChatClick(request) : null}
-              chipContent={request.type}
-              afterDate={
-                isRequestCompleted(request.status) ? (
-                  <DoneIcon
+          {!loaded ?
+            [...Array(6)].map(() =>
+              <SkeletonRequest />
+            )
+            :
+            (requests.length === 0 ?
+              (
+                <Box sx={{ height: "100%" }}>
+                  <Typography
+                    color="watermark.main"
+                    fontSize='1.25rem'
                     sx={{
-                      fontSize: "1rem",
-                      position: "relative",
-                      top: "2px",
-                      color: "green",
+                      height: "100%",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textTransform: 'none'
                     }}
+                  >
+                    {isMember(userRole) ? WATERMARK_FOR_MEMBERS : WATERMARK_FOR_PO}
+                  </Typography>
+                </Box>
+              )
+              :
+              (<InfiniteScroll
+                dataLength={requests.length}
+                next={fetchMoreRequests}
+                // style={{ display: 'flex', flexDirection: 'column-reverse' }} // To put endMessage and loader to the top.
+                // inverse //
+                hasMore={hasMore}
+                loader={
+                  <Box sx={{ width: '100%' }}>
+                    <SkeletonRequest />
+                  </Box>
+                }
+                scrollableTarget="scrollableRequestDiv"
+              >
+                {requests.map((request, index) => (
+                  <ChatContainer
+                    key={request.requestId}
+                    name={request.author}
+                    content={request.content}
+                    date={new Date(request.createdAt)}
+                    previousRequestDate={index === 0 ? null : new Date(requests[index - 1]?.createdAt)}
+                    // onClick={() => format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleChatClick(request) : null}
+                    onClick={() => handleChatClick(request)}
+                    chipContent={request.type}
+                    afterDate={
+                      isRequestCompleted(request.status) ? (
+                        <DoneIcon
+                          sx={{
+                            fontSize: "1rem",
+                            position: "relative",
+                            top: "2px",
+                            color: "green",
+                          }}
+                        />
+                      ) : (
+                        ""
+                      )
+                    }
                   />
-                ) : (
-                  ""
-                )
-              }
-            />
-          ))}
+                ))}
+              </InfiniteScroll >
+              )
+            )
+          }
         </AccordionDetails>
 
         {
-          (openEditModal) && format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
+          // (openEditModal) && format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
+          (openEditModal) && (
             <Dialog
               open={openEditModal}
               onClose={handleEditModalClose}
@@ -285,12 +352,14 @@ export default function Requests({ selectedDate }) {
                 onCloseButtonClick={handleEditModalClose}
                 // primaryButtonText='Mark as Discussed' right now just adding save
                 primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-                onPrimaryButtonClick={format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleEditRequest : null}
+                // onPrimaryButtonClick={format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleEditRequest : null}
+                onPrimaryButtonClick={handleEditRequest}
                 defaultValue={editModalData.content}
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteRequest}
                 authorize={user.memberId === editModalData.memberId || isAdmin(userRole)}
+                totalCharacters={CHAR_COUNT}
               >
                 <Typography>
                   Tags

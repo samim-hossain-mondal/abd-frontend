@@ -4,6 +4,10 @@ import '@fontsource/roboto/400.css';
 // Theme for the PO Notes Tables Header
 const theme = createTheme({
   palette: {
+    watermark: {
+      main: '#bdbdbd',
+      light: "#e0e0e0",
+    },
     primary: {
       main: '#2258F5',
       light: '#E6EEF2',

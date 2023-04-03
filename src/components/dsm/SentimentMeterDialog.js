@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import { React, useState } from 'react';
+import { React, useContext, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -22,7 +22,13 @@ import {
 } from 'chart.js';
 import { Pie, Bar } from 'react-chartjs-2';
 import { CSVLink } from 'react-csv';
+import { useParams } from 'react-router';
+import getDBOffSetTime from "../utilityFunctions/getOffsetTimestamp";
+import getTodayDate from '../utilityFunctions/getTodayDate';
 import { SentimentMeterInfo } from '../constants/SentimentMeter';
+import makeRequest from '../utilityFunctions/makeRequest';
+import { GET_SENTIMENTS_BY_DATE } from '../constants/apiEndpoints';
+import { ErrorContext } from '../contexts/ErrorContext';
 
 ChartJS.register(
   ArcElement,
@@ -34,8 +40,49 @@ ChartJS.register(
   Title
 );
 
-export default function SentimentMeterDialog({ open, setOpen, csvReport, feelingsArray, weekStats, todayStats }) {
+export default function SentimentMeterDialog({ open, setOpen, isLeaderOrAdmin }) {
   const [compareButton, setCompareButton] = useState(false);
+  const [weekStats, setWeekStats] = useState([])
+  const [todayStats, setTodayStats] = useState([])
+  const [sentimeterData, setSentimeterData] = useState([]);
+  const { projectId } = useParams()
+  const { setError } = useContext(ErrorContext)
+  const feelingsArray = ["HAPPY", "GOOD", "OK", "BAD"]
+
+  const getSentiments = async (date) => {
+    try {
+      const resData = await makeRequest(GET_SENTIMENTS_BY_DATE(projectId, date));
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return [];
+    }
+  }
+
+  const getSentimeterStats = async (queryDate) => {
+    try {
+      if (isLeaderOrAdmin()) {
+        const resData = await getSentiments(queryDate);
+        return resData;
+      }
+      return [];
+    }
+    catch (err) {
+      setError(err.message);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    const queryDate = getTodayDate();
+    if (isLeaderOrAdmin()) {
+      getSentimeterStats(queryDate).then(stats => {
+        setSentimeterData(stats)
+      })
+    }
+  }, [])
+
 
   const sentimentData = {
     labels: feelingsArray,
@@ -58,6 +105,81 @@ export default function SentimentMeterDialog({ open, setOpen, csvReport, feeling
         borderWidth: 1,
       },
     ],
+  };
+
+
+
+  const formatedDataByLabels = (groupData) => {
+    if (groupData) {
+      const formatedData = [];
+      groupData.forEach((item) => {
+        formatedData[item.sentiment] = item.count;
+      });
+      return formatedData;
+    }
+    return [];
+  }
+
+  const calcSentimentCountWeekAvg = (dataArray, dayDiff) => {
+    const noOfDays = (dayDiff + 1) > 5 ? 5 : (dayDiff + 1);
+    const formatedData = formatedDataByLabels(dataArray);
+    return feelingsArray.map((item) => {
+      if (!formatedData[item]) return 0;
+      return formatedData[item] / noOfDays;
+    })
+  }
+
+  const calcSentimentCountToday = (dataArray) => {
+    const formatedData = formatedDataByLabels(dataArray);
+    return feelingsArray.map((item) => {
+      if (!formatedData[item]) return 0;
+      return formatedData[item];
+    })
+  }
+
+  useEffect(() => {
+    if (isLeaderOrAdmin()) {
+      setWeekStats(calcSentimentCountWeekAvg(sentimeterData.thisWeek?.data, sentimeterData.thisWeek?.dayDifference))
+      setTodayStats(calcSentimentCountToday(sentimeterData.today?.data))
+    }
+  }, [sentimeterData])
+
+  const getCSVHeaders = () => {
+    const headers = [{ label: "", key: "name" }, { label: "Date", key: "date" }]
+    feelingsArray.forEach(emoji => {
+      headers.push({ label: emoji, key: emoji })
+    })
+    headers.push({ label: "Total Responses", key: "totalCount" })
+    return headers;
+  }
+
+  const getOffSetTimeDate = (date, offSetTime) => {
+    if (date) return new Date(new Date(date).getTime() + offSetTime).toISOString().split('T')[0]
+    return null;
+  }
+
+  const createCSVReportData = () => {
+    const todayDateString = getTodayDate();
+    const offSetTime = getDBOffSetTime(todayDateString);
+    const todayRow = { name: "Today", date: `${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}` }
+    const weekRow = {
+      name: "This Week",
+      date:
+        `(${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}) - (${getOffSetTimeDate(sentimeterData.thisWeek?.lastDay, offSetTime)})`
+    }
+    todayStats.forEach((item, index) => {
+      todayRow[feelingsArray[index]] = item;
+      weekRow[feelingsArray[index]] = weekStats[index];
+    })
+    todayRow.totalCount = todayStats.reduce((a, b) => a + b, 0);
+    weekRow.totalCount = weekStats.reduce((a, b) => a + b, 0);
+    return [todayRow, weekRow];
+  }
+
+  const csvReport = {
+    data: createCSVReportData(),
+    headers: getCSVHeaders(),
+    filename: `SentimentMeter-${new Date().toLocaleDateString()}.csv`
   };
 
   const handleClose = () => { setOpen(false); };
@@ -149,8 +271,5 @@ export default function SentimentMeterDialog({ open, setOpen, csvReport, feeling
 SentimentMeterDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
-  csvReport: PropTypes.object.isRequired,
-  feelingsArray: PropTypes.array.isRequired,
-  weekStats: PropTypes.array.isRequired,
-  todayStats: PropTypes.array.isRequired,
+  isLeaderOrAdmin: PropTypes.func.isRequired,
 }

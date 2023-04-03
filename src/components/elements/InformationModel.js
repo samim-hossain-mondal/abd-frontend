@@ -8,7 +8,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 450,
+  minWidth: 280,
+  maxWidth: 450,
   fontFamily: 'Roboto',
   bgcolor: 'background.paper',
   boxShadow: 24,
@@ -16,6 +17,7 @@ const style = {
   px: 4,
   pb: 3,
 };
+
 export default function NestedModal(props) {
   const { heading, definition, accessibiltyInformation } = props;
   const [open, setOpen] = useState(false);
@@ -25,6 +27,7 @@ export default function NestedModal(props) {
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
     <Tooltip title="More Info" placement='top'>
       <Box sx={{ paddingLeft: '0.5%' }}>

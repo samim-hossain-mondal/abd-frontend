@@ -1,4 +1,6 @@
+export const HEADING = "Daily Retro Board"
 export const GENERIC_NAME = 'Celebration';
+export const CHAR_COUNT = 300;
 
 export const celebrationType = {
   CELEBRATION: 'CELEBRATION',
@@ -26,6 +28,8 @@ export const instructions = {
     ]
   }
 }
+
+export const WATERMARK = "Celebrate your team!"
 
 export const celebrationTypes = [
   'CELEBRATION', 'IMPEDIMENT'

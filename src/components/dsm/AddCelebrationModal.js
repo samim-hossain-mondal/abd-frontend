@@ -28,7 +28,7 @@ export default function AddCelebrationModal({ openModal, setOpenModal, newCelebr
       }
       const resData = await makeRequest(CREATE_CELEBRATION(projectId), { data: reqBody })
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
-      const newCelebrations = [...celebrations, resData]
+      const newCelebrations = [resData.newCelebration, ...celebrations]
       setCelebrations(newCelebrations)
       return resData;
     }

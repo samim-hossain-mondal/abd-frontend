@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Box, IconButton, Tooltip, useMediaQuery } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import propTypes from 'prop-types';
-import { USER_ROLES } from '../constants/users';
+import { isAdmin } from '../constants/users';
 import PONotesDialog from './PONotesDialog';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 
@@ -17,23 +17,16 @@ export default function AddPONotes({ defaultValue }) {
 
   return (
     <Box sx={{ flexGrow: 0.2, display: { md: 'flex' } }}>
-      {userRole === USER_ROLES.ADMIN &&
-      <Tooltip title='Add PO Notes' placement='top'>
-        <IconButton data-testid="AddPONotesFormIdentifier" aria-label="Add Notes"
-          component="label" sx={{ color: 'primary.main', padding: "0" }} >
-          <AddRoundedIcon onClick={handleNoteOpener} fontSize={breakpoint500 ? 'medium' : 'small'}
-            sx={{ backgroundColor: 'backgroundColor.secondary', borderRadius: '50%' }} />
-        </IconButton>
-      </Tooltip>
+      {isAdmin(userRole) &&
+        <Tooltip title='Add PO Notes' placement='top'>
+          <IconButton data-testid="AddPONotesFormIdentifier" aria-label="Add Notes"
+            component="label" sx={{ color: 'primary.main', padding: "0" }} >
+            <AddRoundedIcon onClick={handleNoteOpener} fontSize={breakpoint500 ? 'medium' : 'small'}
+              sx={{ backgroundColor: 'backgroundColor.secondary', borderRadius: '50%' }} />
+          </IconButton>
+        </Tooltip>
       }
-      {addNote &&
-        <PONotesDialog defaultValue={defaultValue}
-          updateItem={false}
-          open={addNote}
-          handleClose={handleNoteOpener}
-          access={userRole === USER_ROLES.ADMIN}
-        />
-      }
+      <PONotesDialog defaultValue={defaultValue} updateItem={false} open={addNote} handleClose={handleNoteOpener} access={isAdmin(userRole)} />
     </Box >
   );
 };

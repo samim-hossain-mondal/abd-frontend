@@ -3,7 +3,7 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography,List, ListItem, ListItemButton, Tooltip } from '@mui/material';
+import { Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
@@ -45,16 +45,20 @@ export default function AnnouncementInputModal({
   setIsDisabled,
   deleteRequest,
   authorize,
-  title
+  title,
+  totalCharactersTitle,
+  totalCharactersContent
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
   const [announcementTitle, setAnnouncementTitle] = useState(title);
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
-  const {setSuccess, setError} = useContext(ErrorContext);
+  const { setSuccess, setError } = useContext(ErrorContext);
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [charCountTitle, setCharCountTitle] = useState(announcementTitle?.length ?? 0);
+  const [charCountContent, setCharCountContent] = useState(content?.length ?? 0);
 
   useEffect(() => {
     setUsers(getAllMembersData(projectDetails.projectMembers ?? []));
@@ -66,40 +70,32 @@ export default function AnnouncementInputModal({
   }
 
   const handleChangeTextArea = (e) => {
-    if(e.target.value.length > 2000)
-    {
+    if (e.target.value.length > totalCharactersContent ?? 2000) {
       setError(ERROR_MESSAGES.CONTENT_LENGTH_EXCEEDED);
-      return;
     }
-    setContent(e.target.value);
+    setCharCountContent(Math.min(e.target.value.length, totalCharactersContent));
+    setContent(String(e.target.value).slice(0, totalCharactersContent ?? 2000));
   }
 
   const handleChangeTitle = (e) => {
-    if(e.target.value.length > 255){
+    if (e.target.value.length > totalCharactersTitle ?? 255) {
       setError(ERROR_MESSAGES.TITLE_LENGTH_EXCEEDED);
       return;
     }
-    setAnnouncementTitle(e.target.value);
+    setCharCountTitle(Math.min(e.target.value.length, totalCharactersTitle));
+    setAnnouncementTitle(String(e.target.value).slice(0, totalCharactersTitle ?? 2000));
   };
 
   return (
     <Box
-      sx={matchesLargeSize ? {
+      sx={{
         width: 'max(25vw, 340px)',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
         padding: '16px 24px 24px 24px',
-      } : {
-        width: 'max(25vw, 255px)',
-        boxSizing: 'border-box',
-        backgroundColor: '#FFFFFF',
-        boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
-        borderRadius: '8px',
-        padding: '16px 24px 24px 24px',
-      }
-      }
+      }}
     >
       <DeleteDialog
         open={openDeleteDialog}
@@ -117,11 +113,11 @@ export default function AnnouncementInputModal({
                 justifyContent: authorize ? 'space-between' : "flex-end",
               }}
             >
-              {authorize && 
-                <Tooltip title='Delete Announcement' placement='top'> 
+              {authorize &&
+                <Tooltip title='Delete Announcement' placement='top'>
                   <IconButton onClick={() => {
-                      setOpenDeleteDialog(true);
-                    }} 
+                    setOpenDeleteDialog(true);
+                  }}
                     sx={{ padding: 0 }}
                   >
                     <DeleteForeverIcon date-testid='delete-icon' />
@@ -129,10 +125,10 @@ export default function AnnouncementInputModal({
                 </Tooltip>
               }
               <Box>
-                {authorize && 
+                {authorize &&
                   <Tooltip title='Edit Announcement' placement='top'>
-                    <IconButton onClick={() => setIsDisabled(false)}>
-                      <EditIcon data-testid='edit-icon' />
+                    <IconButton onClick={() => setIsDisabled(!isDisabled)}>
+                      <EditIcon data-testid='edit-icon' color={!isDisabled ? 'primary' : "none"} />
                     </IconButton>
                   </Tooltip>
                 }
@@ -157,13 +153,13 @@ export default function AnnouncementInputModal({
 
       {/* Title */}
       <Typography
-        sx={{ fontWeight: 700}}
+        sx={{ fontWeight: 700 }}
       >{MODAL_TITLE}</Typography>
 
       {/* Title */}
       <Box sx={{
         width: '100%',
-        margin: '16px 0',
+        margin: '16px 0 24px 0',
         position: 'relative'
       }}>
         <ReactTextareaAutocomplete
@@ -205,11 +201,20 @@ export default function AnnouncementInputModal({
           rows={2}
           placeholder={DSM_ANNOUNCEMENT_TITLE_PLACEHOLDER}
         />
-
+        {!isDisabled && <Tooltip title="Characters Limit" placement='top'>
+          <Typography sx={{
+            position: 'absolute',
+            left: '16px',
+            bottom: '-20px',
+            fontSize: '12px',
+          }}>
+            {charCountTitle}/{totalCharactersTitle ?? 225}
+          </Typography>
+        </Tooltip>}
       </Box>
 
-      <Typography 
-        sx={{ fontWeight: 700}}
+      <Typography
+        sx={{ fontWeight: 700 }}
       >{MODAL_CONTENT}</Typography>
 
       {/* TextField */}
@@ -290,6 +295,16 @@ export default function AnnouncementInputModal({
             }
           }} />
         </Tooltip>
+        {!isDisabled && <Tooltip title="Characters Limit" placement='top'>
+          <Typography sx={{
+            position: 'absolute',
+            left: '16px',
+            bottom: '-20px',
+            fontSize: '12px',
+          }}>
+            {charCountContent}/{totalCharactersContent ?? 2000}
+          </Typography>
+        </Tooltip>}
       </Box>
 
       {children}
@@ -360,6 +375,8 @@ AnnouncementInputModal.propTypes = {
   deleteRequest: PropTypes.func,
   authorize: PropTypes.bool,
   title: PropTypes.string,
+  totalCharactersTitle: PropTypes.number,
+  totalCharactersContent: PropTypes.number,
 };
 
 AnnouncementInputModal.defaultProps = {
@@ -373,5 +390,7 @@ AnnouncementInputModal.defaultProps = {
   setIsDisabled: () => { },
   deleteRequest: () => { },
   authorize: false,
-  title: ''
+  title: '',
+  totalCharactersTitle: 225,
+  totalCharactersContent: 2000,
 };

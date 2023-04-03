@@ -13,6 +13,8 @@ const SNACKBAR_TEXT = {
   DATE_ERROR: 'End date must be greater than start date',
 };
 
+const CHAR_COUNT = 300;
+
 export {
   VIEWS,
   DEFAULT_VIEW,
@@ -20,4 +22,5 @@ export {
   PLACEHOLDER,
   LOADING_TEXT,
   SNACKBAR_TEXT,
+  CHAR_COUNT
 };

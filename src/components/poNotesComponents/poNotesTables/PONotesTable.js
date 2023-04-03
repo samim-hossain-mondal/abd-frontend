@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Paper, CircularProgress, LinearProgress } from '@mui/material'
+import { Box, Paper, CircularProgress, Typography } from '@mui/material'
 import PropTypes from 'prop-types';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
@@ -13,7 +14,10 @@ import { RefreshContext } from '../../contexts/RefreshContext';
 import PONotesViewportContext from '../../contexts/PONotesViewportContext';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import { GET_PO_NOTES } from '../../constants/apiEndpoints';
-import { PO_NOTES_TYPES } from '../../constants/PONotes';
+import { PO_NOTES_TYPES, WATERMARK } from '../../constants/PONotes';
+import { isMember } from '../../constants/users';
+import { ProjectUserContext } from '../../contexts/ProjectUserContext';
+import SkeletonPONote from '../../skeletons/poNote';
 
 const getApiUrlQuery = (type, query, page, limit) => {
   const apiQuery = {
@@ -46,9 +50,14 @@ export default function PONotesTable(props) {
 
   const { heading, definition, accessibilityInformation, query, checkBox } = props;
   const type = HEADINGS[heading].toUpperCase();
+  const [loaded, setLoaded] = useState(false);
 
   const limit = 10;
   const [countOfItems, setCountOfItems] = useState(0);
+
+  const { userRole } = useContext(ProjectUserContext);
+
+  // const breakpoint500 = useMediaQuery('(min-width:500px)');
 
   const getPONotes = async (params) => {
     try {
@@ -74,18 +83,20 @@ export default function PONotesTable(props) {
 
 
   useEffect(() => {
+    setLoaded(false);
     fetchMorePONoteData(true).then(resData => {
       setPONotes(resData.notes);
       setCountOfItems(resData.totalCount ?? 0);
+      setLoaded(true);
     })
   }, [query]);
 
   if (refresh.poNotes) {
+    setRefresh(val => ({ ...val, poNotes: false }));
     fetchMorePONoteData(true).then(resData => {
       setPONotes(resData.notes);
       setCountOfItems(resData.totalCount ?? 0);
     })
-    setRefresh(val => ({ ...val, poNotes: false }));
   }
 
   const { error, isError, isLoading } = useQuery(HEADINGS[heading], async () => {
@@ -144,28 +155,56 @@ export default function PONotesTable(props) {
                   overflowY: 'auto',
                   backgroundColor: 'backgroundColor.secondary'
                 }}>
-
-                <InfiniteScroll
-                  dataLength={poNotes.length}
-                  next={fetchMorePONoteData}
-                  hasMore={countOfItems > poNotes.length}
-                  loader={
-                    <Box sx={{ width: '100%' }}>
-                      <LinearProgress />
-                    </Box>
-                  }
-                  scrollableTarget={`scrollableDiv${heading}`}
-                >
-                  {
-                    poNotes.map((item) => (
-                      <CustomCard
-                        key={item.noteId}
-                        checkBox={checkBox}
-                        type={type}
-                        data={item} />
-                    ))
-                  }
-                </InfiniteScroll>
+                {!loaded ?
+                  [...Array(10)].map(() =>
+                    <SkeletonPONote />
+                  )
+                  :
+                  (
+                    poNotes.length === 0 ?
+                      (<Box sx={{ height: "100%" }}>
+                        <Typography
+                          color="watermark.main"
+                          fontSize='1.25rem'
+                          sx={{
+                            height: "100%",
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textTransform: 'none'
+                          }}
+                        >
+                          {isMember(userRole) ? WATERMARK[type] : WATERMARK[type]}
+                        </Typography>
+                      </Box>)
+                      :
+                      (<InfiniteScroll
+                        dataLength={poNotes.length}
+                        next={fetchMorePONoteData}
+                        // style={{ display: 'flex', flexDirection: 'column-reverse' }} // To put endMessage and loader to the top.
+                        // inverse //
+                        hasMore={countOfItems > poNotes.length}
+                        loader={
+                          <Box sx={{ width: '100%' }}>
+                            <SkeletonPONote />
+                          </Box>
+                        }
+                        scrollableTarget={`scrollableDiv${heading}`}
+                      >
+                        {poNotes.map((item, index) => (
+                          <CustomCard
+                            key={item.noteId}
+                            checkBox={checkBox}
+                            type={type}
+                            data={item}
+                            previousRequestDate={index === 0 ? null : new Date(poNotes[index - 1]?.createdAt)} />
+                        ))
+                        }
+                      </InfiniteScroll>
+                      )
+                  )
+                }
               </Box>
             </Box>
           </Box>

@@ -101,9 +101,9 @@ export const DELETE_TEAM_REQUEST = (projectId, requestId) => ({
   method: 'delete',
 })
 
-// ***** announcments  Endpoints *****
+// ***** ANNOUNCEMENTs  Endpoints *****
 
-export const GET_ANNOUNCMENTS = (projectId) => ({
+export const GET_ANNOUNCEMENTS = (projectId) => ({
   url: `api/dsm/announcements/${projectId}`,
   method: 'get',
 })
@@ -113,17 +113,17 @@ export const GET_ANNOUNCEMENTS_BY_DATE = (projectId, date) => ({
   method: 'get',
 })
 
-export const CREATE_ANNOUNCMENT = (projectId) => ({
+export const CREATE_ANNOUNCEMENT = (projectId) => ({
   url: `api/dsm/announcements/${projectId}`,
   method: 'post',
 })
 
-export const UPDATE_ANNOUNCMENT = (projectId, announcementId) => ({
+export const UPDATE_ANNOUNCEMENT = (projectId, announcementId) => ({
   url: `api/dsm/announcements/${projectId}/${announcementId}`,
   method: 'patch',
 })
 
-export const DELETE_ANNOUNCMENT = (projectId, announcementId) => ({
+export const DELETE_ANNOUNCEMENT = (projectId, announcementId) => ({
   url: `api/dsm/announcements/${projectId}/${announcementId}`,
   method: 'delete',
 })
@@ -225,7 +225,7 @@ export const UPDATE_MADE_TO_STICK = (projectId, madeToStickId) => ({
 //   url: `${BACKEND_URL}/po-notes`,
 //   method: 'patch',
 // }
- export const GET_TEAM_INFORMATION_BY_PROJECT_ID= (projectId) => ({
+export const GET_TEAM_INFORMATION_BY_PROJECT_ID = (projectId) => ({
   url: `api/teamInformations/projectId/${projectId}`,
   method: 'GET',
 })
@@ -233,18 +233,18 @@ export const POST_TEAM_INFORMATION = {
   url: `api/teamInformations`,
   method: 'POST',
 }
-export const PUT_TEAM_INFORMATION = (id)=>({
+export const PUT_TEAM_INFORMATION = (id) => ({
   url: `api/teamInformations/${id}`,
   method: 'PUT',
 
 })
-export const DELETE_TEAM_INFORMATION = (id)=>({
+export const DELETE_TEAM_INFORMATION = (id) => ({
   url: `api/teamInformations/${id}`,
   method: 'DELETE',
 })
 
 // ***** projects  Endpoints *****
-export const GET_ROLE_IN_PROJECT = (projectId,memberId) => ({
+export const GET_ROLE_IN_PROJECT = (projectId, memberId) => ({
   url: `api/management/project/${projectId}/member/${memberId}`,
   method: 'get',
 })

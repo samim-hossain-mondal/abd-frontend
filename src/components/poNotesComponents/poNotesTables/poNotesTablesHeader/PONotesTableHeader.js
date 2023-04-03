@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { ProjectUserContext } from '../../../contexts/ProjectUserContext';
-import { USER_ROLES } from '../../../constants/users';
+import { isAdmin } from '../../../constants/users';
 import AddPONotes from '../../AddPONotes';
 import InformationModel from '../../../elements/InformationModel';
 import { agendaItems } from '../../../constants/PONotes';
@@ -12,7 +12,7 @@ export default function PONotesTableHeader(props) {
   const { userRole } = React.useContext(ProjectUserContext);
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Box ml={userRole === USER_ROLES.ADMIN ? 5 : 0} flex={userRole === USER_ROLES.ADMIN ? 1 : 1}
+      <Box ml={isAdmin(userRole) ? 5 : 0} flex={isAdmin(userRole) ? 1 : 1}
         sx={{ display: 'flex', justifyContent: 'center' }}>
         {
           (heading === agendaItems.heading) ? (

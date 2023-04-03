@@ -28,6 +28,7 @@ import {
   PLACEHOLDER,
   LOADING_TEXT,
   SNACKBAR_TEXT,
+  CHAR_COUNT,
 } from '../../constants/Timeline/Calendar';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
 import {
@@ -39,7 +40,6 @@ import {
 import { REFETCH_INTERVAL } from '../../../config';
 
 import './availabilityCalendar.css';
-
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -259,7 +259,9 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
   };
 
   return eventsData ? (
-    <Box sx={{ fontFamily: 'Roboto !important' }} data-testid='availability-calendar'>
+    <Box
+      sx={{ fontFamily: 'Roboto !important' }}
+      data-testid='availability-calendar'>
       <Box>
         <AppBar
           position='static'
@@ -304,7 +306,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
             onSelectEvent={(event) => handleEditModal(event)}
             onSelectSlot={handleSelect}
             eventPropGetter={eventStyleGetter}
-            dayLayoutAlgorithm="no-overlap"
+            dayLayoutAlgorithm='no-overlap'
           />
           {inputModal && (
             <Dialog open={inputModal} onClose={handleInputModalClose}>
@@ -317,6 +319,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
                 defaultStartDate={selectedStartDate}
                 defaultEndDate={selectedEndDate}
                 placeholder={PLACEHOLDER}
+                totalCharacters={CHAR_COUNT}
               />
             </Dialog>
           )}
@@ -336,6 +339,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 handleDelete={handleDeleteEvent}
+                totalCharacters={CHAR_COUNT}
               />
             </Dialog>
           )}

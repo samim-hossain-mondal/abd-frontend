@@ -14,6 +14,7 @@ import { ErrorContext } from "../contexts/ErrorContext";
 import NewProjectModal from "./NewProjectModal";
 import { DOMAIN } from "../../config";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
+import { isAdmin, isLeader } from '../constants/users';
 
 function AccountSettingsModal({ open, setOpenSettings }) {
   const [projectInfo, setProjectInfo] = useState();
@@ -75,8 +76,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const addCollaborator = (lock) => {
-    console.log("projectInfo", projectInfo);
-    if (projectInfo.role === "ADMIN" || projectInfo.role === "LEADER") {
+    if (isAdmin(projectInfo.role) || isLeader(projectInfo.role)) {
       if (!lock) {
         const newCollaborator = { email: "", role: "", isNew: true };
         setProjectInfo({
@@ -275,133 +275,137 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   return (
-    <Box sx={{display:"flex",justifyContent:"flex-end"}} className="cont">
-    <Dialog
-    id="joiiii"
-      open={open}
-      TransitionComponent={Transition}
-     onClose={handleClose}
-     PaperProps={{ sx: { position:"absolute",right: -30,maxHeight:"100%",height:"100%",width:"50%",minWidth:"320px",background:"#F5F5F5"} }}
-    >
-      <DialogContent id="dd">
-        <Box
-        id="ff"
-          sx={{ display: "flex", flexDirection: "column", textAlign: "center",justifyContent:"center",alignItems:"center" }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between",width:"80%",flexWrap:"wrap",minHeight:"50px",borderBottom:"2px dashed gray"}} >
-            <Typography variant="h5" mb={5}>
-              Manage Projects
-            </Typography >
-            <Box mt={0.5}>
-            <AddCircleRoundedIcon  sx={{color:"blue"}}onClick={handleAddNew} />
+    <Box sx={{ display: "flex", justifyContent: "flex-end" }} className="cont">
+      <Dialog
+        id="joiiii"
+        open={open}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        PaperProps={{ sx: { position: "absolute", right: -30, maxHeight: "100%", height: "100%", width: "50%", minWidth: "320px", background: "#F5F5F5" } }}
+      >
+        <DialogContent id="dd">
+          <Box
+            id="ff"
+            sx={{ display: "flex", flexDirection: "column", textAlign: "center", justifyContent: "center", alignItems: "center" }}
+          >
+            <Box sx={{ display: "flex", justifyContent: "space-between", width: "80%", flexWrap: "wrap", minHeight: "50px", borderBottom: "2px dashed gray" }} >
+              <Typography variant="h5" mb={5}>
+                Manage Projects
+              </Typography >
+              <Box mt={0.5}>
+                <AddCircleRoundedIcon sx={{ color: "blue" }} onClick={handleAddNew} />
+              </Box>
+            </Box>
+
+            <Box
+              mt={5}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                fontFamily: "Poppins",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                overflowY: "scroll",
+              }}
+              mb={4}
+            >
+              {projects &&
+                projects.map((project) => (
+                  <Box
+                    key={project?.projectId}
+                    sx={{
+                      display: "flex",
+                      width: "80%",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      backgroundColor: "#E6EEF2",
+                      height: "50px",
+                      borderRadius: "10px",
+                      alignItems: "center",
+                    }}
+                    mx={2}
+                    mb={2}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        textAlign: "center",
+                        width: "60%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        marginLeft: "25px"
+                      }}
+                    >
+                      {project.projectId === selectedProject ? (
+                        <Typography sx={{
+                          fontSize: "20px",
+                          color: "primary.main",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          textUnderlineOffset: "7px"
+                        }}>
+                          {project.projectName}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          sx={{ fontSize: "20px", cursor: "pointer" }}
+                          onClick={() => {
+                            handleSelectedProject(project.projectId);
+                          }}
+                        >
+                          {project.projectName}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        marginRight: "25px"
+                      }}
+                    >
+                      <Typography
+                        onClick={() => {
+                          handleEditModel(project.projectId);
+                        }}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <OpenInNewRoundedIcon sx={{ color: "gray" }} />
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
             </Box>
           </Box>
-
-          <Box
-          mt={5}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: "Poppins",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              overflowY: "scroll",
-            }}
-            mb={4}
-          >
-            {projects &&
-              projects.map((project) => (
-                <Box
-                  key={project?.projectId}
-                  sx={{
-                    display: "flex",
-                    width: "80%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    backgroundColor:"#E6EEF2",
-                    height:"50px",
-                    borderRadius:"10px",
-                    alignItems:"center",
-                  }}
-                  mx={2}
-                  mb={2}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      textAlign: "center",
-                      width: "60%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      marginLeft:"25px"
-                    }}
-                  >
-                   {project.projectId === selectedProject ? (
-                      <Typography sx={{ fontSize: "20px",color:"primary.main",textDecoration:"underline", cursor:"pointer",
-                      textUnderlineOffset: "7px"
-                      }}>
-                        {project.projectName}
-                      </Typography>
-                    ) : (
-                    <Typography
-                      sx={{ fontSize: "20px",cursor:"pointer"}}
-                      onClick={() => {
-                        handleSelectedProject(project.projectId);
-                      }}
-                    >
-                      {project.projectName}
-                    </Typography>
-                    )}
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      marginRight:"25px"
-                    }}
-                  >
-                    <Typography
-                      onClick={() => {
-                        handleEditModel(project.projectId);
-                      }}
-                      sx={{ cursor:"pointer" }}
-                    >
-                      <OpenInNewRoundedIcon sx={{color:"gray"}}/>
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-          </Box>
-        </Box>
-      </DialogContent>
-    </Dialog>
-    {openNewProjectModal && (
-      <NewProjectModal
-        open={openNewProjectModal}
-        projects={projects}
-        setProjects={setProjects}
-        setOpen={setOpenNewProjectModal}
-        projectInfo={projectInfo}
-      />
-    )}
+        </DialogContent>
+      </Dialog>
+      {openNewProjectModal && (
+        <NewProjectModal
+          open={openNewProjectModal}
+          projects={projects}
+          setProjects={setProjects}
+          setOpen={setOpenNewProjectModal}
+          projectInfo={projectInfo}
+        />
+      )}
       {openEditModel && (
-              <ProjectModal
-                open={openEditModel}
-                handleClose={setOpenEditModel}
-                projectInfo={projectInfo}
-                addCollaborator={addCollaborator}
-                handleEmailChange={handleEmailChange}
-                handleRoleChange={handleRoleChange}
-                handleSaveCollab={handleSaveCollab}
-                removeCollaborator={removeCollaborator}
-                handleDelete={handleDelete}
-                handleDeleteProject={handleDeleteProject}
-                editProjectDetails={editProjectDetails}
-                handleCancelChanges={handleCancelChanges}
-              />
-            )}
+        <ProjectModal
+          open={openEditModel}
+          handleClose={setOpenEditModel}
+          projectInfo={projectInfo}
+          addCollaborator={addCollaborator}
+          handleEmailChange={handleEmailChange}
+          handleRoleChange={handleRoleChange}
+          handleSaveCollab={handleSaveCollab}
+          removeCollaborator={removeCollaborator}
+          handleDelete={handleDelete}
+          handleDeleteProject={handleDeleteProject}
+          editProjectDetails={editProjectDetails}
+          handleCancelChanges={handleCancelChanges}
+        />
+      )}
     </Box>
   );
 }

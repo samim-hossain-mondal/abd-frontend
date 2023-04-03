@@ -1,37 +1,42 @@
 import React from 'react';
-import { AppBar, Typography, Box, Container, Toolbar, IconButton, Tooltip } from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ArrowLeft, ArrowRight } from '@mui/icons-material';
-import { PropTypes } from 'prop-types';
+import {
+  AppBar, Typography, Box, Container, Toolbar,
+  // IconButton, Tooltip 
+} from '@mui/material';
+// import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+// import { PropTypes } from 'prop-types';
 
-export default function DSMHeader({ handleDate }) {
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    handleDate(date);
-  };
+export default function DSMHeader(
+  // { handleDate }
+) {
+  // const [selectedDate, setSelectedDate] = React.useState(new Date());
+  // const handleDateChange = (date) => {
+  //   setSelectedDate(date);
+  //   handleDate(date);
+  // };
 
-  const handleDecrementDate = () => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() - 1);
-    setSelectedDate(newDate);
-    handleDate(newDate);
-  };
+  // const handleDecrementDate = () => {
+  //   const newDate = new Date(selectedDate);
+  //   newDate.setDate(newDate.getDate() - 1);
+  //   setSelectedDate(newDate);
+  //   handleDate(newDate);
+  // };
 
-  const handleIncrementDate = () => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + 1);
-    const currentDate = new Date();
-    if (newDate > currentDate) {
-      setSelectedDate(currentDate);
-      handleDate(currentDate);
-    } else {
-      setSelectedDate(newDate);
-      handleDate(newDate);
-    }
-  };
+  // const handleIncrementDate = () => {
+  //   const newDate = new Date(selectedDate);
+  //   newDate.setDate(newDate.getDate() + 1);
+  //   const currentDate = new Date();
+  //   if (newDate > currentDate) {
+  //     setSelectedDate(currentDate);
+  //     handleDate(currentDate);
+  //   } else {
+  //     setSelectedDate(newDate);
+  //     handleDate(newDate);
+  //   }
+  // };
 
   return (
     <Box>
@@ -48,7 +53,7 @@ export default function DSMHeader({ handleDate }) {
               >
                 Daily Standup (DSM)
               </Typography>
-              <Box sx={{ display: 'flex', alignContent: 'center' }}>
+              {/* <Box sx={{ display: 'flex', alignContent: 'center' }}>
                 <Tooltip title="Previous Date" placement="top">
                   <IconButton onClick={handleDecrementDate}>
                     <ArrowLeft />
@@ -68,7 +73,7 @@ export default function DSMHeader({ handleDate }) {
                     <ArrowRight />
                   </IconButton>
                 </Tooltip>
-              </Box>
+              </Box> */}
             </Box>
           </Toolbar>
         </Container>
@@ -78,5 +83,5 @@ export default function DSMHeader({ handleDate }) {
 };
 
 DSMHeader.propTypes = {
-  handleDate: PropTypes.func.isRequired,
+  // handleDate: PropTypes.func.isRequired,
 };

@@ -7,25 +7,21 @@ import SentimentVerySatisfiedTwoToneIcon from '@mui/icons-material/SentimentVery
 import SentimentSatisfiedTwoToneIcon from '@mui/icons-material/SentimentSatisfiedTwoTone';
 import SentimentDissatisfiedTwoToneIcon from '@mui/icons-material/SentimentDissatisfiedTwoTone';
 import SentimentVeryDissatisfiedTwoToneIcon from '@mui/icons-material/SentimentVeryDissatisfiedTwoTone';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {
   IconButton,
   Box,
-  Menu,
-  MenuItem,
   Grid,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
   useMediaQuery,
-  Tooltip
+  Tooltip,
+  Button
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { CSVLink } from "react-csv";
 import { useParams } from 'react-router-dom';
-import getDBOffSetTime from "../utilityFunctions/getOffsetTimestamp";
-import { CREATE_SENTIMENT, GET_SENTIMENTS_BY_DATE, GET_TODAY_SENTIMENT_OF_MEMBER, UPDATE_SENTIMENT } from '../constants/apiEndpoints';
+import { CREATE_SENTIMENT, GET_TODAY_SENTIMENT_OF_MEMBER, UPDATE_SENTIMENT } from '../constants/apiEndpoints';
 import InformationModel from '../elements/InformationModel';
 import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext";
 import SentimentMeterDialog from './SentimentMeterDialog';
@@ -34,9 +30,9 @@ import { RefreshContext } from '../contexts/RefreshContext';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { ErrorContext } from '../contexts/ErrorContext';
 import { SUCCESS_MESSAGE } from "../constants/dsm/index"
-import { GENERIC_NAME } from '../constants/dsm/Sentiments';
-import getTodayDate from '../utilityFunctions/getTodayDate';
+import { GENERIC_NAME, HEADING } from '../constants/dsm/Sentiments';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
+import { isAdmin, isLeader, isMember } from '../constants/users';
 
 export default function Sentiment() {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -48,11 +44,7 @@ export default function Sentiment() {
   const { projectId } = useParams()
 
   const { userRole } = useContext(ProjectUserContext);
-  const isLeaderOrAdmin = () => (userRole === "ADMIN" || userRole === "LEADER")
-  // const isLeaderOrAdmin = () => false;
-
-  const [weekStats, setWeekStats] = useState([])
-  const [todayStats, setTodayStats] = useState([])
+  const isLeaderOrAdmin = () => (isAdmin(userRole) || isLeader(userRole))
 
   const createSentiment = async (sentiment) => {
     const reqBody = {
@@ -74,19 +66,9 @@ export default function Sentiment() {
     return resData;
   }
 
-  const getSentiments = async (date) => {
-    try {
-      const resData = await makeRequest(GET_SENTIMENTS_BY_DATE(projectId, date));
-      return resData;
-    }
-    catch (err) {
-      setError(err.message);
-      return [];
-    }
-  }
-
   const getTodaySentimentOfMember = async () => {
     try {
+      if (!isMember(userRole)) return {};
       const resData = await makeRequest(GET_TODAY_SENTIMENT_OF_MEMBER(projectId));
       return resData;
     }
@@ -145,38 +127,13 @@ export default function Sentiment() {
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const handleExpandSentiment = () => {
-    dispatchGridHeight({ type: "SENTIMENT" })
+    dispatchGridHeight({ type: "SENTIMENT", userRole })
   };
-  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
-  const openMenu = Boolean(anchorEl);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const handleDialog = () => {
     setOpen(true);
-    setAnchorEl(null);
   };
-
-  const [sentimeterData, setSentimeterData] = useState([]);
-
-  const getSentimeterStats = async (queryDate) => {
-    try {
-      if (isLeaderOrAdmin()) {
-        const resData = await getSentiments(queryDate);
-        return resData;
-      }
-      return [];
-    }
-    catch (err) {
-      setError(err.message);
-      return [];
-    }
-  }
 
   useEffect(() => {
     getTodaySentimentOfMember().then(todaySentiment => {
@@ -187,193 +144,83 @@ export default function Sentiment() {
     })
   }, [])
 
-  useEffect(() => {
-    const queryDate = getTodayDate();
-    getSentimeterStats(queryDate).then(stats => {
-      setSentimeterData(stats)
-    })
-  }, [sentimentResponse, userRole])
-
   if (refresh.sentiment) {
-    const queryDate = getTodayDate();
-    getSentimeterStats(queryDate).then(stats => {
-      setSentimeterData(stats)
-    })
+    setRefresh(val => ({ ...val, sentiment: false }));
     getTodaySentimentOfMember().then(todaySentiment => {
       if (todaySentiment !== null) {
         setSentimentResponse(todaySentiment.sentiment)
         setSentimentObj(todaySentiment)
       }
     })
-    setRefresh(val => ({ ...val, sentiment: false }));
   }
-
-  const feelingsArray = ["HAPPY", "GOOD", "OK", "BAD"]
-
-  const formatedDataByLabels = (groupData) => {
-    if (groupData) {
-      const formatedData = [];
-      groupData.forEach((item) => {
-        formatedData[item.sentiment] = item.count;
-      });
-      return formatedData;
-    }
-    return [];
-  }
-
-  const calcSentimentCountWeekAvg = (dataArray, dayDiff) => {
-    const noOfDays = (dayDiff + 1) > 5 ? 5 : (dayDiff + 1);
-    const formatedData = formatedDataByLabels(dataArray);
-    return feelingsArray.map((item) => {
-      if (!formatedData[item]) return 0;
-      return formatedData[item] / noOfDays;
-    })
-  }
-
-  const calcSentimentCountToday = (dataArray) => {
-    const formatedData = formatedDataByLabels(dataArray);
-    return feelingsArray.map((item) => {
-      if (!formatedData[item]) return 0;
-      return formatedData[item];
-    })
-  }
-
-  useEffect(() => {
-    if (isLeaderOrAdmin()) {
-      setWeekStats(calcSentimentCountWeekAvg(sentimeterData.thisWeek?.data, sentimeterData.thisWeek?.dayDifference))
-      setTodayStats(calcSentimentCountToday(sentimeterData.today?.data))
-    }
-  }, [sentimeterData])
-
-  const getCSVHeaders = () => {
-    const headers = [{ label: "", key: "name" }, { label: "Date", key: "date" }]
-    feelings.forEach(emoji => {
-      headers.push({ label: emoji.name, key: emoji.name })
-    })
-    headers.push({ label: "Total Responses", key: "totalCount" })
-    return headers;
-  }
-
-  const getOffSetTimeDate = (date, offSetTime) => {
-    if (date) return new Date(new Date(date).getTime() + offSetTime).toISOString().split('T')[0]
-    return null;
-  }
-
-  const createCSVReportData = () => {
-    const todayDateString = getTodayDate();
-    const offSetTime = getDBOffSetTime(todayDateString);
-    const todayRow = { name: "Today", date: `${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}` }
-    const weekRow = {
-      name: "This Week",
-      date:
-        `(${getOffSetTimeDate(sentimeterData.thisWeek?.firstDay, offSetTime)}) - (${getOffSetTimeDate(sentimeterData.thisWeek?.lastDay, offSetTime)})`
-    }
-    todayStats.forEach((item, index) => {
-      todayRow[feelings[index].name] = item;
-      weekRow[feelings[index].name] = weekStats[index];
-    })
-    todayRow.totalCount = todayStats.reduce((a, b) => a + b, 0);
-    weekRow.totalCount = weekStats.reduce((a, b) => a + b, 0);
-    return [todayRow, weekRow];
-  }
-
-  const csvReport = {
-    data: createCSVReportData(),
-    headers: getCSVHeaders(),
-    filename: `SentimentMeter-${new Date().toLocaleDateString()}.csv`
-  };
 
   return (
     <Grid item
       sx={{
+        // marginBottom: isMember(userRole) ? "10px" : "0px", paddingBottom: isMember(userRole) ? "10px" : "0px",
         marginBottom: "10px", paddingBottom: "10px",
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
-      }} height={breakpoint500 ? gridHeightState.sentiment.height : gridHeightState.sentiment.height} >
+      }} height={gridHeightState.sentiment.height} >
       <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12}>
-        <Accordion expanded={gridHeightState.sentiment.expanded} onChange={handleExpandSentiment} sx={{
-          height: gridHeightState.sentiment.expanded ? "100%" : "auto",
-        }}>
+        <Accordion
+          expanded={userRole && isMember(userRole) && gridHeightState.sentiment.expanded}
+          onChange={handleExpandSentiment}
+          sx={{
+            height: gridHeightState.sentiment.expanded ? "100%" : "auto",
+          }}>
           <Box sx={{ display: 'flex', alignItems: 'center', height: '8vh' }}>
-            {isLeaderOrAdmin() &&
+            {userRole && isLeaderOrAdmin() &&
               <SentimentMeterDialog
-                open={open} setOpen={setOpen}
-                feelingsArray={feelingsArray}
-                csvReport={csvReport}
-                weekStats={weekStats}
-                todayStats={todayStats}
+                open={open} setOpen={setOpen} isLeaderOrAdmin={isLeaderOrAdmin}
               />
             }
             <AccordionSummary
-              expandIcon={<Tooltip title={(gridHeightState.sentiment.expanded) ? 'Collapse' : 'Expand'} placement='top'><ExpandMoreIcon /></Tooltip>}
+              expandIcon={userRole && isMember(userRole) ? <Tooltip title={(gridHeightState.sentiment.expanded) ? 'Collapse' : 'Expand'} placement='top'><ExpandMoreIcon /></Tooltip> : null}
               aria-controls="panel1a-content"
               id="panel1a-header"
               sx={{
                 flexGrow: 1,
-                paddingRight: 0,
-                paddingLeft: breakpoint391 ? "none" : "5px"
+                ...(userRole && isLeaderOrAdmin() && { paddingRight: "0px" }),
+                ...(userRole && isMember(userRole) && { paddingLeft: breakpoint391 ? "none" : "5px" })
               }}
             >
-              <Typography onClick={() => { }} variant="dsmMain"
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
-                fontSize={breakpoint500 ? "1.65rem" : "1.25rem"} paddingLeft="6%" textTransform='none'
-                width="100%" >
-                How are you feeling today?
-                <InformationModel
-                  heading={SentimentMeterInfo.heading}
-                  definition={SentimentMeterInfo.definition}
-                  accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />
-              </Typography>
+              {isLeaderOrAdmin() ?
+                <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{userRole && HEADING}</Typography> :
+                <Typography onClick={() => { }} variant="dsmMain"
+                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
+                  fontSize={breakpoint500 ? "1.65rem" : "1.25rem"} paddingLeft="6%" textTransform='none'
+                  width="100%" >
+                  {userRole && "How are you feeling today?"}
+                  {userRole && <InformationModel
+                    heading={SentimentMeterInfo.heading}
+                    definition={SentimentMeterInfo.definition}
+                    accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />}
+                </Typography>
+              }
             </AccordionSummary>
-            {isLeaderOrAdmin() &&
-              <Tooltip title="See or Export Results" placement='top'>
-                <IconButton
-                  sx={{ borderRadius: 100, width: breakpoint391 ? "none" : "30px" }}
-                  aria-label="more"
-                  id="long-button"
-                  aria-controls={open ? 'long-menu' : undefined}
-                  aria-expanded={open ? 'true' : undefined}
-                  aria-haspopup="true"
-                  onClick={handleClick}
-                >
-                  <MoreVertIcon sx={{ borderRadius: 50 }} />
-                </IconButton>
-              </Tooltip>
-            }
-            {isLeaderOrAdmin() &&
-              <Menu
-                id="long-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'long-button',
-                }}
-                anchorEl={anchorEl}
-                open={openMenu}
-                onClose={handleClose} >
-                <MenuItem onClick={handleDialog}>See Results</MenuItem>
-                <CSVLink {...csvReport} style={{ "text-decoration": "none", color: '#3D3D3D' }}>
-                  <MenuItem onClick={handleClose}>
-                    Export Results
-                  </MenuItem>
-                </CSVLink>
-              </Menu>
+            {userRole && isLeaderOrAdmin() &&
+              <Button variant="contained" onClick={handleDialog} sx={{ fontSize: "0.8rem", ...(!breakpoint500 && { fontSize: "0.6rem", width: "28%" }), marginRight: "16px", textTransform: "capitalize" }}>See Stats</Button>
             }
           </Box>
-          <AccordionDetails sx={{ p: 0 }}>
-            <Grid container direction="row" sx={{ display: "flex", justifyContent: "center", height: "8vh" }}>
-              {feelings.map((feeling) => (
-                <Grid key={feeling.name} item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Tooltip title={feeling.name} placement='top'>
-                    <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
-                      {feeling.name === sentimentResponse ?
-                        feeling.iconSelected :
-                        feeling.icon
-                      }
-                    </IconButton>
-                  </Tooltip>
-                </Grid>
-              ))}
-            </Grid>
-          </AccordionDetails>
+          {userRole && isMember(userRole) &&
+            <AccordionDetails sx={{ p: 0 }}>
+              <Grid container direction="row" sx={{ display: "flex", justifyContent: "center", height: "8vh" }}>
+                {feelings.map((feeling) => (
+                  <Grid key={feeling.name} item xs={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Tooltip title={feeling.name} placement='top'>
+                      <IconButton onClick={() => handleOnClickResponse(feeling.name)} sx={{ borderRadius: 100, p: 0, color: feeling.color, display: 'flex', justifyContent: 'center' }} >
+                        {feeling.name === sentimentResponse ?
+                          feeling.iconSelected :
+                          feeling.icon
+                        }
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
+                ))}
+              </Grid>
+            </AccordionDetails>
+          }
         </Accordion>
       </Grid>
       {

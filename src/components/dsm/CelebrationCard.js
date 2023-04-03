@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { Avatar, Card, CardActions, CardContent, CircularProgress, Grid, Box, IconButton, Typography, useMediaQuery, Tooltip } from '@mui/material';
+import { Avatar, Card, CardActions, CardContent, Grid, Box, IconButton, Typography, useMediaQuery, Tooltip } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import PlusOneRoundedIcon from '@mui/icons-material/PlusOneRounded';
 import PropTypes from 'prop-types';
@@ -8,10 +8,9 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import { useParams } from 'react-router-dom';
 import stc from 'string-to-color';
-import format from 'date-fns/format';
-import parseISO from 'date-fns/parseISO';
+// import format from 'date-fns/format';
+// import parseISO from 'date-fns/parseISO';
 import { celebrationType } from '../constants/dsm/Celebrations';
-import dateGetter from '../utilityFunctions/DateGetter';
 import { ErrorContext } from '../contexts/ErrorContext';
 import UpdateCelebrationModal from './UpdateCelebrationModal';
 import makeRequest from '../utilityFunctions/makeRequest/index';
@@ -19,8 +18,11 @@ import { UPDATE_CELEBRATION_REACTION } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import stringAvatar from '../utilityFunctions/getStringColor';
+import SkeletonCelebration from '../skeletons/dsm/celebration';
 
-export default function CelebrationCard({ celebration, isPreview, onDeleteCelebration }) {
+export default function CelebrationCard({
+  celebration,
+  isPreview, onDeleteCelebration }) {
   const breakpoint391 = useMediaQuery('(min-width:391px)');
   const { user } = useContext(ProjectUserContext)
   const { setError, setSuccess } = useContext(ErrorContext)
@@ -68,9 +70,8 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
       return false;
     }
   }
-  // console.log(newCelebration.createdAt)
-  // && format(newCelebration.createdAt, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
-  return newCelebration ?
+
+  return newCelebration && newCelebration.type ?
     <Card
       sx={{
         maxWidth: breakpoint391 ? "155px" : "95%",
@@ -80,10 +81,11 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
       }}
       onClick={() => {
-        setOpenUpdateModal(format(parseISO(newCelebration.createdAt), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? !isPreview : false)
+        // setOpenUpdateModal(format(parseISO(newCelebration.createdAt), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? !isPreview : false)
+        setOpenUpdateModal(!isPreview)
       }}
     >
-      <CardContent sx={{ padding: '10px 10px 5px 10px', height: '100px' }}>
+      <CardContent sx={{ padding: '10px 10px 5px 10px', minHeight: '80px', maxHeight: "160px" }}>
         <Grid container>
           <Grid item xs={12} sx={{ maxHeight: 'inherit', overflow: 'auto' }}>
             <Typography
@@ -94,7 +96,7 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
                 fontStyle: 'italic',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                WebkitLineClamp: 3,
+                WebkitLineClamp: 6,
                 WebkitBoxOrient: 'vertical',
                 display: '-webkit-box'
               }}
@@ -121,15 +123,17 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         }}>
           {
             newCelebration.isAnonymous ?
-              <Tooltip title="Anonymous" placement='top'>
+              <Tooltip title="Anonymous" placement="bottom">
                 <Avatar sx={{ height: "30px", width: "30px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar>
               </Tooltip> :
-              <Tooltip title={newCelebration.author ?? '  '} placement='top'>
+              <Tooltip title={newCelebration.author ?? '  '} placement='bottom'>
                 <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
               </Tooltip>
           }
-          <Typography variant='contentMain' display="flex" fontSize="0.6rem" lineHeight='2'>
-            {dateGetter(newCelebration.createdAt, true)}
+          <Typography paddingTop="24%" variant='contentMain' display="flex" fontSize="0.6rem" lineHeight='2'>
+            {new Date(newCelebration.createdAt).toLocaleString('en-US', {
+              hour: '2-digit', minute: '2-digit', hour12: true
+            })}
           </Typography>
         </Box>
         <Tooltip title="React" placement='bottom'>
@@ -160,8 +164,9 @@ export default function CelebrationCard({ celebration, isPreview, onDeleteCelebr
         updateCelebrationOnSubmit={updateCelebrationOnSubmit}
         onDeleteCelebration={onDeleteCelebration}
       />
-    </Card > :
-    <CircularProgress />
+    </Card>
+    :
+    <SkeletonCelebration height="100px" />
 }
 
 CelebrationCard.propTypes = {
@@ -178,6 +183,7 @@ CelebrationCard.propTypes = {
   }).isRequired,
   isPreview: PropTypes.bool,
   onDeleteCelebration: PropTypes.func.isRequired,
+  previousRequestDate: (PropTypes.instanceOf(Date) || null).isRequired,
 };
 
 CelebrationCard.defaultProps = {

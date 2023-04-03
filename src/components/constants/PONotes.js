@@ -1,4 +1,5 @@
 const GENERIC_NAME = "PO Note";
+
 const placeholder = {
   'ACTION_ITEM': 'Example: PO is to get the marketing approvals for the Payment screen text content by Monday so that we are prepared for our next sprint.',
   'KEY_DECISION': 'Example: The client suggested to use Stripe for payment integration as they already have corporate subscription.',
@@ -37,3 +38,16 @@ export const PO_NOTES_TYPES = {
   KEY_DECISION: 'KEY_DECISION',
   AGENDA_ITEM: 'AGENDA_ITEM'
 }
+
+export const WATERMARK = {
+  'ACTION_ITEM': 'No Action Items found',
+  'KEY_DECISION': 'No Key Decisions found',
+  'AGENDA_ITEM': 'No Open Questions found'
+}
+
+export const CHAR_COUNT = {
+  'ACTION_ITEM': 300,
+  'KEY_DECISION': 300,
+  'AGENDA_ITEM': 300
+}
+

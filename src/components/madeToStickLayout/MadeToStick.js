@@ -237,20 +237,20 @@ export default function MadeToStick() {
   };
 
   return (
-    <Box sx={{ marginTop: '110px'}}>
-      {(!isMobile)  && (
-        <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0'}}>
+    <Box sx={{ marginTop: '110px' }}>
+      {(!isMobile) && (
+        <Box sx={{ backgroundColor: 'backgroundColor.main', padding: '24px 0' }}>
           {
             (isPO) && (
               <Container maxWidth="xl" className="action-buttons">
-                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Box>
                     <Button
                       variant="contained" color='customButton1'
                       onClick={addTextCard}
                       name="add"
                       type="button"
-                      sx={{marginRight: '16px'}}
+                      sx={{ marginRight: '16px' }}
                     >
                       Add text card
                     </Button>
@@ -259,14 +259,14 @@ export default function MadeToStick() {
                       onClick={addImageCard}
                       name="add"
                       type="button"
-                      sx={{marginRight: '16px'}}
+                      sx={{ marginRight: '16px' }}
                     >
                       Add Image card
                     </Button>
                   </Box>
                   <Box>
                     <Button
-                      variant="contained" 
+                      variant="contained"
                       color='customButton1'
                       onClick={() => {
                         if (!isMobile) handleSave();
@@ -282,11 +282,11 @@ export default function MadeToStick() {
           }
           <Container maxWidth="xl">
             <Box
-              sx={{ 
-                backgroundColor: 'backgroundColor.main',  
+              sx={{
+                backgroundColor: 'backgroundColor.main',
                 minHeight: '100vh',
-                display:'flex', 
-                alignItems:'stretch',
+                display: 'flex',
+                alignItems: 'stretch',
                 flexGrow: 1,
                 marginTop: '24px',
               }}
@@ -324,8 +324,8 @@ export default function MadeToStick() {
                           handleEditImgLink={handleEditImgLink}
                           handleDelete={handleDelete}
                           handleCardInputChange={handleCardInputChange}
-                          handleImageInputChange={handleImageInputChange} 
-                          handleSave = {handleSave}
+                          handleImageInputChange={handleImageInputChange}
+                          handleSave={handleSave}
                         />
                       </Resizable>
                     </Box>
@@ -337,7 +337,7 @@ export default function MadeToStick() {
         </Box>
       )}
       {isMobile && (
-        <Box sx={{backgroundColor: 'backgroundColor.main', padding: '24px 0', minHeight: '100vh'}}>
+        <Box sx={{ backgroundColor: 'backgroundColor.main', padding: '24px 0', minHeight: '100vh' }}>
           <Box className="layout" layout={layout} cols={1} width={windowWidth * 0.95}
             sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", flexWrap: "wrap", alignItems: "center" }}
           >

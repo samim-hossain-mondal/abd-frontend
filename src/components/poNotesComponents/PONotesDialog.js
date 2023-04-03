@@ -21,7 +21,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import { actionItems, keyDecisions, GENERIC_NAME, noteTypes, PO_NOTES_TYPES } from '../constants/PONotes';
+import { actionItems, keyDecisions, GENERIC_NAME, noteTypes, PO_NOTES_TYPES, CHAR_COUNT } from '../constants/PONotes';
 import Transition from '../utilityFunctions/OverlayTransition';
 import Timeline from '../utilityFunctions/Timeline';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
@@ -32,8 +32,17 @@ import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import { USER_ROLES } from '../constants/users';
+import { isAdmin } from '../constants/users';
 import { RefreshContext } from '../contexts/RefreshContext';
+
+// const getNextDate = (days) => {
+//   const date = new Date();
+//   date.setDate(date.getDate() + days);
+//   const dateString = date
+//     .toISOString()
+//     .substring(0, date.toISOString().indexOf("T"));
+//   return dateString;
+// };
 
 const getISODateToTimlineFormat = (isoDate = '') => {
   try {
@@ -54,8 +63,8 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
   const [timeline, setTimeline] =
     useState(
       updateItem ?
-        (data?.dueDate === null ? '' :
-          getISODateToTimlineFormat(data?.dueDate)) : ''
+        getISODateToTimlineFormat(data?.dueDate) :
+        ""
     );
 
   const [type, setType] = useState(
@@ -101,7 +110,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
       }
 
       if (updateItem) {
-        if (userRole !== USER_ROLES.ADMIN) {
+        if (!isAdmin(userRole)) {
           setError("ACCESS DENIED: ADMIN's can perform this action")
           return;
         }
@@ -151,7 +160,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
   };
   const handleDelete = async () => {
     try {
-      if (userRole !== USER_ROLES.ADMIN) {
+      if (!isAdmin(userRole)) {
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
@@ -179,20 +188,21 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <Grid container rowSpacing={1} paddingTop="2%" paddingBottom="2%" textAlign="center" alignItems="center"  >
-          {access && <Grid item xs={3}>
-            <Tooltip title="Delete" placement="top">
-              <IconButton
-                edge="start"
-                color="error"
-                onClick={handleDeleteAlert}
-                aria-label="close"
-                disabled={!updateItem}
-              >
-                <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
-              </IconButton>
-            </Tooltip>
-          </Grid>
+        <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
+          {access &&
+            <Grid item xs={3}>
+              <Tooltip title="Delete" placement="top">
+                <IconButton
+                  edge="start"
+                  color="error"
+                  onClick={handleDeleteAlert}
+                  aria-label="close"
+                  disabled={!updateItem}
+                >
+                  <DeleteForeverRoundedIcon sx={{ color: 'secondary.main', visibility: updateItem ? '' : 'hidden' }} />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           }
           <Grid item xs={!access ? 10 : 5} sx={{ visibility: 'hidden' }} />
           {access &&
@@ -279,6 +289,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
                 setContent={setStatement}
                 disabled={lock}
                 placeholder={PLACEHOLDER[type]}
+                totalCharacters={CHAR_COUNT[type]}
               />
             </ListItem>
           </List>

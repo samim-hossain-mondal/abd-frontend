@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PropTypes } from 'prop-types';
 import {
   Box,
@@ -13,14 +13,16 @@ import {
 import { useParams } from 'react-router-dom';
 import Status from './Status';
 import dateGetter from '../utilityFunctions/DateGetter';
-import { STATUS } from '../utilityFunctions/Enums';
+import { STATUS, TYPE } from '../utilityFunctions/Enums';
 import { statusCompleted, statusDraft } from '../utilityFunctions/Color';
 import { ErrorContext } from '../contexts/ErrorContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { PATCH_PO_NOTE } from '../constants/apiEndpoints';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
-import { USER_ROLES, isAdmin } from '../constants/users';
+import { isAdmin } from '../constants/users';
+import { getDateGroupName } from '../utilityFunctions/dateMatcher';
+import DateDivider from '../elements/DateDivider';
 
 const Cards = styled(Card)(() => ({
   borderRadius: 20,
@@ -30,12 +32,18 @@ const CardHeader = styled(Box)(() => ({
   justifyContent: 'space-between'
 }));
 
-export default function CustomCard({ checkBox, data, type }) {
+export default function CustomCard({ checkBox, data, previousRequestDate, type }) {
   const [checked, setChecked] = useState(data.status === STATUS.completed);
   const { setError, setSuccess } = React.useContext(ErrorContext);
   const [open, setOpen] = React.useState(false);
-  const { projectId } = useParams();
-  const { userRole } = useContext(ProjectUserContext);
+  const { projectId } = useParams()
+  const { userRole } = useContext(ProjectUserContext)
+
+  const [dateGroupName, setDateGroupName] = useState();
+
+  useEffect(() => {
+    setDateGroupName(getDateGroupName(new Date(data.createdAt), previousRequestDate));
+  }, [data, previousRequestDate]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,11 +53,18 @@ export default function CustomCard({ checkBox, data, type }) {
     setOpen(false ?? !open)
   };
 
+  const isActionItem = () => {
+    if (type === TYPE.action_item.toUpperCase()) {
+      return true;
+    }
+    return false;
+  }
+
   const handleToggle = async (e) => {
     try {
       e.stopPropagation();
       e.preventDefault();
-      if (userRole !== USER_ROLES.ADMIN) {
+      if (!isAdmin(userRole)) {
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
@@ -86,17 +101,12 @@ export default function CustomCard({ checkBox, data, type }) {
 
   return (
     <Box m={3}>
-      {open &&
-        <PONotesDialog
-          deafultValue={type}
-          updateItem open={open}
-          handleClose={handleClose}
-          data={data}
-          access={userRole === USER_ROLES.ADMIN}
-        />
+      {dateGroupName &&
+        <DateDivider dateGroupName={dateGroupName} sx={{ padding: "0 0 24px 0" }} />
       }
+      <PONotesDialog updateItem open={open} handleClose={handleClose} data={data} access={isAdmin(userRole)} />
       <Cards>
-        <Box onClick={handleClickOpen} sx={{ padding: '5px 18px 12px 18px' }}>
+        <Box onClick={handleClickOpen} sx={{ padding: '5px 18px 12px 18px', cursor: "pointer" }}>
           <Box sx={{ padding: '0', margin: '0' }}>
             <CardHeader>
               {renderCheckBox()}
@@ -121,7 +131,7 @@ export default function CustomCard({ checkBox, data, type }) {
             <Box marginTop="25px" display="flex" justifyContent='space-between' alignItems="baseline">
               <Box>
                 {
-                  data?.dueDate !== null && data?.dueDate !== undefined &&
+                  isActionItem() && data?.dueDate !== null && data?.dueDate !== undefined &&
                   <Box display='flex' alignItems="baseline">
                     <Typography sx={{ fontSize: "0.75rem", marginRight: "5px" }}>
                       Needed by
@@ -135,7 +145,7 @@ export default function CustomCard({ checkBox, data, type }) {
               <Box>
                 <Box>
                   {
-                    data?.issueLink && data?.issueLink !== '' &&
+                    isActionItem() && data?.issueLink && data?.issueLink !== '' &&
                     <Link fontSize="0.95rem" target='_blank' href={data?.issueLink ?? '#'} variant="contained"
                       sx={{ fontFamily: 'poppins', display: 'inline-flex' }} onClick={(e) => e.stopPropagation()}>
                       ISSUE LINK
@@ -146,7 +156,9 @@ export default function CustomCard({ checkBox, data, type }) {
             </Box>
             <Box marginTop="10px">
               <Typography fontSize="0.65rem" variant="caption" display="block" gutterBottom>
-                {dateGetter(data.createdAt, true)}
+                {new Date(data.createdAt).toLocaleString('en-US', {
+                  hour: '2-digit', minute: '2-digit', hour12: true
+                })}
               </Typography>
             </Box>
           </Box>
@@ -167,4 +179,5 @@ CustomCard.propTypes = {
     createdAt: PropTypes.string.isRequired,
     status: PropTypes.string,
   }).isRequired,
+  previousRequestDate: (PropTypes.instanceOf(Date) || null).isRequired,
 };
