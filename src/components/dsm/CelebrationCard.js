@@ -19,6 +19,7 @@ import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import stringAvatar from '../utilityFunctions/getStringColor';
 import SkeletonCelebration from '../skeletons/dsm/celebration';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 export default function CelebrationCard({
   celebration,
@@ -32,7 +33,7 @@ export default function CelebrationCard({
   const [reactCount, setReactCount] = useState(0)
   const [newCelebration, setNewCelebration] = useState({})
   const [updateCelebration, setUpdateCelebration] = useState({})
-
+  const { setLoading } = useContext(LoadingContext);
   const updateCelebrationOnSubmit = () => {
     setNewCelebration(updateCelebration)
   }
@@ -59,7 +60,7 @@ export default function CelebrationCard({
       const reqBody = {
         isReacted: !reacted
       }
-      const resData = await makeRequest(UPDATE_CELEBRATION_REACTION(projectId, celebration.celebrationId), { data: reqBody })
+      const resData = await makeRequest(UPDATE_CELEBRATION_REACTION(projectId, celebration.celebrationId), setLoading, { data: reqBody })
       setSuccess(SUCCESS_MESSAGE("Reaction").UPDATED);
       setReactCount(reacted ? reactCount - 1 : reactCount + 1)
       setReacted(!reacted);

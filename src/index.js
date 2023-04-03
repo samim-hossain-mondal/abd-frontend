@@ -7,16 +7,20 @@ import App from './App';
 import { ErrorProvider } from './components/contexts/ErrorContext';
 import theme from './components/theme/GlobalTheme';
 import { ProjectUserProvider } from './components/contexts/ProjectUserContext';
+import { LoadingProvider } from './components/contexts/LoadingContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ProjectUserProvider>
-    <ThemeProvider theme={theme}>
-      <ErrorProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ErrorProvider>
-    </ThemeProvider>
-  </ProjectUserProvider>
+  <LoadingProvider>
+    <ProjectUserProvider>
+      <ThemeProvider theme={theme}>
+        <ErrorProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ErrorProvider>
+      </ThemeProvider>
+    </ProjectUserProvider>
+  </LoadingProvider>
+
 );

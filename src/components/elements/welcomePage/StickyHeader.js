@@ -9,16 +9,18 @@ import {
   MenuItem,
   Button,
   useMediaQuery,
+  LinearProgress,
 } from "@mui/material";
 import { useOktaAuth } from "@okta/okta-react";
 import propTypes from "prop-types";
 import Logo from "../../../assets/images/agileLogo.png";
 import AccountSettingsModal from "../AccountSettingsModal";
 import { ProjectUserContext } from "../../contexts/ProjectUserContext";
+import { LoadingContext } from '../../contexts/LoadingContext';
 
 const settings = ["Profile", "Account Settings", "Logout"];
 
-function StickyHeader({ 
+function StickyHeader({
   userName, handleCreateProjectClick, handleLoginClick
 }) {
   const { oktaAuth } = useOktaAuth();
@@ -39,9 +41,13 @@ function StickyHeader({
   };
 
   const logout = async () => oktaAuth.signOut("/");
+  const { loading } = useContext(LoadingContext)
 
   return (
     <>
+      {loading && <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>}
       <Box
         component="header"
         sx={{
@@ -89,52 +95,52 @@ function StickyHeader({
           </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
-        {user.memberId ? (
-          <>
-          {isLargeScreen && (
-          <Button
-            variant="outlined"
-            sx={{ 
-              color: "logoBlue.main", 
-              margin: 1,
-              marginInline: 2,
-              padding: 1,
-              fontWeight: "bold"
-            }}
-            onClick={handleCreateProjectClick}
-          >
-            Create Project
-          </Button>
+          {user.memberId ? (
+            <>
+              {isLargeScreen && (
+                <Button
+                  variant="outlined"
+                  sx={{
+                    color: "logoBlue.main",
+                    margin: 1,
+                    marginInline: 2,
+                    padding: 1,
+                    fontWeight: "bold"
+                  }}
+                  onClick={handleCreateProjectClick}
+                >
+                  Create Project
+                </Button>
+              )}
+              <Tooltip title="Open settings">
+                <IconButton
+                  onClick={handleOpenUserMenu}
+                  sx={{ marginRight: 0, padding: 0 }}
+                >
+                  <Avatar
+                    alt={userName}
+                    src="/static/images/avatar/2.jpg"
+                    sx={{ height: 50, width: 50, }}
+                  />
+                </IconButton>
+              </Tooltip>
+            </>
+          ) : (
+            <Button
+              variant="outlined"
+              sx={{
+                color: "logoBlue.main",
+                margin: 1,
+                // marginInline: 2,
+                padding: 1,
+                px: 2,
+                fontWeight: "bold",
+              }}
+              onClick={handleLoginClick}
+            >
+              Login
+            </Button>
           )}
-          <Tooltip title="Open settings">
-          <IconButton
-            onClick={handleOpenUserMenu}
-            sx={{ marginRight: 0, padding: 0 }}
-          >
-            <Avatar
-              alt={userName}
-              src="/static/images/avatar/2.jpg"
-              sx={{ height: 50, width: 50, }}
-            />
-          </IconButton>
-        </Tooltip>
-        </>
-        ) : (
-          <Button
-          variant="outlined"
-          sx={{ 
-            color: "logoBlue.main", 
-            margin: 1,
-            // marginInline: 2,
-            padding: 1,
-            px: 2,
-            fontWeight: "bold",
-          }}
-            onClick={handleLoginClick}
-          >
-            Login
-          </Button>
-        )}
         </Box>
         <Menu
           id="menu-appbar"

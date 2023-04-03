@@ -3,7 +3,7 @@ name: ReactApp-AWS-S3 CD
 env:
   REACT_APP_OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
   REACT_APP_OCTA_DOMAIN: ${{ secrets.OCTA_DOMAIN }}
-  BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
+  REACT_APP_BACKEND_DOMAIN_URL: ${{ secrets.BACKEND_DOMAIN_URL }}
   AWS_REGION: ap-south-1
   S3_BUCKECT_NAME: dev-ap-south-1-myagileboard
   CLOUDFRONT_DISTRIBUTION_ID: E2LKJW0PZN196Y # set this to your cloudfront distribution-id

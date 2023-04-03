@@ -1,5 +1,5 @@
 // import axios from "axios";
-import React, { createContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import makeRequest from "../utilityFunctions/makeRequest/index";
@@ -10,6 +10,7 @@ import {
   CREATE_PROJECT,
 } from "../constants/apiEndpoints";
 import { DOMAIN } from "../../config";
+import { LoadingContext } from './LoadingContext';
 
 export const ProjectUserContext = createContext();
 
@@ -22,12 +23,13 @@ export function ProjectUserProvider({ children }) {
 
   const [projects, setProjects] = useState([]);
   const [projectsUpdated, setProjectsUpdated] = useState(false);
+  const { setLoading } = useContext(LoadingContext);
 
   const updateUserDetails = async (setError, setSuccess) => {
     try {
       const userDetailsPromises = [];
-      userDetailsPromises.push(makeRequest(GET_ME));
-      userDetailsPromises.push(makeRequest(GET_PROJECTS));
+      userDetailsPromises.push(makeRequest(GET_ME, setLoading));
+      userDetailsPromises.push(makeRequest(GET_PROJECTS, setLoading));
 
       const userDetails = await Promise.all(userDetailsPromises);
       setUser(userDetails[0]);
@@ -42,7 +44,7 @@ export function ProjectUserProvider({ children }) {
   const updateProjectDetails = async (projectIdParam, setError) => {
     try {
       setProjectId(projectIdParam);
-      const resData = await makeRequest(GET_PROJECT_BY_ID(projectIdParam));
+      const resData = await makeRequest(GET_PROJECT_BY_ID(projectIdParam), setLoading);
       const memberData = resData.projectMembers?.find(
         (member) => member.memberId === user.memberId
       );
@@ -63,7 +65,7 @@ export function ProjectUserProvider({ children }) {
       projectName: title,
       projectDescription: projectDesc,
     };
-    const { result } = await makeRequest(CREATE_PROJECT, {
+    const { result } = await makeRequest(CREATE_PROJECT, setLoading, {
       data: body,
     });
     const project = {

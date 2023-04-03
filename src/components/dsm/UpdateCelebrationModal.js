@@ -11,12 +11,14 @@ import { DELETE_CELEBRATION, UPDATE_CELEBRATION } from '../constants/apiEndpoint
 import { SUCCESS_MESSAGE } from '../constants/dsm/index'
 import { GENERIC_NAME } from "../constants/dsm/Celebrations";
 import { ProjectUserContext } from '../contexts/ProjectUserContext'
+import { LoadingContext } from '../contexts/LoadingContext'
 
 export default function UpdateCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, updateCelebrationOnSubmit, onDeleteCelebration }) {
   const [preview, setPreview] = useState(false);
   const { user } = useContext(ProjectUserContext)
   const { projectId } = useParams()
   const { setError, setSuccess } = useContext(ErrorContext)
+  const { setLoading } = useContext(LoadingContext);
 
   const [lock, setLock] = useState(true);
 
@@ -33,7 +35,7 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
         type: newCelebration.type,
         isAnonymous: newCelebration.anonymous
       }
-      const resData = await makeRequest(UPDATE_CELEBRATION(projectId, newCelebration.celebrationId), { data: reqBody })
+      const resData = await makeRequest(UPDATE_CELEBRATION(projectId, newCelebration.celebrationId), setLoading, { data: reqBody })
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       return resData;
     }
@@ -46,7 +48,7 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
 
   const deleteCelebrationToDB = async () => {
     try {
-      const resData = await makeRequest(DELETE_CELEBRATION(projectId, newCelebration.celebrationId));
+      const resData = await makeRequest(DELETE_CELEBRATION(projectId, newCelebration.celebrationId), setLoading);
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
       return resData;
     }

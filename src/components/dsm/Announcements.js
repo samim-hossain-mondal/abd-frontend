@@ -22,6 +22,7 @@ import DSMViewportContext from '../contexts/DSMViewportContext';
 import { isAdmin, isMember } from '../constants/users';
 import { REFETCH_INTERVAL } from '../../config';
 import SkeletonAnnouncement from '../skeletons/dsm/announcement';
+import { LoadingContext } from '../contexts/LoadingContext';
 // import dateGetter from '../utilityFunctions/DateGetter';
 
 export default function Announcements() {
@@ -46,6 +47,7 @@ export default function Announcements() {
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const { setLoading } = useContext(LoadingContext);
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
@@ -72,7 +74,7 @@ export default function Announcements() {
   const getAnnouncements = async (params) => {
     try {
       // const resData = await makeRequest(GET_ANNOUNCEMENTS_BY_DATE(projectId, dateGetter(selectedDate)))
-      const resData = await makeRequest(GET_ANNOUNCEMENTS(projectId), { params })
+      const resData = await makeRequest(GET_ANNOUNCEMENTS(projectId), setLoading, { params })
       return resData;
     }
     catch (err) {
@@ -134,7 +136,7 @@ export default function Announcements() {
         content,
         title
       }
-      const resData = await makeRequest(CREATE_ANNOUNCEMENT(projectId), { data: reqBody })
+      const resData = await makeRequest(CREATE_ANNOUNCEMENT(projectId), setLoading, { data: reqBody })
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
       return resData;
     }
@@ -150,7 +152,7 @@ export default function Announcements() {
         content,
         title
       }
-      const resData = await makeRequest(UPDATE_ANNOUNCEMENT(projectId, editModalData?.announcementId), { data: reqBody })
+      const resData = await makeRequest(UPDATE_ANNOUNCEMENT(projectId, editModalData?.announcementId), setLoading, { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setAnnouncements(announcements.map((announcement) => {
         if (announcement.announcementId === editModalData?.announcementId) {
@@ -173,7 +175,7 @@ export default function Announcements() {
 
   const handleDeleteAnnouncement = async () => {
     try {
-      const resData = await makeRequest(DELETE_ANNOUNCEMENT(projectId, editModalData?.announcementId))
+      const resData = await makeRequest(DELETE_ANNOUNCEMENT(projectId, editModalData?.announcementId, setLoading))
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
       const announcementData = announcements.filter((announcement) => announcement.announcementId !== editModalData?.announcementId);
       setAnnouncements([...announcementData]);

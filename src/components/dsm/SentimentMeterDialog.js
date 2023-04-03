@@ -29,6 +29,7 @@ import { SentimentMeterInfo } from '../constants/SentimentMeter';
 import makeRequest from '../utilityFunctions/makeRequest';
 import { GET_SENTIMENTS_BY_DATE } from '../constants/apiEndpoints';
 import { ErrorContext } from '../contexts/ErrorContext';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 ChartJS.register(
   ArcElement,
@@ -48,10 +49,11 @@ export default function SentimentMeterDialog({ open, setOpen, isLeaderOrAdmin })
   const { projectId } = useParams()
   const { setError } = useContext(ErrorContext)
   const feelingsArray = ["HAPPY", "GOOD", "OK", "BAD"]
+  const { setLoading } = useContext(LoadingContext);
 
   const getSentiments = async (date) => {
     try {
-      const resData = await makeRequest(GET_SENTIMENTS_BY_DATE(projectId, date));
+      const resData = await makeRequest(GET_SENTIMENTS_BY_DATE(projectId, date), setLoading);
       return resData;
     }
     catch (err) {

@@ -40,6 +40,7 @@ import {
 import { REFETCH_INTERVAL } from '../../../config';
 
 import './availabilityCalendar.css';
+import { LoadingContext } from '../../contexts/LoadingContext';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -54,6 +55,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const { setLoading } = useContext(LoadingContext);
 
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
@@ -62,7 +64,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
   if (refresh.availabilityCalendar) {
     (async () => {
       try {
-        const resData = await makeRequest(GET_LEAVES(projectId));
+        const resData = await makeRequest(GET_LEAVES(projectId), setLoading);
         setEventsData(resData);
       } catch (err) {
         setError((val) => val + err);
@@ -73,7 +75,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
 
   const handleMount = async () => {
     try {
-      const resData = await makeRequest(GET_LEAVES(projectId));
+      const resData = await makeRequest(GET_LEAVES(projectId), setLoading);
       setEventsData(resData);
     } catch (err) {
       setError((val) => val + err);
@@ -88,7 +90,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
     'events',
     async () => {
       if (availabilityIsInViewPort) {
-        const resData = await makeRequest(GET_LEAVES(projectId));
+        const resData = await makeRequest(GET_LEAVES(projectId), setLoading);
         setEventsData(resData);
         return resData;
       }
@@ -152,7 +154,7 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
         endDate: endDate.toISOString(),
         isRisk,
       };
-      const resData = await makeRequest(CREATE_LEAVE(projectId), {
+      const resData = await makeRequest(CREATE_LEAVE(projectId), setLoading, {
         data: reqBody,
       });
       const newData = resData;
@@ -194,9 +196,13 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
         endDate,
         isRisk,
       };
-      const resData = await makeRequest(UPDATE_LEAVE(projectId, defaultID), {
-        data: reqBody,
-      });
+      const resData = await makeRequest(
+        UPDATE_LEAVE(projectId, defaultID),
+        setLoading,
+        {
+          data: reqBody,
+        }
+      );
       const newEventsData = eventsData.map((event) => {
         if (event.leaveId === selectedEvent.leaveId) {
           return resData;

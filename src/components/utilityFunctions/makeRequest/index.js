@@ -3,8 +3,9 @@ import { DOMAIN } from '../../../config';
 import { FORBIDDEN_MSG, NOT_FOUND_MSG, SERVER_ERROR_MSG, UNAUTHORIZED_MSG } from '../../constants/HttpMessages';
 import { HttpError } from '../errors';
 
-const makeRequest = async (apiEndPoint, dynamicConfig = {}, navigate = undefined) => {
+const makeRequest = async (apiEndPoint, setLoading, dynamicConfig = {}, navigate = undefined) => {
   try {
+    setLoading(true);
     const requestDetails = {
       baseURL: DOMAIN,
       url: apiEndPoint.url,
@@ -40,6 +41,8 @@ const makeRequest = async (apiEndPoint, dynamicConfig = {}, navigate = undefined
         break;
     }
     throw new HttpError(e.response?.status, message);
+  } finally {
+    setLoading(false);
   }
 };
 

@@ -23,6 +23,7 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import SkeletonCelebration from '../skeletons/dsm/celebration';
 import { groupByDate } from '../utilityFunctions/dateMatcher';
 import CelebrationsMansory from './CelebrationsMansory';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 export default function CelebrationBoard({ selectedDate }) {
   const { userRole } = useContext(ProjectUserContext)
@@ -31,6 +32,7 @@ export default function CelebrationBoard({ selectedDate }) {
   const { setError } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
+  const { setLoading } = useContext(LoadingContext);
 
   const [celebrations, setCelebrations] = useState([]);
   const [celebrationsByDate, setCelebrationsByDate] = useState([]);
@@ -73,7 +75,7 @@ export default function CelebrationBoard({ selectedDate }) {
   const getCelebrations = async (params) => {
     try {
       // const resData = await makeRequest(GET_CELEBRATIONS_BY_DATE(projectId, dateGetter(selectedDate)))
-      const resData = await makeRequest(GET_CELEBRATIONS(projectId), { params })
+      const resData = await makeRequest(GET_CELEBRATIONS(projectId), setLoading, { params })
       return resData;
     }
     catch (err) {
@@ -212,7 +214,7 @@ export default function CelebrationBoard({ selectedDate }) {
             :
             (!loaded ?
               <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} spacing={4}>
-                {[...Array(gridHeightState.celebration.fullExpanded || !breakpoint1080 ? 32 : 16)].map(() =>
+                {[...Array(32)].map(() =>
                   <SkeletonCelebration height="100px" />
                 )}
               </Masonry> :
@@ -228,7 +230,11 @@ export default function CelebrationBoard({ selectedDate }) {
                   hasMore={hasMore}
                   loader={
                     <Box sx={{ width: '100%' }}>
-                      <SkeletonCelebration height="100px" />
+                      <Masonry className="celebration-masonry" sx={{ overflow: 'hidden' }} spacing={4}>
+                        {[...Array(32)].map(() =>
+                          <SkeletonCelebration height="100px" />
+                        )}
+                      </Masonry>
                     </Box>
                   }
                   scrollThreshold="90%"

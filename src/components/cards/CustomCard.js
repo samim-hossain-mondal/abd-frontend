@@ -23,6 +23,7 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin } from '../constants/users';
 import { getDateGroupName } from '../utilityFunctions/dateMatcher';
 import DateDivider from '../elements/DateDivider';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 const Cards = styled(Card)(() => ({
   borderRadius: 20,
@@ -38,6 +39,7 @@ export default function CustomCard({ checkBox, data, previousRequestDate, type }
   const [open, setOpen] = React.useState(false);
   const { projectId } = useParams()
   const { userRole } = useContext(ProjectUserContext)
+  const { setLoading } = useContext(LoadingContext);
 
   const [dateGroupName, setDateGroupName] = useState();
 
@@ -71,7 +73,7 @@ export default function CustomCard({ checkBox, data, previousRequestDate, type }
       const status = checked;
       handleClose();
       const body = { 'status': !status ? STATUS.completed : STATUS.pending }
-      await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body });
+      await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), setLoading, { data: body });
       setSuccess(`Suceessfully marked as ${!status ? STATUS.completed : STATUS.pending}`);
       setChecked(!status);
     }

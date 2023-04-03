@@ -9,11 +9,13 @@ import makeRequest from '../utilityFunctions/makeRequest/index'
 import { CREATE_CELEBRATION } from '../constants/apiEndpoints'
 import { SUCCESS_MESSAGE } from '../constants/dsm/index'
 import { GENERIC_NAME } from '../constants/dsm/Celebrations'
+import { LoadingContext } from '../contexts/LoadingContext'
 
 export default function AddCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, resetModal, setCelebrations, celebrations }) {
   const [preview, setPreview] = useState(false);
   const { projectId } = useParams()
   const { setError, setSuccess } = useContext(ErrorContext)
+  const { setLoading } = useContext(LoadingContext);
 
   const handleModalClose = () => {
     setOpenModal(false);
@@ -26,7 +28,7 @@ export default function AddCelebrationModal({ openModal, setOpenModal, newCelebr
         type: newCelebration.type,
         isAnonymous: newCelebration.anonymous
       }
-      const resData = await makeRequest(CREATE_CELEBRATION(projectId), { data: reqBody })
+      const resData = await makeRequest(CREATE_CELEBRATION(projectId), setLoading, { data: reqBody })
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
       const newCelebrations = [resData.newCelebration, ...celebrations]
       setCelebrations(newCelebrations)

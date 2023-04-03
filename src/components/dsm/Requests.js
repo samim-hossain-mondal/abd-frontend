@@ -23,6 +23,7 @@ import { REFETCH_INTERVAL } from '../../config';
 import { RefreshContext } from '../contexts/RefreshContext';
 import { isAdmin, isMember } from '../constants/users';
 import SkeletonRequest from '../skeletons/dsm/request';
+import { LoadingContext } from '../contexts/LoadingContext';
 /*
 ISSUES: 
         1. someplace key is missing console is showing error
@@ -40,6 +41,7 @@ export default function Requests({ selectedDate }) {
   const [loaded, setLoaded] = useState(false);
 
   const { projectId } = useParams();
+  const { setLoading } = useContext(LoadingContext);
 
   const handleExpandRequests = () => {
     dispatchGridHeight({ type: 'REQUEST', userRole })
@@ -79,7 +81,7 @@ export default function Requests({ selectedDate }) {
   const getRequests = async (params) => {
     try {
       // const resData = await makeRequest(GET_TEAM_REQUESTS_BY_DATE(projectId, format(selectedDate, 'yyyy-MM-dd')))
-      const resData = await makeRequest(GET_TEAM_REQUESTS(projectId), { params })
+      const resData = await makeRequest(GET_TEAM_REQUESTS(projectId), setLoading, { params })
       return resData;
     }
     catch (err) {
@@ -140,7 +142,7 @@ export default function Requests({ selectedDate }) {
         content,
         type: requestType,
       }
-      const resData = await makeRequest(CREATE_TEAM_REQUEST(projectId), { data: reqBody });
+      const resData = await makeRequest(CREATE_TEAM_REQUEST(projectId), setLoading, { data: reqBody });
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
       return resData;
     }
@@ -157,7 +159,7 @@ export default function Requests({ selectedDate }) {
         type: requestType,
         status: editModalData.status,
       }
-      const resData = await makeRequest(UPDATE_TEAM_REQUEST(projectId, editModalData.requestId), { data: reqBody })
+      const resData = await makeRequest(UPDATE_TEAM_REQUEST(projectId, editModalData.requestId), setLoading, { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setRequests(requests.map((request) => {
         if (request.requestId === editModalData.requestId) {
@@ -178,7 +180,7 @@ export default function Requests({ selectedDate }) {
 
   const handleDeleteRequest = async () => {
     try {
-      const resData = await makeRequest(DELETE_TEAM_REQUEST(projectId, editModalData.requestId))
+      const resData = await makeRequest(DELETE_TEAM_REQUEST(projectId, editModalData.requestId), setLoading)
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
       const requestData = requests.filter((request) => request.requestId !== editModalData.requestId);
       setRequests([...requestData]);

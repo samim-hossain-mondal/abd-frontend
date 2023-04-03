@@ -34,6 +34,7 @@ import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin } from '../constants/users';
 import { RefreshContext } from '../contexts/RefreshContext';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 // const getNextDate = (days) => {
 //   const date = new Date();
@@ -59,6 +60,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
   const { projectId } = useParams();
   const { userRole } = useContext(ProjectUserContext)
   const { setRefresh } = useContext(RefreshContext);
+  const { setLoading } = useContext(LoadingContext);
 
   const [timeline, setTimeline] =
     useState(
@@ -114,12 +116,12 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
           setError("ACCESS DENIED: ADMIN's can perform this action")
           return;
         }
-        await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), { data: body })
+        await makeRequest(PATCH_PO_NOTE(projectId, data.noteId), setLoading, { data: body })
         setRefresh(refresh => ({ ...refresh, poNotes: true }));
         setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       }
       else {
-        await makeRequest(CREATE_PO_NOTE(projectId), { data: body })
+        await makeRequest(CREATE_PO_NOTE(projectId), setLoading, { data: body })
         setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).CREATED);
         setRefresh(refresh => ({ ...refresh, poNotes: true }));
       }
@@ -164,7 +166,7 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
         setError("ACCESS DENIED: ADMIN's can perform this action")
         return;
       }
-      await makeRequest(DELETE_PO_NOTE(projectId, data?.noteId))
+      await makeRequest(DELETE_PO_NOTE(projectId, data?.noteId), setLoading)
       setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).DELETED);
       setRefresh(refresh => ({ ...refresh, poNotes: true }));
     }

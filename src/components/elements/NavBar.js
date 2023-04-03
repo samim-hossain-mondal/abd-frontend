@@ -12,7 +12,8 @@ import {
   Avatar,
   Tooltip,
   MenuItem,
-  useMediaQuery
+  useMediaQuery,
+  LinearProgress
 }
   from '@mui/material';
 import stc from 'string-to-color';
@@ -25,6 +26,7 @@ import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
 import MobileTabs from './MobileTabs';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
@@ -76,13 +78,18 @@ export default function Navbar({
     setOpenPageNavMenu(false);
   }
 
+  const { loading } = useContext(LoadingContext)
+
   const location = useLocation();
   return (
     <AppBar
       position="fixed"
-      sx={{ backgroundColor: 'white', boxShadow: "none", padding: '16px 0px', }}
+      sx={{ backgroundColor: 'white', boxShadow: "none" }}
     >
-      <Container maxWidth="xl">
+      {loading && <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>}
+      <Container maxWidth="xl" sx={{ padding: '16px 0px' }}>
         <Toolbar disableGutters sx={{ display: 'flex', direction: 'column' }}>
           <Box
             component="img" sx={{ height: '50px' }}

@@ -25,6 +25,7 @@ import { ProjectUserContext } from "../contexts/ProjectUserContext";
 import InformationToolTip from "./InformationToolTip";
 import { valueNotProvided } from "../constants/TeamInformation";
 import TeamInformationCardContainer from "./TeamInformationCardContainer";
+import { LoadingContext } from '../contexts/LoadingContext';
 
 function CardList() {
   const breakpoint450 = useMediaQuery("(min-width:450px)");
@@ -51,10 +52,11 @@ function CardList() {
   const [adminCards, setAdminCard] = useState(null);
   const [leaderCards, setLeaderCard] = useState(null);
   const [memberCards, setMemberCard] = useState(null);
+  const { setLoading } = useContext(LoadingContext);
 
   useEffect(() => {
     try {
-      makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId)).then(
+      makeRequest(GET_TEAM_INFORMATION_BY_PROJECT_ID(projectId), setLoading).then(
         (response) => {
           setData(response);
           setFilteredData(response);
@@ -116,36 +118,36 @@ function CardList() {
       setError("Start date cannot be greater than end date");
       return;
     }
-    
-      try {
-        makeRequest(PUT_TEAM_INFORMATION(selectedItem.id), {
-          data: {
-            name,
-            memberId,
-            projectId: Number(projectId),
-            projectRole,
-            message,
-            bio,
-            startDate,
-            endDate,
-          },
-        }).then((response) => {
-          const updatedData = data.map((item) => {
-            if (item.id === selectedItem.id) {
-              response.role = role;
-              return response;
-            }
-            return item;
-          });
-          setData(updatedData);
-          setSuccess("Information updated successfully");
-          setIsAddCard(false);
-          handleCloseModal();
+
+    try {
+      makeRequest(PUT_TEAM_INFORMATION(selectedItem.id), setLoading, {
+        data: {
+          name,
+          memberId,
+          projectId: Number(projectId),
+          projectRole,
+          message,
+          bio,
+          startDate,
+          endDate,
+        },
+      }).then((response) => {
+        const updatedData = data.map((item) => {
+          if (item.id === selectedItem.id) {
+            response.role = role;
+            return response;
+          }
+          return item;
         });
-      } catch (error) {
-        setError("Error in making the request");
-      }
-    
+        setData(updatedData);
+        setSuccess("Information updated successfully");
+        setIsAddCard(false);
+        handleCloseModal();
+      });
+    } catch (error) {
+      setError("Error in making the request");
+    }
+
   };
   const formatDate = (date) => {
     const dateInengbFormat = new Date(date);
@@ -242,14 +244,14 @@ function CardList() {
           width="100%"
           height="3%"
           marginTop="7rem"
-          marginBottom={!breakpoint450?"0.8rem":0}
+          marginBottom={!breakpoint450 ? "0.8rem" : 0}
           display="flex"
           justifyContent="flex-end"
         >
           <Box
             sx={{
               background: "white",
-              marginRight:  "3.75%",
+              marginRight: "3.75%",
               marginBottom: "0.25%",
             }}
           >
@@ -307,7 +309,7 @@ function CardList() {
                   today={today}
                 />
               )}
-               {leaderCards && (
+              {leaderCards && (
                 <TeamInformationCardContainer
                   cardData={leaderCards}
                   handleOpenModal={handleOpenModal}
@@ -457,19 +459,19 @@ function CardList() {
                           toolbar:
                             emailId === user.email
                               ? [
-                                  "heading",
-                                  "|",
-                                  "bold",
-                                  "italic",
-                                  "link",
-                                  "bulletedList",
-                                  "numberedList",
-                                  "blockQuote",
-                                  "insertTable",
-                                  "undo",
-                                  "redo",
-                                  "fontColor",
-                                ]
+                                "heading",
+                                "|",
+                                "bold",
+                                "italic",
+                                "link",
+                                "bulletedList",
+                                "numberedList",
+                                "blockQuote",
+                                "insertTable",
+                                "undo",
+                                "redo",
+                                "fontColor",
+                              ]
                               : [],
                         }}
                         onChange={(event, editor) => {

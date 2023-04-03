@@ -18,6 +18,7 @@ import { PO_NOTES_TYPES, WATERMARK } from '../../constants/PONotes';
 import { isMember } from '../../constants/users';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import SkeletonPONote from '../../skeletons/poNote';
+import { LoadingContext } from '../../contexts/LoadingContext';
 
 const getApiUrlQuery = (type, query, page, limit) => {
   const apiQuery = {
@@ -47,6 +48,7 @@ export default function PONotesTable(props) {
   const [poNotes, setPONotes] = useState([])
   const { refresh, setRefresh } = useContext(RefreshContext);
   const PONotesinViewPort = useContext(PONotesViewportContext);
+  const { setLoading } = useContext(LoadingContext);
 
   const { heading, definition, accessibilityInformation, query, checkBox } = props;
   const type = HEADINGS[heading].toUpperCase();
@@ -61,7 +63,7 @@ export default function PONotesTable(props) {
 
   const getPONotes = async (params) => {
     try {
-      const resData = await makeRequest(GET_PO_NOTES(projectId), { params })
+      const resData = await makeRequest(GET_PO_NOTES(projectId), setLoading, { params })
       return resData;
     }
     catch (err) {

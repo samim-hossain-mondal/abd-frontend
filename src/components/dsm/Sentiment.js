@@ -33,6 +33,7 @@ import { SUCCESS_MESSAGE } from "../constants/dsm/index"
 import { GENERIC_NAME, HEADING } from '../constants/dsm/Sentiments';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin, isLeader, isMember } from '../constants/users';
+import { LoadingContext } from '../contexts/LoadingContext';
 
 export default function Sentiment() {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -42,6 +43,7 @@ export default function Sentiment() {
   const [sentimentResponse, setSentimentResponse] = useState(undefined);
   const [sentimentObj, setSentimentObj] = useState({})
   const { projectId } = useParams()
+  const { setLoading } = useContext(LoadingContext);
 
   const { userRole } = useContext(ProjectUserContext);
   const isLeaderOrAdmin = () => (isAdmin(userRole) || isLeader(userRole))
@@ -50,7 +52,7 @@ export default function Sentiment() {
     const reqBody = {
       sentiment
     }
-    const resData = await makeRequest(CREATE_SENTIMENT(projectId), { data: reqBody })
+    const resData = await makeRequest(CREATE_SENTIMENT(projectId), setLoading, { data: reqBody })
     setSentimentResponse(sentiment);
     setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED)
     return resData;
@@ -60,7 +62,7 @@ export default function Sentiment() {
     const reqBody = {
       sentiment
     }
-    const resData = await makeRequest(UPDATE_SENTIMENT(projectId, sentimentObj.sentimentId), { data: reqBody })
+    const resData = await makeRequest(UPDATE_SENTIMENT(projectId, sentimentObj.sentimentId), setLoading, { data: reqBody })
     setSentimentResponse(sentiment);
     setSuccess(SUCCESS_MESSAGE(GENERIC_NAME).UPDATED)
     return resData;
@@ -69,7 +71,7 @@ export default function Sentiment() {
   const getTodaySentimentOfMember = async () => {
     try {
       if (!isMember(userRole)) return {};
-      const resData = await makeRequest(GET_TODAY_SENTIMENT_OF_MEMBER(projectId));
+      const resData = await makeRequest(GET_TODAY_SENTIMENT_OF_MEMBER(projectId), setLoading);
       return resData;
     }
     catch (err) {
