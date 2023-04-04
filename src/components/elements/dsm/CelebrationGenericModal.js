@@ -6,6 +6,7 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import stc from 'string-to-color';
 import makeRequest from '../../utilityFunctions/makeRequest/index';
@@ -145,6 +146,7 @@ export default function CelebrationGenericModal({
           {
             textAlign: 'right',
           }}
+        mb={update ? 2 : 0}
       >
         {update &&
           <Tooltip title="Delete" placement="top">
@@ -178,13 +180,22 @@ export default function CelebrationGenericModal({
           </Box> :
           <Box>
             {
-              user.memberId !== newCelebration.memberId && !isNewCelebration &&
+              !isNewCelebration &&
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Box sx={{ mr: 1 }}>
-                  <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+                  {
+                    newCelebration.isAnonymous ?
+                      <Avatar sx={{ height: "30px", width: "30px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar>
+                      :
+                      <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+                  }
                 </Box>
                 <Box>
-                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{newCelebration.author}</Typography>
+                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>
+                    {
+                      newCelebration.isAnonymous ? 'Anonymous' : newCelebration.author
+                    }
+                  </Typography>
                   <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
                     {new Date(newCelebration.createdAt).toLocaleString('en-US', {
                       month: 'short',
@@ -345,6 +356,7 @@ CelebrationGenericModal.propTypes = {
     type: PropTypes.string,
     content: PropTypes.string,
     anonymous: PropTypes.bool,
+    isAnonymous: PropTypes.bool,
     memberId: PropTypes.number,
     author: PropTypes.string,
     createdAt: PropTypes.string,
