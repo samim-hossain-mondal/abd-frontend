@@ -240,6 +240,9 @@ export default function Requests({ selectedDate }) {
             }}
             placeholder={DSM_REQUEST_INPUT_PLACEHOLDER}
             totalCharacters={CHAR_COUNT}
+            authorName={user.name}
+            authorId={user.userId}
+            date={new Date()}
           >
             <Typography>
               Tags
