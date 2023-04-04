@@ -40,6 +40,10 @@ export default function MadeToStick() {
 
   const isPOCondition = ((userRole===UserRole.ADMIN) || (userRole===UserRole.LEADER));
 
+  useEffect(() => {
+    setIsPO(isPOCondition)
+  }, [userRole]);
+  
   const handleEditImgLink = (i) => {
     setIsEdit(i);
   };
