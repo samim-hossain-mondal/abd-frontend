@@ -54,7 +54,7 @@ const getISODateToTimlineFormat = (isoDate = '') => {
   }
 };
 
-export default function PONotesDialog({ defaultValue, updateItem, data, open, handleClose, access }) {
+export default function PONotesDialog({ value, defaultValue, updateItem, data, open, handleClose, access, typeOfPONote }) {
   const { setError, setSuccess } = useContext(ErrorContext);
   const [lock, setLock] = useState(updateItem)
   const { projectId } = useParams();
@@ -70,13 +70,15 @@ export default function PONotesDialog({ defaultValue, updateItem, data, open, ha
     );
 
   const [type, setType] = useState(
-    updateItem ?
-      data?.type : (
-        defaultValue === actionItems.heading ? PO_NOTES_TYPES.ACTION_ITEM :
-          (defaultValue === keyDecisions.heading ? PO_NOTES_TYPES.KEY_DECISION : PO_NOTES_TYPES.AGENDA_ITEM)
-      )
+    typeOfPONote ?? (
+      updateItem ?
+        data?.type : (
+          defaultValue === actionItems.heading ? PO_NOTES_TYPES.ACTION_ITEM :
+            (defaultValue === keyDecisions.heading ? PO_NOTES_TYPES.KEY_DECISION : PO_NOTES_TYPES.AGENDA_ITEM)
+        )
+    )
   );
-  const [statement, setStatement] = useState(updateItem ? data?.note : '');
+  const [statement, setStatement] = useState(updateItem ? data?.note : value);
   const [issueLink, setIssueLink] = useState(
     updateItem ?
       (data?.issueLink ? data?.issueLink : '') : ''
@@ -377,4 +379,11 @@ PONotesDialog.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   data: PropTypes.object.isRequired,
   access: PropTypes.bool.isRequired,
+  typeOfPONote: PropTypes.string,
+  value: PropTypes.string,
+};
+
+PONotesDialog.defaultProps = {
+  typeOfPONote: undefined,
+  value: '',
 };

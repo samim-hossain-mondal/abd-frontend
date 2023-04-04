@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, useMediaQuery, FormControlLabel, Checkbox, Tooltip } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Chip, useMediaQuery, Tooltip, Button } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { Box, Stack } from '@mui/system';
@@ -12,7 +12,7 @@ import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
 import GenericInputModal from '../elements/dsm/GenericInputModal';
 import { ErrorContext } from '../contexts/ErrorContext';
 import ChatContainer from '../elements/dsm/ChatContainer';
-import { DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, DSM_REQUEST_STATUS, WATERMARK_FOR_MEMBERS, WATERMARK_FOR_PO, HEADING, CHAR_COUNT } from '../constants/dsm/Requests';
+import { DSM_REQUEST_STATUS, DSM_REQUEST_DEFAULT_TYPE, DSM_REQUEST_INPUT_PLACEHOLDER, DSM_REQUEST_TYPES, TITLE, PRIMARY_BUTTON_TEXT, GENERIC_NAME, isRequestCompleted, WATERMARK_FOR_MEMBERS, WATERMARK_FOR_PO, HEADING, CHAR_COUNT } from '../constants/dsm/Requests';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { CREATE_TEAM_REQUEST, DELETE_TEAM_REQUEST, GET_TEAM_REQUESTS, UPDATE_TEAM_REQUEST } from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
@@ -23,6 +23,8 @@ import { RefreshContext } from '../contexts/RefreshContext';
 import { isAdmin, isMember } from '../constants/users';
 import SkeletonRequest from '../skeletons/dsm/request';
 import { LoadingContext } from '../contexts/LoadingContext';
+import PONotesDialog from '../poNotesComponents/PONotesDialog';
+import { PO_NOTES_TYPES } from '../constants/PONotes';
 
 export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -183,6 +185,27 @@ export default function Requests({ selectedDate }) {
       return false;
     }
   };
+
+
+  const toggleRequestCompletion = async () => {
+    editModalData.status = editModalData.status === DSM_REQUEST_STATUS.APPROVED ? DSM_REQUEST_STATUS.PENDING : DSM_REQUEST_STATUS.APPROVED;
+    try {
+      await handleEditRequest(editModalData.content);
+      setSuccess('Request status updated successfully');
+    }
+    catch (err) {
+      setError(err.message);
+    }
+  }
+
+  const [openPONote, setOpenPONote] = useState(false);
+  const openCreateActionItemDialog = () => {
+    setOpenPONote(true);
+  }
+  const handleClosePONote = () => {
+    setOpenPONote(false);
+  }
+
   return (
     <Grid item height={gridHeightState.request.height}
       sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}
@@ -330,7 +353,7 @@ export default function Requests({ selectedDate }) {
                 isDisabled={isDisabled}
                 setIsDisabled={setIsDisabled}
                 deleteRequest={handleDeleteRequest}
-                authorize={user.memberId === editModalData.memberId || isAdmin(userRole)}
+                authorize={user.memberId === editModalData.memberId}
                 totalCharacters={CHAR_COUNT}
                 authorName={editModalData.author}
                 authorId={editModalData.memberId}
@@ -345,23 +368,48 @@ export default function Requests({ selectedDate }) {
                   <Chip label="Resource" onClick={isDisabled ? undefined : () => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
                 </Stack>
                 <br />
-                {isAdmin(userRole) && !isDisabled && (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={isRequestCompleted(editModalData.status)}
-                        onChange={(e) => {
-                          setEditModalData({
-                            ...editModalData,
-                            status: e.target.checked ? DSM_REQUEST_STATUS.APPROVED : DSM_REQUEST_STATUS.PENDING,
-                          })
-                        }}
-                        name="completed"
-                        color="primary"
-                      />
-                    }
-                    label="Completed"
-                  />
+                {isAdmin(userRole) && (
+                  <>
+                    <Button sx={{
+                      margin: '16px 0',
+                      padding: '12px 0',
+                      width: '100%',
+                      borderRadius: '8px',
+                      color: 'customButton1.contrastText',
+                      backgroundColor: 'customButton1.main',
+                      '&:hover': {
+                        color: 'customButton1.contrastText',
+                        backgroundColor: 'customButton1.main',
+                      },
+                    }}
+                    onClick={toggleRequestCompletion}>
+                      Mark as {isRequestCompleted(editModalData.status) ? 'Incomplete' : 'Complete'}
+                    </Button>
+
+                    <PONotesDialog 
+                      open={openPONote}
+                      handleClose={handleClosePONote}
+                      value={editModalData?.content}
+                      typeOfPONote={PO_NOTES_TYPES.ACTION_ITEM}
+                      updateItem={false}
+                      access={isAdmin(userRole)}
+                    />
+
+                    <Button sx={{
+                      padding: '12px 0',
+                      width: '100%',
+                      borderRadius: '8px',
+                      color: 'secondaryButton.contrastText',
+                      backgroundColor: 'secondaryButton.main',
+                      '&:hover': {
+                        color: 'secondaryButton.contrastText',
+                        backgroundColor: 'secondaryButton.main',
+                      },
+                    }}
+                    onClick={openCreateActionItemDialog}>
+                      Create Action Item
+                    </Button>
+                  </>
                 )}
               </GenericInputModal>
             </Dialog>
