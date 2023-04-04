@@ -391,6 +391,9 @@ Item.propTypes = {
 };
 
 AnnouncementInputModal.propTypes = {
+  authorName: PropTypes.string.isRequired,
+  createdDate: PropTypes.string.isRequired,
+  openEditModal: PropTypes.bool.isRequired,
   onCloseButtonClick: PropTypes.func.isRequired,
   primaryButtonText: PropTypes.string.isRequired,
   onPrimaryButtonClick: PropTypes.func,
