@@ -447,7 +447,7 @@ export default function Requests({ selectedDate }) {
                       setEditModalData({...editModalData});
                     }}
                   >
-                    {editModalData.isFlagged ? 'Unflag' : 'Flag'} It
+                    {editModalData.isFlagged ? 'Unflag' : 'Flag'}
                   </Button>
                 }
               </GenericInputModal>
