@@ -26,7 +26,16 @@ export default function AddPONotes({ defaultValue }) {
           </IconButton>
         </Tooltip>
       }
-      <PONotesDialog defaultValue={defaultValue} updateItem={false} open={addNote} handleClose={handleNoteOpener} access={isAdmin(userRole)} />
+      {
+        addNote &&
+        <PONotesDialog
+          defaultValue={defaultValue}
+          updateItem={false}
+          open={addNote}
+          handleClose={handleNoteOpener}
+          access={isAdmin(userRole)}
+        />
+      }
     </Box >
   );
 };

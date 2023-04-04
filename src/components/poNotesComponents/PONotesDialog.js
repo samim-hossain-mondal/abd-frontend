@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import {
@@ -36,15 +36,6 @@ import { isAdmin } from '../constants/users';
 import { RefreshContext } from '../contexts/RefreshContext';
 import { LoadingContext } from '../contexts/LoadingContext';
 
-// const getNextDate = (days) => {
-//   const date = new Date();
-//   date.setDate(date.getDate() + days);
-//   const dateString = date
-//     .toISOString()
-//     .substring(0, date.toISOString().indexOf("T"));
-//   return dateString;
-// };
-
 const getISODateToTimlineFormat = (isoDate = '') => {
   try {
     const dateString = isoDate.substring(0, isoDate.indexOf("T"));
@@ -61,6 +52,12 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
   const { userRole } = useContext(ProjectUserContext)
   const { setRefresh } = useContext(RefreshContext);
   const { setLoading } = useContext(LoadingContext);
+
+  useEffect(() => {
+    if (!open) {
+      setLock(true);
+    }
+  }, [open])
 
   const [timeline, setTimeline] =
     useState(
@@ -229,7 +226,7 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
               <IconButton
                 edge="start"
                 color="inherit"
-                onClick={handleClose}
+                onClick={(e) => { handleClose(e); setLock(true) }}
                 aria-label="close"
               >
                 <CloseIcon sx={{ color: "secondary.main" }} />
