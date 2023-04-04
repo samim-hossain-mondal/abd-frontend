@@ -6,7 +6,6 @@ import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { Box, Stack } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
-// import format from 'date-fns/format';
 import { PropTypes } from 'prop-types';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { DSMBodyLayoutContext } from '../contexts/DSMBodyLayoutContext';
@@ -24,22 +23,15 @@ import { RefreshContext } from '../contexts/RefreshContext';
 import { isAdmin, isMember } from '../constants/users';
 import SkeletonRequest from '../skeletons/dsm/request';
 import { LoadingContext } from '../contexts/LoadingContext';
-/*
-ISSUES: 
-        1. someplace key is missing console is showing error
-*/
 
 export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { user, userRole } = useContext(ProjectUserContext);
-
-
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext);
   const [loaded, setLoaded] = useState(false);
-
   const { projectId } = useParams();
   const { setLoading } = useContext(LoadingContext);
 
@@ -80,7 +72,6 @@ export default function Requests({ selectedDate }) {
 
   const getRequests = async (params) => {
     try {
-      // const resData = await makeRequest(GET_TEAM_REQUESTS_BY_DATE(projectId, format(selectedDate, 'yyyy-MM-dd')))
       const resData = await makeRequest(GET_TEAM_REQUESTS(projectId), setLoading, { params })
       return resData;
     }
@@ -221,18 +212,14 @@ export default function Requests({ selectedDate }) {
             }
           }}
         >
-          {/* All Content/Development of Requests HEADER goes here */}
           <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
           {isMember(userRole) &&
-            // format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
             <Tooltip title="Add Request" placement='top'>
               <IconButton onClick={(e) => handleAddButtonClick(e)}>
                 <AddCircleIcon color="primary" />
               </IconButton>
             </Tooltip>
-            // )
           }
-
         </AccordionSummary>
         <Dialog
           open={openModal}
@@ -259,13 +246,15 @@ export default function Requests({ selectedDate }) {
             </Typography>
             <br />
             <Stack spacing={1} direction="row">
-              <Chip label="Meeting" onClick={() => setRequestType(DSM_REQUEST_TYPES[0])} color={requestType === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'} />
-              <Chip label="Resource" onClick={() => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'} />
+              <Chip label="Meeting"
+                onClick={() => setRequestType(DSM_REQUEST_TYPES[0])} color={requestType === DSM_REQUEST_TYPES[0] ? 'primary' : 'default'}
+              />
+              <Chip label="Resource"
+                onClick={() => setRequestType(DSM_REQUEST_TYPES[1])} color={requestType === DSM_REQUEST_TYPES[1] ? 'primary' : 'default'}
+              />
             </Stack>
           </GenericInputModal>
-
         </Dialog>
-
         <AccordionDetails sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -300,8 +289,6 @@ export default function Requests({ selectedDate }) {
               (<InfiniteScroll
                 dataLength={requests.length}
                 next={fetchMoreRequests}
-                // style={{ display: 'flex', flexDirection: 'column-reverse' }} // To put endMessage and loader to the top.
-                // inverse //
                 hasMore={hasMore}
                 loader={
                   <Box sx={{ width: '100%' }}>
@@ -317,7 +304,6 @@ export default function Requests({ selectedDate }) {
                     content={request.content}
                     date={new Date(request.createdAt)}
                     previousRequestDate={index === 0 ? null : new Date(requests[index - 1]?.createdAt)}
-                    // onClick={() => format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleChatClick(request) : null}
                     onClick={() => handleChatClick(request)}
                     chipContent={request.type}
                     isRequestDone={isRequestCompleted(request.status)}
@@ -330,7 +316,6 @@ export default function Requests({ selectedDate }) {
         </AccordionDetails>
 
         {
-          // (openEditModal) && format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && (
           (openEditModal) && (
             <Dialog
               open={openEditModal}
@@ -339,9 +324,7 @@ export default function Requests({ selectedDate }) {
               <GenericInputModal
                 title={TITLE}
                 onCloseButtonClick={handleEditModalClose}
-                // primaryButtonText='Mark as Discussed' right now just adding save
                 primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
-                // onPrimaryButtonClick={format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? handleEditRequest : null}
                 onPrimaryButtonClick={handleEditRequest}
                 defaultValue={editModalData.content}
                 isDisabled={isDisabled}
@@ -349,6 +332,9 @@ export default function Requests({ selectedDate }) {
                 deleteRequest={handleDeleteRequest}
                 authorize={user.memberId === editModalData.memberId || isAdmin(userRole)}
                 totalCharacters={CHAR_COUNT}
+                authorName={editModalData.author}
+                authorId={editModalData.memberId}
+                date={new Date(editModalData.createdAt)}
               >
                 <Typography>
                   Tags
@@ -360,25 +346,22 @@ export default function Requests({ selectedDate }) {
                 </Stack>
                 <br />
                 {isAdmin(userRole) && !isDisabled && (
-                  <>
-                    {/* mui checkbox for status named as completed */}
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={isRequestCompleted(editModalData.status)}
-                          onChange={(e) => {
-                            setEditModalData({
-                              ...editModalData,
-                              status: e.target.checked ? DSM_REQUEST_STATUS.APPROVED : DSM_REQUEST_STATUS.PENDING,
-                            })
-                          }}
-                          name="completed"
-                          color="primary"
-                        />
-                      }
-                      label="Completed"
-                    />
-                  </>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isRequestCompleted(editModalData.status)}
+                        onChange={(e) => {
+                          setEditModalData({
+                            ...editModalData,
+                            status: e.target.checked ? DSM_REQUEST_STATUS.APPROVED : DSM_REQUEST_STATUS.PENDING,
+                          })
+                        }}
+                        name="completed"
+                        color="primary"
+                      />
+                    }
+                    label="Completed"
+                  />
                 )}
               </GenericInputModal>
             </Dialog>

@@ -3,13 +3,13 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip } from '@mui/material';
-
-import { Box } from '@mui/system';
+import { Box, Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip, Avatar } from '@mui/material';
 import emoji from '@jukben/emoji-search';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import stc from 'string-to-color';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 import { getAllMembersData } from '../../utilityFunctions/User';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import { ErrorContext } from '../../contexts/ErrorContext';
@@ -46,12 +46,16 @@ export default function GenericInputModal({
   setIsDisabled,
   deleteRequest,
   authorize,
-  totalCharacters
+  totalCharacters,
+  authorName,
+  authorId,
+  date
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
+  const { user } = useContext(ProjectUserContext);
   const { setSuccess, setError } = useContext(ErrorContext);
   const [charCount, setCharCount] = useState(content.length ?? 0);
 
@@ -62,8 +66,8 @@ export default function GenericInputModal({
   }, []);
 
   const getSimilarUsers = (text) => {
-    const similarUsers = users.filter((user) => user.email.toLowerCase().includes(text.toLowerCase()));
-    return similarUsers.map((user) => ({ name: user.email, char: '@' }));
+    const similarUsers = users.filter((_user) => _user.email.toLowerCase().includes(text.toLowerCase()));
+    return similarUsers.map((_user) => ({ name: _user.email, char: '@' }));
   }
 
   const handleChangeTextArea = (e) => {
@@ -91,7 +95,6 @@ export default function GenericInputModal({
         handleDelete={deleteRequest}
         description="Are you sure you want to delete this ?"
       />
-      {/* Action Buttons */}
       {
         (isDisabled !== undefined)
           ? (
@@ -138,18 +141,33 @@ export default function GenericInputModal({
             </Box>
           )
       }
-
-
-
-      {/* Title */}
-      <Typography variant="h5" sx={{
-        mt: '8px',
-      }}>{title}</Typography>
-
-      {/* TextField */}
+      <Typography variant="h5" sx={{ mt: 1 }}>
+        {title}
+      </Typography>
+      {
+        user.memberId !== authorId &&
+        <Box sx={{ mt: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ mr: 1 }}>
+              <Avatar {...stringAvatar(authorName, stc)}
+                sx={{ width: "30px", height: "30px", aspectRatio: "1/1", bgcolor: stc(authorName) }}
+              />
+            </Box>
+            <Box>
+              <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{authorName}</Typography>
+              <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
+                {date.toLocaleString('en-US', {
+                  year: 'numeric', month: 'short', day: 'numeric',
+                  hour: '2-digit', minute: '2-digit', hour12: true
+                })}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      }
       <Box sx={{
         width: '100%',
-        margin: '24px 0',
+        margin: '8px 0',
         padding: 0,
         position: 'relative'
       }}>
@@ -201,7 +219,6 @@ export default function GenericInputModal({
               component: Item,
               output: (item) => item.char + item.name,
             }
-            // can add emojis with : trigger if required
           }}
           value={content}
           rows={4}
@@ -237,8 +254,6 @@ export default function GenericInputModal({
       </Box>
 
       {children}
-
-      {/* Primary Button */}
       {
         !isDisabled && (
           <Button
@@ -260,7 +275,6 @@ export default function GenericInputModal({
           </Button>
         )
       }
-
       {secondaryButtonText && (
         <Button
           sx={{
@@ -305,6 +319,9 @@ GenericInputModal.propTypes = {
   deleteRequest: PropTypes.func,
   authorize: PropTypes.bool,
   totalCharacters: PropTypes.number,
+  authorName: PropTypes.string.isRequired,
+  authorId: PropTypes.string.isRequired,
+  date: PropTypes.instanceOf(Date).isRequired
 };
 
 GenericInputModal.defaultProps = {

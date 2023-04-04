@@ -1,12 +1,14 @@
 /* eslint-disable import/no-cycle */
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { Avatar, Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
+import stc from 'string-to-color';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
 import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT } from '../../constants/dsm/Celebrations';
@@ -173,9 +175,33 @@ export default function CelebrationGenericModal({
               }
               )}
             </Box>
-            <Box sx={{ margin: '16px 0 10px 0' }}>
-              <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
-            </Box>
+            {
+              user.memberId === newCelebration.memberId &&
+              <Box sx={{ margin: '16px 0 10px 0' }}>
+                <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
+              </Box>
+            }
+            {
+              user.memberId !== newCelebration.memberId && !isNewCelebration &&
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 3 }}>
+                <Box sx={{ mr: 1 }}>
+                  <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{newCelebration.author}</Typography>
+                  <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
+                    {new Date(newCelebration.createdAt).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                    })}
+                  </Typography>
+                </Box>
+              </Box>
+            }
             <RichTextArea
               sx={{
                 width: '85%',
@@ -291,6 +317,8 @@ CelebrationGenericModal.propTypes = {
     content: PropTypes.string,
     anonymous: PropTypes.bool,
     memberId: PropTypes.number,
+    author: PropTypes.string,
+    createdAt: PropTypes.string,
   }).isRequired,
   update: PropTypes.bool,
   lock: PropTypes.bool,
