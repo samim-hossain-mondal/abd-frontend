@@ -8,6 +8,8 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import stc from 'string-to-color';
+import makeRequest from '../../utilityFunctions/makeRequest/index';
+import { UPDATE_CELEBRATION } from '../../constants/apiEndpoints';
 import stringAvatar from '../../utilityFunctions/getStringColor';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
@@ -17,6 +19,9 @@ import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import ReportDialog from '../ReportDialog';
+import { LoadingContext } from '../../contexts/LoadingContext';
+import { ErrorContext } from '../../contexts/ErrorContext';
+
 
 export default function CelebrationGenericModal({
   isNewCelebration,
@@ -38,6 +43,9 @@ export default function CelebrationGenericModal({
 }) {
 
   const { user } = useContext(ProjectUserContext);
+  const { projectId } = useContext(ProjectUserContext);
+  const { setLoading } = useContext(LoadingContext);
+  const { setError, setSuccess } = useContext(ErrorContext);
 
   const reStructureCardDetails = () => ({
     content: newCelebration.content,
@@ -63,8 +71,22 @@ export default function CelebrationGenericModal({
     setOpen(true);
   }
 
-  const handleReport = () => {
-    setReportAlert(false);
+  const handleReport = async () => {
+    try {
+      const reqBody = {
+        content: newCelebration.content,
+        type: newCelebration.type,
+        isAnonymous: newCelebration.anonymous,
+        isAbuse: true
+      }
+      const resData = await makeRequest(UPDATE_CELEBRATION(projectId, newCelebration.celebrationId), setLoading, { data: reqBody })
+      setSuccess('Reported successfully');
+      return resData;
+    }
+    catch (err) {
+      setError(err.message);
+      return false;
+    }
   }
 
   const onConfirmDelete = async (e) => {
@@ -319,6 +341,7 @@ CelebrationGenericModal.propTypes = {
   setNewCelebration: PropTypes.func.isRequired,
   isNewCelebration: PropTypes.bool.isRequired,
   newCelebration: PropTypes.shape({
+    celebrationId: PropTypes.number,
     type: PropTypes.string,
     content: PropTypes.string,
     anonymous: PropTypes.bool,

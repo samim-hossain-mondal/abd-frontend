@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Tab, Box } from "@mui/material";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
@@ -32,17 +33,17 @@ function MobileTabs({ sections }) {
     >
       {sections.map((section) => (
         <Box
-            key={section.name}
-            sx={{
-                width: '33%',
-                height: 50,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                borderBottom: activeTab === section.name ? "5px solid" : "none",
-                borderBottomColor: activeTab === section.name ? "logoBlue.main" : "none",
-            }}
+          key={section.name}
+          sx={{
+            width: '33%',
+            height: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            borderBottom: activeTab === section.name ? "5px solid" : "none",
+            borderBottomColor: activeTab === section.name ? "logoBlue.main" : "none",
+          }}
         >
           <Tab
             centered

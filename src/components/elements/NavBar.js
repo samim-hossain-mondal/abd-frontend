@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useContext, useState } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -76,15 +77,15 @@ export default function Navbar({
   };
 
   const handleOptionClick = (sectionName, ref) => {
-      animateScroll.scrollTo(ref.current.offsetTop, {
-        duration: 200,
-        delay: 0,
-        smooth: 'easeInOutQuint',
-      });
-      setActiveOption(sectionName);
-      setOpenPageNavMenu(false);
+    animateScroll.scrollTo(ref.current.offsetTop, {
+      duration: 200,
+      delay: 0,
+      smooth: 'easeInOutQuint',
+    });
+    setActiveOption(sectionName);
+    setOpenPageNavMenu(false);
   };
-  
+
 
   const { loading } = useContext(LoadingContext)
   return (
@@ -101,23 +102,23 @@ export default function Navbar({
             component="img" sx={{ height: '50px' }}
             alt="logo" src={Logo}
           />
-              <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2, display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
-                >
-                  My Agile Dashboard
-                </Typography>
-                <Typography
-                  variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
-                  sx ={{
-                    fontSize: '1.15rem',
-                    color: 'text.secondary',
-                    fontWeight: '400',
-                  }}
-                >
-                  {projectDetails?.projectName}
-                </Typography>
-              </Box>
+          <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2, display: 'flex', flexDirection: 'column' }}>
+            <Typography
+              variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
+            >
+              My Agile Board
+            </Typography>
+            <Typography
+              variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
+              sx={{
+                fontSize: '1.15rem',
+                color: 'text.secondary',
+                fontWeight: '400',
+              }}
+            >
+              {projectDetails?.projectName}
+            </Typography>
+          </Box>
           {
             (aboveTablet) && (
               <Box sx={{ display: 'flex', flexGrow: '2', justifyContent: 'center', alignItems: 'center' }}>
@@ -268,7 +269,7 @@ export default function Navbar({
                       key={page}
                       sx={{ marginLeft: '10px' }}
                       onClick={page === DAILY_PAGE_NAME ? handlePageNavMenu : () => { 
-                        setOpenRoutesMenu(false) 
+                        setOpenRoutesMenu(false)
                       }}
                     >
                       <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={getRoute(pages[index], projectId)}>
