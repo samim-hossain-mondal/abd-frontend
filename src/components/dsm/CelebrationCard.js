@@ -8,8 +8,6 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import { useParams } from 'react-router-dom';
 import stc from 'string-to-color';
-// import format from 'date-fns/format';
-// import parseISO from 'date-fns/parseISO';
 import { celebrationType } from '../constants/dsm/Celebrations';
 import { ErrorContext } from '../contexts/ErrorContext';
 import UpdateCelebrationModal from './UpdateCelebrationModal';
@@ -25,27 +23,27 @@ export default function CelebrationCard({
   celebration,
   isPreview, onDeleteCelebration }) {
   const breakpoint391 = useMediaQuery('(min-width:391px)');
-  const { user } = useContext(ProjectUserContext)
-  const { setError, setSuccess } = useContext(ErrorContext)
+  const { user } = useContext(ProjectUserContext);
+  const { setError, setSuccess } = useContext(ErrorContext);
   const [reacted, setReacted] = useState(false);
   const { projectId } = useParams();
-
-  const [reactCount, setReactCount] = useState(0)
-  const [newCelebration, setNewCelebration] = useState({})
-  const [updateCelebration, setUpdateCelebration] = useState({})
+  const [reactCount, setReactCount] = useState(0);
+  const [newCelebration, setNewCelebration] = useState({});
+  const [updateCelebration, setUpdateCelebration] = useState({});
   const { setLoading } = useContext(LoadingContext);
+
   const updateCelebrationOnSubmit = () => {
     setNewCelebration(updateCelebration)
   }
 
-  const [openUpdateModal, setOpenUpdateModal] = useState(false)
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
 
   useEffect(() => {
-    setNewCelebration(celebration)
-    setUpdateCelebration(celebration)
-    setReactCount(celebration?.reaction?.length ?? 0)
+    setNewCelebration(celebration);
+    setUpdateCelebration(celebration);
+    setReactCount(celebration?.reaction?.length ?? 0);
     if (!isPreview && celebration?.reaction?.length > 0) {
-      setReacted(celebration?.reaction.find(reaction => reaction.memberId === user.memberId))
+      setReacted(celebration?.reaction.find(reaction => reaction.memberId === user.memberId));
     }
   }, [celebration])
 
@@ -62,7 +60,7 @@ export default function CelebrationCard({
       }
       const resData = await makeRequest(UPDATE_CELEBRATION_REACTION(projectId, celebration.celebrationId), setLoading, { data: reqBody })
       setSuccess(SUCCESS_MESSAGE("Reaction").UPDATED);
-      setReactCount(reacted ? reactCount - 1 : reactCount + 1)
+      setReactCount(reacted ? reactCount - 1 : reactCount + 1);
       setReacted(!reacted);
       return resData;
     }
@@ -82,8 +80,7 @@ export default function CelebrationCard({
         boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)'
       }}
       onClick={() => {
-        // setOpenUpdateModal(format(parseISO(newCelebration.createdAt), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') ? !isPreview : false)
-        setOpenUpdateModal(!isPreview)
+        setOpenUpdateModal(!isPreview);
       }}
     >
       <CardContent sx={{ padding: '10px 10px 5px 10px', minHeight: '80px', maxHeight: "160px" }}>

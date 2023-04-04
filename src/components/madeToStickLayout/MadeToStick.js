@@ -184,7 +184,7 @@ export default function MadeToStick() {
     try {
       const response = await axios.post(`${API_URL}/${projectId}`, {
         value: "Enter your text here",
-        backgroundColor: "#EEF2F5",
+        backgroundColor: "backgroundColor.secondary",
         x: 0,
         y: 0,
         w: 5,
@@ -195,26 +195,6 @@ export default function MadeToStick() {
       setCards([...cards, response.data]);
       setLayout([...layout, response.data]);
     } catch (err) {
-      setError(ERROR_MESSAGE.ERROR);
-    }
-  };
-
-  const addImageCard = async () => {
-    try {
-      const response = await axios.post(`${API_URL}/${projectId}`, {
-        value: "Enter your image url here",
-        backgroundColor: "#EEF2F5",
-        x: 0,
-        y: 0,
-        w: 5,
-        h: 3,
-        type: NOTE_TYPES.IMAGE,
-        emailId: "test",
-      });
-      setCards([...cards, response.data]);
-      setLayout([...layout, response.data]);
-      setIsEdit(response.data.i);
-    } catch (error) {
       setError(ERROR_MESSAGE.ERROR);
     }
   };
@@ -252,16 +232,7 @@ export default function MadeToStick() {
                       type="button"
                       sx={{ marginRight: '16px' }}
                     >
-                      Add text card
-                    </Button>
-                    <Button
-                      variant="contained" color='customButton1'
-                      onClick={addImageCard}
-                      name="add"
-                      type="button"
-                      sx={{ marginRight: '16px' }}
-                    >
-                      Add Image card
+                      Add Card
                     </Button>
                   </Box>
                   <Box>

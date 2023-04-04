@@ -1,19 +1,25 @@
 /* eslint-disable import/no-cycle */
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { Avatar, Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
+import stc from 'string-to-color';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
 import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT } from '../../constants/dsm/Celebrations';
 import InstructionBox from './InstructionBox';
 import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
+import { ProjectUserContext } from '../../contexts/ProjectUserContext';
+import ReportDialog from '../ReportDialog';
 
 export default function CelebrationGenericModal({
+  isNewCelebration,
   onCloseButtonClick,
   title,
   inputTitle,
@@ -28,8 +34,10 @@ export default function CelebrationGenericModal({
   update,
   lock,
   setLock,
-  handleDelete
+  handleDelete,
 }) {
+
+  const { user } = useContext(ProjectUserContext);
 
   const reStructureCardDetails = () => ({
     content: newCelebration.content,
@@ -45,7 +53,19 @@ export default function CelebrationGenericModal({
       content
     });
   }
+
   const [deleteAlert, setDeleteAlert] = useState(false);
+  const [reportAlert, setReportAlert] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const onReportButtonClick = () => {
+    setReportAlert(true);
+    setOpen(true);
+  }
+
+  const handleReport = () => {
+    setReportAlert(false);
+  }
 
   const onConfirmDelete = async (e) => {
     setDeleteAlert(false)
@@ -62,7 +82,6 @@ export default function CelebrationGenericModal({
   }
 
   const [openDropDown, setOpenDropDown] = useState(false);
-
 
   const updateCelebration = (celebration) => {
     setNewCelebration(celebration);
@@ -85,7 +104,6 @@ export default function CelebrationGenericModal({
   };
 
   return (
-
     <Box
       width={isPreview ? 'max(25vw, 340px)' : 'max(20vw, 340px)'}
       sx={{
@@ -97,9 +115,6 @@ export default function CelebrationGenericModal({
         position: 'relative'
       }}
     >
-
-      {/* Action Buttons */}
-      {/* TODO: add editable buttons and actions as well */}
       <Box
         sx={update ? {
           display: 'flex',
@@ -133,7 +148,6 @@ export default function CelebrationGenericModal({
           </Tooltip>
         </Box>
       </Box>
-
       {
         isPreview ?
           <Box>
@@ -141,8 +155,6 @@ export default function CelebrationGenericModal({
             <InstructionBox header={instructions[newCelebration.type]?.header} points={instructions[newCelebration.type]?.points} />
           </Box> :
           <Box>
-
-            {/* Title */}
             <Box sx={{ margin: '0 0 16px 0' }}>
               <Typography variant="contentMain" sx={{ fontSize: '16px', color: '#121212' }}>{title}</Typography>
             </Box>
@@ -161,15 +173,35 @@ export default function CelebrationGenericModal({
                   return <CustomDropDown key={type} isMenu value={type} handleChange={handleChange} />
                 return null;
               }
-
               )}
             </Box>
-
-            {/* TextField */}
-            <Box sx={{ margin: '16px 0 10px 0' }}>
-              <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
-            </Box>
-
+            {
+              user.memberId === newCelebration.memberId &&
+              <Box sx={{ margin: '16px 0 10px 0' }}>
+                <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
+              </Box>
+            }
+            {
+              user.memberId !== newCelebration.memberId && !isNewCelebration &&
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 3 }}>
+                <Box sx={{ mr: 1 }}>
+                  <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{newCelebration.author}</Typography>
+                  <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
+                    {new Date(newCelebration.createdAt).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                    })}
+                  </Typography>
+                </Box>
+              </Box>
+            }
             <RichTextArea
               sx={{
                 width: '85%',
@@ -183,29 +215,48 @@ export default function CelebrationGenericModal({
               disabled={lock}
               totalCharacters={CHAR_COUNT}
             />
-
+            {
+              user.memberId !== newCelebration.memberId && !isNewCelebration &&
+              < Box sx={{ display: 'flex', flexDirection: 'row-reverse', paddingRight: '16px' }}>
+                <Button
+                  onClick={onReportButtonClick}
+                  sx={{ display: 'flex', borderRadius: '8px', backgroundColor: 'transparent' }}>
+                  <ReportRoundedIcon sx={{ color: 'error.main', cursor: 'pointer', pr: '5px' }} />
+                  <Typography sx={{ textTransform: 'none' }}>Report abuse</Typography>
+                </Button>
+              </Box>
+            }
             {children}
-            <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', fontFamily: 'Poppins' }} control={
-              <Checkbox sx={{
-                color: 'customButton1.main',
-                '&.Mui-checked': {
+            {
+              reportAlert &&
+              <ReportDialog
+                open={open}
+                setOpen={setOpen}
+                handleReport={handleReport}
+                description='Are you sure to report this behavior as abusive?'
+              />
+            }
+            {
+              (!lock || isNewCelebration) &&
+              <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', paddingTop: '5px', fontFamily: 'Poppins' }} control={
+                <Checkbox sx={{
                   color: 'customButton1.main',
-                }
-              }} onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />} label="Post Anonymously" />
-
+                  '&.Mui-checked': {
+                    color: 'customButton1.main',
+                  }
+                }} onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />} label="Post Anonymously" />
+            }
           </Box>
       }
-
       {
         !lock &&
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            {/* Secondary Button */}
             {
               secondaryButtonText && (
                 <Button
                   sx={{
-                    margin: '16px 0 5px 0',
+                    margin: '8px 0 5px 0',
                     padding: '12px 0',
                     width: '100%',
                     borderRadius: '8px',
@@ -224,10 +275,9 @@ export default function CelebrationGenericModal({
             }
           </Grid>
           <Grid item xs={6}>
-            {/* Primary Button */}
             <Button
               sx={{
-                margin: '16px 0 5px 0',
+                margin: '8px 0 5px 0',
                 padding: '12px 0',
                 width: '100%',
                 borderRadius: '8px',
@@ -261,11 +311,14 @@ CelebrationGenericModal.propTypes = {
   onSecondaryButtonClick: PropTypes.func,
   isPreview: PropTypes.bool,
   setNewCelebration: PropTypes.func.isRequired,
+  isNewCelebration: PropTypes.bool.isRequired,
   newCelebration: PropTypes.shape({
     type: PropTypes.string,
     content: PropTypes.string,
     anonymous: PropTypes.bool,
     memberId: PropTypes.number,
+    author: PropTypes.string,
+    createdAt: PropTypes.string,
   }).isRequired,
   update: PropTypes.bool,
   lock: PropTypes.bool,

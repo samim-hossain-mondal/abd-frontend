@@ -1,21 +1,33 @@
 import React from 'react';
-import { Button, Divider } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { PropTypes } from 'prop-types';
-import { Box } from '@mui/system';
 
 export default function DateDivider({ dateGroupName, sx }) {
   return (
     <Box sx={sx}>
       <Divider>
-        <Button variant="contained" disabled
+        <Box
           sx={{
             height: "24px",
-            fontSize: "10px",
-            fontWeight: "bold",
-            textTransform: "capitalize",
+            borderStyle: "solid",
+            borderColor: "grey.300",
+            borderRadius: "8px",
+            backgroundColor: "grey.100",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}>
-          {dateGroupName}
-        </Button>
+          <Typography
+            sx={{
+              fontSize: "0.7rem",
+              textTransform: "capitalize",
+              fontWeight: 700,
+              padding: '8px',
+              color: 'grey.700'
+            }}>
+            {dateGroupName}
+          </Typography>
+        </Box>
       </Divider>
     </Box >
   );

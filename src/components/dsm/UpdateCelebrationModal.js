@@ -1,31 +1,39 @@
 /* eslint-disable import/no-cycle */
-import { Dialog } from '@mui/material'
-import { Box } from '@mui/system'
-import React, { useContext, useState } from 'react'
-import PropTypes from 'prop-types'
-import { useParams } from 'react-router-dom'
-import CelebrationGenericModal from '../elements/dsm/CelebrationGenericModal'
-import { ErrorContext } from '../contexts/ErrorContext'
-import makeRequest from '../utilityFunctions/makeRequest/index'
-import { DELETE_CELEBRATION, UPDATE_CELEBRATION } from '../constants/apiEndpoints'
-import { SUCCESS_MESSAGE } from '../constants/dsm/index'
+import { Dialog } from '@mui/material';
+import { Box } from '@mui/system';
+import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
+import CelebrationGenericModal from '../elements/dsm/CelebrationGenericModal';
+import { ErrorContext } from '../contexts/ErrorContext';
+import makeRequest from '../utilityFunctions/makeRequest/index';
+import { DELETE_CELEBRATION, UPDATE_CELEBRATION } from '../constants/apiEndpoints';
+import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { GENERIC_NAME } from "../constants/dsm/Celebrations";
-import { ProjectUserContext } from '../contexts/ProjectUserContext'
+import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { LoadingContext } from '../contexts/LoadingContext'
 
-export default function UpdateCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, updateCelebrationOnSubmit, onDeleteCelebration }) {
+export default function UpdateCelebrationModal({
+  openModal,
+  setOpenModal,
+  newCelebration,
+  setNewCelebration,
+  updateCelebrationOnSubmit,
+  onDeleteCelebration
+}) {
   const [preview, setPreview] = useState(false);
-  const { user } = useContext(ProjectUserContext)
-  const { projectId } = useParams()
-  const { setError, setSuccess } = useContext(ErrorContext)
+  const { user } = useContext(ProjectUserContext);
+  const { projectId } = useParams();
+  const { setError, setSuccess } = useContext(ErrorContext);
   const { setLoading } = useContext(LoadingContext);
-
   const [lock, setLock] = useState(true);
 
   const handleModalClose = (e) => {
     e.stopPropagation();
     e.preventDefault();
     setOpenModal(false);
+    setPreview(false);
+    setLock(true);
   }
 
   const updateCelebrationToDB = async () => {
@@ -40,7 +48,6 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return false;
     }
@@ -53,14 +60,13 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
       return resData;
     }
     catch (err) {
-      console.error(err);
       setError(err.message);
       return false;
     }
   }
 
   const handleDelete = async () => {
-    onDeleteCelebration(newCelebration.celebrationId)
+    onDeleteCelebration(newCelebration.celebrationId);
     await deleteCelebrationToDB()
   }
 
@@ -68,7 +74,7 @@ export default function UpdateCelebrationModal({ openModal, setOpenModal, newCel
     await updateCelebrationToDB()
     updateCelebrationOnSubmit()
     setOpenModal(false);
-    setPreview(false)
+    setPreview(false);
   }
 
   return (

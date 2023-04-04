@@ -11,7 +11,16 @@ import { SUCCESS_MESSAGE } from '../constants/dsm/index'
 import { GENERIC_NAME } from '../constants/dsm/Celebrations'
 import { LoadingContext } from '../contexts/LoadingContext'
 
-export default function AddCelebrationModal({ openModal, setOpenModal, newCelebration, setNewCelebration, resetModal, setCelebrations, celebrations }) {
+export default function AddCelebrationModal({
+  isNewCelebration,
+  openModal,
+  setOpenModal,
+  newCelebration,
+  setNewCelebration,
+  resetModal,
+  setCelebrations,
+  celebrations
+}) {
   const [preview, setPreview] = useState(false);
   const { projectId } = useParams()
   const { setError, setSuccess } = useContext(ErrorContext)
@@ -65,6 +74,7 @@ export default function AddCelebrationModal({ openModal, setOpenModal, newCelebr
           setNewCelebration={setNewCelebration}
           newCelebration={newCelebration}
           isPreview={preview}
+          isNewCelebration={isNewCelebration}
         />
       </Dialog>
     </Box>
@@ -82,6 +92,7 @@ AddCelebrationModal.propTypes = {
   setNewCelebration: PropTypes.func.isRequired,
   resetModal: PropTypes.func.isRequired,
   setCelebrations: PropTypes.func.isRequired,
+  isNewCelebration: PropTypes.bool.isRequired,
   celebrations: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     content: PropTypes.string,
