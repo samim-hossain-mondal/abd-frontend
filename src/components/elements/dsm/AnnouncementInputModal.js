@@ -3,12 +3,14 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip } from '@mui/material';
+import { Avatar, Button, IconButton, Typography, List, ListItem, ListItemButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import emoji from '@jukben/emoji-search';
 import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
 import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import stc from 'string-to-color';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 import { getAllMembersData } from '../../utilityFunctions/User';
 import { ProjectUserContext } from '../../contexts/ProjectUserContext';
 import { ErrorContext } from '../../contexts/ErrorContext';
@@ -33,6 +35,9 @@ function Loading() {
 }
 
 export default function AnnouncementInputModal({
+  authorName,
+  createdDate,
+  openEditModal,
   onCloseButtonClick,
   defaultValue,
   children,
@@ -111,6 +116,7 @@ export default function AnnouncementInputModal({
               sx={{
                 display: 'flex',
                 justifyContent: authorize ? 'space-between' : "flex-end",
+                mb: authorize ? 1 : 0,
               }}
             >
               {authorize &&
@@ -149,6 +155,29 @@ export default function AnnouncementInputModal({
               </Tooltip>
             </Box>
           )
+      }
+      {
+        openEditModal &&
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Box sx={{ mr: 1 }}>
+            <Avatar {...stringAvatar(authorName, stc)}
+              sx={{ width: "30px", height: "30px", aspectRatio: "1/1", bgcolor: stc(authorName) }}
+            />
+          </Box>
+          <Box>
+            <Typography sx={{ fontWeight: 700, fontSize: '15px' }}>{authorName}</Typography>
+            <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
+              {new Date(createdDate).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+              })}
+            </Typography>
+          </Box>
+        </Box>
       }
 
       {/* Title */}

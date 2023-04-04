@@ -323,6 +323,9 @@ export default function Announcements() {
               onClose={handleEditModalClose}
             >
               <AnnouncementInputModal
+                authorName={editModalData?.author}
+                createdDate={new Date(editModalData?.createdAt)}
+                openEditModal={openEditModal}
                 onCloseButtonClick={handleEditModalClose}
                 primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
                 onPrimaryButtonClick={handleEditAnnouncement}
@@ -338,7 +341,6 @@ export default function Announcements() {
             </Dialog>
           )
         }
-
       </Accordion>
     </ Grid >
   );
