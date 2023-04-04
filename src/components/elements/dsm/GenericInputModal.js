@@ -141,12 +141,9 @@ export default function GenericInputModal({
             </Box>
           )
       }
-      <Typography variant="h5" sx={{ mt: 1 }}>
-        {title}
-      </Typography>
       {
         user.memberId !== authorId &&
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ mr: 1 }}>
               <Avatar {...stringAvatar(authorName, stc)}
@@ -165,6 +162,9 @@ export default function GenericInputModal({
           </Box>
         </Box>
       }
+      <Typography variant="contentMain" sx={{ fontSize: '1.2rem', color: '#121212' }}>
+        {title}
+      </Typography>
       <Box sx={{
         width: '100%',
         margin: '8px 0',
@@ -257,9 +257,10 @@ export default function GenericInputModal({
       {
         !isDisabled && (
           <Button
+            variant='contained'
             sx={{
               margin: '16px 0',
-              padding: '12px 0',
+              padding: '8px 0',
               width: '100%',
               borderRadius: '8px',
               color: 'customButton1.contrastText',
@@ -278,14 +279,15 @@ export default function GenericInputModal({
       {secondaryButtonText && (
         <Button
           sx={{
-            padding: '12px 0',
+            margin: '16px 0',
+            padding: '8px 0',
             width: '100%',
             borderRadius: '8px',
-            color: 'secondaryButton.contrastText',
-            backgroundColor: 'secondaryButton.main',
+            color: 'customButton1.contrastText',
+            backgroundColor: 'customButton1.main',
             '&:hover': {
-              color: 'secondaryButton.contrastText',
-              backgroundColor: 'secondaryButton.main',
+              color: 'customButton1.contrastText',
+              backgroundColor: 'customButton1.main',
             },
           }}
           onClick={() => onSecondaryButtonClick(content)}

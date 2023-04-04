@@ -155,8 +155,32 @@ export default function CelebrationGenericModal({
             <InstructionBox header={instructions[newCelebration.type]?.header} points={instructions[newCelebration.type]?.points} />
           </Box> :
           <Box>
-            <Box sx={{ margin: '0 0 16px 0' }}>
-              <Typography variant="contentMain" sx={{ fontSize: '16px', color: '#121212' }}>{title}</Typography>
+            {
+              user.memberId !== newCelebration.memberId && !isNewCelebration &&
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ mr: 1 }}>
+                  <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{newCelebration.author}</Typography>
+                  <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
+                    {new Date(newCelebration.createdAt).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                    })}
+                  </Typography>
+                </Box>
+              </Box>
+            }
+            <Box sx={{ margin: '16px 0 16px 0' }}>
+              <Typography variant="contentMain" sx={{ fontSize: '1.2rem', color: '#121212' }}>Share your thoughts</Typography>
+            </Box>
+            <Box sx={{ margin: '16px 0 16px 0' }}>
+              <Typography variant="contentMain" sx={{ fontSize: '1rem', color: '#121212' }}>{title}</Typography>
             </Box>
             <CustomDropDown isMenu={false} value={newCelebration.type} openDropDown={lock ? false : openDropDown} setOpenDropDown={lock ? () => { } : setOpenDropDown} />
             <Box
@@ -178,28 +202,7 @@ export default function CelebrationGenericModal({
             {
               user.memberId === newCelebration.memberId &&
               <Box sx={{ margin: '16px 0 10px 0' }}>
-                <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212' }} fontSize="15px" >{inputTitle}</Typography>
-              </Box>
-            }
-            {
-              user.memberId !== newCelebration.memberId && !isNewCelebration &&
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 3 }}>
-                <Box sx={{ mr: 1 }}>
-                  <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
-                </Box>
-                <Box>
-                  <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{newCelebration.author}</Typography>
-                  <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
-                    {new Date(newCelebration.createdAt).toLocaleString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                    })}
-                  </Typography>
-                </Box>
+                <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212', fontSize: "1rem" }} >{inputTitle}</Typography>
               </Box>
             }
             <RichTextArea
@@ -207,6 +210,7 @@ export default function CelebrationGenericModal({
                 width: '85%',
                 margin: '5px 0',
                 boxShadow: '0px 5px 15px rgba(119, 132, 238, 0.3)',
+                fontSize: '1rem'
               }}
               value={newCelebration.content}
               placeholder={celebrationPlaceholder[newCelebration.type]}
