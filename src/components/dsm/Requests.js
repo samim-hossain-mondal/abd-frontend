@@ -373,23 +373,25 @@ export default function Requests({ selectedDate }) {
                 <br />
                 {isAdmin(userRole) && (
                   <>
-                    <Button sx={{
-                      margin: '16px 0',
-                      padding: '12px 0',
-                      width: '100%',
-                      borderRadius: '8px',
-                      color: 'customButton1.contrastText',
-                      backgroundColor: 'customButton1.main',
-                      '&:hover': {
+                    <Button
+                      variant='contained'
+                      sx={{
+                        margin: '8px 0',
+                        padding: '8px 0',
+                        width: '100%',
+                        borderRadius: '8px',
                         color: 'customButton1.contrastText',
                         backgroundColor: 'customButton1.main',
-                      },
-                    }}
-                    onClick={toggleRequestCompletion}>
+                        '&:hover': {
+                          color: 'customButton1.contrastText',
+                          backgroundColor: 'customButton1.main',
+                        },
+                      }}
+                      onClick={toggleRequestCompletion}>
                       Mark as {isRequestCompleted(editModalData.status) ? 'Incomplete' : 'Complete'}
                     </Button>
 
-                    <PONotesDialog 
+                    <PONotesDialog
                       open={openPONote}
                       handleClose={handleClosePONote}
                       value={editModalData?.content}
@@ -397,19 +399,21 @@ export default function Requests({ selectedDate }) {
                       updateItem={false}
                       access={isAdmin(userRole)}
                     />
-
-                    <Button sx={{
-                      padding: '12px 0',
-                      width: '100%',
-                      borderRadius: '8px',
-                      color: 'secondaryButton.contrastText',
-                      backgroundColor: 'secondaryButton.main',
-                      '&:hover': {
+                    <Button
+                      variant='contained'
+                      sx={{
+                        margin: '0px',
+                        padding: '8px 0',
+                        width: '100%',
+                        borderRadius: '8px',
                         color: 'secondaryButton.contrastText',
                         backgroundColor: 'secondaryButton.main',
-                      },
-                    }}
-                    onClick={openCreateActionItemDialog}>
+                        '&:hover': {
+                          color: 'secondaryButton.contrastText',
+                          backgroundColor: 'secondaryButton.main',
+                        },
+                      }}
+                      onClick={openCreateActionItemDialog}>
                       Create Action Item
                     </Button>
                   </>
