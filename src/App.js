@@ -18,7 +18,7 @@ import ScrollableHome from './components/routes/ScrollableHome'
 import {
   CALENDAR_ROUTE,
   HOME_ROUTE,
-  DSM_ROUTE,
+  DAILY_ROUTE,
   MADE_TO_STICK_ROUTE,
   OUR_TEAM_ROUTE,
   PO_NOTE_ROUTE,
@@ -95,7 +95,11 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
-        {authLoaded && window.location.pathname !== '/welcome' && (
+        {
+        authLoaded && 
+        window.location.pathname!==LOGIN_ROUTE &&
+        window.location.pathname!==LOGIN_CALLBACK_ROUTE &&
+        window.location.pathname!==HOME_ROUTE && (
           <Box>
             <Navbar
               authLoaded={authLoaded}
@@ -108,7 +112,7 @@ function AppRoutes() {
         )}
         <Routes>
           <Route path={LOGIN_ROUTE} exact element={<Login />} />
-          <Route path={`/:projectId${DSM_ROUTE}`} exact element={
+          <Route path={`/:projectId${DAILY_ROUTE}`} exact element={
             <SecureRoute>
               {
                 authLoaded &&

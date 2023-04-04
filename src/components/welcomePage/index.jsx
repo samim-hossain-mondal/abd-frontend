@@ -21,7 +21,7 @@ import StickyHeader from '../elements/welcomePage/StickyHeader';
 import NewProjectModal from '../elements/NewProjectModal';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import PaginatedCards from '../elements/welcomePage/PaginatedCards';
-import { DSM_ROUTE, LOGIN_ROUTE } from '../constants/routes';
+import { DAILY_ROUTE, LOGIN_ROUTE } from '../constants/routes';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function WelcomePage() {
   const handleProjectClick = async (projectId) => {
     updateProjectDetails(projectId)
       .then(() => {
-        window.open(`/${projectId}`.concat(DSM_ROUTE), '_blank');
+        window.open(`/${projectId}`.concat(DAILY_ROUTE), '_blank');
       })
       .catch((err) => {
         console.log(err);

@@ -95,7 +95,7 @@ function StickyHeader({
             fontSize="2rem"
             sx={{ marginLeft: 2, cursor: "pointer" }}
           >
-            My Agile Board
+            My Agile Dashboard
           </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -161,7 +161,7 @@ function StickyHeader({
           open={Boolean(anchorElUser)}
           onClose={handleCloseUserMenu}
         >
-          {settings.map((setting) =>
+          {userDetailsUpdated && settings.map((setting) =>
             setting !== "Logout" ? (
               <MenuItem key={setting} onClick={handleCloseUserMenu}>
                 <Typography textAlign="center">{setting}</Typography>

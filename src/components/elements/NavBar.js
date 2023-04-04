@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import { ExpandLess, ExpandMore, } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { animateScroll } from 'react-scroll';
-import { allPages, HOME_ROUTE } from '../constants/routes';
+import { allPages, DAILY_PAGE_NAME, HOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
@@ -37,6 +37,7 @@ export default function Navbar({
   dsmRef,
   availabilityCalendarRef,
 }) {
+  const location = useLocation();
   const pages = allPages
   const { projectId, user, projectDetails, userDetailsUpdated } = useContext(ProjectUserContext)
   const { oktaAuth, authState } = useOktaAuth();
@@ -47,7 +48,7 @@ export default function Navbar({
   const [openRoutesMenu, setOpenRoutesMenu] = useState(false);
   const [openPageNavMenu, setOpenPageNavMenu] = useState(false);
   const [activeOption, setActiveOption] = useState('Daily Retro');
-  const [isDailyPage, setIsDailyPage] = useState(true);
+  const showMobileTabs = (location.pathname === getRoute(DAILY_PAGE_NAME, projectId))
   const sections = [
     { name: 'Daily Retro', ref: dsmRef },
     { name: 'PO Notes', ref: poNotesRef },
@@ -72,7 +73,6 @@ export default function Navbar({
   const handlePageNavMenu = (event) => {
     setAnchorElNavMenu(event.currentTarget);
     setOpenPageNavMenu(!openPageNavMenu);
-    setIsDailyPage(true);
   };
 
   const handleOptionClick = (sectionName, ref) => {
@@ -87,8 +87,6 @@ export default function Navbar({
   
 
   const { loading } = useContext(LoadingContext)
-
-  const location = useLocation();
   return (
     <AppBar
       position="fixed"
@@ -107,7 +105,7 @@ export default function Navbar({
                 <Typography
                   variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
-                  My Agile Board
+                  My Agile Dashboard
                 </Typography>
                 <Typography
                   variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
@@ -133,8 +131,7 @@ export default function Navbar({
                         style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }}
                         to={getRoute(pages[index], projectId)}
                         onClick={
-                          page === 'DSM' ? handlePageNavMenu : () => {
-                            setIsDailyPage(false)
+                          page === DAILY_PAGE_NAME ? handlePageNavMenu : () => {
                             setActiveOption('Daily Retro')
                           }
                         }
@@ -150,7 +147,7 @@ export default function Navbar({
                               ':hover': { color: 'primary.main' }, display: 'flex', fontSize: '1.15rem'
                             }}> {page}
                           </Typography>
-                          {page === 'DSM' && (
+                          {page === DAILY_PAGE_NAME && (
                             <IconButton
                               sx={{ p: 0 }}
                             >
@@ -212,8 +209,8 @@ export default function Navbar({
           {
             ((authLoaded) && (authState?.isAuthenticated)) && (
               <Box sx={{ textAlign: 'right', flexGrow: '1' }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Tooltip title={userDetailsUpdated && user?.name ? "Open settings" : "Loading..."}>
+                  <IconButton onClick={userDetailsUpdated && user?.name && handleOpenUserMenu} sx={{ p: 0 }}>
                     {
                       userDetailsUpdated && user?.name ?
                         <Avatar sx={{ bgcolor: stc(user?.name) }}>
@@ -270,9 +267,8 @@ export default function Navbar({
                     <MenuItem
                       key={page}
                       sx={{ marginLeft: '10px' }}
-                      onClick={page === 'DSM' ? handlePageNavMenu : () => { 
+                      onClick={page === DAILY_PAGE_NAME ? handlePageNavMenu : () => { 
                         setOpenRoutesMenu(false) 
-                        setIsDailyPage(false)
                       }}
                     >
                       <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={getRoute(pages[index], projectId)}>
@@ -293,7 +289,7 @@ export default function Navbar({
           }
           {/* </Box> */}
         </Toolbar>
-        {(!aboveTablet) && (isDailyPage) && (
+        {(!aboveTablet) && (showMobileTabs) && (
           <MobileTabs
             sections={sections}
           />)}

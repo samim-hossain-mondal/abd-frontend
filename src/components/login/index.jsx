@@ -2,10 +2,12 @@ import React from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Box } from '@mui/system';
 import { LinearProgress } from '@mui/material';
-import WelcomePage from '../welcomePage';
+import { useNavigate } from 'react-router-dom';
+import { HOME_ROUTE } from '../constants/routes';
 
 function Loggedin() {
-  return <WelcomePage />;
+  const navigate = useNavigate();
+  navigate(HOME_ROUTE);
 }
 
 function Login() {

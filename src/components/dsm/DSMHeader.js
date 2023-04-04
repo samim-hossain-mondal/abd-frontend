@@ -51,7 +51,7 @@ export default function DSMHeader(
                 noWrap
                 sx={{ ml: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
               >
-                Daily Standup (DSM)
+                Daily Activity
               </Typography>
               {/* <Box sx={{ display: 'flex', alignContent: 'center' }}>
                 <Tooltip title="Previous Date" placement="top">

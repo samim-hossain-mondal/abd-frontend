@@ -168,6 +168,7 @@ export default function PaginatedCards({ projects, handleProjectClick }) {
         onChange={handlePageChange}
         size={isLargeScreen ? "large" : "small"}
         siblingCount={0}
+        color="logoBlue"
         sx={{
           display: "flex",
           justifyContent: "center",
