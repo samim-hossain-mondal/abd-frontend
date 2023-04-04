@@ -20,8 +20,6 @@ import {
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
-// import SaveIcon from "@mui/icons-material/Save";
-// import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { PropTypes } from "prop-types";

@@ -8,7 +8,6 @@ import { Box } from '@mui/material';
 import getAccessToken from './components/utilityFunctions/getAccessToken';
 import MadeToStickContainer from './components/routes/MadeToStick';
 import OurTeamsContainer from './components/routes/OurTeams';
-
 import Navbar from './components/elements/NavBar';
 import Login from './components/login';
 import SecureRoute from './components/secureRoute';

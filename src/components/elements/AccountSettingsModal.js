@@ -193,7 +193,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   const handleSelectedProject = (projectId) => {
     setSelectedProject(projectId);
-    navigate(`/${projectId}/home`);
+    navigate(`/${projectId}/dsm`);
 
   };
 

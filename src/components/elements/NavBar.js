@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line import/no-named-as-default
 import React, { useContext, useState } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -19,9 +20,10 @@ import {
   from '@mui/material';
 import stc from 'string-to-color';
 import PropTypes from 'prop-types';
-import { ExpandLess, ExpandMore, } from '@mui/icons-material';
+import { ExpandLess, ExpandMore,} from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { animateScroll } from 'react-scroll';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { allPages, DAILY_PAGE_NAME, HOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
@@ -29,6 +31,10 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
 import MobileTabs from './MobileTabs';
 import { LoadingContext } from '../contexts/LoadingContext';
+
+import NotificationModal from './NotificationModal'; 
+
+
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
@@ -55,12 +61,16 @@ export default function Navbar({
     { name: 'PO Notes', ref: poNotesRef },
     { name: 'Availability Calendar', ref: availabilityCalendarRef },
   ];
-
+  
+  const [notificationModal, setNotificationModal] = useState(false);
+  const handleOpenNotificationModal = () => {
+    setNotificationModal(true);
+  };
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
   };
   const [openSettings, setOpenSettings] = useState(false);
-
+  
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -207,9 +217,18 @@ export default function Navbar({
               </Box>
             )
           }
+          
           {
             ((authLoaded) && (authState?.isAuthenticated)) && (
               <Box sx={{ textAlign: 'right', flexGrow: '1' }}>
+                {
+                   userDetailsUpdated && user?.name ?
+                       <Tooltip title="Open Notifications">
+                       <NotificationsIcon sx={{color:"blue"}}onClick={handleOpenNotificationModal} />
+                 </Tooltip>
+                 : null
+                }
+            
                 <Tooltip title={userDetailsUpdated && user?.name ? "Open settings" : "Loading..."}>
                   <IconButton onClick={userDetailsUpdated && user?.name && handleOpenUserMenu} sx={{ p: 0 }}>
                     {
@@ -222,7 +241,7 @@ export default function Navbar({
                         </div>
                     }
                   </IconButton>
-                </Tooltip>
+                </Tooltip>               
                 <Menu
                   id="menu-appbar" sx={{ mt: '45px' }}
                   anchorEl={anchorElUser} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -242,7 +261,7 @@ export default function Navbar({
                   ))}
                 </Menu>
                 <AccountSettingsModal open={openSettings} setOpenSettings={setOpenSettings} />
-
+                <NotificationModal open={notificationModal} setOpenNotification={setNotificationModal} />
               </Box>
             )
           }
