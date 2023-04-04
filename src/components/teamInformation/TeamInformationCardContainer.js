@@ -119,7 +119,7 @@ export default function TeamInformationCardContainer({
                     margin="1.5% 0 0% 0"
                     fontSize="large"
                   />
-                  <Box margin="1.75% 4% 2% 2%" display="flex">
+                  <Box margin="1.75% 4% 2% 2%" display="flex" alignItems='center'>
                     {item.message && (
                       <Button
                         href={item.message}

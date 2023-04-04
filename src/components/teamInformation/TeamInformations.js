@@ -5,13 +5,14 @@ import {
   Modal,
   TextField,
   Button,
-  InputAdornment,
   useMediaQuery,
+  CircularProgress,
+  Container,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
-import { Search } from "@mui/icons-material";
+import SearchIcon from '@mui/icons-material/Search';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {
@@ -228,7 +229,7 @@ function CardList() {
     setMemberCard(memberCardValue);
   }, [filteredData]);
 
-  return (
+  return ((adminCards)&&(memberCards)&&(leaderCards))?(
     <Box sx={{ backgroundColor: "#e6eef2", display: "flex", height: "100%" }}>
       <Box
         width="100%"
@@ -237,47 +238,43 @@ function CardList() {
         backgroundColor="#e6eef2"
         className="body"
         height="100vh"
-        sx={{ overflow: "scroll" }}
+        sx={{ overflow: "scroll"}}
       >
         <Box
           position="absoulte"
           width="100%"
-          height="3%"
           marginTop="7rem"
           marginBottom={!breakpoint450 ? "0.8rem" : 0}
           display="flex"
           justifyContent="flex-end"
+          sx={{ backgroundColor: 'primary.contrastText', height: '45px', padding: '8px' }}
         >
-          <Box
-            sx={{
-              background: "white",
-              marginRight: "3.75%",
-              marginBottom: "0.25%",
-            }}
-          >
-            <TextField
-              variant="outlined"
-              placeholder="Search"
-              value={searchValue}
-              onChange={handleSearchValueChange}
-              style={{ background: "white", color: "blue" }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    color="blue"
-                    sx={{ backgroundColor: "white" }}
-                    style={{ backgroundColor: "white" }}
-                  >
-                    <IconButton color="blue">
-                      <Search color="blue" />
-                    </IconButton>
-                  </InputAdornment>
-                ),
+          <Container maxWidth='xl' sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            < Typography variant="h6" sx={{ color: 'secondaryButton.contrastText', fontWeight: 'bold' }}> Collaborators ({adminCards.length+memberCards.length+leaderCards.length}) </Typography>
+            <Box
+              sx={{
+                background: "white"
               }}
-            />
-          </Box>
+            >
+              <TextField
+                id="search-bar"
+                data-testid="search-bar"
+                className="text"
+                label="Search"
+                variant="outlined" placeholder="Search..." size="small"
+                InputProps={{
+                  endAdornment: (
+                    <SearchIcon sx={{ color: 'primary.main' }} />
+                  ),
+                }}
+                value={searchValue}
+                onChange={handleSearchValueChange}
+                sx={{ width: breakpoint450 ? '200px' : "148px" }}
+              />
+            </Box>
+          </Container>
         </Box>
+        <Container maxWidth="xl">
         <Box
           width="100%"
           display="flex"
@@ -286,7 +283,7 @@ function CardList() {
         >
           <Box
             display="flex"
-            width="95%"
+            width="100%"
             flexWrap="wrap"
             justifyContent="center"
             backgroundColor="#e6eef2"
@@ -299,9 +296,9 @@ function CardList() {
               flexWrap="wrap"
               width="99%"
             >
-              {adminCards && (
+              {filteredData && (
                 <TeamInformationCardContainer
-                  cardData={adminCards}
+                  cardData={filteredData}
                   handleOpenModal={handleOpenModal}
                   handleMessageClick={handleMessageClick}
                   formatDate={formatDate}
@@ -309,27 +306,6 @@ function CardList() {
                   today={today}
                 />
               )}
-              {leaderCards && (
-                <TeamInformationCardContainer
-                  cardData={leaderCards}
-                  handleOpenModal={handleOpenModal}
-                  handleMessageClick={handleMessageClick}
-                  formatDate={formatDate}
-                  SlackLogo={SlackLogo}
-                  today={today}
-                />
-              )}
-              {memberCards && (
-                <TeamInformationCardContainer
-                  cardData={memberCards}
-                  handleOpenModal={handleOpenModal}
-                  handleMessageClick={handleMessageClick}
-                  formatDate={formatDate}
-                  SlackLogo={SlackLogo}
-                  today={today}
-                />
-              )}
-
               <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
@@ -582,8 +558,13 @@ function CardList() {
             </Box>
           </Box>
         </Box>
+        </Container>
       </Box>
     </Box>
-  );
+  ):(
+    <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",height:"100vh"}}>
+      <CircularProgress/>
+    </Box>
+  )
 }
 export default CardList;
