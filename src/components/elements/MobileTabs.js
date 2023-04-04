@@ -1,13 +1,19 @@
 import { Tab, Box } from "@mui/material";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { animateScroll } from "react-scroll";
 
 function MobileTabs({ sections }) {
   const [activeTab, setActiveTab] = useState("Daily Retro");
+
   const handleTabClick = (e, name, ref) => {
     e.stopPropagation();
     setActiveTab(name);
-    ref.current.scrollIntoView({ behavior: "smooth" });
+    animateScroll.scrollTo(ref.current.offsetTop, {
+      duration: 200,
+      delay: 0,
+      smooth: 'easeInOutQuint',
+    });
   };
 
   return (
@@ -19,14 +25,21 @@ function MobileTabs({ sections }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        borderTop: "1px solid",
+        borderColor: "divider",
+        marginY: 1
       }}
     >
       {sections.map((section) => (
         <Box
             key={section.name}
             sx={{
-                width: 130,
-                height: 50
+                width: 140,
+                height: 50,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
             }}
         >
           <Tab

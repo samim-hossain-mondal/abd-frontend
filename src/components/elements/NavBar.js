@@ -20,6 +20,7 @@ import stc from 'string-to-color';
 import PropTypes from 'prop-types';
 import { ExpandLess, ExpandMore, } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { animateScroll } from 'react-scroll';
 import { allPages, HOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
 import Logo from '../../assets/images/agileLogo.png';
@@ -27,7 +28,6 @@ import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import AccountSettingsModal from './AccountSettingsModal';
 import MobileTabs from './MobileTabs';
 import { LoadingContext } from '../contexts/LoadingContext';
-
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
 
@@ -38,7 +38,7 @@ export default function Navbar({
   availabilityCalendarRef,
 }) {
   const pages = allPages
-  const { projectId, user, userDetailsUpdated } = useContext(ProjectUserContext)
+  const { projectId, user, projectDetails, userDetailsUpdated } = useContext(ProjectUserContext)
   const { oktaAuth, authState } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const aboveTablet = useMediaQuery('(min-width: 769px)');
@@ -47,6 +47,7 @@ export default function Navbar({
   const [openRoutesMenu, setOpenRoutesMenu] = useState(false);
   const [openPageNavMenu, setOpenPageNavMenu] = useState(false);
   const [activeOption, setActiveOption] = useState('Daily Retro');
+  const [isDailyPage, setIsDailyPage] = useState(true);
   const sections = [
     { name: 'Daily Retro', ref: dsmRef },
     { name: 'PO Notes', ref: poNotesRef },
@@ -71,13 +72,19 @@ export default function Navbar({
   const handlePageNavMenu = (event) => {
     setAnchorElNavMenu(event.currentTarget);
     setOpenPageNavMenu(!openPageNavMenu);
+    setIsDailyPage(true);
   };
 
   const handleOptionClick = (sectionName, ref) => {
-    ref.current.scrollIntoView({ behavior: 'smooth' });
-    setActiveOption(sectionName);
-    setOpenPageNavMenu(false);
-  }
+      animateScroll.scrollTo(ref.current.offsetTop, {
+        duration: 200,
+        delay: 0,
+        smooth: 'easeInOutQuint',
+      });
+      setActiveOption(sectionName);
+      setOpenPageNavMenu(false);
+  };
+  
 
   const { loading } = useContext(LoadingContext)
 
@@ -96,25 +103,21 @@ export default function Navbar({
             component="img" sx={{ height: '50px' }}
             alt="logo" src={Logo}
           />
-          {
-            (aboveTablet) ? (
-              <Box sx={{ paddingLeft: '16px', textAlign: 'center' }}>
+              <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2, display: 'flex', flexDirection: 'column' }}>
                 <Typography
                   variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                 >
                   My Agile Board
                 </Typography>
-              </Box>
-            ) : (
-              <Box sx={{ paddingLeft: '16px', textAlign: 'left', ml: 2 }}>
                 <Typography
                   variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
+                  sx ={{
+                    fontSize: '1.15rem'
+                  }}
                 >
-                  My Agile Board
+                  {projectDetails?.projectName}
                 </Typography>
               </Box>
-            )
-          }
           {
             (aboveTablet) && (
               <Box sx={{ display: 'flex', flexGrow: '2', justifyContent: 'center', alignItems: 'center' }}>
@@ -128,7 +131,10 @@ export default function Navbar({
                         style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }}
                         to={getRoute(pages[index], projectId)}
                         onClick={
-                          page === 'DSM' ? handlePageNavMenu : null
+                          page === 'DSM' ? handlePageNavMenu : () => {
+                            setIsDailyPage(false)
+                            setActiveOption('Daily Retro')
+                          }
                         }
                       >
                         <Box
@@ -262,7 +268,10 @@ export default function Navbar({
                     <MenuItem
                       key={page}
                       sx={{ marginLeft: '10px' }}
-                      onClick={page === 'DSM' ? handlePageNavMenu : () => { setOpenRoutesMenu(false) }}
+                      onClick={page === 'DSM' ? handlePageNavMenu : () => { 
+                        setOpenRoutesMenu(false) 
+                        setIsDailyPage(false)
+                      }}
                     >
                       <Link style={{ textDecoration: 'none', width: '100%', textAlign: 'center' }} to={getRoute(pages[index], projectId)}>
                         <Typography
@@ -282,7 +291,7 @@ export default function Navbar({
           }
           {/* </Box> */}
         </Toolbar>
-        {(!aboveTablet) && (
+        {(!aboveTablet) && (isDailyPage) && (
           <MobileTabs
             sections={sections}
           />)}

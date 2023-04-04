@@ -58,7 +58,6 @@ function AppRoutes() {
   const poNotesRef = useRef(null);
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
-  // const aboveTablet = useMediaQuery('(min-width: 600px)');
 
   const { updateUserDetails } = useContext(ProjectUserContext);
   const { setLoading } = useContext(LoadingContext);
