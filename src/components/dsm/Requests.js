@@ -274,6 +274,7 @@ export default function Requests({ selectedDate }) {
             authorName={user.name}
             authorId={user.userId}
             date={new Date()}
+            addContent={addContent}
           >
             <Typography>
               Tags
@@ -448,7 +449,7 @@ export default function Requests({ selectedDate }) {
                     onClick={() => {
                       editModalData.isFlagged = !editModalData.isFlagged;
                       handleEditRequest(editModalData.content);
-                      setEditModalData({...editModalData});
+                      setEditModalData({ ...editModalData });
                     }}
                   >
                     {editModalData.isFlagged ? 'Unflag' : 'Flag'}
