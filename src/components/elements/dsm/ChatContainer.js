@@ -7,7 +7,7 @@ import DateDivider from '../DateDivider';
 import { getDateGroupName } from "../../utilityFunctions/dateMatcher";
 import { DSM_REQUEST_TYPES } from '../../constants/dsm/Requests';
 
-export default function ChatContainer({ name, src, content, date, previousRequestDate, onClick, isRequestDone, chipContent }) {
+export default function ChatContainer({ name, src, content, date, previousRequestDate, onClick, isRequestDone, chipContent, isRequestFlagged }) {
 
   const [dateGroupName, setDateGroupName] = useState();
 
@@ -59,6 +59,17 @@ export default function ChatContainer({ name, src, content, date, previousReques
               })}
             </Typography>
             <Box>
+              {                
+                isRequestFlagged && <Chip label="FLAGGED" sx={{
+                  cursor: onClick ? 'pointer' : 'default',
+                  height: "24px",
+                  width: "80px",
+                  fontSize: "10px",
+                  // light yellow color
+                  backgroundColor: "#fffde7",
+                  marginRight: "8px"
+                }} />
+              }
               {
                 isRequestDone && <Chip label="COMPLETE" sx={{
                   cursor: onClick ? 'pointer' : 'default',
@@ -96,6 +107,7 @@ ChatContainer.propTypes = {
   chipContent: PropTypes.string,
   isRequestDone: PropTypes.bool,
   previousRequestDate: (PropTypes.instanceOf(Date) || PropTypes.string).isRequired,
+  isRequestFlagged: PropTypes.bool,
 };
 
 ChatContainer.defaultProps = {
@@ -105,5 +117,6 @@ ChatContainer.defaultProps = {
   date: '',
   onClick: undefined,
   chipContent: '',
-  isRequestDone: false
+  isRequestDone: false,
+  isRequestFlagged: false
 };

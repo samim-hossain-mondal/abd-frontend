@@ -155,6 +155,11 @@ export default function Requests({ selectedDate }) {
         type: requestType,
         status: editModalData.status,
       }
+
+      if (editModalData.isFlagged !== undefined) {
+        reqBody.isFlagged = editModalData.isFlagged;
+      }
+
       const resData = await makeRequest(UPDATE_TEAM_REQUEST(projectId, editModalData.requestId), setLoading, { data: reqBody })
       setSuccess(() => SUCCESS_MESSAGE(GENERIC_NAME).UPDATED);
       setRequests(requests.map((request) => {
@@ -336,6 +341,7 @@ export default function Requests({ selectedDate }) {
                     onClick={() => handleChatClick(request)}
                     chipContent={request.type}
                     isRequestDone={isRequestCompleted(request.status)}
+                    isRequestFlagged={request.isFlagged}
                   />
                 ))}
               </InfiniteScroll >
@@ -422,6 +428,32 @@ export default function Requests({ selectedDate }) {
                     </Button>
                   </>
                 )}
+
+                {
+                  user.memberId === editModalData.memberId &&
+                  <Button
+                    variant='contained'
+                    sx={{
+                      margin: '8px 0',
+                      padding: '8px 0',
+                      width: '100%',
+                      borderRadius: '8px',
+                      color: 'customButton1.contrastText',
+                      backgroundColor: 'customButton1.main',
+                      '&:hover': {
+                        color: 'customButton1.contrastText',
+                        backgroundColor: 'customButton1.main',
+                      },
+                    }}
+                    onClick={() => {
+                      editModalData.isFlagged = !editModalData.isFlagged;
+                      handleEditRequest(editModalData.content);
+                      setEditModalData({...editModalData});
+                    }}
+                  >
+                    {editModalData.isFlagged ? 'Unflag' : 'Flag'}
+                  </Button>
+                }
               </GenericInputModal>
             </Dialog>
           )
