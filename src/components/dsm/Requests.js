@@ -153,7 +153,7 @@ export default function Requests({ selectedDate }) {
         status: editModalData.status,
       }
 
-      if (editModalData.isFlagged) {
+      if (editModalData.isFlagged !== undefined) {
         reqBody.isFlagged = editModalData.isFlagged;
       }
 
@@ -338,6 +338,7 @@ export default function Requests({ selectedDate }) {
                     onClick={() => handleChatClick(request)}
                     chipContent={request.type}
                     isRequestDone={isRequestCompleted(request.status)}
+                    isRequestFlagged={request.isFlagged}
                   />
                 ))}
               </InfiniteScroll >
@@ -441,11 +442,12 @@ export default function Requests({ selectedDate }) {
                       },
                     }}
                     onClick={() => {
-                      editModalData.isFlagged = true;
+                      editModalData.isFlagged = !editModalData.isFlagged;
                       handleEditRequest(editModalData.content);
+                      setEditModalData({...editModalData});
                     }}
                   >
-                    Flag It
+                    {editModalData.isFlagged ? 'Unflag' : 'Flag'} It
                   </Button>
                 }
               </GenericInputModal>
