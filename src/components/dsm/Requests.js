@@ -23,6 +23,8 @@ import { RefreshContext } from '../contexts/RefreshContext';
 import { isAdmin, isMember } from '../constants/users';
 import SkeletonRequest from '../skeletons/dsm/request';
 import { LoadingContext } from '../contexts/LoadingContext';
+import PONotesDialog from '../poNotesComponents/PONotesDialog';
+import { PO_NOTES_TYPES } from '../constants/PONotes';
 
 export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -196,7 +198,13 @@ export default function Requests({ selectedDate }) {
     }
   }
 
-  const openCreateActionItemDialog = () => {}
+  const [openPONote, setOpenPONote] = useState(false);
+  const openCreateActionItemDialog = () => {
+    setOpenPONote(true);
+  }
+  const handleClosePONote = () => {
+    setOpenPONote(false);
+  }
 
   return (
     <Grid item height={gridHeightState.request.height}
@@ -255,6 +263,9 @@ export default function Requests({ selectedDate }) {
             }}
             placeholder={DSM_REQUEST_INPUT_PLACEHOLDER}
             totalCharacters={CHAR_COUNT}
+            authorName={user.name}
+            authorId={user.userId}
+            date={new Date()}
           >
             <Typography>
               Tags
@@ -377,6 +388,15 @@ export default function Requests({ selectedDate }) {
                     onClick={toggleRequestCompletion}>
                       Mark as {isRequestCompleted(editModalData.status) ? 'Incomplete' : 'Complete'}
                     </Button>
+
+                    <PONotesDialog 
+                      open={openPONote}
+                      handleClose={handleClosePONote}
+                      value={editModalData?.content}
+                      typeOfPONote={PO_NOTES_TYPES.ACTION_ITEM}
+                      updateItem={false}
+                      access={isAdmin(userRole)}
+                    />
 
                     <Button sx={{
                       padding: '12px 0',
