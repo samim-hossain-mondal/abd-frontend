@@ -4,47 +4,41 @@ import GridLayout from "react-grid-layout";
 import { Resizable } from "react-resizable";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, CircularProgress, Container } from "@mui/material";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import axios from "axios";
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { ErrorContext } from '../contexts/ErrorContext';
-import { BACKEND_URL, API_URL } from "../../constants/apiUrl";
 import Note from "./Note";
 import "react-quill/dist/quill.snow.css";
 import { SUCCESS_MESSAGE, ERROR_MESSAGE, NOTE_TYPES } from "../constants/MadeToStick";
 import { USER_ROLES } from "../constants/users";
+import makeRequest from "../utilityFunctions/makeRequest";
+import { CREATE_MADE_TO_STICK, GET_MADE_TO_STICK, UPDATE_MADE_TO_STICK, DELETE_MADE_TO_STICK } from "../constants/apiEndpoints";
+import { LoadingContext } from "../contexts/LoadingContext";
 
 export default function MadeToStick() {
+  const TABLET_WIDTH = 769;
   const [isPO, setIsPO] = useState(false);
   const [cardDetails, setCardDetails] = useState([]);
   const [mobileCardDetails, setMobileCardDetails] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isMobile, setIsMobile] = useState(windowWidth < 769);
+  const [isMobile, setIsMobile] = useState(windowWidth < TABLET_WIDTH);
   const [cards, setCards] = useState([]);
   const [layout, setLayout] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
 
-  const { user } = useContext(ProjectUserContext);
+  const { user, userRole } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
+  const { setLoading } = useContext(LoadingContext);
   const { projectId } = useParams();
 
   const userId = user.memberId;
 
   const UserRole = USER_ROLES;
-  const TABLET_WIDTH = 769;
 
-  useEffect(() => {
-    const getUserRole = async () => {
-      const res = await axios.get(`${BACKEND_URL}/api/management/project/${projectId}/member/${userId}`);
-      if (res.data.role === UserRole.ADMIN || res.data.role === UserRole.LEADER) {
-        setIsPO(true);
-      }
-    }
-    getUserRole();
-  }, []);
+  const isPOCondition = ((userRole===UserRole.ADMIN) || (userRole===UserRole.LEADER));
 
   const handleEditImgLink = (i) => {
     setIsEdit(i);
@@ -52,10 +46,11 @@ export default function MadeToStick() {
 
   useEffect(() => {
     const getCards = async () => {
-      const res = await axios.get(`${API_URL}/${projectId}`);
-      setCardDetails(res.data);
-      setMobileCardDetails(res.data);
+      const res = await makeRequest(GET_MADE_TO_STICK(projectId),setLoading);
+      setCardDetails(res);
+      setMobileCardDetails(res);
     };
+    setIsPO(isPOCondition);
     getCards();
   }, []);
 
@@ -130,9 +125,10 @@ export default function MadeToStick() {
 
   const editCard = async (i, value, backgroundColor, x, y, w, h, type, emailId) => {
     try {
-      await axios.put(`${API_URL}/${projectId}/${i}`, {
+      const reqBody = {
         i, value, backgroundColor, x, y, w, h, type, emailId,
-      });
+      };
+      await makeRequest(UPDATE_MADE_TO_STICK(projectId, i),setLoading,{data: reqBody});
       setSuccess(SUCCESS_MESSAGE.SAVED);
     } catch (error) {
       setError(ERROR_MESSAGE.SAVE_ERROR);
@@ -182,7 +178,7 @@ export default function MadeToStick() {
 
   const addTextCard = async () => {
     try {
-      const response = await axios.post(`${API_URL}/${projectId}`, {
+      const reqBody = {
         value: "Enter your text here",
         backgroundColor: "backgroundColor.secondary",
         x: 0,
@@ -190,10 +186,11 @@ export default function MadeToStick() {
         w: 5,
         h: 3,
         type: NOTE_TYPES.TEXT,
-        emailId: "test",
-      });
-      setCards([...cards, response.data]);
-      setLayout([...layout, response.data]);
+        emailId: user.email,
+      };
+      const response = await makeRequest(CREATE_MADE_TO_STICK(projectId),setLoading,{data: reqBody});
+      setCards([...cards, response]);
+      setLayout([...layout, response]);
     } catch (err) {
       setError(ERROR_MESSAGE.ERROR);
     }
@@ -201,7 +198,7 @@ export default function MadeToStick() {
 
   const handleDelete = async (i) => {
     try {
-      await axios.delete(`${API_URL}/${projectId}/${i}`);
+      await makeRequest(DELETE_MADE_TO_STICK(projectId, i),setLoading);
       setSuccess(SUCCESS_MESSAGE.DELETED);
     } catch (err) {
       setError(ERROR_MESSAGE.ERROR);
@@ -216,7 +213,7 @@ export default function MadeToStick() {
     setIsEdit(false);
   };
 
-  return (
+  return (cards)?(
     <Box sx={{ marginTop: '110px' }}>
       {(!isMobile) && (
         <Box sx={{ backgroundColor: 'backgroundColor.main', padding: '24px 0' }}>
@@ -346,5 +343,9 @@ export default function MadeToStick() {
         </Box>
       )}
     </Box>
-  );
+  ):(
+    <Box sx={{ marginTop: '110px' }}>
+      <CircularProgress/>
+    </Box>
+  )
 };
