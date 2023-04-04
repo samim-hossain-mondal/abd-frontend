@@ -34,12 +34,14 @@ function MobileTabs({ sections }) {
         <Box
             key={section.name}
             sx={{
-                width: 140,
+                width: '33%',
                 height: 50,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 textAlign: "center",
+                borderBottom: activeTab === section.name ? "5px solid" : "none",
+                borderBottomColor: activeTab === section.name ? "logoBlue.main" : "none",
             }}
         >
           <Tab
@@ -49,8 +51,10 @@ function MobileTabs({ sections }) {
             onClick={(e) => handleTabClick(e, section.name, section.ref)}
             sx={{
               marginInline: 0,
-              borderBottom: activeTab === section.name ? "5px solid" : "none",
-              borderBottomColor: activeTab === section.name ? "logoBlue.main" : "none",
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              overflow: "hidden",
+              fontSize: "0.85rem",
             }}
           />
         </Box>

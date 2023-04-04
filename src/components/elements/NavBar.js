@@ -112,7 +112,9 @@ export default function Navbar({
                 <Typography
                   variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                   sx ={{
-                    fontSize: '1.15rem'
+                    fontSize: '1.15rem',
+                    color: 'text.secondary',
+                    fontWeight: '400',
                   }}
                 >
                   {projectDetails?.projectName}

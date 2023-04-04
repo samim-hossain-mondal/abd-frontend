@@ -48,6 +48,7 @@ export default function Requests({ selectedDate }) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
   const [hasMore, setHasMore] = useState(true);
+  const [openPONote, setOpenPONote] = useState(false);
   const [addContent, setAddContent] = useState(false);
 
   const handleEditModalClose = () => {
@@ -206,7 +207,6 @@ export default function Requests({ selectedDate }) {
     }
   }
 
-  const [openPONote, setOpenPONote] = useState(false);
   const openCreateActionItemDialog = () => {
     setOpenPONote(true);
   }
