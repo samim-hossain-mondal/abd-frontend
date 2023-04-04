@@ -48,14 +48,12 @@ export default function GenericInputModal({
   authorize,
   totalCharacters,
   authorName,
-  authorId,
-  date
+  date,
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
   const [users, setUsers] = useState([]);
   const { projectDetails } = useContext(ProjectUserContext);
-  const { user } = useContext(ProjectUserContext);
   const { setSuccess, setError } = useContext(ErrorContext);
   const [charCount, setCharCount] = useState(content.length ?? 0);
 
@@ -142,8 +140,8 @@ export default function GenericInputModal({
           )
       }
       {
-        user.memberId !== authorId &&
-        <Box sx={{ mt: 1, mb: 2 }}>
+        !authorize &&
+        < Box sx={{ mt: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ mr: 1 }}>
               <Avatar {...stringAvatar(authorName, stc)}
@@ -276,26 +274,28 @@ export default function GenericInputModal({
           </Button>
         )
       }
-      {secondaryButtonText && (
-        <Button
-          sx={{
-            margin: '16px 0',
-            padding: '8px 0',
-            width: '100%',
-            borderRadius: '8px',
-            color: 'customButton1.contrastText',
-            backgroundColor: 'customButton1.main',
-            '&:hover': {
+      {
+        secondaryButtonText && (
+          <Button
+            sx={{
+              margin: '16px 0',
+              padding: '8px 0',
+              width: '100%',
+              borderRadius: '8px',
               color: 'customButton1.contrastText',
               backgroundColor: 'customButton1.main',
-            },
-          }}
-          onClick={() => onSecondaryButtonClick(content)}
-        >
-          {secondaryButtonText}
-        </Button>
-      )}
-    </Box>
+              '&:hover': {
+                color: 'customButton1.contrastText',
+                backgroundColor: 'customButton1.main',
+              },
+            }}
+            onClick={() => onSecondaryButtonClick(content)}
+          >
+            {secondaryButtonText}
+          </Button>
+        )
+      }
+    </Box >
   );
 }
 

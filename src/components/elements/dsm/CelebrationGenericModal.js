@@ -157,7 +157,7 @@ export default function CelebrationGenericModal({
           <Box>
             {
               user.memberId !== newCelebration.memberId && !isNewCelebration &&
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Box sx={{ mr: 1 }}>
                   <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
                 </Box>
@@ -176,7 +176,7 @@ export default function CelebrationGenericModal({
                 </Box>
               </Box>
             }
-            <Box sx={{ margin: '16px 0 16px 0' }}>
+            <Box sx={{ margin: '0 0 16px 0' }}>
               <Typography variant="contentMain" sx={{ fontSize: '1.2rem', color: '#121212' }}>Share your thoughts</Typography>
             </Box>
             <Box sx={{ margin: '16px 0 16px 0' }}>
@@ -259,9 +259,10 @@ export default function CelebrationGenericModal({
             {
               secondaryButtonText && (
                 <Button
+                  variant='contained'
                   sx={{
-                    margin: '8px 0 5px 0',
-                    padding: '12px 0',
+                    margin: '16px 0',
+                    padding: '8px 0',
                     width: '100%',
                     borderRadius: '8px',
                     color: 'secondaryButton.contrastText',
@@ -280,9 +281,10 @@ export default function CelebrationGenericModal({
           </Grid>
           <Grid item xs={6}>
             <Button
+              variant='contained'
               sx={{
-                margin: '8px 0 5px 0',
-                padding: '12px 0',
+                margin: '16px 0',
+                padding: '8px 0',
                 width: '100%',
                 borderRadius: '8px',
                 color: 'customButton1.contrastText',
