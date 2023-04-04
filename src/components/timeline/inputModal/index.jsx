@@ -1,13 +1,16 @@
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel, useMediaQuery } from '@mui/material';
-import { Box } from '@mui/system';
+import { Avatar, Box, Button, IconButton, TextField, Typography, Checkbox, FormGroup, FormControlLabel, useMediaQuery } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import stc from 'string-to-color';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 import DateTimePicker from '../../elements/timeline/DateTimePicker/Index';
 import DeleteDialog from '../../elements/DeleteDialog';
 
 export default function GenericInputModal({
+  editModal,
+  authorName,
   onCloseButtonClick,
   defaultEvent,
   defaultStartDate,
@@ -70,6 +73,19 @@ export default function GenericInputModal({
         )
       }
       
+      {
+        editModal && 
+          <Box sx={{ display: 'flex', alignItems: 'center',mt: 1, mb: 2 }}>
+            <Box sx={{ mr: 1 }}>
+              <Avatar {...stringAvatar(authorName, stc)}
+                sx={{ width: "30px", height: "30px", aspectRatio: "1/1", bgcolor: stc(authorName) }}
+              />
+            </Box>
+            <Box>
+              <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{authorName}</Typography>
+            </Box>
+         </Box>
+      }
 
       <Typography variant="h5">Event Notes</Typography>
 
@@ -148,6 +164,8 @@ export default function GenericInputModal({
 }
 
 GenericInputModal.propTypes = {
+  editModal: PropTypes.bool.isRequired,
+  authorName: PropTypes.string.isRequired,
   onCloseButtonClick: PropTypes.func.isRequired,
   primaryButtonText: PropTypes.string.isRequired,
   onPrimaryButtonClick: PropTypes.func,

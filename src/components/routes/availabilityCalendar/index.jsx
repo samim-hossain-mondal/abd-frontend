@@ -332,11 +332,13 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
           {editModal && (
             <Dialog open={editModal} onClose={handleEditModalClose}>
               <GenericInputModal
+                editModal={editModal}
                 onCloseButtonClick={handleEditModalClose}
                 primaryButtonText={PRIMARY_BUTTON_TEXT.EDIT}
                 onPrimaryButtonClick={(event) => {
                   handleEditEvent(event);
                 }}
+                authorName={selectedEvent.userFullName}
                 defaultID={selectedEvent.leaveId}
                 defaultEvent={selectedEvent.event}
                 defaultStartDate={new Date(selectedEvent.startDate)}
