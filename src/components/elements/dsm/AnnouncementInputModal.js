@@ -165,7 +165,7 @@ export default function AnnouncementInputModal({
             />
           </Box>
           <Box>
-            <Typography sx={{ fontWeight: 700, fontSize: '15px' }}>{authorName}</Typography>
+            <Typography sx={{ fontSize: '0.9rem', lineHeight: 1 }}>{authorName}</Typography>
             <Typography variant="caption" sx={{ color: 'gray', fontSize: '0.7rem' }}>
               {new Date(createdDate).toLocaleString('en-US', {
                 month: 'short',
