@@ -48,6 +48,7 @@ export default function Requests({ selectedDate }) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [requestType, setRequestType] = useState(DSM_REQUEST_DEFAULT_TYPE);
   const [hasMore, setHasMore] = useState(true);
+  const [addContent, setAddContent] = useState(false);
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
@@ -66,10 +67,12 @@ export default function Requests({ selectedDate }) {
   const handleAddButtonClick = (e) => {
     e.stopPropagation();
     setOpenAddModal(!openModal);
+    setAddContent(true);
   }
 
   const handleModalClose = () => {
     setOpenAddModal(false);
+    setAddContent(false);
   }
 
   const getRequests = async (params) => {
@@ -361,6 +364,7 @@ export default function Requests({ selectedDate }) {
                 authorName={editModalData.author}
                 authorId={editModalData.memberId}
                 date={new Date(editModalData.createdAt)}
+                addContent={addContent}
               >
                 <Typography>
                   Tags
