@@ -49,6 +49,7 @@ export default function GenericInputModal({
   totalCharacters,
   authorName,
   date,
+  addContent
 }) {
   const matchesLargeSize = useMediaQuery('(min-width:400px)');
   const [content, setContent] = useState(defaultValue ?? '');
@@ -100,6 +101,7 @@ export default function GenericInputModal({
               sx={{
                 display: 'flex',
                 justifyContent: authorize ? 'space-between' : "flex-end",
+                mb: 2
               }}
             >
               {authorize &&
@@ -140,7 +142,7 @@ export default function GenericInputModal({
           )
       }
       {
-        !authorize &&
+        !addContent &&
         < Box sx={{ mt: 1, mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ mr: 1 }}>
@@ -166,7 +168,7 @@ export default function GenericInputModal({
       <Box sx={{
         width: '100%',
         margin: '8px 0',
-        padding: 0,
+        pt: 1,
         position: 'relative'
       }}>
         <ReactTextareaAutocomplete
@@ -200,6 +202,7 @@ export default function GenericInputModal({
           containerStyle={{
             width: '100%',
             padding: 0,
+            marginBottom: '32px',
           }}
           minChar={0}
           trigger={{
@@ -323,7 +326,8 @@ GenericInputModal.propTypes = {
   totalCharacters: PropTypes.number,
   authorName: PropTypes.string.isRequired,
   authorId: PropTypes.string.isRequired,
-  date: PropTypes.instanceOf(Date).isRequired
+  date: PropTypes.instanceOf(Date).isRequired,
+  addContent: PropTypes.bool.isRequired,
 };
 
 GenericInputModal.defaultProps = {
