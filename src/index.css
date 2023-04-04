@@ -15,3 +15,51 @@ body {
   min-height: 100vh;
   width: 100vw;
 }
+
+/**
+ * ==============================================
+ * Dot Typing
+ * ==============================================
+ */
+.dot-typing {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #2258f5;
+  color: #2258f5;
+  box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5, 10014px 0 0 0 #2258f5;
+  animation: dot-typing 1.5s infinite linear;
+}
+
+@keyframes dot-typing {
+  0% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+  16.667% {
+    box-shadow: 9984px -10px 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+  33.333% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+  50% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px -10px 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+  66.667% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+  83.333% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px -10px 0 0 #2258f5;
+  }
+  100% {
+    box-shadow: 9984px 0 0 0 #2258f5, 9999px 0 0 0 #2258f5,
+      10014px 0 0 0 #2258f5;
+  }
+}

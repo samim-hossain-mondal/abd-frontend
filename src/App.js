@@ -22,17 +22,20 @@ import {
   MADE_TO_STICK_ROUTE,
   OUR_TEAM_ROUTE,
   PO_NOTE_ROUTE,
+  LOGIN_CALLBACK_ROUTE,
+  LOGIN_ROUTE,
 } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
 import LoginCallbackPage from './components/elements/LoginCallbackPage';
 import getDBOffSetTime from './components/utilityFunctions/getOffsetTimestamp';
 import getTodayDate from './components/utilityFunctions/getTodayDate';
+import { LoadingContext } from './components/contexts/LoadingContext';
 
 const oktaAuth = new OktaAuth({
   issuer: `https://${process.env.REACT_APP_OCTA_DOMAIN}/oauth2/default`,
   clientId: process.env.REACT_APP_OKTA_CLIENT_ID,
-  redirectUri: `${window.location.origin}/login/callback`
+  redirectUri: `${window.location.origin}${LOGIN_CALLBACK_ROUTE}`
 });
 const queryClient = new QueryClient();
 
@@ -58,11 +61,13 @@ function AppRoutes() {
   // const aboveTablet = useMediaQuery('(min-width: 600px)');
 
   const { updateUserDetails } = useContext(ProjectUserContext);
-
+  const { setLoading } = useContext(LoadingContext);
   const { setError, setSuccess } = useContext(ErrorContext);
+
   const setAxiosHeader = async () => {
     if (!authState) {
       axios.defaults.headers.common.Authorization = null;
+      setLoading(false)
       return;
     }
     const accessToken = await getAccessToken(authState);
@@ -103,7 +108,7 @@ function AppRoutes() {
           </Box>
         )}
         <Routes>
-          <Route path='/' exact element={<Login />} />
+          <Route path={LOGIN_ROUTE} exact element={<Login />} />
           <Route path={`/:projectId${DSM_ROUTE}`} exact element={
             <SecureRoute>
               {
@@ -157,7 +162,8 @@ function AppRoutes() {
               }
             </SecureRoute>} />
           <Route path={HOME_ROUTE} element={< WelcomePage />} />
-          <Route path='/login/callback' element={<LoginCallbackPage />} />
+          <Route path="/" element={< WelcomePage />} />
+          <Route path={LOGIN_CALLBACK_ROUTE} element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
       </Box>

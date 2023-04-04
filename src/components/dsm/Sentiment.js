@@ -186,19 +186,19 @@ export default function Sentiment() {
                 ...(userRole && isMember(userRole) && { paddingLeft: breakpoint391 ? "none" : "5px" })
               }}
             >
-              {isLeaderOrAdmin() ?
+              {!userRole || isLeaderOrAdmin() ?
                 (<Typography variant="dsmSubMain" fontSize='1.25rem'
-                  sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{userRole && HEADING}
+                  sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{HEADING}
                 </Typography>) :
                 (<Typography onClick={() => { }} variant="dsmMain"
                   sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
                   fontSize={breakpoint500 ? "1.65rem" : "1.25rem"} paddingLeft="6%" textTransform='none'
                   width="100%" >
-                  {userRole && "How are you feeling today?"}
-                  {userRole && <InformationModel
+                  How are you feeling today?
+                  <InformationModel
                     heading={SentimentMeterInfo.heading}
                     definition={SentimentMeterInfo.definition}
-                    accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />}
+                    accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />
                 </Typography>)
               }
             </AccordionSummary>

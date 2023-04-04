@@ -21,7 +21,7 @@ import StickyHeader from '../elements/welcomePage/StickyHeader';
 import NewProjectModal from '../elements/NewProjectModal';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import PaginatedCards from '../elements/welcomePage/PaginatedCards';
-import { DSM_ROUTE } from '../constants/routes';
+import { DSM_ROUTE, LOGIN_ROUTE } from '../constants/routes';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export default function WelcomePage() {
   };
 
   const handleLoginClick = () => {
-    navigate('/');
+    navigate(LOGIN_ROUTE);
   };
 
   let projectCountText;

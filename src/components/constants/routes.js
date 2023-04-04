@@ -1,4 +1,6 @@
 export const HOME_ROUTE = '/welcome';
+export const LOGIN_ROUTE = "/login";
+export const LOGIN_CALLBACK_ROUTE = "/login/callback";
 
 export const DSM_ROUTE = '/dsm';
 export const PO_NOTE_ROUTE = '/po-notes';

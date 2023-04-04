@@ -1,4 +1,7 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState, useContext } from "react";
+import stc from 'string-to-color';
+
 import {
   Box,
   Typography,
@@ -17,16 +20,17 @@ import Logo from "../../../assets/images/agileLogo.png";
 import AccountSettingsModal from "../AccountSettingsModal";
 import { ProjectUserContext } from "../../contexts/ProjectUserContext";
 import { LoadingContext } from '../../contexts/LoadingContext';
+import stringAvatar from '../../utilityFunctions/getStringColor';
 
 const settings = ["Profile", "Account Settings", "Logout"];
 
 function StickyHeader({
   userName, handleCreateProjectClick, handleLoginClick
 }) {
-  const { oktaAuth } = useOktaAuth();
+  const { oktaAuth, authState } = useOktaAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openSettings, setOpenSettings] = useState(false);
-  const { user } = useContext(ProjectUserContext)
+  const { user, userDetailsUpdated } = useContext(ProjectUserContext)
   const isLargeScreen = useMediaQuery("(min-width: 600px)");
 
   const handleOpenUserMenu = (event) => {
@@ -95,52 +99,57 @@ function StickyHeader({
           </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>
-          {user.memberId ? (
-            <>
-              {isLargeScreen && (
-                <Button
-                  variant="outlined"
-                  sx={{
-                    color: "logoBlue.main",
-                    margin: 1,
-                    marginInline: 2,
-                    padding: 1,
-                    fontWeight: "bold"
-                  }}
-                  onClick={handleCreateProjectClick}
-                >
-                  Create Project
-                </Button>
-              )}
-              <Tooltip title="Open settings">
-                <IconButton
-                  onClick={handleOpenUserMenu}
-                  sx={{ marginRight: 0, padding: 0 }}
-                >
-                  <Avatar
-                    alt={userName}
-                    src="/static/images/avatar/2.jpg"
-                    sx={{ height: 50, width: 50, }}
-                  />
-                </IconButton>
-              </Tooltip>
-            </>
-          ) : (
-            <Button
-              variant="outlined"
-              sx={{
-                color: "logoBlue.main",
-                margin: 1,
-                // marginInline: 2,
-                padding: 1,
-                px: 2,
-                fontWeight: "bold",
-              }}
-              onClick={handleLoginClick}
-            >
-              Login
-            </Button>
-          )}
+          {!userDetailsUpdated && authState?.accessToken !== undefined ?
+            <div className="stage" style={{ paddingRight: "40px" }}>
+              <div className="dot-typing" />
+            </div> :
+            user.memberId ? (
+              <>
+                {isLargeScreen && (
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      color: "logoBlue.main",
+                      margin: 1,
+                      marginInline: 2,
+                      padding: 1,
+                      fontWeight: "bold"
+                    }}
+                    onClick={handleCreateProjectClick}
+                  >
+                    Create Project
+                  </Button>
+                )}
+                <Tooltip title="Open settings">
+                  <IconButton
+                    onClick={handleOpenUserMenu}
+                    sx={{ marginRight: 0, padding: 0 }}
+                  >
+                    <Avatar
+                      {...stringAvatar(userName ?? '  ', stc)}
+                      height="50px"
+                      width="50px"
+                    />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <Button
+                variant="outlined"
+                sx={{
+                  color: "logoBlue.main",
+                  margin: 1,
+                  // marginInline: 2,
+                  padding: 1,
+                  px: 2,
+                  fontWeight: "bold",
+                }}
+                onClick={handleLoginClick}
+              >
+                Login
+              </Button>
+            )
+          }
         </Box>
         <Menu
           id="menu-appbar"

@@ -208,7 +208,11 @@ export default function PONotesTable(props) {
           </Box>
         </Box>
       </Box> :
-      <Box>Loading....</Box>
+      <Box>
+        {[...Array(10)].map(() =>
+          <SkeletonPONote />
+        )}
+      </Box>
   )
 }
 

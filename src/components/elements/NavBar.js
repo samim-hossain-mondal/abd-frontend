@@ -38,7 +38,7 @@ export default function Navbar({
   availabilityCalendarRef,
 }) {
   const pages = allPages
-  const { projectId, user } = useContext(ProjectUserContext)
+  const { projectId, user, userDetailsUpdated } = useContext(ProjectUserContext)
   const { oktaAuth, authState } = useOktaAuth();
   const logout = async () => oktaAuth.signOut('/');
   const aboveTablet = useMediaQuery('(min-width: 769px)');
@@ -207,11 +207,13 @@ export default function Navbar({
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     {
-                      user?.name ?
+                      userDetailsUpdated && user?.name ?
                         <Avatar sx={{ bgcolor: stc(user?.name) }}>
                           {user.name[0].toUpperCase()}
                         </Avatar>
-                        : <Avatar />
+                        : <div className="stage" style={{ paddingRight: "20px" }}>
+                          <div className="dot-typing" />
+                        </div>
                     }
                   </IconButton>
                 </Tooltip>

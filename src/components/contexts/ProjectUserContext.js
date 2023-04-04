@@ -20,6 +20,7 @@ export function ProjectUserProvider({ children }) {
 
   const [user, setUser] = useState({});
   const [userRole, setUserRole] = useState();
+  const [userDetailsUpdated, setUserDetailsUpdated] = useState(false);
 
   const [projects, setProjects] = useState([]);
   const [projectsUpdated, setProjectsUpdated] = useState(false);
@@ -38,11 +39,14 @@ export function ProjectUserProvider({ children }) {
       setSuccess("User details loaded successfully");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setUserDetailsUpdated(true)
     }
   };
 
   const updateProjectDetails = async (projectIdParam, setError) => {
     try {
+      setUserRole(undefined)
       setProjectId(projectIdParam);
       const resData = await makeRequest(GET_PROJECT_BY_ID(projectIdParam), setLoading);
       const memberData = resData.projectMembers?.find(
@@ -138,6 +142,8 @@ export function ProjectUserProvider({ children }) {
       addNewProject,
       fetchProjectInfo,
       deleteProject,
+      userDetailsUpdated,
+      setUserDetailsUpdated
     }),
     [
       projectId,
@@ -149,6 +155,7 @@ export function ProjectUserProvider({ children }) {
       addNewProject,
       fetchProjectInfo,
       deleteProject,
+      userDetailsUpdated
     ]
   );
 

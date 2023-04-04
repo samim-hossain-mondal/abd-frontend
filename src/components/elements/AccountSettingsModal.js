@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useContext } from "react";
-import { Box, Dialog, DialogContent, Typography, TextField,InputAdornment,IconButton, Tooltip} from "@mui/material";
+import { Box, Dialog, DialogContent, Typography, TextField, InputAdornment, IconButton, Tooltip } from "@mui/material";
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -8,7 +8,7 @@ import Close from "@mui/icons-material/Close";
 
 import { PropTypes } from "prop-types";
 import axios from "axios";
-import {useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Search } from "@mui/icons-material";
 import ProjectModal from "./ProjectModal";
 import Transition from "../utilityFunctions/SideBarTransition";
@@ -22,7 +22,7 @@ import { isAdmin, isLeader } from '../constants/users';
 function AccountSettingsModal({ open, setOpenSettings }) {
   const navigate = useNavigate();
   const [projectInfo, setProjectInfo] = useState();
-  const { projects, fetchProjectInfo, setProjects, deleteProject} = useContext(ProjectUserContext);
+  const { projects, fetchProjectInfo, setProjects, deleteProject } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const [openEditModel, setOpenEditModel] = useState();
   const [openNewProjectModal, setOpenNewProjectModal] = useState();
@@ -77,17 +77,15 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
   const handleSearchValueChange = (event) => {
     const inputValue = event.target.value;
-    console.log("inputValue", inputValue);
     debounce(() => filterContent(inputValue), 500)();
     setSearchValue(event.target.value);
   };
 
   React.useEffect(() => {
-    console.log("projects", projects);
     setFilteredData(projects);
     debounce(() => filterContent(searchValue), 500)();
   }
-    , [ projects]);
+    , [projects]);
 
   const editProjectDetails = (projectName, projectDescription, projectId) => {
     if (projectName === "" || projectDescription === "") {
@@ -321,167 +319,169 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   return (
-    <Box sx={{display:"flex",justifyContent:"flex-end"}} className="cont">
-    <Dialog
-    id="joiiii"
-      open={open}
-      TransitionComponent={Transition}
-     onClose={handleClose}
-     PaperProps={{ sx: { position:"absolute",right: -30,maxHeight:"100%",height:"100%",width:"50%",minWidth:"320px",background:"#F5F5F5"} }}
-    >
-      <DialogContent id="dd">
-        <Box sx={{display:"flex",justifyContent:"flex-end"}}>
-          <Tooltip title="Close" placement="top">
-      <Close sx={{cursor:"pointer" }}onClick={handleClose}/>
-      </Tooltip>
-      </Box>
-        <Box
-        id="ff"
-          sx={{ display: "flex", flexDirection: "column", textAlign: "center",justifyContent:"center",alignItems:"center" }}
-        >
-          <Box sx={{display:"flex",flexDirection:"column", positon:"fixed", top: 0, right: 0, bottom: 0, width: '80%',
-          zIndex: 9999,
-        
-        }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", flexDirection:"row"}} >
-            <Typography variant="h5" mb={2}>
-              Manage Projects
-            </Typography >
-            <Box mt={0.5}>
-            <Tooltip title="Add New Project" placement="top">
-            <AddCircleRoundedIcon  sx={{color:"blue",width:"50px", height:"30px"}}onClick={handleAddNew} />
+    <Box sx={{ display: "flex", justifyContent: "flex-end" }} className="cont">
+      <Dialog
+        id="joiiii"
+        open={open}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        PaperProps={{ sx: { position: "absolute", right: -30, maxHeight: "100%", height: "100%", width: "50%", minWidth: "320px", background: "#F5F5F5" } }}
+      >
+        <DialogContent id="dd">
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Tooltip title="Close" placement="top">
+              <Close sx={{ cursor: "pointer" }} onClick={handleClose} />
             </Tooltip>
-            </Box>
-            </Box>
-            <Box sx={{display:"flex",flexGrow:1}}>
-            <TextField
-              variant="outlined"
-              placeholder="Search"
-              value={searchValue}
-              fullWidth
-              onChange={handleSearchValueChange}
-              style={{color: "blue" }}
-              
-              InputProps={{
-                style: { height:"45px",width:"100%"}, 
-                endAdornment: (
-                  <InputAdornment
-                    position="end"
-                    color="blue"
-                  >
-                    <Tooltip title="Search" placement="top">
-                    <IconButton color="blue">
-                      <Search color="blue" />
-                    </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            </Box>
-            </Box>
-            
-
-
-          <Box
-          mt={3}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: "Poppins",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              overflowY: "scroll",
-            }}
-            mb={4}
-          >
-            {filteredData &&
-              filteredData.map((project) => (
-                <Box
-                  key={project?.projectId}
-                  sx={{
-                    display: "flex",
-                    width: "80%",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    backgroundColor:"#E6EEF2",
-                    height:"50px",
-                    borderRadius:"10px",
-                    alignItems:"center",
-                  }}
-                  mx={2}
-                  mb={2}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      textAlign: "center",
-                      width: "60%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      marginLeft:"25px"
-                    }}
-                  >
-                   {project.projectId === selectedProject ? (
-                      <Typography sx={{ fontSize: "20px",color:"primary.main",textDecoration:"underline", cursor:"pointer",
-                      textUnderlineOffset: "7px"
-                      }}>
-                        {project.projectName}
-                      </Typography>
-                    ) : (
-                    <Typography
-                      sx={{ fontSize: "20px",cursor:"pointer"}}
-                      onClick={() => {
-                        handleSelectedProject(project.projectId);
-                      }}
-                    >
-                      {project.projectName}
-                    </Typography>
-                    )}
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      marginRight:"25px"
-                    }}
-                  >
-                    <Typography
-                      onClick={() => {
-                        handleEditModel(project.projectId);
-                      }}
-                      sx={{ cursor:"pointer" }}
-                    >
-                     {
-                      project.role === "ADMIN" ? (
-                        <Tooltip title="Edit Project" placement="top">
-                        <EditOutlinedIcon/>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title="You can only view project details" placement="top">
-                        <VisibilityOutlinedIcon />
-                        </Tooltip>
-                      )
-                     }
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
           </Box>
-        </Box>
-      </DialogContent>
-    </Dialog>
-    {openNewProjectModal && (
-      <NewProjectModal
-        open={openNewProjectModal}
-        projects={projects}
-        setProjects={setProjects}
-        setOpen={setOpenNewProjectModal}
-        projectInfo={projectInfo}
-      />
-    )}
+          <Box
+            id="ff"
+            sx={{ display: "flex", flexDirection: "column", textAlign: "center", justifyContent: "center", alignItems: "center" }}
+          >
+            <Box sx={{
+              display: "flex", flexDirection: "column", positon: "fixed", top: 0, right: 0, bottom: 0, width: '80%',
+              zIndex: 9999,
+
+            }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", flexDirection: "row" }} >
+                <Typography variant="h5" mb={2}>
+                  Manage Projects
+                </Typography >
+                <Box mt={0.5}>
+                  <Tooltip title="Add New Project" placement="top">
+                    <AddCircleRoundedIcon sx={{ color: "blue", width: "50px", height: "30px" }} onClick={handleAddNew} />
+                  </Tooltip>
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", flexGrow: 1 }}>
+                <TextField
+                  variant="outlined"
+                  placeholder="Search"
+                  value={searchValue}
+                  fullWidth
+                  onChange={handleSearchValueChange}
+                  style={{ color: "blue" }}
+
+                  InputProps={{
+                    style: { height: "45px", width: "100%" },
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                        color="blue"
+                      >
+                        <Tooltip title="Search" placement="top">
+                          <IconButton color="blue">
+                            <Search color="blue" />
+                          </IconButton>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+            </Box>
+
+
+
+            <Box
+              mt={3}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                fontFamily: "Poppins",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+                overflowY: "scroll",
+              }}
+              mb={4}
+            >
+              {filteredData &&
+                filteredData.map((project) => (
+                  <Box
+                    key={project?.projectId}
+                    sx={{
+                      display: "flex",
+                      width: "80%",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      backgroundColor: "#E6EEF2",
+                      height: "50px",
+                      borderRadius: "10px",
+                      alignItems: "center",
+                    }}
+                    mx={2}
+                    mb={2}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        textAlign: "center",
+                        width: "60%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        marginLeft: "25px"
+                      }}
+                    >
+                      {project.projectId === selectedProject ? (
+                        <Typography sx={{
+                          fontSize: "20px", color: "primary.main", textDecoration: "underline", cursor: "pointer",
+                          textUnderlineOffset: "7px"
+                        }}>
+                          {project.projectName}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          sx={{ fontSize: "20px", cursor: "pointer" }}
+                          onClick={() => {
+                            handleSelectedProject(project.projectId);
+                          }}
+                        >
+                          {project.projectName}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        marginRight: "25px"
+                      }}
+                    >
+                      <Typography
+                        onClick={() => {
+                          handleEditModel(project.projectId);
+                        }}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        {
+                          project.role === "ADMIN" ? (
+                            <Tooltip title="Edit Project" placement="top">
+                              <EditOutlinedIcon />
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title="You can only view project details" placement="top">
+                              <VisibilityOutlinedIcon />
+                            </Tooltip>
+                          )
+                        }
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+            </Box>
+          </Box>
+        </DialogContent>
+      </Dialog>
+      {openNewProjectModal && (
+        <NewProjectModal
+          open={openNewProjectModal}
+          projects={projects}
+          setProjects={setProjects}
+          setOpen={setOpenNewProjectModal}
+          projectInfo={projectInfo}
+        />
+      )}
       {openEditModel && (
         <ProjectModal
           open={openEditModel}

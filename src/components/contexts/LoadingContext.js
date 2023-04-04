@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export const LoadingContext = React.createContext();
 
 export function LoadingProvider({ children }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const errorContextValues = useMemo(() => ({ loading, setLoading }), [loading]);
 

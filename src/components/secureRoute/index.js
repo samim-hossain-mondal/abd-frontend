@@ -1,8 +1,10 @@
 import { useOktaAuth } from '@okta/okta-react';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { toRelativeUrl } from '@okta/okta-auth-js';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Box } from '@mui/system';
+import { LinearProgress } from '@mui/material';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { HOME_ROUTE } from '../constants/routes';
 import { ErrorContext } from '../contexts/ErrorContext';
@@ -56,13 +58,15 @@ export default function SecureRoute({ children, welcome = false }) {
         navigate(HOME_ROUTE);
         setProjectId(undefined);
         setIsProjectMember(false);
-        setError(UNAUTHORIZED_MSG);
+        if (projectId) setError(UNAUTHORIZED_MSG);
       }
     }
   }, [projects]);
   return authState?.isAuthenticated && user?.uid && (welcome || isProjectMember)
     ? children
-    : 'loading ...';
+    : <Box sx={{ width: '100%' }}>
+      <LinearProgress />
+    </Box>;
 }
 
 SecureRoute.propTypes = {

@@ -1,7 +1,7 @@
 export function getCurrentUserID() {
   try {
     const oktaToken = JSON.parse(localStorage.getItem('okta-token-storage'));
-    return oktaToken.accessToken.claims.uid;
+    return oktaToken?.accessToken?.claims?.uid;
   }
   catch (err) {
     return null;
