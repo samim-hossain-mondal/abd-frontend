@@ -268,8 +268,8 @@ export default function Note({
                       (isPO) && (showIcons) && (
                         <Tooltip title="Delete" placement='top'>
                           <IconButton onClick={() => { 
-                              if(isEdit) {
-                                setNumberOfEdits(numberOfEdits - 1)
+                              if(editButton) {
+                                setNumberOfEdits(numberOfEdits - 1);
                               }
                               handleDelete(card.i);
                             }}
