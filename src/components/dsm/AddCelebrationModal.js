@@ -62,6 +62,7 @@ export default function AddCelebrationModal({
       <Dialog
         open={openModal}
         onClose={handleModalClose}
+        sx={{ zIndex: "900" }}
       >
         <CelebrationGenericModal
           title='Type'

@@ -14,7 +14,8 @@ import {
   Tooltip,
   MenuItem,
   useMediaQuery,
-  LinearProgress
+  LinearProgress,
+  Backdrop
 }
   from '@mui/material';
 import axios from 'axios';
@@ -98,11 +99,12 @@ export default function Navbar({
   const handleOpenNotificationModal = () => {
     setNotificationModal(true);
   };
-  
+
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
   };
   const [openSettings, setOpenSettings] = useState(false);
+
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -134,11 +136,17 @@ export default function Navbar({
   return (
     <AppBar
       position="fixed"
-      sx={{ backgroundColor: 'white', boxShadow: "none" }}
+      sx={{ backgroundColor: 'white', boxShadow: "none", zIndex: 99 }}
     >
       {loading &&
+
         <Box sx={{ width: '100%' }}>
           <LinearProgress />
+          <Backdrop
+            sx={{ color: '#fff', zIndex: 10000000000 }}
+            open
+          // onClick={handleClose}
+          />
         </Box>
       }
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px 50px 25px 50px' }}>

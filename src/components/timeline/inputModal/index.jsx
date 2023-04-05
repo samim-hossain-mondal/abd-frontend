@@ -24,32 +24,33 @@ export default function GenericInputModal({
   onSecondaryButtonClick,
   placeholder,
   handleDelete,
-  isDisabled
+  isDisabled,
 }) {
   const [content, setContent] = useState(defaultEvent ?? '');
   const [isRisk, setIsRisk] = useState(defaultIsRisk ?? false);
   const [startDate, setStartDate] = useState(defaultStartDate ?? new Date());
   const [endDate, setEndDate] = useState(defaultEndDate ?? new Date());
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  
+
   const breakpoint411 = useMediaQuery('(min-width:411px)');
   return (
     <Box
       sx={{
-        width: (breakpoint411)?'max(25vw, 340px)':'250px',
+        width: breakpoint411 ? 'max(25vw, 340px)' : '250px',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
         padding: '16px 24px 24px 24px',
-        position: 'relative'
-      }}
-    >
+        position: 'relative',
+      }}>
       <DeleteDialog
         open={openDeleteDialog}
         setOpen={setOpenDeleteDialog}
-        handleDelete={()=>{handleDelete(defaultID)}}
-        description="Are you sure you want to delete this ?"
+        handleDelete={() => {
+          handleDelete(defaultID);
+        }}
+        description='Are you sure you want to delete this ?'
       />
 
       {
@@ -103,43 +104,61 @@ export default function GenericInputModal({
         disabled={isDisabled}
       />
 
-      <Typography variant="h5">Duration</Typography>
-      <DateTimePicker defaultValue={defaultStartDate} label="Start Date" disabled={isDisabled} onChange={setStartDate} />
-      <DateTimePicker defaultValue={defaultEndDate} label="End Date" disabled={isDisabled} onChange={setEndDate}/>
+      <Typography variant='h5'>Duration</Typography>
+      <DateTimePicker
+        defaultValue={defaultStartDate}
+        label='Start Date'
+        disabled={isDisabled}
+        onChange={setStartDate}
+      />
+      <DateTimePicker
+        defaultValue={defaultEndDate}
+        label='End Date'
+        disabled={isDisabled}
+        onChange={setEndDate}
+      />
 
       <FormGroup>
-        <FormControlLabel 
-          control={<Checkbox
-            checked={isRisk}
-            onChange={(e) => setIsRisk(e.target.checked)}
-            inputProps={{ 'aria-label': 'controlled' }}
-          />} 
-          label="Its a risk (will impact overall capacity)" 
-          disabled={isDisabled}/>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isRisk}
+              onChange={(e) => setIsRisk(e.target.checked)}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+          }
+          label='Its a risk (will impact overall capacity)'
+          disabled={isDisabled}
+        />
       </FormGroup>
       {children}
 
-      {
-        !isDisabled && (
-          <Button
-            sx={{
-              margin: '16px 0',
-              padding: '12px 0',
-              width: '100%',
-              borderRadius: '8px',
+      {!isDisabled && (
+        <Button
+          sx={{
+            margin: '16px 0',
+            padding: '12px 0',
+            width: '100%',
+            borderRadius: '8px',
+            color: 'customButton1.contrastText',
+            backgroundColor: 'customButton1.main',
+            '&:hover': {
               color: 'customButton1.contrastText',
               backgroundColor: 'customButton1.main',
-              '&:hover': {
-                color: 'customButton1.contrastText',
-                backgroundColor: 'customButton1.main',
-              },
-            }}
-            onClick={() => onPrimaryButtonClick({content, startDate, endDate, isRisk, defaultID})}
-          >
-            {primaryButtonText}
-          </Button>
-        )
-      }
+            },
+          }}
+          onClick={() =>
+            onPrimaryButtonClick({
+              content,
+              startDate,
+              endDate,
+              isRisk,
+              defaultID,
+            })
+          }>
+          {primaryButtonText}
+        </Button>
+      )}
 
       {secondaryButtonText && (
         <Button
@@ -154,8 +173,7 @@ export default function GenericInputModal({
               backgroundColor: 'secondaryButton.main',
             },
           }}
-          onClick={() => onSecondaryButtonClick(content)}
-        >
+          onClick={() => onSecondaryButtonClick(content)}>
           {secondaryButtonText}
         </Button>
       )}
@@ -183,8 +201,8 @@ GenericInputModal.propTypes = {
 };
 
 GenericInputModal.defaultProps = {
-  onPrimaryButtonClick: () => { },
-  onSecondaryButtonClick: () => { },
+  onPrimaryButtonClick: () => {},
+  onSecondaryButtonClick: () => {},
   secondaryButtonText: undefined,
   children: undefined,
   placeholder: undefined,

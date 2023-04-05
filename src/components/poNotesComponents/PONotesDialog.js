@@ -188,6 +188,7 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
+        sx={{ zIndex: "900" }}
       >
         <Grid container rowSpacing={1} paddingTop="2%" textAlign="center" alignItems="center"  >
           {access &&

@@ -95,7 +95,7 @@ function NotificationDialog(props) {
   return (
     <Box>
       {notif && props.targetType === "TEAM_REQUEST" && (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={handleClose} sx={{ zIndex: "900" }}>
           <GenericInputModal
             title={TITLE}
             authorName={notif.author}
@@ -126,7 +126,7 @@ function NotificationDialog(props) {
       )}
 
       {notif && props.targetType === "CELEBRATION" && (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={handleClose} sx={{ zIndex: "900" }}>
           <CelebrationGenericModal
             title="Type"
             inputTitle="Speak out loud"

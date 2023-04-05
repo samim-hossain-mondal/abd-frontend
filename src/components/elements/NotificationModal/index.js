@@ -37,8 +37,7 @@ function NotificationModal({ open, setOpenNotification }) {
       );
     } else {
       setUrl(
-        `${DOMAIN}/api/notifications/${projectId}/${
-          user?.memberId
+        `${DOMAIN}/api/notifications/${projectId}/${user?.memberId
         }?page=${page}&limit=10&readStatus=${selectedButton === "SEEN"}`
       );
     }
@@ -140,6 +139,7 @@ function NotificationModal({ open, setOpenNotification }) {
       <Dialog
         open={open}
         onClose={() => setOpenNotification(false)}
+        sx={{ zIndex: "900" }}
         PaperProps={{
           sx: {
             position: "absolute",
@@ -151,6 +151,7 @@ function NotificationModal({ open, setOpenNotification }) {
             background: "#F5F5F5",
             p: 2,
             overflowY: "scroll",
+            zIndex: "900"
           },
         }}
       >
@@ -229,7 +230,7 @@ function NotificationModal({ open, setOpenNotification }) {
                   targetType={notif.targetType}
                   isChecked={notif.readStatus}
                   onClose={() => handleClose(notif.notificationId)}
-                  onClick={() => {}}
+                  onClick={() => { }}
                   count={count}
                   setCount={setCount}
                 />
