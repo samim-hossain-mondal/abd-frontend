@@ -329,7 +329,7 @@ export default function MadeToStick() {
               mobileCardDetails.map((card) => (
                 <Box
                   key={card.i}
-                  sx={{ borderRadius: "1.5%", boxShadow: 3, borderColor: card.backgroundColor, marginBottom: "2%" }}
+                  sx={{ borderRadius: "1.5%", boxShadow: 3, borderColor: 'secondaryButton.main', backgroundColor: 'secondaryButton.main',  marginBottom: "2%" }}
                 >
                   <Box
                     className="card"
@@ -349,7 +349,9 @@ export default function MadeToStick() {
                           data={card.value}
                         />
                       )}
-                      <style>{`.ck.ck-editor__main>.ck-editor__editable {background-color: #EEF2F5; border: transparent;font-family: Roboto;}`}</style>
+
+                      <style>{`.ck.ck-editor__main>.ck-editor__editable {background-color: #EEF2F5; border: transparent; font-family: Roboto;}`}</style>
+
                       <style>{`.ck.ck-editor__top { display: none; }`}</style>
                     </Box>
                   </Box>
