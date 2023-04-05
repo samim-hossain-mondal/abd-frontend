@@ -87,9 +87,7 @@ function Step3Content({ projId, projectTitle }) {
       .catch((error) => {
         setError(error.response.data.message);
       });
-
   }
-
 
   return (
     <>
@@ -116,7 +114,7 @@ function Step3Content({ projId, projectTitle }) {
             </Typography>
             <Typography variant="h6">
               <Box sx={{ color: 'black', display: 'inline' }} > Project Link:{" "} </Box>
-              <Link href='https://{window.location.hostname}/{projId}/daily'>
+              <Link href={`/${projId}/daily`}>
                 https://{window.location.hostname}/{projId}/daily
               </Link>
             </Typography>
@@ -202,7 +200,7 @@ function Step3Content({ projId, projectTitle }) {
             </Box>
           ))}
         </Box>
-      </Box>
+      </Box >
     </>
   );
 }
