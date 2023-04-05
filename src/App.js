@@ -98,11 +98,10 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
+        {console.log("window.location.pathname >>>", window.location.pathname)}
         {
           authLoaded &&
-          (window.location.pathname !== LOGIN_ROUTE ||
-            window.location.pathname !== LOGIN_CALLBACK_ROUTE ||
-            window.location.pathname !== HOME_ROUTE) && (
+          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, HOME_ROUTE].includes(window.location.pathname)) && (
             <Box>
               <Navbar
                 navbarRef={navbarRef}
