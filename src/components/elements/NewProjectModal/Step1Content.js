@@ -10,7 +10,7 @@ function Step1Content() {
   return (
     <Box mx={0.5}>
       <Box pl={2}>
-        <Typography variant="h5">
+        <Typography variant="h5" sx={{ mb: 0.5 }}>
           Hi {" "}
           <Box component="span" color="primary.main" fontWeight="bold">
             {user.name}
@@ -19,9 +19,11 @@ function Step1Content() {
           <br />
         </Typography>
         <Typography >
-          Welcome to the first step of creating a new project. Please check the box
-          below to confirm that you have read and understood the information provided
-          in the previous step.
+          Welcome to My Agile Dashboard, where collaboration and transparency come together to help your team succeed!
+          <Box sx={{ mt: 1.5 }}>
+            Create a new project and experience how easy it is to manage tasks and track progress.
+            Our platform empowers your team to work together seamlessly towards a common goal.
+          </Box>
         </Typography>
       </Box>
     </Box>
