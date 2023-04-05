@@ -315,7 +315,10 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
             dayLayoutAlgorithm='no-overlap'
           />
           {inputModal && (
-            <Dialog open={inputModal} onClose={handleInputModalClose}>
+            <Dialog
+              sx={{ zIndex: '900' }}
+              open={inputModal}
+              onClose={handleInputModalClose}>
               <GenericInputModal
                 onCloseButtonClick={handleInputModalClose}
                 primaryButtonText={PRIMARY_BUTTON_TEXT.SAVE}
@@ -330,7 +333,10 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
             </Dialog>
           )}
           {editModal && (
-            <Dialog open={editModal} onClose={handleEditModalClose}>
+            <Dialog
+              sx={{ zIndex: '900' }}
+              open={editModal}
+              onClose={handleEditModalClose}>
               <GenericInputModal
                 editModal={editModal}
                 onCloseButtonClick={handleEditModalClose}

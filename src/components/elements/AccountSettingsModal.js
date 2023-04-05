@@ -320,13 +320,14 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "flex-end" }} className="cont">
+    <Box sx={{ display: "flex", justifyContent: "flex-end", zIndex: 950 }} className="cont">
       <Dialog
         id="joiiii"
         open={open}
         TransitionComponent={Transition}
         onClose={handleClose}
-        PaperProps={{ sx: { position: "absolute", right: -30, maxHeight: "100%", height: "100%", width: "50%", minWidth: "320px", background: "#F5F5F5" } }}
+        sx={{ zIndex: "900" }}
+        PaperProps={{ sx: { zIndex: "900", position: "absolute", right: -30, maxHeight: "100%", height: "100%", width: "50%", minWidth: "320px", background: "#F5F5F5" } }}
       >
         <DialogContent id="dd">
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -340,7 +341,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
           >
             <Box sx={{
               display: "flex", flexDirection: "column", positon: "fixed", top: 0, right: 0, bottom: 0, width: '80%',
-              zIndex: 9999,
+              zIndex: 250,
 
             }}>
               <Box sx={{ display: "flex", justifyContent: "space-between", flexDirection: "row" }} >

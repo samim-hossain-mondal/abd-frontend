@@ -59,6 +59,9 @@ function AppRoutes() {
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
 
+  const navbarRef = useRef(null);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
   const { updateUserDetails } = useContext(ProjectUserContext);
   const { setLoading } = useContext(LoadingContext);
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -95,21 +98,28 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
+        {console.log("window.location.pathname >>>", window.location.pathname)}
         {
-        authLoaded && 
-        window.location.pathname!==LOGIN_ROUTE &&
-        window.location.pathname!==LOGIN_CALLBACK_ROUTE &&
-        window.location.pathname!==HOME_ROUTE && (
-          <Box>
-            <Navbar
-              authLoaded={authLoaded}
-              poNotesRef={poNotesRef}
-              dsmRef={dsmRef}
-              availabilityCalendarRef={availabilityCalendarRef}
-              handleScroll={handleScroll}
-            />
-          </Box>
-        )}
+          authLoaded &&
+          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, HOME_ROUTE].includes(window.location.pathname)) && (
+            <Box>
+              <Navbar
+                navbarRef={navbarRef}
+                authLoaded={authLoaded}
+                poNotesRef={poNotesRef}
+                dsmRef={dsmRef}
+                availabilityCalendarRef={availabilityCalendarRef}
+                handleScroll={handleScroll}
+                setNavbarHeight={setNavbarHeight}
+              />
+
+              <Box sx={{
+                height: `${navbarHeight + 24}px`,
+                backgroundColor: 'backgroundColor.main'
+              }} />
+              {console.log(navbarHeight)}
+            </Box>
+          )}
         <Routes>
           <Route path={LOGIN_ROUTE} exact element={<Login />} />
           <Route path={`/:projectId${DAILY_ROUTE}`} exact element={

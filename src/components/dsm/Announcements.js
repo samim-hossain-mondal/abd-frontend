@@ -230,6 +230,7 @@ export default function Announcements() {
         <Dialog
           open={openModal}
           onClose={handleModalClose}
+          sx={{ zIndex: "900" }}
         >
           <AnnouncementInputModal
             onCloseButtonClick={handleModalClose}
@@ -321,6 +322,7 @@ export default function Announcements() {
             <Dialog
               open={openEditModal}
               onClose={handleEditModalClose}
+              sx={{ zIndex: "900" }}
             >
               <AnnouncementInputModal
                 authorName={editModalData?.author}

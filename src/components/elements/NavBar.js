@@ -14,7 +14,8 @@ import {
   Tooltip,
   MenuItem,
   useMediaQuery,
-  LinearProgress
+  LinearProgress,
+  Backdrop
 }
   from '@mui/material';
 import axios from 'axios';
@@ -39,10 +40,12 @@ const settings = ['Profile', 'Account Settings', 'Logout'];
 const audio = new Audio(notificationSound);
 
 export default function Navbar({
+  navbarRef,
   authLoaded,
   poNotesRef,
   dsmRef,
   availabilityCalendarRef,
+  setNavbarHeight
 }) {
   const location = useLocation();
   const pages = allPages
@@ -65,6 +68,7 @@ export default function Navbar({
   const audioRef = useRef(audio);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isNotify, setIsNotify] = useState(false);
+  const breakPoint510 = useMediaQuery('(max-width: 510px)');
 
   const fetchNotifications = async () => {
     await axios.get(`${DOMAIN}/api/notifications/${projectId}/${user.memberId}`).then((response) => {
@@ -91,18 +95,18 @@ export default function Navbar({
     if (isNotify) {
       audioRef.current.play();
     }
-    console.log('playing audio');
   }, [isNotify]);
 
   const [notificationModal, setNotificationModal] = useState(false);
   const handleOpenNotificationModal = () => {
     setNotificationModal(true);
   };
-  
+
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
   };
   const [openSettings, setOpenSettings] = useState(false);
+
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -130,18 +134,29 @@ export default function Navbar({
   };
 
 
+  useEffect(() => {
+    setNavbarHeight((navbarRef?.current?.clientHeight ?? 0));
+  }, [navbarRef]);
+
   const { loading } = useContext(LoadingContext)
   return (
     <AppBar
       position="fixed"
-      sx={{ backgroundColor: 'white', boxShadow: "none" }}
+      sx={{ backgroundColor: 'white', boxShadow: "none", zIndex: 99 }}
     >
+      <div ref={navbarRef}>
       {loading &&
+
         <Box sx={{ width: '100%' }}>
           <LinearProgress />
+          <Backdrop
+            sx={{ color: '#fff', zIndex: 10000000000 }}
+            open
+          // onClick={handleClose}
+          />
         </Box>
       }
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px 50px 25px 50px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '2px 5px 2px 5px' : '25px 50px 25px 50px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
             component="img" sx={{ height: '50px' }}
@@ -261,7 +276,6 @@ export default function Navbar({
                   userDetailsUpdated && user?.name ?
                     <Tooltip title="Open Notifications">
                       <Badge badgeContent={notificationCount} color='error'>
-                        {/* {console.log(notificationCount)} */}
                         <NotificationsIcon sx={{ color: "primary.main", cursor: 'pointer' }} onClick={handleOpenNotificationModal} />
                       </Badge>
                     </Tooltip>
@@ -351,6 +365,7 @@ export default function Navbar({
         <MobileTabs
           sections={sections}
         />)}
+      </div>
     </AppBar>
   );
 }
@@ -360,10 +375,14 @@ Navbar.propTypes = {
   poNotesRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   dsmRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   availabilityCalendarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  // eslint-disable-next-line react/forbid-prop-types
+  navbarRef: PropTypes.any,
+  setNavbarHeight: PropTypes.func.isRequired,
 };
 
 Navbar.defaultProps = {
   poNotesRef: null,
   dsmRef: null,
   availabilityCalendarRef: null,
+  navbarRef: null,
 };

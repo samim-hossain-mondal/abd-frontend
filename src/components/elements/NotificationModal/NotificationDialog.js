@@ -47,25 +47,20 @@ function NotificationDialog(props) {
 
   const makeCalls = async () => {
     if (!props.open) return;
-    console.log("c", props.count);
     if (props.checked === false) {
       props.setCount(props.count - 1);
-      console.log("cr", props.count);
     }
     if (props.targetType === "TEAM_REQUEST") {
-      // console.log("tr called");
       axios
         .get(`${DOMAIN}/api/dsm/team-requests/${projectId}/${props.targetId}`)
         .then((response) => {
           const { data } = response;
-          // console.log(data);
           setNotif(data);
         })
         .catch((err) => {
           console.log(err);
         });
     } else if (props.targetType === "CELEBRATION") {
-      // console.log("cl called");
       axios
         .get(`${DOMAIN}/api/dsm/celebrations/${projectId}/${props.targetId}`)
         .then((response) => {
@@ -95,7 +90,7 @@ function NotificationDialog(props) {
   return (
     <Box>
       {notif && props.targetType === "TEAM_REQUEST" && (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={handleClose} sx={{ zIndex: "900" }}>
           <GenericInputModal
             title={TITLE}
             authorName={notif.author}
@@ -126,7 +121,7 @@ function NotificationDialog(props) {
       )}
 
       {notif && props.targetType === "CELEBRATION" && (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={handleClose} sx={{ zIndex: "900" }}>
           <CelebrationGenericModal
             title="Type"
             inputTitle="Speak out loud"

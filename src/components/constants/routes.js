@@ -1,4 +1,4 @@
-export const HOME_ROUTE = '/welcome';
+export const HOME_ROUTE = '/';
 export const LOGIN_ROUTE = "/login";
 export const LOGIN_CALLBACK_ROUTE = "/login/callback";
 
