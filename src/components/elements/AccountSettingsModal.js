@@ -193,8 +193,9 @@ function AccountSettingsModal({ open, setOpenSettings }) {
 
   const handleSelectedProject = (projectId) => {
     setSelectedProject(projectId);
-    navigate(`/${projectId}/dsm`);
-
+    navigate(`/${projectId}/daily`);
+    setOpenSettings(false);
+    window.location.reload();
   };
 
   const handleEmailChange = (email, index) => {
