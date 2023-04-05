@@ -135,7 +135,8 @@ export default function CelebrationGenericModal({
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
         padding: '16px 24px 24px 24px',
-        position: 'relative'
+        position: 'relative',
+        
       }}
     >
       <Box

@@ -319,7 +319,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "flex-end", zIndex: 1000 }} className="cont">
+    <Box sx={{ display: "flex", justifyContent: "flex-end", zIndex: 950 }} className="cont">
       <Dialog
         id="joiiii"
         open={open}

@@ -96,20 +96,20 @@ function AppRoutes() {
     <QueryClientProvider client={queryClient}>
       <Box className="App">
         {
-        authLoaded && 
-        window.location.pathname!==LOGIN_ROUTE &&
-        window.location.pathname!==LOGIN_CALLBACK_ROUTE &&
-        window.location.pathname!==HOME_ROUTE && (
-          <Box>
-            <Navbar
-              authLoaded={authLoaded}
-              poNotesRef={poNotesRef}
-              dsmRef={dsmRef}
-              availabilityCalendarRef={availabilityCalendarRef}
-              handleScroll={handleScroll}
-            />
-          </Box>
-        )}
+          authLoaded &&
+          (window.location.pathname !== LOGIN_ROUTE ||
+            window.location.pathname !== LOGIN_CALLBACK_ROUTE ||
+            window.location.pathname !== HOME_ROUTE) && (
+            <Box>
+              <Navbar
+                authLoaded={authLoaded}
+                poNotesRef={poNotesRef}
+                dsmRef={dsmRef}
+                availabilityCalendarRef={availabilityCalendarRef}
+                handleScroll={handleScroll}
+              />
+            </Box>
+          )}
         <Routes>
           <Route path={LOGIN_ROUTE} exact element={<Login />} />
           <Route path={`/:projectId${DAILY_ROUTE}`} exact element={

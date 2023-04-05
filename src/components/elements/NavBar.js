@@ -66,6 +66,7 @@ export default function Navbar({
   const audioRef = useRef(audio);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isNotify, setIsNotify] = useState(false);
+  const breakPoint510 = useMediaQuery('(max-width: 510px)');
 
   const fetchNotifications = async () => {
     await axios.get(`${DOMAIN}/api/notifications/${projectId}/${user.memberId}`).then((response) => {
@@ -148,7 +149,7 @@ export default function Navbar({
           />
         </Box>
       }
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px 50px 25px 50px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '2px 5px 2px 5px' : '25px 50px 25px 50px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box
             component="img" sx={{ height: '50px' }}

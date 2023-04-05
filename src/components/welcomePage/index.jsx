@@ -207,7 +207,7 @@ export default function WelcomePage() {
           width: '100%',
           boxShadow: 5,
           position: 'relative',
-          zIndex: '999',
+          zIndex: 90,
           marginTop: user.memberId ? 0 : 6, // TODO: Change this to a better solution
         }}>
         <Typography
