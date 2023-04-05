@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-named-as-default
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { useOktaAuth } from '@okta/okta-react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -24,6 +24,7 @@ import { ExpandLess, ExpandMore, } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { animateScroll } from 'react-scroll';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import notificationSound from '../../assets/images/notification-sound.mp3';
 import { DOMAIN } from "../../config";
 import { allPages, DAILY_PAGE_NAME, HOME_ROUTE } from '../constants/routes';
 import getRoute from '../utilityFunctions/getRoute';
@@ -35,6 +36,7 @@ import { LoadingContext } from '../contexts/LoadingContext';
 import NotificationModal from './NotificationModal';
 
 const settings = ['Profile', 'Account Settings', 'Logout'];
+const audio = new Audio(notificationSound);
 
 export default function Navbar({
   authLoaded,
@@ -60,10 +62,13 @@ export default function Navbar({
     { name: 'Availability Calendar', ref: availabilityCalendarRef },
   ];
 
+  const audioRef = useRef(audio);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [isNotify, setIsNotify] = useState(false);
 
   const fetchNotifications = async () => {
     await axios.get(`${DOMAIN}/api/notifications/${projectId}/${user.memberId}`).then((response) => {
+      const value = notificationCount;
       const notifications = response.data.map((notif) => ({
         notificationId: notif.notificationId,
         readStatus: notif.readStatus
@@ -71,11 +76,23 @@ export default function Navbar({
       const unreadNotifications = notifications.filter(
         (notif) => notif.readStatus === false
       );
+      if (unreadNotifications.length > value) {
+        setIsNotify(true);
+      } else {
+        setIsNotify(false);
+      }
       setNotificationCount(unreadNotifications.length);
     });
   };
 
   fetchNotifications();
+
+  useEffect(() => {
+    if (isNotify) {
+      audioRef.current.play();
+    }
+    console.log('playing audio');
+  }, [isNotify]);
 
   const [notificationModal, setNotificationModal] = useState(false);
   const handleOpenNotificationModal = () => {
