@@ -34,7 +34,6 @@ export default function Note({
     setCardData(card);
   }, [editButton]);
 
-  console.log(numberOfEdits);
   const handleEditButton = (value) => {
     if(value === true) {
       if(numberOfEdits !== 0) {
@@ -268,7 +267,13 @@ export default function Note({
                     {
                       (isPO) && (showIcons) && (
                         <Tooltip title="Delete" placement='top'>
-                          <IconButton onClick={() => { handleDelete(card.i) }}>
+                          <IconButton onClick={() => { 
+                              if(isEdit) {
+                                setNumberOfEdits(numberOfEdits - 1)
+                              }
+                              handleDelete(card.i);
+                            }}
+                          >
                             <DeleteIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} onClick={() => { handleDelete(card.i) }} />
                           </IconButton>
                         </Tooltip>
