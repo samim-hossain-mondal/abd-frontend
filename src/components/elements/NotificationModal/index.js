@@ -7,29 +7,31 @@ import Chip from "@mui/material/Chip";
 import NotificationCard from "./NotificationCard";
 import { ProjectUserContext } from "../../contexts/ProjectUserContext";
 import { DOMAIN } from "../../../config";
+import { LoadingContext } from '../../contexts/LoadingContext';
+import makeRequest from "../../utilityFunctions/makeRequest";
 
 function NotificationModal({ open, setOpenNotification }) {
   const { user, projectId } = useContext(ProjectUserContext);
+  const { setLoading } = useContext(LoadingContext);
   const [notifs, setNotifs] = useState([]);
-  const [selectedButton, setSelectedButton] = useState("UNSEEN");
+  const [selectedButton, setSelectedButton] = useState("UNREAD");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [url, setUrl] = useState(null);
   const [count, setCount] = useState(0);
   useEffect(() => {
-    if (user) {
-      axios
-        .get(
-          `${DOMAIN}/api/notifications/${projectId}/${user?.memberId}?readStatus=false`
+    if (user && open) {
+      makeRequest
+        (
+         {url: `api/notifications/${projectId}/${user?.memberId}?readStatus=false`},
+          setLoading,
         )
         .then((response) => {
-          setCount(response.data.length);
+          setCount(response.length);
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        
     }
-  }, [user, page]);
+  }, [user, page, open,url]);
   useEffect(() => {
     if (selectedButton === "ALL") {
       setUrl(
@@ -37,11 +39,13 @@ function NotificationModal({ open, setOpenNotification }) {
       );
     } else {
       setUrl(
-        `${DOMAIN}/api/notifications/${projectId}/${user?.memberId
-        }?page=${page}&limit=10&readStatus=${selectedButton === "SEEN"}`
+        `${DOMAIN}/api/notifications/${projectId}/${
+          user?.memberId
+        }?page=${page}&limit=10&readStatus=${selectedButton === "READ"}`
       );
     }
   }, [user, page]);
+ 
 
   const fetchMoreData = () => {
     if (hasMore === false) {
@@ -74,7 +78,13 @@ function NotificationModal({ open, setOpenNotification }) {
       }
     });
   };
-
+  useEffect(() => {
+    if (open) {
+      setPage(1);
+      setNotifs([]);
+      setHasMore(true);
+    }
+  }, [open]);
   useEffect(() => {
     fetchMoreData();
   }, [url, open]);
@@ -84,7 +94,7 @@ function NotificationModal({ open, setOpenNotification }) {
         setUrl(
           `${DOMAIN}/api/notifications/${projectId}/${user?.memberId}?page=${page}&limit=10`
         );
-      } else if (selectedButton === "SEEN") {
+      } else if (selectedButton === "READ") {
         setUrl(
           `${DOMAIN}/api/notifications/${projectId}/${user?.memberId}?page=${page}&limit=10&readStatus=true`
         );
@@ -101,13 +111,13 @@ function NotificationModal({ open, setOpenNotification }) {
   };
   const handleClickUnseen = () => {
     setPage(1);
-    setSelectedButton("UNSEEN");
+    setSelectedButton("UNREAD");
     setNotifs([]);
     setHasMore(true);
   };
   const handleClickSeen = () => {
     setHasMore(true);
-    setSelectedButton("SEEN");
+    setSelectedButton("READ");
     setPage(1);
     setNotifs([]);
   };
@@ -117,6 +127,21 @@ function NotificationModal({ open, setOpenNotification }) {
     setPage(1);
     setNotifs([]);
   };
+  useEffect(() => {
+if(count<0)
+{
+  if (user) {
+    axios
+      .get(
+        `${DOMAIN}/api/notifications/${projectId}/${user?.memberId}?readStatus=false`
+      )
+      .then((response) => {
+        setCount(response.data.length);
+      })
+      
+  }
+}
+  }, [count]);
   return (
     <Box sx={{ display: "flex", justifyContent: "flex-end" }} className="cont">
       <Dialog
@@ -141,6 +166,7 @@ function NotificationModal({ open, setOpenNotification }) {
         <Box
           display="flex"
           margin="2%"
+          marginTop= '7%'
           marginBottom="0%"
           marginLeft="5%"
           alignContent="center"
@@ -165,18 +191,18 @@ function NotificationModal({ open, setOpenNotification }) {
             All
           </Button>
           <Button
-            variant={selectedButton === "UNSEEN" ? "contained" : "outlined"}
+            variant={selectedButton === "UNREAD" ? "contained" : "outlined"}
             sx={{ width: "20%", borderRadius: "20px" }}
             onClick={handleClickUnseen}
           >
-            Unseen
+          Unread
           </Button>
           <Button
-            variant={selectedButton === "SEEN" ? "contained" : "outlined"}
+            variant={selectedButton === "READ" ? "contained" : "outlined"}
             sx={{ width: "20%", borderRadius: "20px" }}
             onClick={handleClickSeen}
           >
-            Seen
+            Read
           </Button>
         </Box>
         <Box
@@ -216,6 +242,8 @@ function NotificationModal({ open, setOpenNotification }) {
                   onClick={() => { }}
                   count={count}
                   setCount={setCount}
+                  notifs={notifs}
+                  setNotifs={setNotifs}
                 />
               ))}
           </InfiniteScroll>

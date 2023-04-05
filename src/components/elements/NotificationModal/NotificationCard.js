@@ -17,6 +17,8 @@ function NotificationCard(props) {
     id,
     setCount,
     count,
+    notifs,
+    setNotifs,
   } = props;
   const [isClosed, setIsClosed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -57,7 +59,9 @@ function NotificationCard(props) {
           position: "relative",
           opacity: isClosed ? 0 : 1,
           transition: "opacity 0.5s ease-out",
-          mb: 2,
+          mb:2,
+          borderRadius: 2.5,
+          cursor: "pointer",
           backgroundColor: !checked ? "primary.light" : "white",
         }}
       >
@@ -69,12 +73,13 @@ function NotificationCard(props) {
               right: 0,
               opacity: isClosed ? 0 : 1,
               transition: "opacity 0.5s ease-out",
+              visibility:"hidden"
             }}
             onClick={handleClose}
           >
             <CloseIcon />
           </IconButton>
-          <Typography color="primary.main" variant="h6" noWrap sx={{ mb: 1 }}>
+          <Typography color="primary.main" variant="h6" noWrap sx={{ mb: 1}}>
             {title}
           </Typography>
           <Typography variant="body1" noWrap sx={{ mb: 1 }}>
@@ -84,9 +89,9 @@ function NotificationCard(props) {
             {formatDate(new Date(date))
             }
           </Typography>
-          <IconButton sx={{}}>
+          <IconButton sx={{visibility: !checked ? "visible" : "hidden"}}>
             <Brightness1Icon
-              sx={{ color: !checked ? "primary.main" : "white" }}
+              sx={{ color: "primary.main", visibility: !checked ? "visible" : "hidden"}}
             />
           </IconButton>
         </CardContent>
@@ -102,6 +107,8 @@ function NotificationCard(props) {
         id={id}
         setCount={setCount}
         count={count}
+        notifs={notifs}
+        setNotifs={setNotifs}
       />
     </>
   );

@@ -41,6 +41,7 @@ function NotificationDialog(props) {
     type: "",
     anonymous: false,
     memberId: user.memberId,
+    createdAt: "",
   });
   const [notif, setNotif] = useState();
   const [lock, setLock] = useState(true);
@@ -48,18 +49,21 @@ function NotificationDialog(props) {
   const makeCalls = async () => {
     if (!props.open) return;
     if (props.checked === false) {
-      props.setCount(props.count - 1);
+      const countValue= props.count;
+      props.setCount(countValue-1);
     }
     if (props.targetType === "TEAM_REQUEST") {
+
       axios
         .get(`${DOMAIN}/api/dsm/team-requests/${projectId}/${props.targetId}`)
         .then((response) => {
           const { data } = response;
           setNotif(data);
+          const value =[...props.notifs];
+        const index = value.findIndex((item) => item.teamRequestId === props.targetId);
+        value[index].readStatus = true;
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        
     } else if (props.targetType === "CELEBRATION") {
       axios
         .get(`${DOMAIN}/api/dsm/celebrations/${projectId}/${props.targetId}`)
@@ -71,7 +75,12 @@ function NotificationDialog(props) {
             type: data.type,
             anonymous: data.isAnonymous,
             memberId: user.memberId,
+            createdAt: data.createdAt,
           });
+          const value =[...props.notifs];
+        const index = value.findIndex((item) => item.celebrationId === props.targetId);
+        value[index].readStatus = true;
+          props.setNotifs(value);
         });
     } else if (props.targetType === "ANNOUNCEMENT") {
       axios
@@ -79,7 +88,11 @@ function NotificationDialog(props) {
         .then((response) => {
           const { data } = response;
           setNotif(data);
+          const value =[...props.notifs];
+        const index = value.findIndex((item) => item.announcementId === props.targetId);
+        value[index].readStatus = true;
         });
+
     }
   };
 
