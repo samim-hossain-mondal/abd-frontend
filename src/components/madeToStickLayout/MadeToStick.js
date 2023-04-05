@@ -226,7 +226,7 @@ export default function MadeToStick() {
   }
 
   return (cards)?(
-    <Box sx={{ marginTop: '110px' }}>
+    <Box>
       {(!isMobile) && (
         <Box sx={{ backgroundColor: 'backgroundColor.main', padding: '24px 0' }}>
           {
@@ -349,7 +349,7 @@ export default function MadeToStick() {
                           data={card.value}
                         />
                       )}
-                      <style>{`.ck.ck-editor__main>.ck-editor__editable {background-color: #EEF2F5; border: transparent;}`}</style>
+                      <style>{`.ck.ck-editor__main>.ck-editor__editable {background-color: #EEF2F5; border: transparent;font-family: Roboto;}`}</style>
                       <style>{`.ck.ck-editor__top { display: none; }`}</style>
                     </Box>
                   </Box>
@@ -360,7 +360,7 @@ export default function MadeToStick() {
       )}
     </Box>
   ):(
-    <Box sx={{ marginTop: '110px' }}>
+    <Box>
       <CircularProgress/>
     </Box>
   )
