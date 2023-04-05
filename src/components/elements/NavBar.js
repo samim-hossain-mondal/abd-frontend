@@ -98,6 +98,7 @@ export default function Navbar({
   const handleOpenNotificationModal = () => {
     setNotificationModal(true);
   };
+  
   const handleOpenRoutesMenu = () => {
     setOpenRoutesMenu(!openRoutesMenu);
   };

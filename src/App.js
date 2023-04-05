@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default */
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Security, useOktaAuth } from '@okta/okta-react';
