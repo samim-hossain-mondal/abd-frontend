@@ -23,15 +23,15 @@ import GenericInputModal from "../dsm/GenericInputModal";
 
 import CelebrationGenericModal from "../dsm/CelebrationGenericModal";
 import AnnouncementInputModal from "../dsm/AnnouncementInputModal";
-import {DOMAIN} from "../../../config";
+import { DOMAIN } from "../../../config";
 
 function NotificationDialog(props) {
-  console.log(props);
+  // console.log(props);
   const handleClose = () => {
     props.setOpen(false);
-    if(props.checked) 
-    return;
-    axios.put(`${DOMAIN}/api/notifications/${props.id}`,{
+    if (props.checked)
+      return;
+    axios.put(`${DOMAIN}/api/notifications/${props.id}`, {
       readStatus: true,
     }).then(() => {
       props.setChecked(!props.checked);
@@ -48,25 +48,25 @@ function NotificationDialog(props) {
   const [lock, setLock] = useState(true);
 
   const makeCalls = async () => {
-    console.log(props,'*');
+    // console.log(props, '*');
     if (!props.open) return;
-    console.log(props.targetType);
-   
+    // console.log(props.targetType);
+
     if (props.targetType === "TEAM_REQUEST") {
-      console.log("tr called");
+      // console.log("tr called");
       axios
         .get(`${DOMAIN}/api/dsm/team-requests/${projectId}/${props.targetId}`)
         .then((response) => {
           const { data } = response;
-          console.log(data);
+          // console.log(data);
           setNotif(data);
         })
         .catch((err) => {
           console.log(err);
         });
-      
+
     } else if (props.targetType === "CELEBRATION") {
-      console.log("cl called");
+      // console.log("cl called");
       axios
         .get(`${DOMAIN}/api/dsm/celebrations/${projectId}/${props.targetId}`)
         .then((response) => {
@@ -80,7 +80,7 @@ function NotificationDialog(props) {
           });
         });
     }
-    else if(props.targetType === "ANNOUNCEMENT"){
+    else if (props.targetType === "ANNOUNCEMENT") {
       axios
         .get(`${DOMAIN}/api/dsm/announcements/${projectId}/${props.targetId}`)
         .then((response) => {
@@ -145,14 +145,14 @@ function NotificationDialog(props) {
 
       {notif && props.targetType === "ANNOUNCEMENT" && (
         <Dialog open={props.open} onClose={handleClose}>
-          <AnnouncementInputModal 
-           onCloseButtonClick={handleClose}
-           primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
-           defaultValue={notif.content}
-           authorized={notif.memberId === user.memberId}
-           title={notif.title}
-           totalCharactersTitle={CHAR_COUNT_TITLE}
-           totalCharactersContent={CHAR_COUNT_CONTENT}
+          <AnnouncementInputModal
+            onCloseButtonClick={handleClose}
+            primaryButtonText={MODAL_PRIMARY_BUTTON_TEXT}
+            defaultValue={notif.content}
+            authorized={notif.memberId === user.memberId}
+            title={notif.title}
+            totalCharactersTitle={CHAR_COUNT_TITLE}
+            totalCharactersContent={CHAR_COUNT_CONTENT}
           />
         </Dialog>
       )}
