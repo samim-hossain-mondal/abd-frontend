@@ -28,6 +28,7 @@ export default function MadeToStick() {
   const [cards, setCards] = useState([]);
   const [layout, setLayout] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [numberOfEdits, setNumberOfEdits] = useState(0);
 
   const { user, userRole } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -217,6 +218,13 @@ export default function MadeToStick() {
     setIsEdit(false);
   };
 
+  const handleReset = (cardData) =>{
+    setCards((prevCards) => [
+        ...prevCards.filter((item) => item.i !== cardData.i),
+        cardData
+      ]);
+  }
+
   return (cards)?(
     <Box sx={{ marginTop: '110px' }}>
       {(!isMobile) && (
@@ -224,10 +232,11 @@ export default function MadeToStick() {
           {
             (isPO) && (
               <Container maxWidth="xl" className="action-buttons">
-                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Box>
                     <Button
-                      variant="contained" color='customButton1'
+                      variant="contained"
+                      color="primary"
                       onClick={addTextCard}
                       name="add"
                       type="button"
@@ -239,7 +248,7 @@ export default function MadeToStick() {
                   <Box>
                     <Button
                       variant="contained"
-                      color='customButton1'
+                      color="primary"
                       onClick={() => {
                         if (!isMobile) handleSave();
                       }}
@@ -298,6 +307,9 @@ export default function MadeToStick() {
                           handleCardInputChange={handleCardInputChange}
                           handleImageInputChange={handleImageInputChange}
                           handleSave={handleSave}
+                          handleReset={handleReset}
+                          numberOfEdits={numberOfEdits}
+                          setNumberOfEdits={setNumberOfEdits}
                         />
                       </Resizable>
                     </Box>

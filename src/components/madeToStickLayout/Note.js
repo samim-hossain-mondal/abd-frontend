@@ -4,31 +4,51 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-param-reassign */
 /* eslint-disable arrow-body-style */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import proptypes from 'prop-types';
 import { useOktaAuth } from '@okta/okta-react';
 import { TextareaAutosize } from "@mui/base";
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from '@mui/icons-material/Done';
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, Button } from "@mui/material";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { NOTE_TYPES } from '../constants/MadeToStick';
 import getAccessToken from '../utilityFunctions/getAccessToken';
 import {DOMAIN} from '../../config';
+import { ErrorContext } from '../contexts/ErrorContext';
 
 export default function Note({
-  card, isEdit, handleCloseButton, handleEditImgLink, handleDelete, handleImageInputChange, handleCardInputChange, handleSave, isPO
+  card, isEdit, handleCloseButton, handleEditImgLink, handleDelete, handleImageInputChange, handleCardInputChange, handleSave, isPO, handleReset
+  , numberOfEdits, setNumberOfEdits
 }) {
   const { authState } = useOktaAuth();
   const token = getAccessToken(authState);
   const [editButton, setEditButton] = useState(false);
   const [showIcons, setShowIcons] = useState(false);
+  const [cardData, setCardData] = useState(null);
+  const { setError } = useContext(ErrorContext);
+  // Edge case need to be solved later, when we save layout from madetostick itself, then how to handle discard.
+  useEffect(() => {
+    setCardData(card);
+  }, [editButton]);
+
+  console.log(numberOfEdits);
   const handleEditButton = (value) => {
-    setEditButton(value);
+    if(value === true) {
+      if(numberOfEdits !== 0) {
+        setError("You have unsaved changes. Please save or discard them before editing another card.");
+        return;
+      }
+      setEditButton(value);
+      setNumberOfEdits(numberOfEdits + 1);
+      return;
+    }
+    setNumberOfEdits(numberOfEdits - 1);
     if (value === false) {
       handleSave();
+      setEditButton(value);
     }
   };
   class MyUploadAdapter {
@@ -266,11 +286,24 @@ export default function Note({
                           flexWrap: "wrap",
                         }}
                       >
-                        <Tooltip title="Save" placement='top'>
-                          <IconButton onClick={() => { handleEditButton(false) }}>
-                            <DoneIcon style={{ padding: "3px 3px 0px 3px", cursor: 'pointer' }} />
-                          </IconButton>
-                        </Tooltip>
+
+                        <Button 
+                          onClick={() => {
+                            setEditButton(false);
+                            setNumberOfEdits(numberOfEdits - 1);
+                            handleReset(cardData);
+                          }} 
+                          sx={{ padding: "3px 3px 0px 3px", cursor: 'pointer', textTransform: 'none' }}
+                        >
+                          Discard
+                        </Button>
+
+                        <Button
+                          onClick={() => { handleEditButton(false) }}
+                          sx={{ padding: "3px 3px 0px 3px", cursor: 'pointer', textTransform: 'none' }}
+                        >
+                          Save
+                        </Button>
                       </Box>
                     )
                   }
@@ -348,9 +381,15 @@ Note.propTypes = {
   handleCardInputChange: proptypes.func.isRequired,
   handleSave: proptypes.func,
   isPO: proptypes.bool,
+  handleReset: proptypes.func,
+  numberOfEdits: proptypes.number,
+  setNumberOfEdits: proptypes.func,
 };
 
 Note.defaultProps = {
   handleSave: () => { },
   isPO: false,
+  handleReset: () => { },
+  numberOfEdits: 0,
+  setNumberOfEdits: () => { },
 };
