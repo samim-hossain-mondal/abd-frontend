@@ -40,10 +40,12 @@ const settings = ['Profile', 'Account Settings', 'Logout'];
 const audio = new Audio(notificationSound);
 
 export default function Navbar({
+  navbarRef,
   authLoaded,
   poNotesRef,
   dsmRef,
   availabilityCalendarRef,
+  setNavbarHeight
 }) {
   const location = useLocation();
   const pages = allPages
@@ -132,12 +134,17 @@ export default function Navbar({
   };
 
 
+  useEffect(() => {
+    setNavbarHeight((navbarRef?.current?.clientHeight ?? 0));
+  }, [navbarRef]);
+
   const { loading } = useContext(LoadingContext)
   return (
     <AppBar
       position="fixed"
       sx={{ backgroundColor: 'white', boxShadow: "none", zIndex: 99 }}
     >
+      <div ref={navbarRef}>
       {loading &&
 
         <Box sx={{ width: '100%' }}>
@@ -358,6 +365,7 @@ export default function Navbar({
         <MobileTabs
           sections={sections}
         />)}
+      </div>
     </AppBar>
   );
 }
@@ -367,10 +375,14 @@ Navbar.propTypes = {
   poNotesRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   dsmRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   availabilityCalendarRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  // eslint-disable-next-line react/forbid-prop-types
+  navbarRef: PropTypes.any,
+  setNavbarHeight: PropTypes.func.isRequired,
 };
 
 Navbar.defaultProps = {
   poNotesRef: null,
   dsmRef: null,
   availabilityCalendarRef: null,
+  navbarRef: null,
 };
