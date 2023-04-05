@@ -1,13 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useContext, useState } from "react";
-import {
-  Box,
-  Dialog,
-  Typography,
-  Stack,
-  Chip,
-} from "@mui/material";
+import { Box, Dialog, Typography, Stack, Chip } from "@mui/material";
 import axios from "axios";
 import { ProjectUserContext } from "../../contexts/ProjectUserContext";
 import {
@@ -16,26 +10,30 @@ import {
   PRIMARY_BUTTON_TEXT,
   CHAR_COUNT,
 } from "../../constants/dsm/Requests";
+import { DOMAIN } from "../../../config";
 
-import { CHAR_COUNT_CONTENT, CHAR_COUNT_TITLE, MODAL_PRIMARY_BUTTON_TEXT } from '../../constants/dsm/Announcements';
+import {
+  CHAR_COUNT_CONTENT,
+  CHAR_COUNT_TITLE,
+  MODAL_PRIMARY_BUTTON_TEXT,
+} from "../../constants/dsm/Announcements";
 
 import GenericInputModal from "../dsm/GenericInputModal";
 
 import CelebrationGenericModal from "../dsm/CelebrationGenericModal";
 import AnnouncementInputModal from "../dsm/AnnouncementInputModal";
-import { DOMAIN } from "../../../config";
 
 function NotificationDialog(props) {
-  // console.log(props);
   const handleClose = () => {
     props.setOpen(false);
-    if (props.checked)
-      return;
-    axios.put(`${DOMAIN}/api/notifications/${props.id}`, {
-      readStatus: true,
-    }).then(() => {
-      props.setChecked(!props.checked);
-    });
+    if (props.checked) return;
+    axios
+      .put(`${DOMAIN}/api/notifications/${props.id}`, {
+        readStatus: true,
+      })
+      .then(() => {
+        props.setChecked(!props.checked);
+      });
   };
   const { user, projectId } = useContext(ProjectUserContext);
   const [newCelebration, setNewCelebration] = useState({
@@ -48,10 +46,12 @@ function NotificationDialog(props) {
   const [lock, setLock] = useState(true);
 
   const makeCalls = async () => {
-    // console.log(props, '*');
     if (!props.open) return;
-    // console.log(props.targetType);
-
+    console.log("c", props.count);
+    if (props.checked === false) {
+      props.setCount(props.count - 1);
+      console.log("cr", props.count);
+    }
     if (props.targetType === "TEAM_REQUEST") {
       // console.log("tr called");
       axios
@@ -64,7 +64,6 @@ function NotificationDialog(props) {
         .catch((err) => {
           console.log(err);
         });
-
     } else if (props.targetType === "CELEBRATION") {
       // console.log("cl called");
       axios
@@ -79,8 +78,7 @@ function NotificationDialog(props) {
             memberId: user.memberId,
           });
         });
-    }
-    else if (props.targetType === "ANNOUNCEMENT") {
+    } else if (props.targetType === "ANNOUNCEMENT") {
       axios
         .get(`${DOMAIN}/api/dsm/announcements/${projectId}/${props.targetId}`)
         .then((response) => {
@@ -88,7 +86,6 @@ function NotificationDialog(props) {
           setNotif(data);
         });
     }
-
   };
 
   useEffect(() => {
@@ -156,9 +153,8 @@ function NotificationDialog(props) {
           />
         </Dialog>
       )}
-
     </Box>
   );
 }
 
-export default NotificationDialog
+export default NotificationDialog;

@@ -7,9 +7,8 @@ import {
   Button,
   useMediaQuery,
   CircularProgress,
-  Container,
+  Box,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
@@ -248,7 +247,7 @@ function CardList() {
           justifyContent="flex-end"
           sx={{ backgroundColor: 'primary.contrastText', height: '45px', padding: '8px' }}
         >
-          <Container maxWidth='xl' sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexGrow: '1', padding: '25px 50px 25px 50px'}}>
             < Typography variant="h6" sx={{ color: 'secondaryButton.contrastText', fontWeight: 'bold' }}> Collaborators ({adminCards.length+memberCards.length+leaderCards.length}) </Typography>
             <Box
               sx={{
@@ -271,9 +270,9 @@ function CardList() {
                 sx={{ width: breakpoint450 ? '200px' : "148px" }}
               />
             </Box>
-          </Container>
+          </Box>
         </Box>
-        <Container maxWidth="xl">
+        <Box sx={{padding: '25px 50px 25px 50px'}}>
         <Box
           width="100%"
           display="flex"
@@ -557,7 +556,7 @@ function CardList() {
             </Box>
           </Box>
         </Box>
-        </Container>
+        </Box>
       </Box>
     </Box>
   ):(

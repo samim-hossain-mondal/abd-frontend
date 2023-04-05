@@ -1,40 +1,58 @@
-  /* eslint-disable react/prop-types */
-  import React, { useState } from "react";
-  import { Card, CardContent, IconButton, Typography,Button} from "@mui/material";
-  import CloseIcon from "@mui/icons-material/Close";
-  import NotificationDialog from "./NotificationDialog";
+/* eslint-disable react/prop-types */
+import React, { useState } from "react";
+import { Card, CardContent, IconButton, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import Brightness1Icon from "@mui/icons-material/Brightness1";
+import NotificationDialog from "./NotificationDialog";
 
-  function NotificationCard(props) {
-    const { title, desc, date, isChecked, targetId,targetType,notifId,id} = props;
-    const [isClosed, setIsClosed] = useState(false);
-    const [open, setOpen]=useState(false);
-    const [checked,setChecked]=useState(isChecked);
+function NotificationCard(props) {
+  const {
+    title,
+    desc,
+    date,
+    isChecked,
+    targetId,
+    targetType,
+    notifId,
+    id,
+    setCount,
+    count,
+  } = props;
+  const [isClosed, setIsClosed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(isChecked);
 
-    const handleCheck = (e) => {
-      e.stopPropagation();
-      setChecked(!checked);
-      
-    };
+  // const handleCheck = (e) => {
+  //   e.stopPropagation();
+  //   setChecked(!checked);
 
-    const handleClose = (e) => {
-      e.stopPropagation();
-      setIsClosed(true);
-
-    };
+  // };
+  function formatDate(dateValue) {
+    const year = dateValue.getFullYear();
+    const month = String(dateValue.getMonth() + 1).padStart(2, '0');
+    const day = String(dateValue.getDate()).padStart(2, '0');
+    const hours = dateValue.getHours();
+    const minutes = String(dateValue.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    return `${year}-${month}-${day} ${formattedHours}:${minutes} ${period}`;
+  }
+  
+  const handleClose = (e) => {
+    e.stopPropagation();
+    setIsClosed(true);
+  };
 
   const handleCardClick = () => {
     if (!isClosed) {
-      console.log("clicked");
-      console.log(targetType);
       setOpen(true);
-      console.log('open',open);
     }
   };
 
-    return (
-      <>
+  return (
+    <>
       <Card
-      onClick={handleCardClick}
+        onClick={handleCardClick}
         sx={{
           position: "relative",
           opacity: isClosed ? 0 : 1,
@@ -54,7 +72,7 @@
             }}
             onClick={handleClose}
           >
-            <CloseIcon /> 
+            <CloseIcon />
           </IconButton>
           <Typography color="primary.main" variant="h6" noWrap sx={{ mb: 1 }}>
             {title}
@@ -63,18 +81,30 @@
             {desc}
           </Typography>
           <Typography variant="caption" sx={{ mb: 1 }}>
-            {date} 
+            {formatDate(new Date(date))
+            }
           </Typography>
-          <Button sx={{}} variant={checked ? "contained" : "outlined"} onClick={handleCheck}>
-           {
-              checked ? "Marked as Read" : "Mark as Read"
-           }
-          </Button>
+          <IconButton sx={{}}>
+            <Brightness1Icon
+              sx={{ color: !checked ? "primary.main" : "white" }}
+            />
+          </IconButton>
         </CardContent>
       </Card>
-      <NotificationDialog open={open} setOpen={setOpen} targetId={targetId} targetType={targetType} setChecked={setChecked} checked={checked}  notifId={notifId} id={id}/>
-      </>
-    );
-  }
+      <NotificationDialog
+        open={open}
+        setOpen={setOpen}
+        targetId={targetId}
+        targetType={targetType}
+        setChecked={setChecked}
+        checked={checked}
+        notifId={notifId}
+        id={id}
+        setCount={setCount}
+        count={count}
+      />
+    </>
+  );
+}
 
-  export default NotificationCard;
+export default NotificationCard;
