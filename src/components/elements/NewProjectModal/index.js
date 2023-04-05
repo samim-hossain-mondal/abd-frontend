@@ -71,9 +71,9 @@ function NewProjectModal({ open, setOpen }) {
     <Dialog
       PaperProps={{
         sx: {
-         display: "flex",
-         justifyContent: "center",
-         zIndex: "900"
+          display: "flex",
+          justifyContent: "center",
+          zIndex: "900"
         },
       }}
       sx={{ zIndex: "900" }}
