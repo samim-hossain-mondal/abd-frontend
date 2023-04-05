@@ -29,7 +29,8 @@ export default function ReportDialog({ open, setOpen, handleReport, description 
         aria-describedby="alert-dialog-description"
         sx={{
           boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)',
-          borderRadius: '2px'
+          borderRadius: '2px',
+          zIndex: "900"
         }}
       >
         <DialogContent>

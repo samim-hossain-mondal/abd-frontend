@@ -20,7 +20,7 @@ function MobileTabs({ sections }) {
   return (
     <Box
       sx={{
-        zIndex: 9999,
+        zIndex: 250,
         backgroundColor: "white",
         color: "black",
         display: "flex",

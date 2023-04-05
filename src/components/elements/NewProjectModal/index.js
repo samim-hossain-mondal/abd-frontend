@@ -80,8 +80,10 @@ function NewProjectModal({ open, setOpen }) {
         sx: {
          display: "flex",
          justifyContent: "center",
+         zIndex: "900"
         },
       }}
+      sx={{ zIndex: "900" }}
       open={open}
       onClose={() => {
         setOpen(false);

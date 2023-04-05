@@ -225,7 +225,7 @@ export default function SentimentMeterDialog({ open, setOpen, isLeaderOrAdmin })
     <div >
       <Dialog
         open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description"
-        sx={{ boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)', borderRadius: '2px' }}
+        sx={{ zIndex: "900", boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.1), 0px 24px 48px rgba(0, 0, 0, 0.2)', borderRadius: '2px' }}
       >
         <DialogContent>
           <Box sx={{ display: 'flex' }}>

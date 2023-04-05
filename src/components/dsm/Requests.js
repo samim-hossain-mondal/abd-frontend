@@ -255,6 +255,7 @@ export default function Requests({ selectedDate }) {
         <Dialog
           open={openModal}
           onClose={handleModalClose}
+          sx={{ zIndex: "900" }}
         >
           <GenericInputModal
             title={TITLE}
@@ -356,6 +357,7 @@ export default function Requests({ selectedDate }) {
             <Dialog
               open={openEditModal}
               onClose={handleEditModalClose}
+              sx={{ zIndex: "900" }}
             >
               <GenericInputModal
                 title={TITLE}

@@ -58,10 +58,11 @@ export default function AddCelebrationModal({
   }
 
   return (
-    <Box>
+    <Box sx={{ zIndex: "900" }}>
       <Dialog
         open={openModal}
         onClose={handleModalClose}
+        sx={{ zIndex: "900" }}
       >
         <CelebrationGenericModal
           title='Type'

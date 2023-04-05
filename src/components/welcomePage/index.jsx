@@ -182,7 +182,7 @@ export default function WelcomePage() {
                 position: 'fixed',
                 bottom: 40,
                 right: 40,
-                zIndex: '9999',
+                zIndex: '250',
                 height: { xs: 50, sm: 60, md: 70 },
                 width: { xs: 50, sm: 60, md: 70 },
                 backgroundColor: 'logoBlue.main',
@@ -207,7 +207,7 @@ export default function WelcomePage() {
           width: '100%',
           boxShadow: 5,
           position: 'relative',
-          zIndex: '999',
+          zIndex: 90,
           marginTop: user.memberId ? 0 : 6, // TODO: Change this to a better solution
         }}>
         <Typography
