@@ -59,7 +59,7 @@ export default function ScrollableHome({
 
   return (
     <RefreshContextProvider>
-      <Box sx={{ marginTop: '95px' }}>
+      <Box>
         <div ref={dsmRef}>
           <DSMViewportContext.Provider value={dsmIsInViewPort}>
             <HomeContainer />

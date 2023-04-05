@@ -58,6 +58,9 @@ function AppRoutes() {
   const dsmRef = useRef(null);
   const availabilityCalendarRef = useRef(null);
 
+  const navbarRef = useRef(null);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+
   const { updateUserDetails } = useContext(ProjectUserContext);
   const { setLoading } = useContext(LoadingContext);
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -101,12 +104,20 @@ function AppRoutes() {
         window.location.pathname!==HOME_ROUTE && (
           <Box>
             <Navbar
+              navbarRef={navbarRef}
               authLoaded={authLoaded}
               poNotesRef={poNotesRef}
               dsmRef={dsmRef}
               availabilityCalendarRef={availabilityCalendarRef}
               handleScroll={handleScroll}
+              setNavbarHeight={setNavbarHeight}
             />
+
+          <Box sx={{
+            height: `${navbarHeight + 24}px`,
+            backgroundColor: 'backgroundColor.main'
+          }} />
+          {console.log(navbarHeight)}
           </Box>
         )}
         <Routes>

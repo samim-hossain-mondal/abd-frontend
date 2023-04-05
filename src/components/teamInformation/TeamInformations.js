@@ -243,7 +243,6 @@ function CardList() {
         <Box
           position="absoulte"
           width="100%"
-          marginTop="7rem"
           marginBottom={!breakpoint450 ? "0.8rem" : 0}
           display="flex"
           justifyContent="flex-end"
