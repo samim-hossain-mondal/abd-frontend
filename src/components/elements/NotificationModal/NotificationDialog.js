@@ -47,25 +47,20 @@ function NotificationDialog(props) {
 
   const makeCalls = async () => {
     if (!props.open) return;
-    console.log("c", props.count);
     if (props.checked === false) {
       props.setCount(props.count - 1);
-      console.log("cr", props.count);
     }
     if (props.targetType === "TEAM_REQUEST") {
-      // console.log("tr called");
       axios
         .get(`${DOMAIN}/api/dsm/team-requests/${projectId}/${props.targetId}`)
         .then((response) => {
           const { data } = response;
-          // console.log(data);
           setNotif(data);
         })
         .catch((err) => {
           console.log(err);
         });
     } else if (props.targetType === "CELEBRATION") {
-      // console.log("cl called");
       axios
         .get(`${DOMAIN}/api/dsm/celebrations/${projectId}/${props.targetId}`)
         .then((response) => {

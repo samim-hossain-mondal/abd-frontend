@@ -92,7 +92,6 @@ export default function Navbar({
     if (isNotify) {
       audioRef.current.play();
     }
-    console.log('playing audio');
   }, [isNotify]);
 
   const [notificationModal, setNotificationModal] = useState(false);
@@ -269,7 +268,6 @@ export default function Navbar({
                   userDetailsUpdated && user?.name ?
                     <Tooltip title="Open Notifications">
                       <Badge badgeContent={notificationCount} color='error'>
-                        {/* {console.log(notificationCount)} */}
                         <NotificationsIcon sx={{ color: "primary.main", cursor: 'pointer' }} onClick={handleOpenNotificationModal} />
                       </Badge>
                     </Tooltip>

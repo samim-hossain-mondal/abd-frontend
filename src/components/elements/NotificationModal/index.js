@@ -74,24 +74,7 @@ function NotificationModal({ open, setOpenNotification }) {
       }
     });
   };
-  // useEffect(() => {
-  //   if (!open) return;
-  //   axios.get(url).then((response) => {
-  //     console.log(response.data);
-  //     const notifications = response.data.map((notif) => ({
-  //       notificationId: notif.notificationId,
-  //       memberId: notif.memberId,
-  //       readStatus: notif.readStatus,
-  //       title: notif.notifications.title,
-  //       createdAt: notif.notifications.createdAt,
-  //       targetId: notif.notifications.targetId,
-  //       content: notif.notifications.content,
-  //       targetType: notif.notifications.targetType,
-  //     }));
 
-  //     setNotifs(notifications);
-  //   });
-  // }, [open, url]);need for future use
   useEffect(() => {
     fetchMoreData();
   }, [url, open]);
