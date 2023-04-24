@@ -114,7 +114,7 @@ export default function Note({
         // This URL will be used to display the image in the content. Learn more in the
         // UploadAdapter#upload documentation.
         resolve({
-          default: response.url?.replace('us-east-1', 'ap-south-1') ?? response.url
+          default: response.url,
         });
       });
 
