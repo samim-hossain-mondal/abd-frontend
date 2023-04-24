@@ -13,15 +13,14 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import CardBox from '../elements/welcomePage/CardBox';
 import { texts } from '../constants/welcomePage';
 import ImageCarousel from '../elements/welcomePage/ImageCarousel';
 import StickyHeader from '../elements/welcomePage/StickyHeader';
-// import ProfileCard from "../elements/welcomePage/ProfileCard"; // TODO: parked for now
 import NewProjectModal from '../elements/NewProjectModal';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import PaginatedCards from '../elements/welcomePage/PaginatedCards';
 import { DAILY_ROUTE, LOGIN_ROUTE } from '../constants/routes';
+import ValueProps from '../elements/welcomePage/ValueProps';
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -53,8 +52,9 @@ export default function WelcomePage() {
   };
 
   let projectCountText;
+  const projectsCount = userProjects.length;
   if (userProjects.length > 0) {
-    projectCountText = `${userProjects.length} projects for ${user.email}`;
+    projectCountText = `${projectsCount} active project${projectsCount > 1 ? `s` : ``} for ${user.email}`;
   } else if (user.memberId) {
     projectCountText = 'You have no active projects';
   } else {
@@ -124,10 +124,7 @@ export default function WelcomePage() {
           direction='column'
           spacing={2}
           sx={{ alignSelf: 'center', width: '100%' }}>
-          <CardBox
-            title='Why use My Agile Dashboard?'
-            description={texts.whyMyAgile}
-          />
+          <ValueProps/>
           <ImageCarousel />
         </Stack>
       </Container>

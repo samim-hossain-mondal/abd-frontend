@@ -11,18 +11,17 @@ function Step1Content() {
     <Box mx={0.5}>
       <Box pl={2}>
         <Typography variant="h5" sx={{ mb: 0.5 }}>
-          Hi {" "}
+          Kudos to you, {" "}
           <Box component="span" color="primary.main" fontWeight="bold">
             {user.name}
           </Box>
-          ,
+          {" "}👍
           <br />
         </Typography>
         <Typography >
-          Welcome to My Agile Dashboard, where collaboration and transparency come together to help your team succeed!
+          You are about to create a Home page for your agile team to effectively manage, colloaborate with transparancy.
           <Box sx={{ mt: 1.5 }}>
-            Create a new project and experience how easy it is to manage tasks and track progress.
-            Our platform empowers your team to work together seamlessly towards a common goal.
+            Your data is safe and it is protected within our firm ecosystem. Only you and your team can access your data based on their roles.
           </Box>
         </Typography>
       </Box>

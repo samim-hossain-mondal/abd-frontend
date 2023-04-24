@@ -327,7 +327,9 @@ function ProjectModal({
           mt={2}
         >
           {projectInfo &&
-            projectInfo.projectMembers.map((collaborator, index) => (
+            projectInfo.projectMembers
+            .filter((collaborator) => collaborator.isActive === true)
+            .map((collaborator, index) => (
               <Box sx={{ display: "flex", flexDirection: "column" }} mb={2} className="collabRow">
                 <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }} className="collabEssentialDetails">
                   <Box

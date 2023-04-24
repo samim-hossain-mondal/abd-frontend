@@ -30,7 +30,7 @@ const slides = [
     {
         id: 3,
         title: "Stay informed about your team's availability status \u{1F5D3}",
-        description: 'The availability calendar helps you stay informed about your team members availability status, so that you can plan your meetings accordingly.',
+        description: 'The Risk Assessment calendar helps you stay informed about your team members availability status, so that you can anticipate risks for the sprints.',
         image: calendarImg
     }
 ]

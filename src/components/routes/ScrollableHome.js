@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+// import { useLocation } from 'react-router';
 import { Box } from '@mui/material';
 import PropTypes from 'prop-types';
 import HomeContainer from './Home';
@@ -8,6 +9,10 @@ import DSMViewportContext from '../contexts/DSMViewportContext';
 import { RefreshContextProvider } from '../contexts/RefreshContext';
 import PONotesViewportContext from '../contexts/PONotesViewportContext';
 import FabRefresh from '../utilityFunctions/FabRefresh';
+// import getRoute from '../utilityFunctions/getRoute';
+// import {  DAILY_PAGE_NAME } from '../constants/routes';
+// import { ProjectUserContext } from '../contexts/ProjectUserContext';
+// import MobileTabs from '../elements/MobileTabs';
 
 function useIsInViewport(ref) {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -57,8 +62,23 @@ export default function ScrollableHome({
     }
   }, [scrollTo]);
 
+  // const { projectId } = useContext(ProjectUserContext)
+  // const location = useLocation();
+  // const aboveTablet = useMediaQuery('(min-width: 769px)');
+  // const showMobileTabs = (location.pathname === getRoute(DAILY_PAGE_NAME, projectId))
+  // const sections = [
+  //   { name: 'Daily Retro', ref: dsmRef },
+  //   { name: 'PO Notes', ref: poNotesRef },
+  //   { name: 'Availability Calendar', ref: availabilityCalendarRef },
+  // ];
+
+
   return (
     <RefreshContextProvider>
+      {/* {(!aboveTablet) && (showMobileTabs) && (
+        <MobileTabs 
+          sections={sections}
+        />)} */}
       <Box>
         <div ref={dsmRef}>
           <DSMViewportContext.Provider value={dsmIsInViewPort}>

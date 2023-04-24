@@ -23,7 +23,7 @@ import { ProjectUserContext } from "../../contexts/ProjectUserContext";
 import { LoadingContext } from '../../contexts/LoadingContext';
 import stringAvatar from '../../utilityFunctions/getStringColor';
 
-const settings = ["Profile", "Account Settings", "Logout"];
+const settings = ["My Projects", "Logout"];
 
 function StickyHeader({
   userName, handleCreateProjectClick, handleLoginClick
@@ -39,7 +39,7 @@ function StickyHeader({
   };
 
   const handleCloseUserMenu = (event) => {
-    if (event.target.innerText === "Account Settings") {
+    if (event.target.innerText === "My Projects") {
       setOpenSettings(true);
     }
     setAnchorElUser(null);
@@ -130,7 +130,7 @@ function StickyHeader({
                 <Tooltip title="Open settings">
                   <IconButton
                     onClick={handleOpenUserMenu}
-                    sx={{ marginRight: 0, padding: 0 }}
+                    sx={{ marginRight: 0, padding: 0, height: "50px", width: "50px" }}
                   >
                     <Avatar
                       {...stringAvatar(userName ?? '  ', stc)}

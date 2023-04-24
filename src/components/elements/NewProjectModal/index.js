@@ -13,9 +13,9 @@ import Step2Content from "./Step2Content";
 import Step3Content from "./Step3Content";
 
 const steps = [
-  'Agree to Terms and Conditions',
-  'Create a new project',
-  'Add members to the project',
+  'Welcome',
+  'Add Project Details',
+  'Add Collaborators',
 ];
 
 function NewProjectModal({ open, setOpen }) {
