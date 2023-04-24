@@ -24,7 +24,7 @@ export const INFORMATION_RADIATORS_PAGE_NAME = 'Information Radiators';
 export const MADE_TO_STICK_PAGE_NAME = 'Made to Stick';
 
 export const allPages = [
-  HOME_PAGE_NAME,
+  // HOME_PAGE_NAME,
   DAILY_PAGE_NAME,
   OUR_TEAM_PAGE_NAME,
   MADE_TO_STICK_PAGE_NAME
