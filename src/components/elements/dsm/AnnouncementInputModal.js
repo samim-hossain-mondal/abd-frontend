@@ -99,7 +99,7 @@ export default function AnnouncementInputModal({
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
-        padding: '16px 24px 24px 24px',
+        padding: '16px 24px 16px 24px',
       }}
     >
       <DeleteDialog
@@ -343,8 +343,8 @@ export default function AnnouncementInputModal({
         !isDisabled && (
           <Button
             sx={{
-              margin: '16px 0',
-              padding: '12px 0',
+              margin: '16px 0px 0px 0px',
+              padding: '8px 0',
               width: '100%',
               borderRadius: '8px',
               color: 'customButton1.contrastText',
@@ -364,7 +364,7 @@ export default function AnnouncementInputModal({
       {secondaryButtonText && (
         <Button
           sx={{
-            padding: '12px 0',
+            padding: '8px 0',
             width: '100%',
             borderRadius: '8px',
             color: 'secondaryButton.contrastText',
