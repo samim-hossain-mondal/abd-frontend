@@ -35,6 +35,7 @@ export default function CelebrationBoard({ selectedDate }) {
   const { refresh, setRefresh } = useContext(RefreshContext);
   const DSMInViewPort = useContext(DSMViewportContext);
   const { setLoading } = useContext(LoadingContext);
+  const [accordionDetailsHeight, setAccordionDetailsHeight] = useState(0);
 
   const [celebrations, setCelebrations] = useState([]);
   const [celebrationsByDate, setCelebrationsByDate] = useState([]);
@@ -86,6 +87,16 @@ export default function CelebrationBoard({ selectedDate }) {
       return [];
     }
   }
+
+  const getElementHeight = (id)=>{
+    const element = document.getElementById(id);
+    return element ? element.offsetHeight-88 : 0;
+  }
+
+  useEffect(()=>{
+    const height = getElementHeight('scrollableCelebrationDiv');
+    setAccordionDetailsHeight(height);
+  },[celebrations, gridHeightState, userRole, breakpoint1080, DSMInViewPort]);
 
   const limit = 15;
 
@@ -192,13 +203,15 @@ export default function CelebrationBoard({ selectedDate }) {
         </AccordionSummary>
         <AccordionDetails
           sx={{
-            padding: loaded && celebrations.length === 0 ? "20% 16px" : "none",
-            paddingTop: "0px"
+            padding: loaded && celebrations.length === 0 ? "none" : "none",
+            height: `${accordionDetailsHeight}px`,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           {loaded && celebrations.length === 0 ?
             (
-              <Box sx={{ height: "100%" }}>
+              <Box sx={{ height: "100%",display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <Typography
                   color="watermark.main"
                   fontSize='1.25rem'

@@ -272,7 +272,7 @@ export default function Announcements() {
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            padding: loaded && announcements.length === 0 ? "10% 16px" : '0 16px',
+            padding: loaded && announcements.length === 0 ? "none" : '0 16px',
             gap: '16px',
             height: `${accordionDetailsHeight}px`,
             overflow: 'scroll',
@@ -284,7 +284,7 @@ export default function Announcements() {
             :
             (announcements.length === 0 ?
               (
-                <Box sx={{ height: "100%" }}>
+                <Box sx={{ height: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Typography
                     color="watermark.main"
                     fontSize='1.25rem'
