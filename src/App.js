@@ -24,6 +24,7 @@ import {
   PO_NOTE_ROUTE,
   LOGIN_CALLBACK_ROUTE,
   LOGIN_ROUTE,
+  WELCOME_ROUTE,
 } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
@@ -98,10 +99,9 @@ function AppRoutes() {
   return (
     <QueryClientProvider client={queryClient}>
       <Box className="App">
-        {console.log("window.location.pathname >>>", window.location.pathname)}
         {
           authLoaded &&
-          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, HOME_ROUTE].includes(window.location.pathname)) && (
+          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, WELCOME_ROUTE].includes(window.location.pathname)) && (
             <Box>
               <Navbar
                 navbarRef={navbarRef}
@@ -117,7 +117,6 @@ function AppRoutes() {
                 height: `${navbarHeight + 24}px`,
                 backgroundColor: 'backgroundColor.main'
               }} />
-              {console.log(navbarHeight)}
             </Box>
           )}
         <Routes>
@@ -174,8 +173,8 @@ function AppRoutes() {
                   scrollTo='availabilityCalendar' />
               }
             </SecureRoute>} />
-          <Route path={HOME_ROUTE} element={< WelcomePage />} />
-          <Route path="/" element={< WelcomePage />} />
+          <Route path={HOME_ROUTE} element={<h1> </h1>} />
+          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
           <Route path={LOGIN_CALLBACK_ROUTE} element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
