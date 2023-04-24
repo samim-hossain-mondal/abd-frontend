@@ -260,13 +260,11 @@ export default function Requests({ selectedDate }) {
               accessibiltyInformation={TeamRequestInfo.accessibiltyInformation}
             />
           </Typography>
-          {isMember(userRole) &&
-            <Tooltip title="Add Request" placement='top'>
-              <IconButton onClick={(e) => handleAddButtonClick(e)}>
-                <AddCircleIcon color="primary" />
-              </IconButton>
-            </Tooltip>
-          }
+          <Tooltip title="Add Request" placement='top'>
+            <IconButton onClick={(e) => handleAddButtonClick(e)}>
+              <AddCircleIcon color="primary" />
+            </IconButton>
+          </Tooltip>
         </AccordionSummary>
         <Dialog
           open={openModal}
