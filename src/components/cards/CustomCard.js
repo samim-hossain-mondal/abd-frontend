@@ -26,7 +26,7 @@ import DateDivider from '../elements/DateDivider';
 import { LoadingContext } from '../contexts/LoadingContext';
 
 const Cards = styled(Card)(() => ({
-  borderRadius: 20,
+  borderRadius: 8,
 }));
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
