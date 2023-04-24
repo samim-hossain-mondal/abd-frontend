@@ -1,6 +1,14 @@
 /* eslint-disable import/no-cycle */
 import { Close as CloseIcon } from '@mui/icons-material';
-import { Avatar, Button, Checkbox, FormControlLabel, Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
@@ -80,7 +88,9 @@ export default function CelebrationGenericModal({
         isAnonymous: newCelebration.anonymous,
         isAbuse: true
       }
-      const resData = await makeRequest(UPDATE_CELEBRATION(projectId, newCelebration.celebrationId), setLoading, { data: reqBody })
+      const resData = await makeRequest(
+        UPDATE_CELEBRATION(projectId, newCelebration.celebrationId),
+        setLoading, { data: reqBody })
       setSuccess('Reported successfully');
       return resData;
     }
@@ -128,15 +138,15 @@ export default function CelebrationGenericModal({
 
   return (
     <Box
-      width={isPreview ? 'max(25vw, 340px)' : 'max(20vw, 340px)'}
+      width={isPreview ? 'max(20vw, 320px)' : 'max(20vw, 320px)'}
       sx={{
+        display: 'flex',
+        flexDirection: 'column',
         boxSizing: 'border-box',
         backgroundColor: '#FFFFFF',
         boxShadow: '0px 30px 60px rgba(32, 56, 85, 0.15)',
         borderRadius: '8px',
-        padding: '16px 24px 24px 24px',
-        position: 'relative',
-        
+        padding: '16px 24px 0px 24px',
       }}
     >
       <Box
@@ -177,7 +187,10 @@ export default function CelebrationGenericModal({
         isPreview ?
           <Box>
             <CelebrationCard celebration={reStructureCardDetails(newCelebration)} isPreview={isPreview} />
-            <InstructionBox header={instructions[newCelebration.type]?.header} points={instructions[newCelebration.type]?.points} />
+            <InstructionBox
+              header={instructions[newCelebration.type]?.header}
+              points={instructions[newCelebration.type]?.points}
+            />
           </Box> :
           <Box>
             {
@@ -186,7 +199,9 @@ export default function CelebrationGenericModal({
                 <Box sx={{ mr: 1 }}>
                   {
                     newCelebration.isAnonymous ?
-                      <Avatar sx={{ height: "30px", width: "30px", aspectRatio: "1/1" }}><PersonOutlineRoundedIcon /></Avatar>
+                      <Avatar sx={{ height: "30px", width: "30px", aspectRatio: "1/1" }}>
+                        <PersonOutlineRoundedIcon />
+                      </Avatar>
                       :
                       <Avatar {...stringAvatar(newCelebration.author ?? '  ', stc, true)} />
                   }
@@ -236,7 +251,10 @@ export default function CelebrationGenericModal({
             {
               user.memberId === newCelebration.memberId &&
               <Box sx={{ margin: '16px 0 10px 0' }}>
-                <Typography variant='contentMain' sx={{ fontWeight: 500, color: '#121212', fontSize: "1rem" }} >{inputTitle}</Typography>
+                <Typography variant='contentMain'
+                  sx={{ fontWeight: 500, color: '#121212', fontSize: "1rem" }} >
+                  {inputTitle}
+                </Typography>
               </Box>
             }
             <RichTextArea
@@ -275,67 +293,73 @@ export default function CelebrationGenericModal({
               />
             }
             {
-              (!lock || isNewCelebration) &&
-              <FormControlLabel disabled={lock} sx={{ margin: '10px 0', paddingLeft: '5px', paddingTop: '5px', fontFamily: 'Poppins' }} control={
-                <Checkbox sx={{
-                  color: 'customButton1.main',
-                  '&.Mui-checked': {
+              (isNewCelebration || user.memberId === newCelebration.memberId) &&
+              <FormControlLabel disabled={lock || newCelebration.content.trim() === ''}
+                sx={{ margin: '10px 0', paddingLeft: '5px', paddingTop: '5px', fontFamily: 'Poppins' }}
+                control={
+                  <Checkbox sx={{
                     color: 'customButton1.main',
-                  }
-                }} onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />} label="Post Anonymously" />
+                    '&.Mui-checked': {
+                      color: 'customButton1.main',
+                    }
+                  }}
+                    onChange={() => updateAnonymous(!newCelebration.anonymous)} checked={newCelebration.anonymous} />}
+                label="Post Anonymously" />
             }
           </Box>
       }
       {
-        !lock &&
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            {
-              secondaryButtonText && (
-                <Button
-                  variant='contained'
-                  sx={{
-                    margin: '16px 0',
-                    padding: '8px 0',
-                    width: '100%',
-                    borderRadius: '8px',
-                    color: 'secondaryButton.contrastText',
-                    backgroundColor: 'secondaryButton.main',
-                    '&:hover': {
-                      color: 'secondaryButton.contrastText',
-                      backgroundColor: 'secondaryButton.main',
-                    },
-                  }}
-                  onClick={() => onSecondaryButtonClick()}
-                >
-                  <Typography variant='contentMain' color="inherit">{secondaryButtonText}</Typography>
-                </Button>
-              )
-            }
-          </Grid>
-          <Grid item xs={6}>
+        (isNewCelebration || user.memberId === newCelebration.memberId) &&
+        secondaryButtonText && (
+          <Box>
             <Button
               variant='contained'
+              disabled={lock || newCelebration.content.trim() === ''}
               sx={{
-                margin: '16px 0',
                 padding: '8px 0',
                 width: '100%',
                 borderRadius: '8px',
-                color: 'customButton1.contrastText',
-                backgroundColor: 'customButton1.main',
+                color: 'secondaryButton.contrastText',
+                backgroundColor: 'secondaryButton.main',
                 '&:hover': {
-                  color: 'customButton1.contrastText',
-                  backgroundColor: 'customButton1.main',
+                  color: 'secondaryButton.contrastText',
+                  backgroundColor: 'secondaryButton.main',
                 },
               }}
-              onClick={() => onPrimaryButtonClick()}
+              onClick={() => onSecondaryButtonClick()}
             >
-              <Typography variant='contentMain' color="inherit">{primaryButtonText}</Typography>
+              <Typography variant='contentMain' color="inherit">{secondaryButtonText}</Typography>
             </Button>
-          </Grid>
-        </Grid>
+          </Box>
+        )
       }
-      <DeleteDialog open={deleteAlert} setOpen={setDeleteAlert} handleDelete={onConfirmDelete} description="Are you sure want to delete celebration" />
+      <Box>
+        <Button
+          variant='contained'
+          disabled={lock || newCelebration.content.trim() === ''}
+          sx={{
+            margin: '16px 0',
+            padding: '8px 0',
+            width: '100%',
+            borderRadius: '8px',
+            color: 'customButton1.contrastText',
+            backgroundColor: 'customButton1.main',
+            '&:hover': {
+              color: 'customButton1.contrastText',
+              backgroundColor: 'customButton1.main',
+            },
+          }}
+          onClick={() => onPrimaryButtonClick()}
+        >
+          <Typography variant='contentMain' color="inherit">{primaryButtonText}</Typography>
+        </Button>
+      </Box>
+      <DeleteDialog
+        open={deleteAlert}
+        setOpen={setDeleteAlert}
+        handleDelete={onConfirmDelete}
+        description="Are you sure want to delete celebration"
+      />
     </Box >
   );
 }
