@@ -29,6 +29,7 @@ import { LoadingContext } from '../contexts/LoadingContext';
 
 function CardList() {
   const breakpoint450 = useMediaQuery("(min-width:450px)");
+  const breakPoint510 = useMediaQuery('(max-width:510px)');
   const { projectId } = useParams();
   const { user } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
@@ -247,11 +248,11 @@ function CardList() {
           justifyContent="flex-end"
           sx={{ backgroundColor: 'primary.contrastText', height: '45px', padding: '8px' }}
         >
-          <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexGrow: '1', padding: '25px 50px 25px 50px'}}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexGrow: '1', padding: breakPoint510 ? '15px 5px 15px 5px' : '25px 50px 25px 50px' }}>
             < Typography variant="h6" sx={{ color: 'secondaryButton.contrastText', fontWeight: 'bold' }}> Collaborators ({adminCards.length+memberCards.length+leaderCards.length}) </Typography>
             <Box
               sx={{
-                background: "white"
+                background: "white",
               }}
             >
               <TextField

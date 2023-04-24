@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import {
   Box,
   AppBar,
-  Container,
   InputLabel,
   FormControl,
-  Toolbar,
   Typography,
   Popover,
   Select,
@@ -17,6 +15,8 @@ import PropTypes from 'prop-types';
 import SearchBar from '../utilityFunctions/SearchBar';
 import QuickFilterPopover from './poNotesTables/poNotesTablesHeader/QuickFilterPopover';
 import { quickFilterSanitizerPONotes } from '../utilityFunctions/filters';
+import InformationModel from '../elements/InformationModel';
+import { PONotesInfo } from '../constants/AccesibilityInfo';
 
 export default function PONotesHeader({ query, setQuery }) {
   const [positioningReferenceElement, setPositioningReferenceElement] = useState(null);
@@ -28,16 +28,14 @@ export default function PONotesHeader({ query, setQuery }) {
   };
 
   const aboveTablet = useMediaQuery('(min-width: 650px)');
+  const breakPoint510 = useMediaQuery('(max-width:510px)');
   const breakpoint391 = useMediaQuery('(min-width: 391px)');
   const open = Boolean(positioningReferenceElement);
   const id = open ? 'simple-popover' : undefined;
 
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
-      <Container maxWidth="xl" padding='0' margin='20px'>
-        <Toolbar disableGutters
-          sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}
-        >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '15px 5px 15px 5px' : '25px 50px 25px 50px' }}>
           <Box
             height={aboveTablet ? "auto" : "60px"}
             sx={{ flexGrow: 2, display: { md: 'flex' } }}
@@ -50,9 +48,14 @@ export default function PONotesHeader({ query, setQuery }) {
               variant={aboveTablet ? 'h5' : 'h6'}
               noWrap
               fontSize="1.5rem"
-              sx={{ ml: 5, mr: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
+              sx={{ fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none', display: 'flex', alignItems: 'center', width: '100%' }}
             >
               PO Notes
+              <InformationModel
+                heading={PONotesInfo.heading}
+                definition={PONotesInfo.definition}
+                accessibiltyInformation={PONotesInfo.accessibilityInformation}
+              />
             </Typography>
           </Box>
           <Box
@@ -101,8 +104,7 @@ export default function PONotesHeader({ query, setQuery }) {
               </Popover>
             </FormControl>
           </Box>
-        </Toolbar>
-      </Container>
+        </Box>
     </AppBar >
   );
 }

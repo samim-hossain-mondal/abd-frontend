@@ -35,8 +35,8 @@ function MobileTabs({ sections }) {
         <Box
           key={section.name}
           sx={{
-            width: '33%',
             height: 50,
+            flexGrow:1,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

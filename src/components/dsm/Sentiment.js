@@ -25,7 +25,7 @@ import { CREATE_SENTIMENT, GET_TODAY_SENTIMENT_OF_MEMBER, UPDATE_SENTIMENT } fro
 import InformationModel from '../elements/InformationModel';
 import { DSMBodyLayoutContext } from "../contexts/DSMBodyLayoutContext";
 import SentimentMeterDialog from './SentimentMeterDialog';
-import { SentimentMeterInfo } from '../constants/SentimentMeter';
+import { SentimentMeterInfo, TeamRequestInfo, AnnouncementInfo } from '../constants/AccesibilityInfo';
 import { RefreshContext } from '../contexts/RefreshContext';
 import makeRequest from '../utilityFunctions/makeRequest/index';
 import { ErrorContext } from '../contexts/ErrorContext';
@@ -34,6 +34,8 @@ import { GENERIC_NAME, HEADING } from '../constants/dsm/Sentiments';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin, isLeader, isMember } from '../constants/users';
 import { LoadingContext } from '../contexts/LoadingContext';
+import { HEADING as requestHeading } from '../constants/dsm/Requests';
+import { HEADING as announcementHeading } from '../constants/dsm/Announcements';
 
 export default function Sentiment() {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -163,7 +165,7 @@ export default function Sentiment() {
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
       }} height={gridHeightState.sentiment.height} >
-      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12}>
+      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12} sx={{marginRight: breakpoint1080 && gridHeightState.celebration.fullExpanded && '4px'}}>
         <Accordion
           expanded={userRole && isMember(userRole) && gridHeightState.sentiment.expanded}
           onChange={handleExpandSentiment}
@@ -188,7 +190,11 @@ export default function Sentiment() {
             >
               {!userRole || isLeaderOrAdmin() ?
                 (<Typography variant="dsmSubMain" fontSize='1.25rem'
-                  sx={{ textTransform: 'none', gap: breakpoint391 ? '4px' : "2px" }}>{HEADING}
+                  sx={{ display: 'flex', alignItems: 'center', textTransform: 'none', gap: breakpoint391 ? '4px' : "2px", width: '100%' }}>{HEADING}
+                  <InformationModel
+                    heading={SentimentMeterInfo.heading}
+                    definition={SentimentMeterInfo.definition}
+                    accessibiltyInformation={SentimentMeterInfo.accessibilityInformation} />
                 </Typography>) :
                 (<Typography onClick={() => { }} variant="dsmMain"
                   sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: breakpoint391 ? '4px' : "2px" }}
@@ -237,36 +243,69 @@ export default function Sentiment() {
       </Grid>
       {
         breakpoint1080 && gridHeightState.celebration.fullExpanded && (
-          <Grid item xs={1.7}>
+          <Grid item xs={6} sx={{marginRight: '4px'}}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
-              padding: "6px",
             }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: '8vh',
+                }}
+              >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
+                sx={{
+                  display: 'flex',
+                  flexGrow: 1,
+                }}
               >
-                <Typography fontSize="1rem" variant='dsmSubMain'>Requests</Typography>
+                <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{textTransform: 'none', width: '100%', display: 'flex', alignItems: 'center'}}>
+                  {requestHeading}
+                  <InformationModel
+                    heading={TeamRequestInfo.heading}
+                    definition={TeamRequestInfo.definition}
+                    accessibiltyInformation={TeamRequestInfo.accessibilityInformation}
+                  />
+                </Typography>
               </AccordionSummary>
+              </Box>
             </Accordion>
           </Grid>
         )
       }
       {
         breakpoint1080 && gridHeightState.celebration.fullExpanded && (
-          <Grid item xs={2} height="auto">
+          <Grid item xs={6}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
-              padding: "6px",
             }}>
+              <Box 
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: '8vh'
+                }}
+              >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
+                sx={{display: 'flex',flexGrow: '1'}}
               >
-                <Typography fontSize="1rem" variant='dsmSubMain'>Announcements</Typography>
+                <Typography variant="dsmSubMain" fontSize='1.25rem'  sx={{textTransform: 'none',width: '100%', display: 'flex', alignItems: 'center'}}>
+                  {announcementHeading}
+                  <InformationModel
+                    heading={AnnouncementInfo.heading}
+                    definition={AnnouncementInfo.definition}
+                    accessibiltyInformation={AnnouncementInfo.accessibilityInformation}
+                  />
+                </Typography>
               </AccordionSummary>
+              </Box>
             </Accordion>
           </Grid>
         )

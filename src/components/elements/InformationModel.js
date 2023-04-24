@@ -21,23 +21,25 @@ const style = {
 export default function NestedModal(props) {
   const { heading, definition, accessibiltyInformation } = props;
   const [open, setOpen] = useState(false);
-  const handleOpen = () => {
+  const handleOpen = (e) => {
     setOpen(true);
+    e.stopPropagation();
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.stopPropagation();
     setOpen(false);
   };
 
   return (
-    <Tooltip title="More Info" placement='top'>
-      <Box sx={{ paddingLeft: '0.5%' }}>
+    <Tooltip title="Click for more info" placement='top'>
+      <Box sx={{ paddingLeft: '0.5%', display: 'flex', alignItems: 'center' }}>
         <InfoOutlinedIcon
           sx={{
             fontSize: 'large',
             color: 'primary.main',
             borderRadius: '50%',
             ml: '15%',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           onClick={handleOpen}
         />

@@ -7,9 +7,7 @@ import {
   AppBar,
   Box,
   Dialog,
-  Toolbar,
   Typography,
-  Container,
   Grid,
   CircularProgress,
   useMediaQuery,
@@ -41,12 +39,14 @@ import { REFETCH_INTERVAL } from '../../../config';
 
 import './availabilityCalendar.css';
 import { LoadingContext } from '../../contexts/LoadingContext';
+import InformationModel from '../../elements/InformationModel'
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
 export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
+  const breakPoint510 = useMediaQuery('(max-width:510px)');
   const { projectId } = useParams();
   const [eventsData, setEventsData] = useState([]);
   const [inputModal, setInputModal] = useState(false);
@@ -272,25 +272,30 @@ export default function AvailabilityCalendar({ availabilityIsInViewPort }) {
         <AppBar
           position='static'
           sx={{ background: 'transparent', boxShadow: 'none' }}>
-          <Container maxWidth='xl'>
-            <Toolbar disableGutters>
-              <Box sx={{ display: { md: 'flex' } }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '15px 5px 15px 5px' : '25px 50px 25px 50px' }}>
+              <Box sx={{ display: { md: 'flex', flexGrow: '1' } }}>
                 <Typography
                   data-testid='poNotesIdentifier'
                   variant='h5'
                   noWrap
                   sx={{
-                    ml: 5,
                     fontWeight: 500,
                     letterSpacing: '.025rem',
                     color: 'secondary.main',
                     textDecoration: 'none',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
                   }}>
-                  Availability Calendar
+                    Risk Assessment Calendar
+                    <InformationModel
+                      heading='Risk Assessment Calendar'
+                      definition=' is a calendar that enables the Product Owner/Scrum Master to assess how a various calendar events affect the sprint deliverables. Also, this can serve as a availability calendar for the team.'
+                      accessibiltyInformation=''
+                    />
                 </Typography>
               </Box>
-            </Toolbar>
-          </Container>
+            </Box>
         </AppBar>
       </Box>
       <Grid backgroundColor='backgroundColor.main' height='100%'>

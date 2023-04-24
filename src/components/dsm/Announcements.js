@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Box, Tooltip } from '@mui/material';
+import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography, IconButton, Dialog, Box, Tooltip, useMediaQuery } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
@@ -23,26 +23,30 @@ import { isAdmin, isMember } from '../constants/users';
 import { REFETCH_INTERVAL } from '../../config';
 import SkeletonAnnouncement from '../skeletons/dsm/announcement';
 import { LoadingContext } from '../contexts/LoadingContext';
+import InformationModel from '../elements/InformationModel';
+import { AnnouncementInfo } from '../constants/AccesibilityInfo';
 // import dateGetter from '../utilityFunctions/DateGetter';
 
 export default function Announcements() {
+  const getElementHeight = (id)=>{
+    const element = document.getElementById(id);
+    return element ? element.offsetHeight-96 : 0;
+  }
+  const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { projectId } = useParams();
   const DSMInViewPort = useContext(DSMViewportContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const { refresh, setRefresh } = useContext(RefreshContext);
   const { user, userRole } = useContext(ProjectUserContext)
   const [loaded, setLoaded] = useState(false);
-
   // const [hasMore, setHasMore] = useState(true);
-
   const { gridHeightState, dispatchGridHeight } = useContext(DSMBodyLayoutContext)
   const handleExpandAnnouncements = () => {
     dispatchGridHeight({ type: 'ANNOUNCEMENT', userRole })
   };
-
+  const [accordionDetailsHeight, setAccordionDetailsHeight] = useState(0);
   const [announcements, setAnnouncements] = useState([]);
   const [openModal, setOpenAddModal] = useState(false);
-
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
@@ -104,6 +108,10 @@ export default function Announcements() {
       setHasMore(true);
     })
   }
+
+  useEffect(() => {
+    setAccordionDetailsHeight(getElementHeight('scrollableAnnouncementDiv'));
+  }, [gridHeightState,announcements]);
 
   useEffect(() => {
     setLoaded(false);
@@ -191,13 +199,16 @@ export default function Announcements() {
   return (
     <Grid item height={gridHeightState.announcement.height}
       paddingTop={gridHeightState.request.expanded ? 'none' : '5%'}
+      marginTop={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "8px" : 'none'}
     >
       <Accordion
         id="scrollableAnnouncementDiv"
-        expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements} sx={{
+        expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements} 
+        sx={{
           height: gridHeightState.announcement.expanded ? '100%' : 'none',
-          overflow: 'auto',
-        }}>
+          paddingBottom: '16px'
+        }}
+      >
         <AccordionSummary
           expandIcon={
             <Tooltip title={gridHeightState.announcement.expanded ? 'Collapse' : 'Expand'}>
@@ -215,7 +226,14 @@ export default function Announcements() {
             }
           }}
         >
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', display:'flex', alignItems: 'center', width: '100%' }}>
+            {HEADING}
+            <InformationModel
+              heading={AnnouncementInfo.heading}
+              definition={AnnouncementInfo.definition}
+              accessibiltyInformation={AnnouncementInfo.accessibiltyInformation}
+            />
+          </Typography>
           {
             // (userRole === USER_ROLES.ADMIN) && (dateGetter(selectedDate) === dateGetter(new Date())) && (
             (isAdmin(userRole) && (
@@ -256,6 +274,8 @@ export default function Announcements() {
             flexDirection: 'column',
             padding: loaded && announcements.length === 0 ? "10% 16px" : '0 16px',
             gap: '16px',
+            height: `${accordionDetailsHeight}px`,
+            overflow: 'scroll',
           }}>
           {!loaded ?
             [...Array(6)].map(() =>
@@ -316,7 +336,6 @@ export default function Announcements() {
             )
           }
         </AccordionDetails>
-
         {
           (openEditModal) && (
             <Dialog

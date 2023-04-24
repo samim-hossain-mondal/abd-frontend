@@ -1,87 +1,34 @@
 import React from 'react';
 import {
-  AppBar, Typography, Box, Container, Toolbar,
-  // IconButton, Tooltip 
+  AppBar, Typography, Box, useMediaQuery
 } from '@mui/material';
-// import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-// import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-// import { ArrowLeft, ArrowRight } from '@mui/icons-material';
-// import { PropTypes } from 'prop-types';
+import InformationModel from '../elements/InformationModel';
 
-export default function DSMHeader(
-  // { handleDate }
-) {
-  // const [selectedDate, setSelectedDate] = React.useState(new Date());
-  // const handleDateChange = (date) => {
-  //   setSelectedDate(date);
-  //   handleDate(date);
-  // };
-
-  // const handleDecrementDate = () => {
-  //   const newDate = new Date(selectedDate);
-  //   newDate.setDate(newDate.getDate() - 1);
-  //   setSelectedDate(newDate);
-  //   handleDate(newDate);
-  // };
-
-  // const handleIncrementDate = () => {
-  //   const newDate = new Date(selectedDate);
-  //   newDate.setDate(newDate.getDate() + 1);
-  //   const currentDate = new Date();
-  //   if (newDate > currentDate) {
-  //     setSelectedDate(currentDate);
-  //     handleDate(currentDate);
-  //   } else {
-  //     setSelectedDate(newDate);
-  //     handleDate(newDate);
-  //   }
-  // };
-
+export default function DSMHeader() {
+  const breakPoint510 = useMediaQuery('(max-width:510px)');
+  const breakpoint391 = useMediaQuery('(min-width:391px)');
   return (
     <Box>
       <Box sx={{ backgroundColor: 'primary.light', padding: '5px' }} />
       <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }} >
-        <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Box display="flex" justifyContent="space-between" width="100%">
-              <Typography
-                data-testid="poNotesIdentifier"
-                variant="h5"
-                noWrap
-                sx={{ ml: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
-              >
-                Daily Activity
-              </Typography>
-              {/* <Box sx={{ display: 'flex', alignContent: 'center' }}>
-                <Tooltip title="Previous Date" placement="top">
-                  <IconButton onClick={handleDecrementDate}>
-                    <ArrowLeft />
-                  </IconButton>
-                </Tooltip>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    disableFuture
-                    slots={{ openPickerIcon: ExpandMoreIcon }}
-                    value={selectedDate}
-                    format="LLLL d, yyyy"
-                    onChange={handleDateChange}
-                  />
-                </LocalizationProvider>
-                <Tooltip title="Next Date" placement="top">
-                  <IconButton onClick={handleIncrementDate}>
-                    <ArrowRight />
-                  </IconButton>
-                </Tooltip>
-              </Box> */}
-            </Box>
-          </Toolbar>
-        </Container>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '15px 5px 15px 5px' : '25px 50px 25px 50px' }}>
+          <Box display="flex" justifyContent="flex-start" alignItems='center' width="100%">
+            <Typography
+              data-testid="poNotesIdentifier"
+              variant="h5"
+              noWrap
+              sx={{ display: 'flex', alignItems: 'center', gap: breakpoint391 ? '4px' : "2px", fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none', width:'100%' }}
+            >
+              Daily Activity
+              <InformationModel
+                heading="Daily Activity"
+                definition=" is the core feature of My Agile Board to maintain team collaboration and morale by facilitating Sentiment Meter, Daily Standup, and Daily retro board, Team requests, and PO Reminders."
+                accessibilityInformation=""
+              />
+            </Typography>
+          </Box>
+        </Box>
       </AppBar>
     </Box >
   );
-};
-
-DSMHeader.propTypes = {
-  // handleDate: PropTypes.func.isRequired,
 };

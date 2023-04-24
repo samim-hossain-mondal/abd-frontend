@@ -62,7 +62,7 @@ export default function Navbar({
   const sections = [
     { name: 'Daily Retro', ref: dsmRef },
     { name: 'PO Notes', ref: poNotesRef },
-    { name: 'Availability Calendar', ref: availabilityCalendarRef },
+    { name: 'Risk Assessment Calendar', ref: availabilityCalendarRef },
   ];
 
   const audioRef = useRef(audio);
@@ -226,7 +226,7 @@ export default function Navbar({
                         PaperProps={{
                           style: {
                             maxHeight: 48 * 4.5,
-                            width: '12rem',
+                            width: '14rem',
                           },
                         }}
                         sx={{ marginTop: '0.6rem' }}

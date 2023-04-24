@@ -23,6 +23,7 @@ export default function DSMBody({ selectedDate }) {
         }}>
           <Grid container spacing={2} sx={{ display: 'flex', flexWrap: 'wrap', height: breakpoint391 ? '78vh' : "78vh" }}>
             <Grid item xs={gridHeightState.celebration.fullExpanded || !breakpoint1080 ? 12 : 8} height="100%">
+              {/* Request and announcements heading is contained in this Sentiment component in this case */}
               <Sentiment />
               <CelebrationBoard selectedDate={selectedDate} />
             </Grid>

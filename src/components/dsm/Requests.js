@@ -25,6 +25,8 @@ import SkeletonRequest from '../skeletons/dsm/request';
 import { LoadingContext } from '../contexts/LoadingContext';
 import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import { PO_NOTES_TYPES } from '../constants/PONotes';
+import InformationModel from '../elements/InformationModel';
+import { TeamRequestInfo } from '../constants/AccesibilityInfo';
 
 export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -41,6 +43,11 @@ export default function Requests({ selectedDate }) {
     dispatchGridHeight({ type: 'REQUEST', userRole })
   };
 
+  const getElementHeight = (id)=>{
+    const element = document.getElementById(id);
+    return element ? element.offsetHeight-88 : 0;
+  }
+
   const [requests, setRequests] = useState([]);
   const [openModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -50,6 +57,11 @@ export default function Requests({ selectedDate }) {
   const [hasMore, setHasMore] = useState(true);
   const [openPONote, setOpenPONote] = useState(false);
   const [addContent, setAddContent] = useState(false);
+  const [accordionDetailsHeight, setAccordionDetailsHeight] = useState(0);
+
+  useEffect(() => {
+    setAccordionDetailsHeight(getElementHeight('scrollableRequestDiv'));
+  }, [gridHeightState, requests]);
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
@@ -213,19 +225,16 @@ export default function Requests({ selectedDate }) {
   const handleClosePONote = () => {
     setOpenPONote(false);
   }
-
   return (
     <Grid item height={gridHeightState.request.height}
-      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '15px' }) }}
-      marginBottom={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "40px" : 'none'
-      }
+      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '16px' })}}
+      marginTop={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "8px" : 'none'}
     >
       <Accordion
         id="scrollableRequestDiv"
         expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
           height: gridHeightState.request.expanded ? '100%' : 'none',
-          overflow: 'auto',
-        }}>
+      }}>
         <AccordionSummary
           expandIcon={
             <Tooltip title={gridHeightState.request.expanded ? 'Collapse' : 'Expand'} placement='top'>
@@ -243,7 +252,14 @@ export default function Requests({ selectedDate }) {
             }
           }}
         >
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', display: 'flex', alignItems:'center', width:'100%' }}>
+            {HEADING}
+            <InformationModel
+              heading={TeamRequestInfo.heading}
+              definition={TeamRequestInfo.definition}
+              accessibiltyInformation={TeamRequestInfo.accessibiltyInformation}
+            />
+          </Typography>
           {isMember(userRole) &&
             <Tooltip title="Add Request" placement='top'>
               <IconButton onClick={(e) => handleAddButtonClick(e)}>
@@ -296,7 +312,10 @@ export default function Requests({ selectedDate }) {
           flexDirection: 'column',
           padding: loaded && requests.length === 0 ? "10% 16px" : '0 16px',
           gap: '16px',
-        }}>
+          height: `${accordionDetailsHeight}px`,
+          overflow: 'scroll',
+        }}
+        >
           {!loaded ?
             [...Array(6)].map(() =>
               <SkeletonRequest />

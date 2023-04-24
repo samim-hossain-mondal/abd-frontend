@@ -128,9 +128,9 @@ export default function PONotesTable(props) {
     poNotes ?
       <Box
         sx={{
-          width: "100%"
+          width: "100%",
         }}>
-        <Box component={Paper} sx={{ height: '80vh', width: "100%" }}>
+        <Box component={Paper} sx={{ height: '80vh', width: "100%", backgroundColor: 'backgroundColor.secondary' }}>
           <Box aria-label='simple table'>
             <Box>
               <Box align='center' sx={{
@@ -151,9 +151,9 @@ export default function PONotesTable(props) {
               <Box
                 id={`scrollableDiv${heading}`}
                 sx={{
-                  height: 'calc(80vh - 60px)',
+                  height: 'calc(80vh - 80px)',
                   overflowY: 'auto',
-                  backgroundColor: 'backgroundColor.secondary'
+                  backgroundColor: 'backgroundColor.secondary',
                 }}>
                 {!loaded ?
                   [...Array(10)].map(() =>

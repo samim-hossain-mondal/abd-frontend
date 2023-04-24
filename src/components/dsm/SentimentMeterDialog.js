@@ -25,7 +25,7 @@ import { CSVLink } from 'react-csv';
 import { useParams } from 'react-router';
 import getDBOffSetTime from "../utilityFunctions/getOffsetTimestamp";
 import getTodayDate from '../utilityFunctions/getTodayDate';
-import { SentimentMeterInfo } from '../constants/SentimentMeter';
+import { SentimentMeterInfo } from '../constants/AccesibilityInfo';
 import makeRequest from '../utilityFunctions/makeRequest';
 import { GET_SENTIMENTS_BY_DATE } from '../constants/apiEndpoints';
 import { ErrorContext } from '../contexts/ErrorContext';

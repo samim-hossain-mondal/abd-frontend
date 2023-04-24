@@ -18,7 +18,7 @@ const slides = [
     {
         id: 1,
         title: 'Run your Daily Standup Meetings more efficiently \u{2705}',
-        description: "Keep up with your team's well being, achievements, requests, blockers and announcements, all within a single Agile dashboard.",
+        description: "Keep up with your team's well being, achievements, requests, blockers and reminders, all within a single Agile dashboard.",
         image: dsmImg
     },
     {

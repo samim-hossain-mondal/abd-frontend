@@ -24,6 +24,8 @@ import SkeletonCelebration from '../skeletons/dsm/celebration';
 import { groupByDate } from '../utilityFunctions/dateMatcher';
 import CelebrationsMansory from './CelebrationsMansory';
 import { LoadingContext } from '../contexts/LoadingContext';
+import InformationModel from '../elements/InformationModel';
+import { CelebrationBoardInfo } from '../constants/AccesibilityInfo';
 
 export default function CelebrationBoard({ selectedDate }) {
   const { userRole } = useContext(ProjectUserContext)
@@ -141,13 +143,14 @@ export default function CelebrationBoard({ selectedDate }) {
     <Grid item
       height={gridHeightState.celebration.height}
       paddingTop={gridHeightState.celebration.fullExpanded || !gridHeightState.sentiment.expanded ? topPadding : 'none'}
+      marginTop='8px'
     >
       <Accordion
         id="scrollableCelebrationDiv"
         expanded={gridHeightState.celebration.expanded || !breakpoint1080}
         onChange={handleExpandCelebration} sx={{
-          overflowX: 'auto',
-          height: gridHeightState.celebration.expanded ? '100%' : 'auto'
+          height: gridHeightState.celebration.expanded ? '101%' : 'auto',
+          overflow: 'auto'
         }}>
         <AccordionSummary
           expandIcon={
@@ -174,7 +177,13 @@ export default function CelebrationBoard({ selectedDate }) {
             }
           }}
         >
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>{HEADING}</Typography>
+          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ display: 'flex', alignItems: 'center',textTransform: 'none' }} width='100%'>
+            {HEADING}
+            <InformationModel
+              heading={CelebrationBoardInfo.heading}
+              definition={CelebrationBoardInfo.definition}
+              accessibiltyInformation={CelebrationBoardInfo.accessibilityInformation} />
+          </Typography>
           <Tooltip title="Add Celebration">
             <IconButton onClick={(e) => handleAddButtonClick(e)}>
               <AddCircleIcon color="primary" />
