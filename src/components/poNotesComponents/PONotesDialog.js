@@ -21,7 +21,14 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import { actionItems, keyDecisions, GENERIC_NAME, noteTypes, PO_NOTES_TYPES, CHAR_COUNT } from '../constants/PONotes';
+import {
+  actionItems,
+  keyDecisions,
+  GENERIC_NAME,
+  noteTypes,
+  PO_NOTES_TYPES,
+  CHAR_COUNT
+} from '../constants/PONotes';
 import Transition from '../utilityFunctions/OverlayTransition';
 import Timeline from '../utilityFunctions/Timeline';
 import { PLACEHOLDER } from '../utilityFunctions/Enums';
@@ -29,7 +36,11 @@ import { ErrorContext } from '../contexts/ErrorContext';
 import DeleteDialog from '../elements/DeleteDialog';
 import RichTextArea from '../elements/RichTextArea';
 import makeRequest from '../utilityFunctions/makeRequest/index';
-import { CREATE_PO_NOTE, DELETE_PO_NOTE, PATCH_PO_NOTE } from '../constants/apiEndpoints';
+import {
+  CREATE_PO_NOTE,
+  DELETE_PO_NOTE,
+  PATCH_PO_NOTE
+} from '../constants/apiEndpoints';
 import { SUCCESS_MESSAGE } from '../constants/dsm/index';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin } from '../constants/users';
@@ -45,7 +56,9 @@ const getISODateToTimlineFormat = (isoDate = '') => {
   }
 };
 
-export default function PONotesDialog({ value, defaultValue, updateItem, data, open, handleClose, access, typeOfPONote }) {
+export default function PONotesDialog({
+  value, defaultValue, updateItem, data, open, handleClose, access, typeOfPONote
+}) {
   const { setError, setSuccess } = useContext(ErrorContext);
   const [lock, setLock] = useState(updateItem)
   const { projectId } = useParams();
@@ -298,7 +311,7 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
           </List>
         </Box>
         {
-          type === PO_NOTES_TYPES.ACTION_ITEM && (statement.trim() !== '') &&
+          type === PO_NOTES_TYPES.ACTION_ITEM &&
           <Box>
             <Typography sx={{ fontWeight: 700, ml: '15px' }} >Issue Link
               <Box sx={{ display: 'inline', fontSize: '0.75rem' }}> (optional)</Box>
@@ -319,7 +332,7 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
         }
         <Box>
           {
-            type === "ACTION_ITEM" && (statement.trim() !== '') &&
+            type === "ACTION_ITEM" &&
             <Timeline
               isSubmit={lock}
               timeline={timeline}
@@ -329,10 +342,19 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
         </Box>
         {isPublish() && (
           <Box>
-            {(statement.trim() !== '') && !lock &&
+            {!lock &&
               <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton1' onClick={handlePublish}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }}
+                <Button
+                  variant="contained"
+                  color='customButton1'
+                  onClick={handlePublish}
+                  disabled={statement.trim() === ''}
+                  sx={{
+                    borderRadius: '8px',
+                    width: '90%',
+                    ml: '16px',
+                    mr: '16px'
+                  }}
                 >
                   Publish
                 </Button>
@@ -342,10 +364,19 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
         )}
         {isSave() && (
           <Box>
-            {(statement.trim() !== '') && !lock &&
+            {updateItem &&
               <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color={isPublish() ? 'customButton2' : 'customButton1'} onClick={handleSave}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }} >
+                <Button
+                  variant="contained"
+                  color={isPublish() ? 'customButton2' : 'customButton1'}
+                  onClick={handleSave}
+                  disabled={lock}
+                  sx={{
+                    borderRadius: '8px',
+                    width: '90%',
+                    ml: '16px',
+                    mr: '16px'
+                  }} >
                   Save
                 </Button>
               </Box>
@@ -354,14 +385,25 @@ export default function PONotesDialog({ value, defaultValue, updateItem, data, o
         )}
         {isSaveDraft() && (
           <Box>
-            {(statement.trim() !== '') && !lock &&
-              <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
-                <Button variant="contained" color='customButton2' onClick={handleDraft}
-                  sx={{ borderRadius: '8px', width: '90%', ml: '16px', mr: '16px' }}>
-                  Save as Draft
-                </Button>
-              </Box>
-            }
+            <Box textAlign='center' sx={{ marginTop: '6px', marginBottom: '6px' }}>
+              <Button
+                variant="contained"
+                color='customButton2'
+                onClick={handleDraft}
+                disabled={
+                  statement.trim() === '' ||
+                  lock
+                }
+                sx={{
+                  borderRadius: '8px',
+                  width: '90%',
+                  ml: '16px',
+                  mr: '16px',
+                  mb: '8px'
+                }}>
+                Save as Draft
+              </Button>
+            </Box>
           </Box>
         )}
       </Dialog >
