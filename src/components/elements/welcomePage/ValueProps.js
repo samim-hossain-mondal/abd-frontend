@@ -19,10 +19,10 @@ function ValueProps() {
         <Grid container alignItems="center">
           <Grid item xs={12} lg={5}>
             <Typography variant="h3" my={1}>
-              Why use My Agile Dashboard?
+            Why use My Agile Portal?
             </Typography>
             <Typography variant="body2" color="text" mb={2}>
-              My Agile Dashboard serves as the home page for any of your Agile projects that unifies the areas unseen by other team management tools to improve team collaboration and tranparancy.
+              My Agile Portal serves as the home page for any of your Agile projects that unifies the areas unseen by other team management tools to improve team collaboration and tranparancy.
             </Typography>
             {/* <Typography
               component="a"

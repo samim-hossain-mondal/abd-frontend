@@ -22,7 +22,7 @@ export default function DSMHeader() {
               Daily Activity
               <InformationModel
                 heading="Daily Activity"
-                definition=" is the core feature of My Agile Board to maintain team collaboration and morale by facilitating Sentiment Meter, Daily Standup, and Daily retro board, Team requests, and PO Reminders."
+                definition=" is the core feature of My Agile Portal to maintain team collaboration and morale by facilitating Sentiment Meter, Daily Standup, and Daily retro board, Team requests, and PO Reminders."
                 accessibilityInformation=""
               />
             </Typography>

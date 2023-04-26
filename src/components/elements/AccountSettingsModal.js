@@ -120,7 +120,16 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   const addCollaborator = (lock) => {
     if (isAdmin(projectInfo.role) || isLeader(projectInfo.role)) {
       if (!lock) {
-        const newCollaborator = { email: "", role: "", isNew: true };
+        // check if any new collaborators are added
+        const checkNewCollab = projectInfo.projectMembers.find(
+          (member) => member.isNew
+        );
+        if (checkNewCollab) {
+          setError("Please save new collaborators before adding more");
+          return;
+        }
+        
+        const newCollaborator = { email: "", role: "",isActive:true, isNew: true };
         setProjectInfo({
           ...projectInfo,
           projectMembers: [...projectInfo.projectMembers, newCollaborator],
@@ -150,6 +159,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
             {
               email: projectInfo.projectMembers[index].email,
               role: projectInfo.projectMembers[index].role,
+              isActive: true,
               isNew: false,
             },
             ...projectInfo.projectMembers.slice(index + 1),
@@ -164,6 +174,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 {
                   email: projectInfo.projectMembers[index].email,
                   role: projectInfo.projectMembers[index].role,
+                  isActive: projectInfo.projectMembers[index].isActive,
                 },
               ],
               _count: {
@@ -322,7 +333,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   return (
     <Box sx={{ display: "flex", justifyContent: "flex-end", zIndex: 950 }} className="cont">
       <Dialog
-        id="joiiii"
         open={open}
         TransitionComponent={Transition}
         onClose={handleClose}

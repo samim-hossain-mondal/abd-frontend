@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-no-undef */
 import React, { useState, useContext } from "react";
-import { Dialog, Box, Button, Stepper, Step, StepLabel } from "@mui/material";
+import { Dialog, Box, Stepper, Step, StepLabel } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { PropTypes } from "prop-types";
 import { ErrorContext } from "../../contexts/ErrorContext";
@@ -47,15 +47,30 @@ function NewProjectModal({ open, setOpen }) {
   };
 
   const handleProjectTitle = (e) => {
-    setProjectTitle(e.target.value);
+    const newValue=e.target.value;
+    if (newValue.length <= 100) {
+      setProjectTitle(newValue);
+    }
+    else
+    {
+      setError("Project title cannot be more than 100 characters");
+    }
   };
 
   const handleProjectDescription = (e) => {
-    setProjectDescription(e.target.value);
+    const newValue=e.target.value;
+    if (newValue.length <= 250) {
+      setProjectDescription(newValue);
+    }
+    else
+    {
+      setError("Project Description cannot be more than 500 characters");
+    }
   };
 
-  const handleAddNewProject = (title, projectDesc) => {
-    addNewProject(title, projectDesc)
+  const handleAddNewProject = () => {
+    console.log("handleAddNewProject", projectTitle, projectDescription);
+    addNewProject(projectTitle, projectDescription)
       .then((response) => {
         setProjId(response.projectId);
         setSuccess("Project created successfully");
@@ -76,11 +91,8 @@ function NewProjectModal({ open, setOpen }) {
           zIndex: "900"
         },
       }}
-      sx={{ zIndex: "900" }}
+      sx={{ zIndex: "900",}}
       open={open}
-      onClose={() => {
-        setOpen(false);
-      }}
     >
       <Box pr={3} mt={2} />
       <Box sx={{ display: "flex", justifyContent: "flex-end", cursor: "pointer" }} pr={3} mb={3}>
@@ -100,25 +112,12 @@ function NewProjectModal({ open, setOpen }) {
       </Stepper>
 
       <Box my={2} mx={2}>
-        {activeStep === 0 && <Step1Content />}
+        {activeStep === 0 && <Step1Content onClick={handleNext}/>}
         {activeStep === 1 && isStep1Completed && <Step2Content projectTitle={projectTitle} handleProjectTitle={handleProjectTitle} projectDescription={projectDescription}
-          handleProjectDescription={handleProjectDescription} handleAddNewProject={handleAddNewProject} isProjectCreated={isProjectCreated}
+          handleProjectDescription={handleProjectDescription} handleAddNewProject={handleAddNewProject} isProjectCreated={isProjectCreated} onPrev={handleBack}
         />}
-        {activeStep === 2 && isStep2Completed && <Step3Content projId={projId} projectTitle={projectTitle} />}
-      </Box>
+        {activeStep === 2 && isStep2Completed && <Step3Content projId={projId} projectTitle={projectTitle} setOpen={setOpen}/>}
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", alignItems: "space-between" }} mx={4} my={2}>
-        {activeStep > 0 && (
-          <Button variant="contained" disabled={activeStep === 0} onClick={handleBack}>Back</Button>
-        )}
-        {activeStep < steps.length - 1 ? (
-          <Button variant="contained" onClick={handleNext}>Next</Button>
-        ) : (
-          <Button variant="contained" disabled={!isStep2Completed} onClick={() => {
-            setOpen(false);
-
-          }}>Finish</Button>
-        )}
       </Box>
     </Dialog>
   );

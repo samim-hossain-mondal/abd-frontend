@@ -1,12 +1,15 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Link, Box, Button, Select, MenuItem, Typography, TextField, useMediaQuery } from "@mui/material";
+import { Link, Box, Button, Select, MenuItem, Typography, TextField, useMediaQuery, Tooltip,
+  Avatar,Divider
+} from "@mui/material";
+import PersonAdd from "@mui/icons-material/PersonAdd";
 import axios from "axios";
 import { ErrorContext } from "../../contexts/ErrorContext";
 import DeleteDialog from "../DeleteDialog";
 import { DOMAIN } from "../../../config";
 
-function Step3Content({ projId, projectTitle }) {
+function Step3Content({ projId, projectTitle, setOpen}) {
   const { setError } = useContext(ErrorContext);
   const above600 = useMediaQuery("(min-width:600px)");
   const [deleteAlert, setDeleteAlert] = useState(false);
@@ -33,6 +36,28 @@ function Step3Content({ projId, projectTitle }) {
     }
   }, [members.length]);
 
+  const renderColor = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "red";
+      case "LEADER":
+        return "info.main";
+      case "MEMBER":
+        return "success.main";
+      default:
+        return "grey";
+    }
+  };
+
+  const emailInitals = (email) =>
+  email
+    .split("@")[0]
+    .split("_")
+    .map((n) => n.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   const removeMember = (index) => {
     setSelectedCollaborator(index);
     setDeleteAlert(true);
@@ -57,6 +82,14 @@ function Step3Content({ projId, projectTitle }) {
 
 
   const addMemberToProject = () => {
+    const checkNewCollab = members.find(
+      (member) => member.isNew
+    );
+    if (checkNewCollab) {
+      setError("Please save new collaborators before adding more");
+      return;
+    }
+
     setMembers([...members, { email: '', role: '', isNew: true }])
 
   }
@@ -102,17 +135,18 @@ function Step3Content({ projId, projectTitle }) {
         }
         description="Are you sure want to delete this project Member?"
       />
-      <Box px={2}>
+      <Box  px={2} sx={{width:above600?"500px":"auto"}}>
         <Typography variant="h5">
-          Add members to the project{" "}
+          Congratulation on creating an agile portal for your {" "}
           <Box component="span" color="primary.main" fontWeight="bold">
             {projectTitle}
           </Box>
-          <Box mb={1}>
+          {" "}team!
+          <Box mb={4}>
             <Typography variant="h6">
               Your Project Link
             </Typography>
-            <Typography variant="h6">
+            <Typography variant="h6" mb={2}>
               <Box sx={{ color: 'black', display: 'inline' }} > Project Link:{" "} </Box>
               <Link href={`/${projId}/daily`}>
                 https://{window.location.hostname}/{projId}/daily
@@ -120,20 +154,31 @@ function Step3Content({ projId, projectTitle }) {
             </Typography>
           </Box>
         </Typography>
-        <Box mb={1}>
-          <Button variant="contained"
-            sx={{
-              mt: 2,
-              width: above600 ? "auto" : "100%"
-            }}
-            onClick={addMemberToProject}>
-            Add Member
-          </Button>
+        <Divider />
+        <Box mt={1} sx={{display:"flex", justifyContent:"space-between", width:"auto"}}>
+        <Typography variant="h5">Collaborators</Typography>
+          <Tooltip title="Add Members">
+            <PersonAdd mr={0}
+              sx={{ 
+              }}
+              onClick={addMemberToProject} />
+          </Tooltip>
         </Box>
         <Box maxHeight="290px" overflow="scroll">
           {members && members.map((member, index) => (
-            <Box mt={4} mb={2} sx={{ display: "flex", flexDirection: "column" }} id="CollabRow">
-              <Box id="allPlaceholders" sx={{ justifyContent: "space-between", flexWrap: "wrap", display: "flex", width: "100%", height: "30px" }}>
+            <Box mt={2} mb={2} sx={{ display: "flex", flexDirection: "column",padding:"4px"}} id="CollabRow">
+              <Box id="allPlaceholders" sx={{ justifyContent: "space-between", display: "flex", width: "100%"}}>
+            
+                    <Avatar
+                      sx={{
+                        backgroundColor: renderColor(member.role),
+                        color: "#fff",
+                    
+                      }}
+                    >
+                      {emailInitals(member.email)}
+                    </Avatar>
+
                 <TextField
                   inputRef={newMemberNameRef}
                   disableUnderline
@@ -146,7 +191,7 @@ function Step3Content({ projId, projectTitle }) {
                 />
 
                 <Select
-                  sx={{ height: "100%", width: "40%", padding: "0px 0px" }}
+                  sx={{ height: "30px", width: "30%", padding: "0px 0px" }}
                   disabled={!member.isNew}
                   value={member.role || ""}
                   onChange={(event) =>
@@ -163,42 +208,50 @@ function Step3Content({ projId, projectTitle }) {
                   ))}
                 </Select>
               </Box>
-              <Box mt={1} id="icons" sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box mt={1} id="icons" sx={{ display: "flex", justifyContent: !member.isNew ? "flex-end" : "space-between" }}>
                 {
                   member.isNew === true ?
                     (
-                      <><Button variant="outlined" color="primary"
-                        onClick={() => {
-                          handleSaveMember(index);
-                        }}
-                      >
-                        Save
-                      </Button>
-                        <Button variant="outlined" color="error" size="small"
-                          onClick={() => {
-                            removeMember(index);
-                          }}
-                        >
-                          Delete
-                        </Button></>
-
-                    ) : (
-                      <>  <Button variant="contained" size="small" disabled >
-                        Saved
-                      </Button>
-                        <Button variant="contained" color="error" size="small" disabled={member.role === "ADMIN"}
+                      <>
+                      <Button sx={{visibility:"hidden"}}variant="outlined" color="error" size="small"
                           onClick={() => {
                             removeMember(index);
                           }}
                         >
                           Delete
                         </Button>
-                      </>
+                      <Button variant="outlined" color="success"
+                        onClick={() => {
+                          handleSaveMember(index);
+                        }}
+                      >
+                        Save
+                      </Button>
+                        
+</>
+                    ) : (
+                      <Button variant="contained" color="error" size="small" disabled={member.role === "ADMIN"}
+                          onClick={() => {
+                            removeMember(index);
+                          }}
+                        >
+                          Delete
+                        </Button>
                     )
                 }
               </Box>
             </Box>
           ))}
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }} mt={1}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          Finish
+        </Button>
         </Box>
       </Box >
     </>

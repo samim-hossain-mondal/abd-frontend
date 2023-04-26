@@ -101,7 +101,7 @@ function StickyHeader({
             fontSize="2rem"
             sx={{ marginLeft: 2, cursor: "pointer" }}
           >
-            My Agile Dashboard
+            My Agile Portal
           </Typography>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "row" }}>

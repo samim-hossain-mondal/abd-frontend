@@ -1,10 +1,9 @@
-import React from "react";
+import React,{useRef,useEffect,useContext} from "react";
 import {
   Dialog,
   TextField,
   Typography,
   Box,
-  Input,
   Select,
   MenuItem,
   Button,
@@ -16,6 +15,7 @@ import {
   Divider,
   useMediaQuery,
   Tooltip,
+  InputAdornment
 } from "@mui/material";
 
 import PersonAdd from "@mui/icons-material/PersonAdd";
@@ -25,6 +25,8 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { PropTypes } from "prop-types";
 import DeleteDialog from "./DeleteDialog";
 import { isAdmin, isLeader, roles } from '../constants/users';
+import { ErrorContext } from "../contexts/ErrorContext";
+
 
 function ProjectModal({
   handleClose,
@@ -39,6 +41,8 @@ function ProjectModal({
   editProjectDetails,
   handleCancelChanges,
 }) {
+  const { setError } = useContext(ErrorContext);
+  const newMemberNameRef = useRef(null);
   const [lock, setLock] = React.useState(true);
   const [name, setName] = React.useState(projectInfo.projectName);
   const [desc, setDesc] = React.useState(projectInfo.projectDescription);
@@ -47,6 +51,18 @@ function ProjectModal({
     React.useState(false);
   const [selectedCollaborator, setSelectedCollaborator] = React.useState(null);
   const above546 = useMediaQuery("(min-width:546px)");
+  // const above390 = useMediaQuery("(min-width:390px)");
+
+
+  useEffect(() => {
+   // I want to focus when the new member is added
+    if (newMemberNameRef.current) {
+      newMemberNameRef.current.focus();
+      console.log(projectInfo.projectMembers);
+    }
+  }, [projectInfo.projectMembers.length]);
+  
+
 
   const handelDeleteProjectMember = (index) => {
     setSelectedCollaborator(index);
@@ -79,11 +95,17 @@ function ProjectModal({
       .toUpperCase();
 
   const projName = (title) => {
+    if(title.length <= 250)
     setName(title);
+    else
+    setError("Project name should be less than 100 characters");
   };
 
   const projDesc = (description) => {
+    if(description.length <= 250)
     setDesc(description);
+    else 
+    setError("Description should be less than 250 characters");
   };
 
   const handleLock = () => {
@@ -108,7 +130,7 @@ function ProjectModal({
           removeCollaborator(selectedCollaborator);
           setDeleteProjectMemberAlert(false);
         }}
-        description="Are you sure want to remove this project member?"
+        description="Are you sure want to remove this Collaborator?"
       />
       <Dialog
         PaperProps={{
@@ -202,6 +224,11 @@ function ProjectModal({
             sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "5px" }}
           >
             Project Title
+            <InputAdornment 
+            sx={{color: "grey", fontSize: "12px", marginTop: "6px"}}
+            position="down">
+                        {name.length}/{100}
+                      </InputAdornment>
           </Typography>
           <List>
             <ListItem>
@@ -235,17 +262,22 @@ function ProjectModal({
             sx={{ fontWeight: 700, marginLeft: "20px", marginTop: "9px" }}
           >
             Project Description
+            <InputAdornment 
+            sx={{color: "grey", fontSize: "12px", marginTop: "6px"}}
+            position="down">
+                        {desc.length}/{250}
+                      </InputAdornment>
           </Typography>
           <List>
             <ListItem>
               <TextField
+                multiline
+                rows={4}
                 type="text"
                 InputProps={{
                   disableUnderline: true,
                 }}
                 sx={{
-                  multiline: true,
-                  rows: 4,
                   fontSize: "16px",
                   lineHeight: "20px",
                   width: "100%",
@@ -259,6 +291,7 @@ function ProjectModal({
                 onChange={(e) => {
                   projDesc(e.target.value);
                 }}
+
                 disabled={lock}
               />
             </ListItem>
@@ -275,6 +308,13 @@ function ProjectModal({
               alignItems: "center",
             }}
           >
+             <Button
+              variant="outlined"
+              sx={{ width: "50%" }}
+              onClick={handleCancelChanges}
+            >
+              Cancel
+            </Button>
             <Button
               sx={{ width: "45%" }}
               variant="contained"
@@ -284,13 +324,6 @@ function ProjectModal({
               }}
             >
               Save
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ width: "50%" }}
-              onClick={handleCancelChanges}
-            >
-              Cancel
             </Button>
           </Box>
         ) : null}
@@ -307,8 +340,11 @@ function ProjectModal({
           mt={1}
         >
           <Typography variant="h5">Collaborators</Typography>
-          <Tooltip title="Add Collaborator">
+          <Tooltip title="Add Collaborators">
             <PersonAdd mr={0}
+            sx={{
+              color: lock?"gray":"secondary.main",
+            }}  
               onClick={() => {
                 addCollaborator(lock);
               }}
@@ -330,8 +366,8 @@ function ProjectModal({
             projectInfo.projectMembers
             .filter((collaborator) => collaborator.isActive === true)
             .map((collaborator, index) => (
-              <Box sx={{ display: "flex", flexDirection: "column" }} mb={2} className="collabRow">
-                <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }} className="collabEssentialDetails">
+              <Box  sx={{ display: "flex", flexDirection: "column",padding:"4px",boxShadow:"2px 0px 5px 0px rgba(0, 0, 0, 0.1)"}} mb={2} pt={6} className="collabRow">
+                <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap"}} className="collabEssentialDetails">
                   <Box
                     className="collabAvatar"
                     mr={2}
@@ -350,11 +386,18 @@ function ProjectModal({
                       {emailInitals(collaborator.email)}
                     </Avatar>
                   </Box>
-                  <Box sx={{ display: "flex" }} className="collabEmail">
-                    <Input
+                  <Box sx={{ display: "flex", flexGrow:"1"}} className="collabEmail">
+                    <TextField
+                    inputRef={newMemberNameRef}
                       disableUnderline
-                      sx={{ height: "30px", width: above546 ? "100%" : "200px" }}
+                      sx={{ height: "30px", width: "100%" }}
                       type="email"
+                      inputProps={{
+                        style: {
+                          fontSize: "16px",
+                          padding:"3px 10px",
+                        },
+                      }}
                       placeholder="xyz@gmail.com"
                       value={collaborator.email}
                       disabled={
@@ -368,10 +411,13 @@ function ProjectModal({
                     />
                   </Box>
                   <Box className="collabRole" ml={1} sx={{
+                    marginLeft: !above546 ? "55px":"10px",
                     marginTop: !above546 ? "10px" : "0px",
+                    display: "flex",
+                    flexGrow:"1"
                   }}>
                     <Select
-                      sx={{ height: "30px", width: "150px" }}
+                      sx={{ height: "30px", width: "100%" }}
                       value={collaborator.role}
                       onChange={(event) =>
                         handleRoleChange(
@@ -394,10 +440,10 @@ function ProjectModal({
                   <Box
                     mt={1}
                     className="collabIcon"
-                    sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                    sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}
                   >
                     {collaborator.isNew ? (
-                      <>
+                
                         <Button variant="outlined"
                           color="success"
                           onClick={() => {
@@ -406,17 +452,10 @@ function ProjectModal({
                         >
                           Save
                         </Button>
-                        <Button variant="outlined"
-                          color="error"
-                          onClick={() => {
-                            handelDeleteProjectMember(index);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                      </>
+                    
+                    
                     ) : (
-                      collaborator.role !== "ADMIN" && (
+                       collaborator.role !== "ADMIN" && (
                         <Button variant="outlined"
                           color="error"
                           onClick={() => {
@@ -427,6 +466,7 @@ function ProjectModal({
                         </Button>
                       )
                     )}
+                
                   </Box>
                 ) : null}
               </Box>

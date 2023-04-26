@@ -35,7 +35,7 @@ import MobileTabs from './MobileTabs';
 import { LoadingContext } from '../contexts/LoadingContext';
 import NotificationModal from './NotificationModal';
 
-const settings = ['Profile', 'Account Settings', 'Logout'];
+const settings = ['My Projects', 'Logout'];
 const audio = new Audio(notificationSound);
 
 export default function Navbar({
@@ -112,7 +112,7 @@ export default function Navbar({
     setAnchorElUser(event.currentTarget);
   };
   const handleCloseUserMenu = (event) => {
-    if (event.target.innerText === "Account Settings") {
+    if (event.target.innerText === "My Projects") {
       setOpenSettings(true);
     }
     setAnchorElUser(null);
@@ -172,7 +172,7 @@ export default function Navbar({
                   <Typography
                     variant={(aboveTablet) ? 'h4' : 'h5'} color="secondary.main"
                   >
-                    My Agile Board
+                    My Agile Portal
                   </Typography>
                 )
               }

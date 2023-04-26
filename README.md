@@ -1,4 +1,4 @@
-# My Agile Board
+# My Agile Portal
 
 In the software industry, there is often a lack of transparency, collaboration, and effective communication, which can lead to missed deadlines, poor decision-making, and a negative impact on team morale. Additionally, teams often struggle with risk and planning, which can result in inefficient use of time and resources.
 
