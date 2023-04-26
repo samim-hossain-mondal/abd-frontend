@@ -13,7 +13,6 @@ import {
   Button,
   useMediaQuery,
   LinearProgress,
-  Backdrop,
 } from "@mui/material";
 import { useOktaAuth } from "@okta/okta-react";
 import propTypes from "prop-types";
@@ -53,11 +52,11 @@ function StickyHeader({
       {loading &&
         <Box sx={{ width: '100%' }}>
           <LinearProgress />
-          <Backdrop
+          {/* <Backdrop
             sx={{ color: '#fff', zIndex: 10000000000 }}
             open
           // onClick={handleClose}
-          />
+          /> */}
         </Box>}
       <Box
         component="header"

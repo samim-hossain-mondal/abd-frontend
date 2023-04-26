@@ -14,8 +14,7 @@ import {
   Tooltip,
   MenuItem,
   useMediaQuery,
-  LinearProgress,
-  Backdrop
+  LinearProgress
 }
   from '@mui/material';
 import axios from 'axios';
@@ -155,10 +154,10 @@ export default function Navbar({
 
           <Box sx={{ width: '100%' }}>
             <LinearProgress />
-            <Backdrop
+            {/* <Backdrop
               sx={{ color: '#fff', zIndex: 10000000000 }}
               open
-            />
+            /> */}
           </Box>
         }
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '2px 5px 2px 5px' : '25px 50px 25px 50px' }}>

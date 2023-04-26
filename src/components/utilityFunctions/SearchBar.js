@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 export default function SearchBar({ query, setQuery }) {
 
   const [searchInput, setSearchInput] = useState(query.search);
-  const breakpoint391 = useMediaQuery('(min-width: 391px)');
+  const breakpoint440 = useMediaQuery('(min-width: 440px)');
 
   const debounced = useDebouncedCallback(
     (value) => {
@@ -23,7 +23,7 @@ export default function SearchBar({ query, setQuery }) {
   }
 
   return (
-    <form onSubmit={(e)=>{handleSubmit(e)}} onChange={(e)=>debounced(e.target.value)} data-testid='search-form'>
+    <form onSubmit={(e) => { handleSubmit(e) }} onChange={(e) => debounced(e.target.value)} data-testid='search-form'>
       <TextField
         id="search-bar"
         data-testid="search-bar"
@@ -35,7 +35,7 @@ export default function SearchBar({ query, setQuery }) {
             <SearchIcon sx={{ color: 'primary.main' }} />
           ),
         }}
-        sx={{ width: breakpoint391 ? '200px' : "148px" }}
+        sx={{ width: breakpoint440 ? '200px' : "148px" }}
       />
     </form>
   );
@@ -47,5 +47,5 @@ SearchBar.propTypes = {
     startDate: PropTypes.string,
     endDate: PropTypes.string,
   }).isRequired,
-  setQuery: PropTypes.func.isRequired
+  setQuery: PropTypes.func.isRequired,
 };

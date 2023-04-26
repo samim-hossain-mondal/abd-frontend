@@ -27,6 +27,7 @@ import PONotesDialog from '../poNotesComponents/PONotesDialog';
 import { PO_NOTES_TYPES } from '../constants/PONotes';
 import InformationModel from '../elements/InformationModel';
 import { TeamRequestInfo } from '../constants/AccesibilityInfo';
+import MultipleSelectDropdown from '../elements/dsm/MultipleSelectDropdown';
 
 export default function Requests({ selectedDate }) {
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
@@ -43,9 +44,9 @@ export default function Requests({ selectedDate }) {
     dispatchGridHeight({ type: 'REQUEST', userRole })
   };
 
-  const getElementHeight = (id)=>{
+  const getElementHeight = (id) => {
     const element = document.getElementById(id);
-    return element ? element.offsetHeight-88 : 0;
+    return element ? element.offsetHeight - 88 : 0;
   }
 
   const [requests, setRequests] = useState([]);
@@ -62,6 +63,8 @@ export default function Requests({ selectedDate }) {
   useEffect(() => {
     setAccordionDetailsHeight(getElementHeight('scrollableRequestDiv'));
   }, [gridHeightState, requests]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [filters, setFilters] = useState({});
 
   const handleEditModalClose = () => {
     setOpenEditModal(false);
@@ -100,9 +103,9 @@ export default function Requests({ selectedDate }) {
   }
   const limit = 10;
 
-  const fetchMoreRequests = async (isRefresh = false) => {
+  const fetchMoreRequests = async (isRefresh = false, query = {}) => {
     const page = isRefresh ? 1 : Math.ceil(requests.length / limit) + 1;
-    const resData = await getRequests({ page, limit });
+    const resData = await getRequests({ page, limit, ...query });
     if (resData.length < limit) {
       setHasMore(false);
     }
@@ -227,14 +230,14 @@ export default function Requests({ selectedDate }) {
   }
   return (
     <Grid item height={gridHeightState.request.height}
-      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '16px' })}}
+      sx={{ ...(gridHeightState.request.expanded && { paddingBottom: '16px' }) }}
       marginTop={!breakpoint1080 && !gridHeightState.request.expanded && !gridHeightState.announcement.expanded ? "8px" : 'none'}
     >
       <Accordion
         id="scrollableRequestDiv"
-        expanded={gridHeightState.request.expanded} onChange={handleExpandRequests} sx={{
+        expanded={gridHeightState.request.expanded} onChange={!anchorEl && handleExpandRequests} sx={{
           height: gridHeightState.request.expanded ? '100%' : 'none',
-      }}>
+        }}>
         <AccordionSummary
           expandIcon={
             <Tooltip title={gridHeightState.request.expanded ? 'Collapse' : 'Expand'} placement='top'>
@@ -252,19 +255,30 @@ export default function Requests({ selectedDate }) {
             }
           }}
         >
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', display: 'flex', alignItems:'center', width:'100%' }}>
-            {HEADING}
+          <Box sx={{ display: 'flex', justifyContent: "flex-start", alignItems: "center" }}>
+            <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', width: '152px' }}>
+              {HEADING}
+            </Typography>
             <InformationModel
               heading={TeamRequestInfo.heading}
               definition={TeamRequestInfo.definition}
               accessibiltyInformation={TeamRequestInfo.accessibiltyInformation}
             />
-          </Typography>
-          <Tooltip title="Add Request" placement='top'>
-            <IconButton onClick={(e) => handleAddButtonClick(e)}>
-              <AddCircleIcon color="primary" />
-            </IconButton>
-          </Tooltip>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: "flex-start", gap: "8px", alignItems: "center" }}>
+            <Tooltip title="Quick Filter" placement='top'>
+              <IconButton>
+                <MultipleSelectDropdown filters={filters} setFilters={setFilters} fetchMore={fetchMoreRequests} anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+              </IconButton>
+            </Tooltip>
+            {isMember(userRole) &&
+              <Tooltip title="Add Request" placement='top'>
+                <IconButton onClick={(e) => handleAddButtonClick(e)}>
+                  <AddCircleIcon color="primary" />
+                </IconButton>
+              </Tooltip>
+            }
+          </Box>
         </AccordionSummary>
         <Dialog
           open={openModal}
@@ -321,7 +335,7 @@ export default function Requests({ selectedDate }) {
             :
             (requests.length === 0 ?
               (
-                <Box sx={{ height: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Box sx={{ height: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Typography
                     color="watermark.main"
                     fontSize='1.25rem'

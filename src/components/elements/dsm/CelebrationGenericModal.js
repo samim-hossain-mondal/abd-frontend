@@ -22,7 +22,7 @@ import { UPDATE_CELEBRATION } from '../../constants/apiEndpoints';
 import stringAvatar from '../../utilityFunctions/getStringColor';
 import CustomDropDown from './CustomDropDown';
 import CelebrationCard from '../../dsm/CelebrationCard';
-import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT, celebrationType } from '../../constants/dsm/Celebrations';
+import { celebrationTypes, celebrationPlaceholder, instructions, CHAR_COUNT } from '../../constants/dsm/Celebrations';
 import InstructionBox from './InstructionBox';
 import RichTextArea from '../RichTextArea';
 import DeleteDialog from '../DeleteDialog';
@@ -231,7 +231,7 @@ export default function CelebrationGenericModal({
             <Box sx={{ margin: '16px 0 16px 0' }}>
               <Typography variant="contentMain" sx={{ fontSize: '1rem', color: '#121212' }}>{title}</Typography>
             </Box>
-            <CustomDropDown isMenu={false} value={celebrationType[newCelebration.type] || newCelebration.type} openDropDown={lock ? false : openDropDown} setOpenDropDown={lock ? () => { } : setOpenDropDown} />
+            <CustomDropDown isMenu={false} value={newCelebration.type} openDropDown={lock ? false : openDropDown} setOpenDropDown={lock ? () => { } : setOpenDropDown} />
             <Box
               disabled={lock}
               visibility={openDropDown ? 'visible' : 'hidden'}

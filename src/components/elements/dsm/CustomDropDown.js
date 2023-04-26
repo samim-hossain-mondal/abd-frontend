@@ -5,6 +5,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
 import SegmentRoundedIcon from '@mui/icons-material/SegmentRounded';
 import { PropTypes } from 'prop-types';
+import { celebrationType } from '../../constants/dsm/Celebrations';
 
 export default function CustomDropDown({ isMenu, value, openDropDown, setOpenDropDown, handleChange }) {
 
@@ -30,7 +31,7 @@ export default function CustomDropDown({ isMenu, value, openDropDown, setOpenDro
         }} />
       </Grid>
       <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography>{value}</Typography>
+        <Typography>{celebrationType[value]}</Typography>
       </Grid>
       {!isMenu &&
         <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>

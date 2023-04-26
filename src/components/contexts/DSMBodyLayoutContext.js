@@ -1,4 +1,4 @@
-import React, { useReducer, useMemo, createContext, useContext } from 'react';
+import React, { useReducer, useMemo, createContext, useContext, useEffect } from 'react';
 import {
   Grid,
 } from '@mui/material';
@@ -192,6 +192,10 @@ export function DSMBodyLayoutProvider({ children }) {
   const { userRole } = useContext(ProjectUserContext)
   const [gridHeightState, dispatchGridHeight] = useReducer(gridHeightReducer, intitalGridHeightState(isMember(userRole)))
   const dsmBodyLayoutContextValue = useMemo(() => ({ gridHeightState, dispatchGridHeight }), [gridHeightState])
+
+  useEffect(() => {
+    dispatchGridHeight({ userRole })
+  }, [userRole])
 
   return (
     <DSMBodyLayoutContext.Provider value={dsmBodyLayoutContextValue}>

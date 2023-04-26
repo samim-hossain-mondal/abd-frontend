@@ -9,7 +9,7 @@ export const celebrationType = {
 
 export const celebrationPlaceholder = {
   CELEBRATION: 'Example: Thank you @GC for helping out on Payment integration yesterday.',
-  SUGGESTION: 'Example: We should make sure designs are getting marketing sign-off before given for development.'
+  IMPEDIMENT: 'Example: We should make sure designs are getting marketing sign-off before given for development.'
 }
 
 export const instructions = {
@@ -20,7 +20,7 @@ export const instructions = {
       'Celebrate your small achievements.'
     ]
   },
-  SUGGESTION: {
+  IMPEDIMENT: {
     header: 'Act wisely',
     points: [
       'Try not to be personal.',
@@ -31,4 +31,4 @@ export const instructions = {
 
 export const WATERMARK = "Celebrate your team!"
 
-export const celebrationTypes = Object.values(celebrationType)
+export const celebrationTypes = Object.keys(celebrationType)

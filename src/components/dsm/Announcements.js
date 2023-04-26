@@ -25,12 +25,13 @@ import SkeletonAnnouncement from '../skeletons/dsm/announcement';
 import { LoadingContext } from '../contexts/LoadingContext';
 import InformationModel from '../elements/InformationModel';
 import { AnnouncementInfo } from '../constants/AccesibilityInfo';
+import MultipleSelectDropdown from '../elements/dsm/MultipleSelectDropdown';
 // import dateGetter from '../utilityFunctions/DateGetter';
 
 export default function Announcements() {
-  const getElementHeight = (id)=>{
+  const getElementHeight = (id) => {
     const element = document.getElementById(id);
-    return element ? element.offsetHeight-96 : 0;
+    return element ? element.offsetHeight - 96 : 0;
   }
   const breakpoint1080 = useMediaQuery('(min-width:1080px)');
   const { projectId } = useParams();
@@ -51,6 +52,8 @@ export default function Announcements() {
   const [editModalData, setEditModalData] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [filters, setFilters] = useState({});
   const { setLoading } = useContext(LoadingContext);
 
   const handleEditModalClose = () => {
@@ -89,9 +92,9 @@ export default function Announcements() {
 
   const limit = 10;
 
-  const fetchMoreAnnouncements = async (isRefresh = false) => {
+  const fetchMoreAnnouncements = async (isRefresh = false, query = {}) => {
     const page = isRefresh ? 1 : Math.ceil(announcements.length / limit) + 1;
-    const resData = await getAnnouncements({ page, limit });
+    const resData = await getAnnouncements({ page, limit, ...query });
     if (resData.length < limit) {
       setHasMore(false);
     }
@@ -111,7 +114,7 @@ export default function Announcements() {
 
   useEffect(() => {
     setAccordionDetailsHeight(getElementHeight('scrollableAnnouncementDiv'));
-  }, [gridHeightState,announcements]);
+  }, [gridHeightState, announcements]);
 
   useEffect(() => {
     setLoaded(false);
@@ -203,7 +206,7 @@ export default function Announcements() {
     >
       <Accordion
         id="scrollableAnnouncementDiv"
-        expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements} 
+        expanded={gridHeightState.announcement.expanded} onChange={handleExpandAnnouncements}
         sx={{
           height: gridHeightState.announcement.expanded ? '100%' : 'none',
           paddingBottom: '16px'
@@ -226,24 +229,32 @@ export default function Announcements() {
             }
           }}
         >
-          <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', display:'flex', alignItems: 'center', width: '100%' }}>
-            {HEADING}
+          <Box sx={{ display: 'flex', justifyContent: "flex-start", alignItems: "center" }}>
+            <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none' }}>
+              {HEADING}
+            </Typography>
             <InformationModel
               heading={AnnouncementInfo.heading}
               definition={AnnouncementInfo.definition}
               accessibiltyInformation={AnnouncementInfo.accessibiltyInformation}
             />
-          </Typography>
-          {
-            // (userRole === USER_ROLES.ADMIN) && (dateGetter(selectedDate) === dateGetter(new Date())) && (
-            (isAdmin(userRole) && (
-              <Tooltip title="Add Announcement">
-                <IconButton onClick={handleAddButtonClick}>
-                  <AddCircleIcon color="primary" />
-                </IconButton>
-              </Tooltip>
-            ))
-          }
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: "flex-start", gap: "8px", alignItems: "center" }}>
+            <Tooltip title="Quick Filter" placement='top'>
+              <IconButton>
+                <MultipleSelectDropdown isAnnouncement filters={filters} setFilters={setFilters} fetchMore={fetchMoreAnnouncements} anchorEl={anchorEl} setAnchorEl={setAnchorEl} />
+              </IconButton>
+            </Tooltip>
+            {
+              (isAdmin(userRole) && (
+                <Tooltip title="Add Announcement">
+                  <IconButton onClick={handleAddButtonClick}>
+                    <AddCircleIcon color="primary" />
+                  </IconButton>
+                </Tooltip>
+              ))
+            }
+          </Box>
         </AccordionSummary>
         <Dialog
           open={openModal}

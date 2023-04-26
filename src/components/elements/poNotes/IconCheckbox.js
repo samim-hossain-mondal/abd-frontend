@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import style from 'react-style-proptype';
 
-export default function IconCheckbox({ Icon, label, onChange, isChecked=false, sx = {} }) {
+export default function IconCheckbox({ Icon, label, onChange, isChecked = false, sx = {} }) {
   const idName = `${label.toLowerCase().replace(' ', '-')}-checkbox`;
 
   return (
@@ -24,13 +24,13 @@ export default function IconCheckbox({ Icon, label, onChange, isChecked=false, s
           display: 'flex',
         }}
       >
-        <Icon
+        {Icon && <Icon
           fontSize="medium"
           sx={{
             marginRight: '18px',
           }}
           color="iconCheckbox"
-        />
+        />}
         <Typography
           sx={{
             position: 'relative',

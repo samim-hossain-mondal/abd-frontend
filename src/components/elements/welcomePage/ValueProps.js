@@ -12,14 +12,14 @@ import TeamIcon from '../../../assets/icons/team.png'
 import POIcon from '../../../assets/icons/po.png'
 
 function ValueProps() {
-    const isLargeScreen = useMediaQuery("(min-width:600px)");
-    return (
+  const isLargeScreen = useMediaQuery("(min-width:600px)");
+  return (
     <Box component="section" py={{ xs: 3, md: 12 }}>
       <Container>
         <Grid container alignItems="center">
           <Grid item xs={12} lg={5}>
             <Typography variant="h3" my={1}>
-            Why use My Agile Dashboard?
+              Why use My Agile Dashboard?
             </Typography>
             <Typography variant="body2" color="text" mb={2}>
               My Agile Dashboard serves as the home page for any of your Agile projects that unifies the areas unseen by other team management tools to improve team collaboration and tranparancy.
@@ -66,29 +66,30 @@ function ValueProps() {
                   borderRadius="xl"
                 >
                   <Icon fontSize="large" color="action">
-                        <Image
-                        src={LeaderIcon}
-                        height="100%"
-                        width="100%"
-                        fit="cover"
-                        duration={0}
-                        errorIcon
-                        shift={null}
-                        shiftDuration={900}
-                        showLoading
-                        easing="ease-in-out"
-                        sx={{ 
-                        position: isLargeScreen ? "absolute" : "relative", 
-                        top: 0, 
-                        left: 0 }}
-                        />
-                    </Icon>
+                    <Image
+                      src={LeaderIcon}
+                      height="100%"
+                      width="100%"
+                      fit="cover"
+                      duration={0}
+                      errorIcon
+                      shift={null}
+                      shiftDuration={900}
+                      showLoading
+                      easing="ease-in-out"
+                      sx={{
+                        position: isLargeScreen ? "absolute" : "relative",
+                        top: 0,
+                        left: 0
+                      }}
+                    />
+                  </Icon>
                 </Box>
                 <Typography variant="body2" color="text" pl={2}>
                   <b>Scrum Master / Product Owner</b>
                   <br />
-                  Maintain your notes in Action Items, Key Decisions and Open Questions for better visibility. 
-                  Use the Team Sentiment Meter and Daily Retro Board to drive your high velocity team. 
+                  Maintain your notes in Action Items, Key Decisions and Open Questions for better visibility.
+                  Use the Team Sentiment Meter and Daily Retro Board to drive your high velocity team.
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" p={2}>
@@ -105,29 +106,30 @@ function ValueProps() {
                   borderRadius="xl"
                 >
                   <Icon fontSize="large">
-                  <Image
-                        src={POIcon}
-                        height="100%"
-                        width="100%"
-                        fit="cover"
-                        duration={0}
-                        errorIcon
-                        shift={null}
-                        shiftDuration={900}
-                        showLoading
-                        easing="ease-in-out"
-                        sx={{ 
-                        position: isLargeScreen ? "absolute" : "relative", 
-                        top: 0, 
-                        left: 0 }}
-                        />
+                    <Image
+                      src={POIcon}
+                      height="100%"
+                      width="100%"
+                      fit="cover"
+                      duration={0}
+                      errorIcon
+                      shift={null}
+                      shiftDuration={900}
+                      showLoading
+                      easing="ease-in-out"
+                      sx={{
+                        position: isLargeScreen ? "absolute" : "relative",
+                        top: 0,
+                        left: 0
+                      }}
+                    />
                   </Icon>
                 </Box>
                 <Typography variant="body2" color="text" pl={2}>
                   <b>Project Leadership</b>
                   <br />
-                  Stay updated on your team's health and what is blocking them, amid your busy schedule. 
-                  Know your team members and their contributions better than before. 
+                  Stay updated on your team&apos;s health and what is blocking them, amid your busy schedule.
+                  Know your team members and their contributions better than before.
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" p={2}>
@@ -144,22 +146,23 @@ function ValueProps() {
                   borderRadius="xl"
                 >
                   <Icon fontSize="large">
-                  <Image
-                        src={TeamIcon}
-                        height="100%"
-                        width="100%"
-                        fit="cover"
-                        duration={0}
-                        errorIcon
-                        shift={null}
-                        shiftDuration={900}
-                        showLoading
-                        easing="ease-in-out"
-                        sx={{ 
-                        position: isLargeScreen ? "absolute" : "relative", 
-                        top: 0, 
-                        left: 0 }}
-                        />
+                    <Image
+                      src={TeamIcon}
+                      height="100%"
+                      width="100%"
+                      fit="cover"
+                      duration={0}
+                      errorIcon
+                      shift={null}
+                      shiftDuration={900}
+                      showLoading
+                      easing="ease-in-out"
+                      sx={{
+                        position: isLargeScreen ? "absolute" : "relative",
+                        top: 0,
+                        left: 0
+                      }}
+                    />
                   </Icon>
                 </Box>
                 <Typography variant="body2" color="text" pl={2}>

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import {
   Box,
   AppBar,
+  Container,
   InputLabel,
   FormControl,
+  Toolbar,
   Typography,
   Popover,
   Select,
@@ -28,16 +30,19 @@ export default function PONotesHeader({ query, setQuery }) {
   };
 
   const aboveTablet = useMediaQuery('(min-width: 650px)');
-  const breakPoint510 = useMediaQuery('(max-width:510px)');
-  const breakpoint391 = useMediaQuery('(min-width: 391px)');
+  const breakpoint440 = useMediaQuery('(min-width: 440px)');
   const open = Boolean(positioningReferenceElement);
   const id = open ? 'simple-popover' : undefined;
 
   return (
     <AppBar position="static" sx={{ background: 'transparent', boxShadow: 'none' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: breakPoint510 ? '15px 5px 15px 5px' : '25px 50px 25px 50px' }}>
+      <Container maxWidth="xl" padding='0' margin='20px'>
+        <Toolbar disableGutters
+          sx={(aboveTablet) ? { display: 'flex', flexWrap: 'wrap' } : { display: 'flex', flexDirection: 'column' }}
+        >
           <Box
             height={aboveTablet ? "auto" : "60px"}
+            width={aboveTablet ? "auto" : "100%"}
             sx={{ flexGrow: 2, display: { md: 'flex' } }}
           >
             <Typography
@@ -48,7 +53,7 @@ export default function PONotesHeader({ query, setQuery }) {
               variant={aboveTablet ? 'h5' : 'h6'}
               noWrap
               fontSize="1.5rem"
-              sx={{ fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none', display: 'flex', alignItems: 'center', width: '100%' }}
+              sx={{ ml: 5, mr: 5, fontWeight: 500, letterSpacing: '.025rem', color: 'secondary.main', textDecoration: 'none' }}
             >
               PO Notes
               <InformationModel
@@ -66,7 +71,7 @@ export default function PONotesHeader({ query, setQuery }) {
                 <SearchBar query={query} setQuery={setQuery} />
               </Box>
             </Tooltip>
-            <FormControl id="demo-select-small" sx={{ minWidth: breakpoint391 ? '200px' : "148px" }} size="small">
+            <FormControl id="demo-select-small" sx={{ minWidth: breakpoint440 ? '200px' : "148px" }} size="small">
               <InputLabel id="demo-select-small">
                 <Box display='flex' align-items='center'>
                   Quick Filters
@@ -104,7 +109,8 @@ export default function PONotesHeader({ query, setQuery }) {
               </Popover>
             </FormControl>
           </Box>
-        </Box>
+        </Toolbar>
+      </Container>
     </AppBar >
   );
 }

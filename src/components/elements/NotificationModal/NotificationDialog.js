@@ -49,8 +49,8 @@ function NotificationDialog(props) {
   const makeCalls = async () => {
     if (!props.open) return;
     if (props.checked === false) {
-      const countValue= props.count;
-      props.setCount(countValue-1);
+      const countValue = props.count;
+      props.setCount(countValue - 1);
     }
     if (props.targetType === "TEAM_REQUEST") {
 
@@ -59,11 +59,11 @@ function NotificationDialog(props) {
         .then((response) => {
           const { data } = response;
           setNotif(data);
-          const value =[...props.notifs];
-        const index = value.findIndex((item) => item.teamRequestId === props.targetId);
-        value[index].readStatus = true;
+          const value = [...props.notifs];
+          const index = value.findIndex((item) => item.teamRequestId === props.targetId);
+          value[index].readStatus = true;
         })
-        
+
     } else if (props.targetType === "CELEBRATION") {
       axios
         .get(`${DOMAIN}/api/dsm/celebrations/${projectId}/${props.targetId}`)
@@ -77,9 +77,9 @@ function NotificationDialog(props) {
             memberId: user.memberId,
             createdAt: data.createdAt,
           });
-          const value =[...props.notifs];
-        const index = value.findIndex((item) => item.celebrationId === props.targetId);
-        value[index].readStatus = true;
+          const value = [...props.notifs];
+          const index = value.findIndex((item) => item.celebrationId === props.targetId);
+          value[index].readStatus = true;
           props.setNotifs(value);
         });
     } else if (props.targetType === "ANNOUNCEMENT") {
@@ -88,9 +88,9 @@ function NotificationDialog(props) {
         .then((response) => {
           const { data } = response;
           setNotif(data);
-          const value =[...props.notifs];
-        const index = value.findIndex((item) => item.announcementId === props.targetId);
-        value[index].readStatus = true;
+          const value = [...props.notifs];
+          const index = value.findIndex((item) => item.announcementId === props.targetId);
+          value[index].readStatus = true;
         });
 
     }

@@ -14,9 +14,11 @@ const allowedDateFilters = ['today', 'yesterday', 'week'];
 
 export default function QuickFilterPopover({ query, onChange }) {
   const [filters, setFilters] = useState(query);
+  const [mount, setMount] = useState(0)
 
   useEffect(() => {
-    onChange(filters);
+    if (mount > 0) onChange(filters);
+    setMount(mount + 1)
   }, [filters]);
 
   return (

@@ -31,6 +31,8 @@ import makeRequest from '../utilityFunctions/makeRequest/index';
 import { ErrorContext } from '../contexts/ErrorContext';
 import { SUCCESS_MESSAGE } from "../constants/dsm/index"
 import { GENERIC_NAME, HEADING } from '../constants/dsm/Sentiments';
+// import { HEADING as requestHeader } from '../constants/dsm/Requests';
+// import { HEADING as announcementHeader } from '../constants/dsm/Announcements';
 import { ProjectUserContext } from '../contexts/ProjectUserContext';
 import { isAdmin, isLeader, isMember } from '../constants/users';
 import { LoadingContext } from '../contexts/LoadingContext';
@@ -146,7 +148,7 @@ export default function Sentiment() {
         setSentimentObj(todaySentiment)
       }
     })
-  }, [])
+  }, [userRole])
 
   if (refresh.sentiment) {
     setRefresh(val => ({ ...val, sentiment: false }));
@@ -165,9 +167,9 @@ export default function Sentiment() {
         ...(gridHeightState.sentiment.expanded && { paddingBottom: "15px" }),
         display: "flex", flexDirection: "row", justifyContent: "space-between"
       }} height={gridHeightState.sentiment.height} >
-      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12} sx={{marginRight: breakpoint1080 && gridHeightState.celebration.fullExpanded && '4px'}}>
+      <Grid item xs={breakpoint1080 && gridHeightState.celebration.fullExpanded ? 8 : 12} sx={{ marginRight: breakpoint1080 && gridHeightState.celebration.fullExpanded && '4px' }}>
         <Accordion
-          expanded={userRole && isMember(userRole) && gridHeightState.sentiment.expanded}
+          expanded={gridHeightState.sentiment.expanded}
           onChange={handleExpandSentiment}
           sx={{
             height: gridHeightState.sentiment.expanded ? "100%" : "auto",
@@ -243,7 +245,7 @@ export default function Sentiment() {
       </Grid>
       {
         breakpoint1080 && gridHeightState.celebration.fullExpanded && (
-          <Grid item xs={6} sx={{marginRight: '4px'}}>
+          <Grid item xs={6} sx={{ marginRight: '4px' }}>
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
             }}>
@@ -254,24 +256,24 @@ export default function Sentiment() {
                   height: '8vh',
                 }}
               >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                sx={{
-                  display: 'flex',
-                  flexGrow: 1,
-                }}
-              >
-                <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{textTransform: 'none', width: '100%', display: 'flex', alignItems: 'center'}}>
-                  {requestHeading}
-                  <InformationModel
-                    heading={TeamRequestInfo.heading}
-                    definition={TeamRequestInfo.definition}
-                    accessibiltyInformation={TeamRequestInfo.accessibilityInformation}
-                  />
-                </Typography>
-              </AccordionSummary>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  sx={{
+                    display: 'flex',
+                    flexGrow: 1,
+                  }}
+                >
+                  <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', width: '100%', display: 'flex', alignItems: 'center' }}>
+                    {requestHeading}
+                    <InformationModel
+                      heading={TeamRequestInfo.heading}
+                      definition={TeamRequestInfo.definition}
+                      accessibiltyInformation={TeamRequestInfo.accessibilityInformation}
+                    />
+                  </Typography>
+                </AccordionSummary>
               </Box>
             </Accordion>
           </Grid>
@@ -283,28 +285,28 @@ export default function Sentiment() {
             <Accordion expanded={false} onChange={handleExpandSentiment} sx={{
               height: gridHeightState.sentiment.expanded ? "100%" : "none",
             }}>
-              <Box 
+              <Box
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   height: '8vh'
                 }}
               >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-                sx={{display: 'flex',flexGrow: '1'}}
-              >
-                <Typography variant="dsmSubMain" fontSize='1.25rem'  sx={{textTransform: 'none',width: '100%', display: 'flex', alignItems: 'center'}}>
-                  {announcementHeading}
-                  <InformationModel
-                    heading={AnnouncementInfo.heading}
-                    definition={AnnouncementInfo.definition}
-                    accessibiltyInformation={AnnouncementInfo.accessibilityInformation}
-                  />
-                </Typography>
-              </AccordionSummary>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                  sx={{ display: 'flex', flexGrow: '1' }}
+                >
+                  <Typography variant="dsmSubMain" fontSize='1.25rem' sx={{ textTransform: 'none', width: '100%', display: 'flex', alignItems: 'center' }}>
+                    {announcementHeading}
+                    <InformationModel
+                      heading={AnnouncementInfo.heading}
+                      definition={AnnouncementInfo.definition}
+                      accessibiltyInformation={AnnouncementInfo.accessibilityInformation}
+                    />
+                  </Typography>
+                </AccordionSummary>
               </Box>
             </Accordion>
           </Grid>
