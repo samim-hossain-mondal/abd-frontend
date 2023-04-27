@@ -1,8 +1,7 @@
-export const WELCOME_ROUTE = '/';
 export const LOGIN_ROUTE = "/login";
 export const LOGIN_CALLBACK_ROUTE = "/login/callback";
 
-export const HOME_ROUTE = '/home';
+export const HOME_ROUTE = '/';
 export const DAILY_ROUTE = '/daily';
 export const PO_NOTE_ROUTE = '/po-notes';
 export const OUR_TEAM_ROUTE = '/our-team';

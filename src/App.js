@@ -24,7 +24,6 @@ import {
   PO_NOTE_ROUTE,
   LOGIN_CALLBACK_ROUTE,
   LOGIN_ROUTE,
-  WELCOME_ROUTE,
 } from './components/constants/routes';
 import { ProjectUserContext } from './components/contexts/ProjectUserContext';
 import { ErrorContext } from './components/contexts/ErrorContext';
@@ -101,7 +100,7 @@ function AppRoutes() {
       <Box className="App">
         {
           authLoaded &&
-          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, WELCOME_ROUTE].includes(window.location.pathname)) && (
+          (![LOGIN_ROUTE, LOGIN_CALLBACK_ROUTE, HOME_ROUTE].includes(window.location.pathname)) && (
             <Box>
               <Navbar
                 navbarRef={navbarRef}
@@ -173,8 +172,7 @@ function AppRoutes() {
                   scrollTo='availabilityCalendar' />
               }
             </SecureRoute>} />
-          <Route path={HOME_ROUTE} element={<h1> </h1>} />
-          <Route path={WELCOME_ROUTE} element={< WelcomePage />} />
+          <Route path={HOME_ROUTE} element={<WelcomePage/>} />
           <Route path={LOGIN_CALLBACK_ROUTE} element={<LoginCallbackPage />} />
           <Route path='*' element={<h1>404: Not Found</h1>} />
         </Routes>
