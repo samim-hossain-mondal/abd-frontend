@@ -64,6 +64,17 @@ function ProjectModal({
   
 
 
+
+  useEffect(() => {
+   // I want to focus when the new member is added
+    if (newMemberNameRef.current) {
+      newMemberNameRef.current.focus();
+      console.log(projectInfo.projectMembers);
+    }
+  }, [projectInfo.projectMembers.length]);
+  
+
+
   const handelDeleteProjectMember = (index) => {
     setSelectedCollaborator(index);
     setDeleteProjectMemberAlert(true);

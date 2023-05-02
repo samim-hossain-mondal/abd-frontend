@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Box, Chip, Button } from "@mui/material";
+import { Grid, Box, Chip, Button, useMediaQuery} from "@mui/material";
 import propTypes from "prop-types";
 import { colorMap } from "../constants/Color";
 
@@ -11,6 +11,7 @@ export default function TeamInformationCardContainer({
   SlackLogo,
   today,
 }) {
+  const breakpoint450 = useMediaQuery("(min-width:450px)");
   return (
     <Grid
       className="body"
@@ -53,7 +54,7 @@ export default function TeamInformationCardContainer({
             >
               <Box onClick={() => handleOpenModal(item)}>
                 <Box
-                  fontSize="1.8rem"
+                  fontSize={breakpoint450?"1.5rem":"1.35rem"}
                   display="flex"
                   flexDirection="row"
                   justifyContent="flex-start"
@@ -93,7 +94,9 @@ export default function TeamInformationCardContainer({
                 </Box>
                 <Box
                   backgroundColor="whitesmoke"
-                  height="50px"
+                  height="48px"
+                  minHeight="48px"
+                  maxHeight="48px"
                   display="flex"
                   fontSize="large"
                   justifyContent="space-between"
@@ -105,6 +108,7 @@ export default function TeamInformationCardContainer({
                     alignItems="center"
                     marginLeft="4%"
                     color="black"
+                    fontSize="1rem"
                   >
                     {item.startDate && formatDate(item.startDate)}
                     {item.endDate &&

@@ -8,6 +8,7 @@ import {
   useMediaQuery,
   CircularProgress,
   Box,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
@@ -54,6 +55,8 @@ function CardList() {
   const [leaderCards, setLeaderCard] = useState(null);
   const [memberCards, setMemberCard] = useState(null);
   const { setLoading } = useContext(LoadingContext);
+  const [activeMembers, setActiveMembers] = useState(null);
+  const [notActiveMembers,setNotActiveMembers] = useState(null);
 
   useEffect(() => {
     try {
@@ -227,6 +230,14 @@ function CardList() {
     setAdminCard(adminCardValue);
     setLeaderCard(leaderCardValue);
     setMemberCard(memberCardValue);
+    const activeMembersValue = filterDataValue?.filter(
+      (item) => item.isActive === true
+    );
+    setActiveMembers(activeMembersValue)
+    const notActiveMembersValue = filterDataValue?.filter(
+      (item) => item.isActive === false
+    );
+    setNotActiveMembers(notActiveMembersValue);
   }, [filteredData]);
 
   return ((adminCards)&&(memberCards)&&(leaderCards))?(
@@ -239,6 +250,7 @@ function CardList() {
         className="body"
         height="100vh"
         sx={{ overflow: "scroll"}}
+        marginTop={breakpoint450 ? "2%" : "3%"}
       >
         <Box
           position="absoulte"
@@ -273,7 +285,7 @@ function CardList() {
             </Box>
           </Box>
         </Box>
-        <Box sx={{padding: '25px 50px 25px 50px'}}>
+        <Box sx={{padding: breakpoint450? '0.5rem 3rem 0.5rem 2.75rem':'0.5rem 0.5rem 0.5rem 0.5rem'}}>
         <Box
           width="100%"
           display="flex"
@@ -295,9 +307,31 @@ function CardList() {
               flexWrap="wrap"
               width="99%"
             >
-              {filteredData && (
+              {
+                activeMembers?.length!==0 && <Chip
+                label="ACTIVE MEMBERS"
+                style={{ backgroundColor:"white" }}
+              />
+              }
+              {activeMembers && (
                 <TeamInformationCardContainer
-                  cardData={filteredData}
+                  cardData={activeMembers}
+                  handleOpenModal={handleOpenModal}
+                  handleMessageClick={handleMessageClick}
+                  formatDate={formatDate}
+                  SlackLogo={SlackLogo}
+                  today={today}
+                />
+              )}
+              {
+                notActiveMembers?.length!==0 && <Chip
+                label="PAST MEMBERS"
+                style={{ backgroundColor:"white" }}
+              />
+              }
+              {notActiveMembers && (
+                <TeamInformationCardContainer
+                  cardData={notActiveMembers}
                   handleOpenModal={handleOpenModal}
                   handleMessageClick={handleMessageClick}
                   formatDate={formatDate}
