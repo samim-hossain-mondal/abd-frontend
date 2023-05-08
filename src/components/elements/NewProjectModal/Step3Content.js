@@ -22,8 +22,12 @@ function Step3Content({ projId, projectTitle, setOpen}) {
     axios
       .get(`${DOMAIN}/api/management/project/${projId}`)
       .then((response) => {
-        // setSuccess("Project members Added");
-        setMembers(response.data.projectMembers);
+     const extractedMembers = response.data.projectMembers.map((member) => ({
+          email: member.email,
+          role: member.role,
+          isNew: false,
+        }));
+        setMembers(extractedMembers);
       })
       .catch((error) => {
         setError(error.response.data.message);
@@ -72,7 +76,6 @@ function Step3Content({ projId, projectTitle, setOpen}) {
         setMembers([...members.slice(0, index), {
           email: members[index].email,
           role: members[index].role,
-          isNew: false,
         }, ...members.slice(index + 1)])
       })
       .catch((error) => {
@@ -168,7 +171,6 @@ function Step3Content({ projId, projectTitle, setOpen}) {
           {members && members.map((member, index) => (
             <Box mt={2} mb={2} sx={{ display: "flex", flexDirection: "column",padding:"4px"}} id="CollabRow">
               <Box id="allPlaceholders" sx={{ justifyContent: "space-between", display: "flex", width: "100%"}}>
-            
                     <Avatar
                       sx={{
                         backgroundColor: renderColor(member.role),
@@ -180,8 +182,7 @@ function Step3Content({ projId, projectTitle, setOpen}) {
                     </Avatar>
 
                 <TextField
-                  inputRef={newMemberNameRef}
-                  disableUnderline
+                  inputRef={newMemberNameRef} 
                   inputProps={{ style: { padding: "4px 7px" } }}
                   placeholder="xyz@gmail.com"
                   value={member.email}

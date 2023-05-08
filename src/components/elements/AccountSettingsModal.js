@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useContext } from "react";
 import { Box, Dialog, DialogContent, Typography, TextField, InputAdornment, IconButton, Tooltip } from "@mui/material";
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
@@ -13,7 +12,6 @@ import { Search } from "@mui/icons-material";
 import ProjectModal from "./ProjectModal";
 import Transition from "../utilityFunctions/SideBarTransition";
 import { ErrorContext } from "../contexts/ErrorContext";
-// eslint-disable-next-line import/no-named-as-default
 import NewProjectModal from "./NewProjectModal";
 import { DOMAIN } from "../../config";
 import { ProjectUserContext } from "../contexts/ProjectUserContext";
@@ -22,7 +20,7 @@ import { isAdmin, isLeader } from '../constants/users';
 function AccountSettingsModal({ open, setOpenSettings }) {
   const navigate = useNavigate();
   const [projectInfo, setProjectInfo] = useState();
-  const { projects, fetchProjectInfo, setProjects, deleteProject } = useContext(ProjectUserContext);
+  const { projects, fetchProjectInfo, deleteProject } = useContext(ProjectUserContext);
   const { setError, setSuccess } = useContext(ErrorContext);
   const [openEditModel, setOpenEditModel] = useState();
   const [openNewProjectModal, setOpenNewProjectModal] = useState();
@@ -87,48 +85,37 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   }
     , [projects]);
 
-  const editProjectDetails = (projectName, projectDescription, projectId) => {
-    if (projectName === "" || projectDescription === "") {
-      setError("Project name and description cannot be empty");
-      return;
-    }
-    axios
-      .patch(`${DOMAIN}/api/management/project/${projectId}`, {
-        projectName,
-        projectDescription,
-      })
-      .then(() => {
-        setSuccess("Successfully Edited Project Details");
-        const index = projects.findIndex(
-          (project) => project.projectId === projectId
-        );
-        const newProjects = [...projects];
-        newProjects[index].projectName = projectName;
-        newProjects[index].projectDescription = projectDescription;
-        setProjects(newProjects);
-        setProjectInfo({
-          ...projectInfo,
+    const editProjectDetails = (projectName, projectDescription, projectId) => {
+      if (projectName === "" || projectDescription === "") {
+        setError("Project name and description cannot be empty");
+        return;
+      }
+      axios
+        .patch(`${DOMAIN}/api/management/project/${projectId}`, {
           projectName,
           projectDescription,
+        })
+        .then(() => {
+          setSuccess("Successfully Edited Project Details");
+          return axios.get(`${DOMAIN}/api/management/project/${projectId}`);
+        }).then((response) => {
+            setProjectInfo(...projectInfo, response.data);
+        })
+        .catch((error) => {
+          setError(error.data.message);
         });
-      })
-      .catch((error) => {
-        setError(error.data.message);
-      });
-  };
+    };
 
   const addCollaborator = (lock) => {
     if (isAdmin(projectInfo.role) || isLeader(projectInfo.role)) {
       if (!lock) {
-        // check if any new collaborators are added
         const checkNewCollab = projectInfo.projectMembers.find(
-          (member) => member.isNew
+          (collab) => collab.isNew
         );
         if (checkNewCollab) {
           setError("Please save new collaborators before adding more");
           return;
         }
-        
         const newCollaborator = { email: "", role: "",isActive:true, isNew: true };
         setProjectInfo({
           ...projectInfo,
@@ -150,41 +137,12 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         email: projectInfo.projectMembers[index].email,
         role: projectInfo.projectMembers[index].role,
       })
-      .then(() => {
+      .then(() => axios.get(`${DOMAIN}/api/management/project/${projectId}/member`)).then((response) => {
         setSuccess("Successfully Added Collaborator");
         setProjectInfo({
           ...projectInfo,
-          projectMembers: [
-            ...projectInfo.projectMembers.slice(0, index),
-            {
-              email: projectInfo.projectMembers[index].email,
-              role: projectInfo.projectMembers[index].role,
-              isActive: true,
-              isNew: false,
-            },
-            ...projectInfo.projectMembers.slice(index + 1),
-          ],
+          projectMembers: response.data,
         });
-        const newProjectArray = projects.map((project) => {
-          if (project.projectId === projectId) {
-            return {
-              ...project,
-              projectMembers: [
-                ...project.projectMembers,
-                {
-                  email: projectInfo.projectMembers[index].email,
-                  role: projectInfo.projectMembers[index].role,
-                  isActive: projectInfo.projectMembers[index].isActive,
-                },
-              ],
-              _count: {
-                projectMembers: project._count.projectMembers + 1, // TODO: fix when backend changes
-              }
-            };
-          }
-          return project;
-        });
-        setProjects(newProjectArray);
       })
       .catch((error) => {
         setError(error.response.data.message);
@@ -252,19 +210,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
   };
 
   const removeCollaborator = (index) => {
-    if (
-      projectInfo.projectMembers[index].email === "" ||
-      projectInfo.projectMembers[index].role === ""
-    ) {
-      setProjectInfo({
-        ...projectInfo,
-        projectMembers: [
-          ...projectInfo.projectMembers.slice(0, index),
-          ...projectInfo.projectMembers.slice(index + 1),
-        ],
-      });
-      return;
-    }
     const { projectId } = projectInfo;
     axios
       .delete(`${DOMAIN}/api/management/project/${projectId}/member`, {
@@ -272,21 +217,20 @@ function AccountSettingsModal({ open, setOpenSettings }) {
           email: projectInfo.projectMembers[index].email,
         },
       })
-      .then(() => {
+      .then(() => axios.get(`${DOMAIN}/api/management/project/${projectId}`))
+      .then((response) => {
+        const { data } = response;
+        const { projectMembers } = data;
+        const updatedProjectInfo = {
+          ...projectInfo,
+          projectMembers,
+        };
+        setProjectInfo(updatedProjectInfo);
         setSuccess("Collaborator Deleted Successfully");
       })
       .catch((error) => {
         setError(error.data.message);
       });
-
-    const updatedProjectInfo = {
-      ...projectInfo,
-      projectMembers: [
-        ...projectInfo.projectMembers.slice(0, index),
-        ...projectInfo.projectMembers.slice(index + 1),
-      ],
-    };
-    setProjectInfo(updatedProjectInfo);
   };
 
   const handleEditModel = (id) => {
@@ -391,9 +335,6 @@ function AccountSettingsModal({ open, setOpenSettings }) {
                 />
               </Box>
             </Box>
-
-
-
             <Box
               mt={3}
               sx={{
@@ -489,7 +430,7 @@ function AccountSettingsModal({ open, setOpenSettings }) {
         <NewProjectModal
           open={openNewProjectModal}
           projects={projects}
-          setProjects={setProjects}
+          // setProjects={setProjects}
           setOpen={setOpenNewProjectModal}
           projectInfo={projectInfo}
         />

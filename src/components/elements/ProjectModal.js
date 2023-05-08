@@ -58,7 +58,6 @@ function ProjectModal({
    // I want to focus when the new member is added
     if (newMemberNameRef.current) {
       newMemberNameRef.current.focus();
-      console.log(projectInfo.projectMembers);
     }
   }, [projectInfo.projectMembers.length]);
   
@@ -375,8 +374,9 @@ function ProjectModal({
         >
           {projectInfo &&
             projectInfo.projectMembers
-            .filter((collaborator) => collaborator.isActive === true)
             .map((collaborator, index) => (
+              collaborator.isActive===true?
+              (
               <Box  sx={{ display: "flex", flexDirection: "column",padding:"4px",boxShadow:"2px 0px 5px 0px rgba(0, 0, 0, 0.1)"}} mb={2} pt={6} className="collabRow">
                 <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap"}} className="collabEssentialDetails">
                   <Box
@@ -481,7 +481,7 @@ function ProjectModal({
                   </Box>
                 ) : null}
               </Box>
-
+              ):null
             ))}
         </Box>
       </Dialog>
